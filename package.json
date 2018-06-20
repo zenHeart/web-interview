@@ -1,0 +1,26 @@
+{
+  "name": "web-interview",
+  "version": "1.0.0",
+  "description": "web 面试题目汇总",
+  "main": "index.js",
+  "scripts":{
+    "test":"jest"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zenHeart/web-interview.git"
+  },
+  "keywords": [
+    "interview",
+    "web"
+  ],
+  "author": "zenheart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zenHeart/web-interview/issues"
+  },
+  "homepage": "https://github.com/zenHeart/web-interview#readme"
+}
