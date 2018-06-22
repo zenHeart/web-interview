@@ -4,7 +4,7 @@
   "description": "web 面试题目汇总",
   "main": "index.js",
   "scripts":{
-    "test":"jest"
+    "test":"jest --watch"
   },
   "directories": {
     "test": "tests"
