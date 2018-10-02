@@ -6,11 +6,6 @@ describe("node 测试",function() {
             expect(va).toBeUndefined();
             let la = 1;
             var va = 1;
-
-
-
-
-
         })
     });
 });

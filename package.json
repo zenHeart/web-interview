@@ -4,10 +4,8 @@
   "description": "web 面试题目汇总",
   "main": "index.js",
   "scripts":{
-    "test":"jest --watch"
-  },
-  "directories": {
-    "test": "tests"
+    "test":"jest --watch",
+    "node:cache":"node node/cache/cache.test.js"
   },
   "repository": {
     "type": "git",

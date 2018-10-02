@@ -1,8 +1,8 @@
 ---
-title:interview    
-tag:interview      
-birth:2017-03-21      
-modified:2017-03-21      
+title: interview    
+tag: interview      
+birth: 2017-03-21      
+modified: 2017-03-21      
 ---
 
 interview
@@ -16,6 +16,7 @@ interview
 理解在变成行业各公司的晋升渠道和技能水平.
 
 ### bat
+[bat 架构详解](https://juejin.im/post/5b34675d6fb9a00e6325434e)
 
 [前端面试题](https://github.com/markyun/My-blog/tree/master/Front-end-Developer-Questions/Questions-and-Answers)
 
