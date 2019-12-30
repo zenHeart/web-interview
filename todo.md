@@ -1,4 +1,5 @@
 ## todo
+* [ ] intersection observer api 是否
 * [ ] [web interview](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 
 * [ ] [技术面试 github](https://github.com/yangshun/tech-interview-handbook)
 * [ ] [coding-interview-university](https://github.com/jwasham/coding-interview-university)
@@ -13,3 +14,5 @@
 * [ ] toString 和 toValue 的区别
 * [ ] [理解 v8 垃圾回收](http://alinode.aliyun.com/blog/37)
 * [ ] [知乎 v8 回收](https://zhuanlan.zhihu.com/p/25736931)
+* [ ] [腾讯面试题](https://juejin.im/post/5c19c1b6e51d451d1e06c163)
+* [ ] [高频试题](https://juejin.im/post/5d23e750f265da1b855c7bbe)

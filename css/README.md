@@ -1,6 +1,7 @@
-记录 css 相关问题
+## 几种方式实现已知或者未知宽度的垂直水平居中
+### 考点
 
-## 问题
+
 ### css 选择器优先级如何计算?
 [选择器特殊性](https://github.com/zenHeart/css-demo/blob/master/docs/selector/selector-specificity.md)
 

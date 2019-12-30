@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "description": "web 面试题目汇总",
   "main": "index.js",
-  "scripts":{
-    "test":"jest --watch",
-    "node:cache":"node node/cache/cache.test.js"
+  "scripts": {
+    "test": "mocha -w **/**/**/*.test.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/zenHeart/web-interview/issues"
   },
-  "homepage": "https://github.com/zenHeart/web-interview#readme"
+  "homepage": "https://github.com/zenHeart/web-interview#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "lerna": "^3.14.1"
+  }
 }
