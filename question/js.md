@@ -56,7 +56,9 @@ js 采用词法作用域,更详细的资料参见 [你不知道的 JavaScript（
 1. 静态(词法)作用域和动态作用域
 2. 左查询和右查询
 
-## 变量提升?
+## 变量提升
+
+### class 变量提升
 
 参考 [我知道你懂 hoisting，可是你了解到多深？](https://blog.techbridge.cc/2018/11/10/javascript-hoisting/)
 
@@ -166,6 +168,8 @@ IIFE 是立即执行函数表达式。
 1. 用于动态修改执行时的 this 绑定。
 
 ## 迭代器概念和使用
+
+## toString 和 toValue 的区别
 
 ## 什么是原型链？
 
