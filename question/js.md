@@ -131,6 +131,8 @@ IIFE 是立即执行函数表达式。
 
 推荐视频 <https://www.youtube.com/watch?v=wPBjd-vb9eI>
 
+-   [表示 ieee754](https://www.youtube.com/watch?v=8afbTaA-gOQ)
+
 ## Number 的特殊值?
 
 1. **NaN** 表示非法数字,利用 `NaN !=== NaN` 的特性判断

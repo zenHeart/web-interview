@@ -5,8 +5,8 @@
     "main": "index.js",
     "scripts": {
         "test": "mocha -w **/**/**/*.test.js",
-        "docs:dev": "gitbook serve question",
-        "docs:build": "gitbook build question",
+        "docs:dev": "gitbook serve",
+        "docs:build": "gitbook build",
         "deploy": "./scripts/deploy-book.sh"
     },
     "repository": {
@@ -25,6 +25,16 @@
     "homepage": "https://github.com/zenHeart/web-interview#readme",
     "devDependencies": {
         "chai": "^4.2.0",
-        "lerna": "^3.14.1"
+        "lerna": "^3.14.1",
+        "virtual-dom": "^2.1.1",
+        "gitbook-plugin-todo": "^0.1.3",
+        "gitbook-plugin-fontsettings": "latest",
+        "gitbook-plugin-search": "latest",
+        "gitbook-plugin-prism": "latest",
+        "gitbook-plugin-lunr": "latest",
+        "gitbook-plugin-timeline": "latest",
+        "gitbook-plugin-popup": "latest",
+        "gitbook-plugin-anchor-navigation-ex": "latest",
+        "gitbook-plugin-styled-blockquotes": "latest"
     }
 }
