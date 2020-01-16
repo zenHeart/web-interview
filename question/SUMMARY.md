@@ -1,44 +1,41 @@
-## 概述
+* [前言](./README.md)
+* [计算机基础](./company/README.md)
+  * [操作系统](./computer.md)
+  * [网络](./net.md)
+  * [算法](./algorithm.md)
+  * [编码](./encode.md)
+* [前端基础](./frontend-basic/README.md)
+  * [css](./frontend-basic/css.md)
+  * [js](./frontend-basic/js.md)
+  * [dom](./frontend-basic/dom.md)
+  * [html](./frontend-basic/html.md)
+  * [vue](./frontend-basic/vue.md)
+* [前端进阶](./frontend-advanced/README.md)
+  * [性能](./frontend-advanced/performance.md)
+  * [安全](./frontend-advanced/security.md)
+  * [node](./frontend-advanced/node.md)
+* [面试技巧](./interview-skills/README.md)
+  * [通用问题](./interview-skills/general-question.md)
+  * [如何制作简历](./interview-skills/how-to-make-resume.md)
+* [公司题库](./company/README.md)
+  * [一线公司概述](./company/big-company.md)
+  * [人人](./company/人人.md)
+  * [小米](./company/小米.md)
+  * [金山](./company/金山.md)
+  * [风行](./company/风行.md)
+  * [跟谁学](./company/跟谁学.md)
+  * [木仓科技](./company/木仓科技.md)
+  * [神策数据](./company/神策数据.md)
+  * [ThoughtWorks](./company/ThoughtWorks.md) 
 
--   [资料说明](./README.md)
 
-## 计算机基础
+## 待补充公司
 
--   [计算原理](./computer.md)
--   [算法](./algorithm.md)
--   [编码](./encode.md)
--   [网络](./net.md)
-
-## 前端基础
-
--   [css](./css.md)
--   [js](./js.md)
--   [dom](./dom.md)
--   [html](./html.md)
--   [框架](./frame.md)
--   [node](./node.md)
-
-## 其他
-
--   [性能](./performance.md)
--   [安全](./security.md)
-
-## 公司
-
--   [概述](./company/README.md)
--   [人人](./人人.md)
--   [小米](./小米.md)
--   [金山](./金山.md)
--   [风行](./风行.md)
--   [跟谁学](./跟谁学.md)
--   [木仓科技](./木仓科技.md)
--   [神策数据](./神策数据.md)
--   [ThoughtWorks](./ThoughtWorks.md) 待补充
--   [华为](./华为.md) 待补充
--   [斗鱼](./斗鱼.md) 待补充
--   [腾讯](./腾讯.md) 待补充
--   [小红书](./小红书.md) 待补充
--   [字节跳动](./字节跳动.md) 待补充
--   [微派网络](./微派网络.md) 待补充
--   [石墨文档](./石墨文档.md) 待补充
--   [青云安全](./青云安全.md) 待补充
+* [华为](./company/华为.md) 
+* [斗鱼](./company/斗鱼.md) 
+* [腾讯](./company/腾讯.md) 
+* [小红书](./company/小红书.md) 
+* [字节跳动](./company/字节跳动.md) 
+* [微派网络](./company/微派网络.md) 
+* [石墨文档](./company/石墨文档.md) 
+* [青云安全](./company/青云安全.md) 

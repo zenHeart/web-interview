@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "mocha -w **/**/**/*.test.js",
-        "docs:dev": "gitbook serve",
+        "start": "gitbook serve",
         "docs:build": "gitbook build",
         "deploy": "./scripts/deploy-book.sh"
     },

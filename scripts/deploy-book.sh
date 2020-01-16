@@ -5,7 +5,7 @@ rep_url=$(git remote get-url origin) # 仓库地址
 bookRootPath=$(
     cd $(dirname $0)/..
     pwd
-)/question/_book
+)/_book
 
 # 确保脚本抛出遇到的错误
 set -e

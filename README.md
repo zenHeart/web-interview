@@ -7,3 +7,15 @@
 ## 概述
 
 仓库地址 <https://github.com/zenHeart/web-interview>
+
+## 开发说明
+```bash
+# 本地编辑文档
+npm start
+
+# 部署
+npm run deploy
+
+# 运行测试
+npm  test
+```
