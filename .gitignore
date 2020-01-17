@@ -62,4 +62,7 @@ typings/
 # next.js build output
 .next
 
+# 忽略编译结果
 _book/
+# 忽略锁文件
+package-lock.json
