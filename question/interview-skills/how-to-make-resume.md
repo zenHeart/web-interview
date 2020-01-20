@@ -31,5 +31,6 @@ resume
 3. 投入你的诚意，比如打印简历等。
 
 ## 参考资料
-[技术简历的 47 条准则](http://www.cnblogs.com/figure9/p/lean-technical-resume.html#rule1)
-[高水平简历制作](https://www.zhihu.com/question/21187514)
+* [如何编写技术简历](https://www.ruanyifeng.com/blog/2020/01/technical-resume.html)
+* [技术简历的 47 条准则](http://www.cnblogs.com/figure9/p/lean-technical-resume.html#rule1)
+* [高水平简历制作](https://www.zhihu.com/question/21187514)

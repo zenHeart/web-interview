@@ -27,10 +27,8 @@
   * [木仓科技](./company/木仓科技.md)
   * [神策数据](./company/神策数据.md)
   * [ThoughtWorks](./company/ThoughtWorks.md) 
-
-
+  
 ## 待补充公司
-
 * [华为](./company/华为.md) 
 * [斗鱼](./company/斗鱼.md) 
 * [腾讯](./company/腾讯.md) 
