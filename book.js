@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    root: 'question',
+    root: 'docs',
     plugins: [
         'fontsettings',
         'search',
