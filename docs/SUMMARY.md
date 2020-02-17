@@ -1,4 +1,6 @@
 * [前言](./README.md)
+
+## 面试部分
 * [计算机基础](./computer-basic/README.md)
   * [操作系统](./computer-basic/system.md)
   * [网络](./computer-basic/net.md)
@@ -10,7 +12,7 @@
   * [html](./frontend-basic/html.md)
   * [vue](./frontend-basic/vue.md)
 * [前端进阶](./frontend-advanced/README.md)
-  * [工程化](./frontend-advanced/engineer.md)
+  * [工程化](./frontend-advanced/engineering.md)
   * [性能](./frontend-advanced/performance.md)
   * [安全](./frontend-advanced/security.md)
   * [node](./frontend-advanced/node.md)
@@ -30,8 +32,8 @@
   * [木仓科技](./company/木仓科技.md)
   * [神策数据](./company/神策数据.md)
   * [ThoughtWorks](./company/ThoughtWorks.md) 
-  
-## 待补充公司
+
+## 待补充内容
 * [华为](./company/华为.md) 
 * [斗鱼](./company/斗鱼.md) 
 * [腾讯](./company/腾讯.md) 

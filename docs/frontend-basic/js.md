@@ -18,10 +18,12 @@ js 的面试问题分为三大块。
   
 ## 概念
 ### 原型链？ ⭐️⭐️⭐️⭐️⭐️
+{% include '../answer/js/prototype/README.md' %}
+
 
 
 ### 类型转换? ⭐️⭐️⭐️⭐️⭐️
-[类型转换](/answer/js/type/README.md)
+{% include '../answer/js/type/README.md' %}
 
 ### `==` 和 `===` ? ⭐️⭐️⭐️⭐️⭐️
 
@@ -87,7 +89,7 @@ js 的面试问题分为三大块。
 ## 应用
 
 ### call,apply,bind ? ⭐️⭐️⭐️⭐️⭐️
-
+{% include '../answer/js/function/call-apply-bind.md' %}
 
 
 ### toString 和 toValue 的区别? ⭐️⭐️
@@ -96,8 +98,6 @@ js 的面试问题分为三大块。
 
 
 ## 编程题
-### 实现 isObject 方法
-
 ### 数组去重 ⭐️⭐️⭐️⭐️⭐️ 
 
 ### 深拷贝和浅拷贝 ⭐️⭐️⭐️⭐️⭐️

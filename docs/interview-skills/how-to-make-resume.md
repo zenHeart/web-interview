@@ -34,3 +34,4 @@ resume
 * [如何编写技术简历](https://www.ruanyifeng.com/blog/2020/01/technical-resume.html)
 * [技术简历的 47 条准则](http://www.cnblogs.com/figure9/p/lean-technical-resume.html#rule1)
 * [高水平简历制作](https://www.zhihu.com/question/21187514)
+* [技能的反面 - 魔方和模仿](https://www.cnblogs.com/xinz/archive/2011/08/07/2129751.html) 讲解如何描述技能等级
