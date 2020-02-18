@@ -4,7 +4,7 @@
     "description": "web 面试题目汇总",
     "main": "index.js",
     "scripts": {
-        "test": "mocha  -t 10000  -w docs/answer/**/**/*.test.js",
+        "test": "mocha  -t 10000  -w docs/answer/**/**/sort.test.js",
         "start": "gitbook serve",
         "docs:build": "gitbook build",
         "deploy": "./scripts/deploy-book.sh"
