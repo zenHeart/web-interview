@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html class="html" lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>示例说明</title>
+        <style>
+            div {
+                padding: 20px;
+                border: 1px solid #000;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body class="body">
+        <label for="enableCapture">开启捕获</label>
+        <input name="enableCapture" type="checkbox" />
+        <div class="grand-parent">
+            grand-parent
+            <div class="parent">
+                parent
+                <div class="children">children</div>
+            </div>
+        </div>
+        <script>
+            let divs = document.querySelectorAll('div');
+            let checkbox = document.querySelector('[name="enableCapture"]');
+            checkbox.addEventListener('change', () => {
+                bindEvent(checkbox.checked);
+            });
+            let eventHandle = e => console.dir(e.currentTarget.className);
+            let windowHandle = () => console.log('window');
+            let documentHandle = () => console.log('document');
+            bindEvent(checkbox.checked);
+
+            function bindEvent(enableCapture) {
+                divs.forEach(ele => {
+                    ele.removeEventListener('click', eventHandle);
+                    ele.addEventListener('click', eventHandle, enableCapture);
+                });
+                window.removeEventListener('click', windowHandle);
+                window.addEventListener('click', windowHandle, enableCapture);
+                document.removeEventListener('click', documentHandle);
+                document.addEventListener(
+                    'click',
+                    documentHandle,
+                    enableCapture
+                );
+            }
+        </script>
+    </body>
+</html>

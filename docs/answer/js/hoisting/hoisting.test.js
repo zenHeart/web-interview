@@ -3,7 +3,7 @@
  */
 const { expect } = require('chai');
 
-describe.skip('验证变量提升机制', function() {
+describe('验证变量提升机制', function() {
     it('var 变量申明会被提升并且值为 undefined', function() {
         expect(a).to.undefined;
         var a = 1;
@@ -23,15 +23,15 @@ describe.skip('验证变量提升机制', function() {
             return 1;
         }
     });
-    it('函数会在变量申明之前提升', function() {
-        expect(foo()).to.equal(1);
+    it('变量申明在函数提升之前', function() {
+        expect(foo()).to.eq(1);
         var foo = 2;
         function foo() {
             return 1;
         }
     });
-    it('同名函数提升会按照词法顺序出现覆盖', function() {
-        expect(foo()).to.equal(2);
+    it('同名函数提升会按照申明顺序出现覆盖', function() {
+        expect(foo()).to.equal(12);
         var foo = 3;
         expect(foo).to.equal(3);
         function foo() {
