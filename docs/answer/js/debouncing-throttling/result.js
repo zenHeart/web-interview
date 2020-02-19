@@ -51,20 +51,3 @@ function throttling(func,time) {
 	} 
 	return throttlingFunc
 }
-
-function hi(name) {
-	console.log(new Date().toLocaleString()+`: hi ${name} `);
-}
-
-new Array(100).fill(1).forEach(ele => hi('tom'));
-console.log('---')
-let debounceRun = debounce(hi,1);
-new Array(100).fill(1).forEach(ele => debounceRun('jack'));
-console.log('***')
-let throttlingFunc = throttling(hi,1000);
-new Array(20).fill(1).forEach((ele,index) => throttlingFunc(`jack ${index}`));
-
-
-
-
-

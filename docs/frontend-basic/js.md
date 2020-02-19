@@ -17,95 +17,36 @@ js 的面试问题分为三大块。
 * **编程题** 汇总典型的编程问题
   
 ## 概念
-### 原型链？ ⭐️⭐️⭐️⭐️⭐️
 {% include '../answer/js/prototype/README.md' %}
-
-
-
-### 类型转换? ⭐️⭐️⭐️⭐️⭐️
+{% include '../answer/js/this/README.md' %}
 {% include '../answer/js/type/README.md' %}
+{% include '../answer/js/type/type-convert.md' %}
+{% include '../answer/js/operator/equal-strict-equal.md' %}
+{% include '../answer/js/scope/README.md' %}
 
-### `==` 和 `===` ? ⭐️⭐️⭐️⭐️⭐️
+{% include '../answer/js/closure/README.md' %}
 
-
-### let var const 区别? ⭐️⭐️⭐️⭐️⭐️
-
-核心在于作用域.
-
--   let 作用域为最近的块结构
--   var 为最近的函数结构
-
-
-### 作用域? ⭐️⭐️⭐️⭐️⭐️
+{% include '../answer/js/hoisting/README.md' %}
+{% include '../answer/js/function/iife.md' %}
+{% include '../answer/js/event-loop/README.md' %}
+{% include '../answer/js/function/arrow-function.md' %}
 
 
-### 变量提升？ ⭐️⭐️⭐️⭐️⭐️
-
-### 什么是闭包,闭包的的使用场景？⭐️⭐️⭐️⭐️⭐️
-
-### this? ⭐️⭐️⭐️⭐️⭐️
-
-### 函数声明,函数表达式? ⭐️⭐️⭐️⭐️⭐️
-
-### 事件循环?  ⭐️⭐️⭐️⭐️⭐️
-
-### 箭头函数的典型使用? ⭐️⭐️⭐️⭐️⭐️
-
-### 对象解构? ⭐️⭐️⭐️⭐️⭐️
-
-### 模板语法? ⭐️⭐️⭐️⭐️⭐️
-
-### 对象扩展和剩余参数? ⭐️⭐️⭐️⭐️⭐️
-
-### 类语法?  ⭐️⭐️⭐️⭐️⭐️
-
-### ES6 类和 ES5 构造函数区别? ⭐️⭐️⭐️
-
-### 什么是严格模式? ⭐️⭐️⭐️
-
-### IIFE 及作用？ ⭐️⭐️⭐️
-
-### 导通运算和短路运算?  ⭐️⭐️⭐️
-
-### 高阶函数？ ⭐️⭐️⭐️
-
-### 为什么 `0.1 + 0.2 != 0.3`, 类似还有 `.3 - .2 !=== .2 - .1` ⭐️⭐️⭐️
-
-### Number 的特殊值及转换? ⭐️⭐️⭐️
 
 
-### 内存分配原理？⭐️⭐️⭐️
-
-### js 有哪些类型? ⭐️⭐️⭐️
-
-### 运算符优先级? ⭐️⭐️⭐️
 
 
-### 迭代器概念和使用? ⭐️⭐️
-
-### 对象的可变和不可变? ⭐️⭐️
 
 
 ## 应用
 
-### call,apply,bind ? ⭐️⭐️⭐️⭐️⭐️
+### ⭐️⭐️⭐️⭐️⭐️
 {% include '../answer/js/function/call-apply-bind.md' %}
 
 
-### toString 和 toValue 的区别? ⭐️⭐️
-
-### Array 常用方法?
 
 
-## 编程题
-### 数组去重 ⭐️⭐️⭐️⭐️⭐️ 
 
-### 深拷贝和浅拷贝 ⭐️⭐️⭐️⭐️⭐️
 
-### 实现 promise ⭐️⭐️⭐️⭐️
 
-### 函数科里化 ⭐️⭐️⭐️⭐️
 
-### 防抖和节流的原理及实现 ⭐️⭐️⭐️⭐️
-
-### 用js实现千位分隔符?

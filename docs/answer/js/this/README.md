@@ -1,3 +1,4 @@
+### this? ⭐️⭐️⭐️⭐️⭐️
 
 1. this 是一个关键字,它的值取决于当前的执行环境,而非申明环境
 2. this 值的判定方法,参考 [你不知道的 javascript 上卷-第二部分　 this 和对象原型](https://book.douban.com/subject/26351021/)

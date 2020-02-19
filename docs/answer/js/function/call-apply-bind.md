@@ -1,3 +1,5 @@
+# call,apply,bind ? 
+
 `call,apply,bind` 是函数对象三个重要的原型方法,
 用来动态改变 js 函数执行时的 this 的指向,典型问题如下:
 
