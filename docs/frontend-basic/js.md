@@ -31,16 +31,6 @@ js 的面试问题分为三大块。
 {% include '../answer/js/event-loop/README.md' %}
 {% include '../answer/js/function/arrow-function.md' %}
 
-
-
-
-
-
-
-
-## 应用
-
-### ⭐️⭐️⭐️⭐️⭐️
 {% include '../answer/js/function/call-apply-bind.md' %}
 
 
