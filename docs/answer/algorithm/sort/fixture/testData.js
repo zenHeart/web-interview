@@ -19,6 +19,10 @@ module.exports = {
     多个乱序元素: {
         input: randomArr,
         expect: sortArr
+    },
+    包含重复元素: {
+        input: [...randomArr, 100],
+        expect: [...sortArr, 100]
     }
 };
 
