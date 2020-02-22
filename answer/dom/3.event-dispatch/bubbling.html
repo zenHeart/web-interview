@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<h1>大部分事件在冒泡阶段触发</h1>
+	<div onclick="console.log(`parent receive`,arguments[0].target);">
+		<p>内层元素</p>
+	</div>
+	<dh1>阻止冒泡
+		<button id="stop-btn" onclick="console.log('button click 阻止向上传播');">stopPropagation 不会传递到上层</button>
+	</dh1>
+	<script>
+	let btn = document.getElementById('stop-btn');
+	btn.addEventListener('click',function(event) {
+		console.log('button js handle!',event);
+		//event.stopPropagation();
+		// event.stopImmediatePropagation();
+	});
+	window.addEventListener('click',function(event) {
+		console.log('window js handle in capture!',event);
+	},true)
+	window.onclick = function(e) {
+		console.log('window receive',e.target);
+	}
+	</script>
+</body>
+</html>

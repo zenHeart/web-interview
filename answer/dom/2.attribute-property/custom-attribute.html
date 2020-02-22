@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body>
+	<h1>获取自定义属性</h1>
+	<div id="content" data-widget-name="menu">点击获取自定义属性
+	</div>
+	<script>
+		let ele =document.getElementById('content');
+		ele.onclick = function() {
+			console.log(this.dataset);
+			console.log(this.getAttribute('data-widget-Name'));
+			console.log(this.attributes);
+		}
+	</script>
+</body>
+</html>
