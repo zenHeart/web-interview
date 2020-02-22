@@ -1,41 +1,41 @@
 {
-    "name": "web-interview",
-    "version": "1.0.0",
-    "description": "web 面试题目汇总",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha  -t 10000  -w docs/answer/**/**/sort.test.js",
-        "start": "gitbook serve",
-        "docs:build": "gitbook build",
-        "deploy": "./scripts/deploy-book.sh"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/zenHeart/web-interview.git"
-    },
-    "keywords": [
-        "interview",
-        "web"
-    ],
-    "author": "zenheart",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/zenHeart/web-interview/issues"
-    },
-    "homepage": "https://github.com/zenHeart/web-interview#readme",
-    "devDependencies": {
-        "chai": "^4.2.0",
-        "gitbook-plugin-anchor-navigation-ex": "latest",
-        "gitbook-plugin-fontsettings": "latest",
-        "gitbook-plugin-lunr": "latest",
-        "gitbook-plugin-popup": "latest",
-        "gitbook-plugin-prism": "latest",
-        "gitbook-plugin-search": "latest",
-        "gitbook-plugin-styled-blockquotes": "latest",
-        "gitbook-plugin-timeline": "latest",
-        "gitbook-plugin-todo": "^0.1.3",
-        "lerna": "^3.14.1",
-        "mocha": "^7.0.1",
-        "virtual-dom": "^2.1.1"
-    }
+  "name": "web-interview",
+  "version": "1.0.0",
+  "description": "web 面试题目汇总",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha  -t 10000  -w docs/answer/algorithm/**/*.test.js",
+    "start": "gitbook serve",
+    "docs:build": "gitbook build",
+    "deploy": "./scripts/deploy-book.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zenHeart/web-interview.git"
+  },
+  "keywords": [
+    "interview",
+    "web"
+  ],
+  "author": "zenheart",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zenHeart/web-interview/issues"
+  },
+  "homepage": "https://github.com/zenHeart/web-interview#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "gitbook-plugin-anchor-navigation-ex": "latest",
+    "gitbook-plugin-fontsettings": "latest",
+    "gitbook-plugin-lunr": "latest",
+    "gitbook-plugin-popup": "latest",
+    "gitbook-plugin-prism": "latest",
+    "gitbook-plugin-search": "latest",
+    "gitbook-plugin-styled-blockquotes": "latest",
+    "gitbook-plugin-timeline": "latest",
+    "gitbook-plugin-todo": "^0.1.3",
+    "lerna": "^3.14.1",
+    "mocha": "^7.0.1",
+    "virtual-dom": "^2.1.1"
+  }
 }
