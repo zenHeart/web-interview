@@ -15,13 +15,6 @@
 {% include '../answer/algorithm/sort/README.md' %}
 
 
-
-
-
-
-
-
-
 ## 排序算法
 ### 冒泡排序
 
