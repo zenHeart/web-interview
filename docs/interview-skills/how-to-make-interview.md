@@ -24,4 +24,10 @@
    2. 是否和公司的文化价值观相契合
 4. 按照技能层级询问问题
 
-### ne
+## 面试官开放性问题
+1. 你有什么想要问我的?
+标准，期望面试者表达出对目前职位的热情和兴趣
+
+
+## 延伸阅读
+* [Interviewing the front-end engineer](https://humanwhocodes.com/blog/2010/01/05/interviewing-the-front-end-engineer/) 
