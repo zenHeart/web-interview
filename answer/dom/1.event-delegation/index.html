@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+		#parent {
+			border: 1px solid #000;
+			padding: 1rem;
+		}
+
+		.btn {
+			border: 1px solid #000;
+			padding: 1rem;
+			margin-bottom: 1rem;
+			background: cyan;
+			text-align: center;
+			list-style: none;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>演示事件委托</h1>
+	<ul id='parent'>
+		<li class="btn" data-id="1">demo1</li>
+		<li class="btn" data-id="2">demo2</li>
+		<li class="btn" data-id="3">demo3</li>
+	</ul>
+	<script>
+		ele = document.getElementById('parent')
+		ele.onclick = function (e) {
+			let id = 'li' + e.target.dataset.id;
+			liHandles[id]()
+		}
+		liHandles = {
+			li1: () => console.log('li1'),
+			li2: () => console.log('li2'),
+			li3: () => console.log('li3')
+		}
+	</script>
+</body>
+
+</html>
