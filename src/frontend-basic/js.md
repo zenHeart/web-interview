@@ -17,22 +17,22 @@ js 的面试问题分为三大块。
 * **编程题** 汇总典型的编程问题
   
 ## 概念
-{% include '../answer/js/prototype/README.md' %}
+{{#include ../answer/js/prototype/README.md }}
 
 ### 类型转换? ⭐️⭐️⭐️⭐️⭐️
-{% include '../answer/js/type/README.md' %}
-{% include '../answer/js/type/type-convert.md' %}
-{% include '../answer/js/operator/equal-strict-equal.md' %}
-{% include '../answer/js/scope/README.md' %}
+{{#include ../answer/js/type/README.md }}
+{{#include ../answer/js/type/type-convert.md}}
+{{#include ../answer/js/operator/equal-strict-equal.md}}
+{{#include ../answer/js/scope/README.md}}
 
-{% include '../answer/js/closure/README.md' %}
+{{#include ../answer/js/closure/README.md}}
 
-{% include '../answer/js/hoisting/README.md' %}
-{% include '../answer/js/function/iife.md' %}
-{% include '../answer/js/event-loop/README.md' %}
-{% include '../answer/js/function/arrow-function.md' %}
+{{#include ../answer/js/hoisting/README.md}}
+{{#include ../answer/js/function/iife.md}}
+{{#include ../answer/js/event-loop/README.md}}
+{{#include ../answer/js/function/arrow-function.md}}
 
-{% include '../answer/js/function/call-apply-bind.md' %}
+{{#include ../answer/js/function/call-apply-bind.md}}
 
 
 

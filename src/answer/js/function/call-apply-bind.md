@@ -15,7 +15,7 @@
 
 **2. 实现 call 或 apply 方法?**
 ```js
-{% include './custom-call-bind-apply.js' %}
+{{#include ./custom-call-bind-apply.js}}
 ```
 核心考点:
 1. 利用成员调用对 this 的修改模拟 call,apply 对 this 的变换
