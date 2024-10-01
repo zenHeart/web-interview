@@ -10,11 +10,11 @@ module.exports = {
  * 2. 左子树
  * 3. 右子树
  */
-function preOrderTree(tree) {
+function preOrderTree (tree) {
   let res = [];
   res.push(tree.data);
-  let leftTree = tree.children && tree.children[0];
-  let rightTree = tree.children && tree.children[1];
+  const leftTree = tree.children && tree.children[0];
+  const rightTree = tree.children && tree.children[1];
   if (leftTree) {
     res = res.concat(preOrderTree(leftTree));
   }
@@ -30,10 +30,10 @@ function preOrderTree(tree) {
  * 2. 根节点
  * 3. 右子树
  */
-function inOrderTree(tree) {
+function inOrderTree (tree) {
   let res = [];
-  let leftTree = tree.children && tree.children[0];
-  let rightTree = tree.children && tree.children[1];
+  const leftTree = tree.children && tree.children[0];
+  const rightTree = tree.children && tree.children[1];
   if (leftTree) {
     res = res.concat(preOrderTree(leftTree));
     res.push(tree.data);
@@ -50,10 +50,10 @@ function inOrderTree(tree) {
  * 2. 右子树
  * 3. 根节点
  */
-function postOrderTree(tree) {
+function postOrderTree (tree) {
   let res = [];
-  let leftTree = tree.children && tree.children[0];
-  let rightTree = tree.children && tree.children[1];
+  const leftTree = tree.children && tree.children[0];
+  const rightTree = tree.children && tree.children[1];
   if (leftTree) {
     res = res.concat(preOrderTree(leftTree));
   }
@@ -71,14 +71,14 @@ function postOrderTree(tree) {
  * 3. 按照节点层级逐级向下遍历
  * */
 
-function levelOrderTree(tree) {
+function levelOrderTree (tree) {
   // 将对应的层节点存入数组
   let levelNodes = [tree];
-  let res = [];
+  const res = [];
   // 遍历层节点直到为空
   while (levelNodes.length) {
     // 退出一个层节点
-    let node = levelNodes.shift();
+    const node = levelNodes.shift();
     res.push(node.data);
     if (node.children) {
       levelNodes = levelNodes.concat(node.children);

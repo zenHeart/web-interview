@@ -138,7 +138,7 @@ exports.removeByNum = {
 
 // 测试循环链表
 
-let cycle = {
+const cycle = {
   没有循环: {
     input: {
       val: 1,

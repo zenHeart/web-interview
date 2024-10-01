@@ -13,31 +13,29 @@ exports.persistence = persistence;
 
  * @param {Number} num 无符号正整形
  */
-function persistence(num) {
-    let n = 0;
-    if(Number.isSafeInteger(num) && num > 0) {
-        while ((num+'').length > 1)  {
-           num =  splitMultiply(num);
-           n++
-        }
-        return n;
-
-    } else {
-        throw new Error('input must be positive safe integer');
+function persistence (num) {
+  let n = 0;
+  if (Number.isSafeInteger(num) && num > 0) {
+    while ((num + '').length > 1) {
+      num = splitMultiply(num);
+      n++;
     }
-
+    return n;
+  } else {
+    throw new Error('input must be positive safe integer');
+  }
 }
 
 /**
  * 将整数拆分,按位相乘,例如 123,拆为 1*2*3,返回结果 6
  * @param  {Number} num 无符号整数
  */
-function splitMultiply(num) {
-    let product = 1;
+function splitMultiply (num) {
+  let product = 1;
 
-    for (let i of num.toString()) {
-        product *= Number(i);
-    }
+  for (const i of num.toString()) {
+    product *= Number(i);
+  }
 
-    return product;
+  return product;
 }

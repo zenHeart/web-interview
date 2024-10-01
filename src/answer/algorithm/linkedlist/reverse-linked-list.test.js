@@ -5,7 +5,7 @@ const { expect } = require('chai');
 const { LinkedList } = require('./linked-list');
 const reverseLinkedList = require('./reverse-linked-list');
 
-let testData = {
+const testData = {
   多节点链表: {
     input: new LinkedList([1, 2, 3, 4, 5]),
     expect: new LinkedList([5, 4, 3, 2, 1])
@@ -20,11 +20,11 @@ let testData = {
   }
 };
 
-describe('单链表翻转测试', function() {
-  for (let testUnitName in testData) {
-    it(testUnitName, function() {
-      let data = testData[testUnitName];
-      let res = reverseLinkedList(data.input);
+describe('单链表翻转测试', function () {
+  for (const testUnitName in testData) {
+    it(testUnitName, function () {
+      const data = testData[testUnitName];
+      const res = reverseLinkedList(data.input);
       expect(res).to.deep.eq(data.expect);
     });
   }

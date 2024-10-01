@@ -4,15 +4,15 @@
  * 2. 考试引用类型判断
  * 3. 考察 null 判断
  */
-exports.deepClone = function deepClone(obj) {
+exports.deepClone = function deepClone (obj) {
   let copy;
   if (Array.isArray(obj)) {
     copy = [];
     copy = obj.map(ele => deepClone(ele));
   } else if ((typeof obj === 'object') & (obj !== null)) {
     copy = {};
-    let keys = Object.keys(obj);
-    for (let key of keys) {
+    const keys = Object.keys(obj);
+    for (const key of keys) {
       copy[key] = deepClone(obj(key));
     }
   } else {

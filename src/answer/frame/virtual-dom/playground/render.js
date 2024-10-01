@@ -4,7 +4,7 @@
  * @param {object} options 属性配置,可选
  * @param {array} children 子节点,可选
  */
-function render(tagName, options, children) {
+function render (tagName, options, children) {
   if (
     typeof tagName !== 'string' ||
     typeof options !== 'object' ||
@@ -13,7 +13,4 @@ function render(tagName, options, children) {
   ) {
     throw new TypeError('input error');
   }
-
-  let root = document.createElement(tagName);
-  for()
 }

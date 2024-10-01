@@ -21,34 +21,33 @@ exports.parse = parse;
  console.log(parse(object, 'd.1.e') == 6); //true
  console.log(parse(object, 'f') == 'undefined'); //true
 
-
  * @param {Object} obj 对象
  * @param {String} keyStr 对象键的索引字符串
  */
-function parse(obj,keyStr) {
-    if(obj && typeof obj === 'object' && typeof keyStr === 'string') {
-        let keyArr = parseKey(keyStr),res = obj ;
+function parse (obj, keyStr) {
+  if (obj && typeof obj === 'object' && typeof keyStr === 'string') {
+    const keyArr = parseKey(keyStr); let res = obj;
 
-        while(keyArr.length && res) {
-            res = res[keyArr.shift()];
-        }
-        return res===undefined?'undefined':res;
-    }else {
-        throw new Error('input error!');
+    while (keyArr.length && res) {
+      res = res[keyArr.shift()];
     }
+    return res === undefined ? 'undefined' : res;
+  } else {
+    throw new Error('input error!');
+  }
 }
 
 /**
  * 将索引字符串拆分为键的数组
  * @param {String} keyStr 索引字符串
  */
-function parseKey(keyStr) {
-    let keyDelimiter = /\w+\b/g;
-    let keyArr = [],res;
+function parseKey (keyStr) {
+  const keyDelimiter = /\w+\b/g;
+  const keyArr = []; let res;
 
-    while ((res = keyDelimiter.exec(keyStr)) !== null) {
-        keyArr.push(res[0]);
-    }
+  while ((res = keyDelimiter.exec(keyStr)) !== null) {
+    keyArr.push(res[0]);
+  }
 
-    return keyArr;
+  return keyArr;
 }

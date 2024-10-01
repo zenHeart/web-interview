@@ -4,10 +4,12 @@
   "description": "web 面试题目汇总",
   "main": "index.js",
   "scripts": {
-    "test": "mocha  -t 10000  -w src/answer/algorithm/**/*.test.js",
+    "test": "mocha  -t 10000  -w src/**/*.test.js",
     "start": " mdbook serve",
     "build": "mdbook build",
-    "deploy": "./scripts/deploy-book.sh"
+    "deploy": "./scripts/deploy-book.sh",
+    "lint": "eslint .",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -25,6 +27,13 @@
   "homepage": "https://github.com/zenHeart/web-interview#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "eslint": "^8.57.1",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-mocha": "^10.5.0",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.6.0",
+    "husky": "^9.1.6",
     "lerna": "^3.14.1",
     "mocha": "^7.0.1",
     "virtual-dom": "^2.1.1"

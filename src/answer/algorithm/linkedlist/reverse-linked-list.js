@@ -8,8 +8,8 @@
 const { LinkedList } = require('./linked-list');
 
 module.exports = reverseLinkedList;
-function reverseLinkedList(list) {
-  let values = [];
+function reverseLinkedList (list) {
+  const values = [];
   // 按顺序提取链表的值
   let head = list;
   while (head) {

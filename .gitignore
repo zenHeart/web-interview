@@ -67,3 +67,4 @@ _book/
 # 忽略锁文件
 package-lock.json
 book
+**/tempCodeRunnerFile.js

@@ -14,9 +14,9 @@ module.exports = swapPairs;
  * 解题思路采用两个数组保存奇数位置和偶数位置的链表值
  * 然后按照偶数位置,奇数位置逐一推出数据即可
  */
-function swapPairs(list) {
-  let oddNodeValues = [];
-  let evenNodeValues = [];
+function swapPairs (list) {
+  const oddNodeValues = [];
+  const evenNodeValues = [];
   // 遍历链表
   let head = list;
   let position = 1;

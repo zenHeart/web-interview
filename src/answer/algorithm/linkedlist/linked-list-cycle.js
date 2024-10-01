@@ -7,8 +7,8 @@ const testData = require('./fixture/testData');
 
 exports.hasCycle = hasCycle;
 exports.detectCycle = detectCycle;
-function hasCycle(list) {
-  let hashMap = new Map();
+function hasCycle (list) {
+  const hashMap = new Map();
   // 按顺序提取链表的值
   let head = list;
   while (head) {
@@ -25,8 +25,8 @@ function hasCycle(list) {
   return false;
 }
 
-function detectCycle(list) {
-  let hashMap = new Map();
+function detectCycle (list) {
+  const hashMap = new Map();
   // 按顺序提取链表的值
   let head = list;
   while (head) {

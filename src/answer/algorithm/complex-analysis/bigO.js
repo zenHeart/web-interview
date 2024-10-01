@@ -3,13 +3,13 @@
  */
 
 //  O(1)
-function constantComplex(n) {
+function constantComplex (n) {
   // 常量复杂度不随 n 变化而变化
   console.log(n);
 }
 
 // O(logn)
-function lognComplex(n, logNum = 10) {
+function lognComplex (n, logNum = 10) {
   while (n >= logNum) {
     console.log(n);
     n /= logNum;
@@ -17,15 +17,15 @@ function lognComplex(n, logNum = 10) {
 }
 
 // O(n)
-function linearComplex(n) {
+function linearComplex (n) {
   while (n) {
     console.log(n--);
   }
 }
 
 // O(nlogn)
-function nLognComplex(n, logNum = 10) {
-  let temp = n;
+function nLognComplex (n, logNum = 10) {
+  const temp = n;
   while (n) {
     console.log(`current ${n}`);
     lognComplex(temp, logNum);
@@ -34,10 +34,10 @@ function nLognComplex(n, logNum = 10) {
 }
 
 // O(n^2)
-function quadraticComplex(n) {
-  let temp = n;
+function quadraticComplex (n) {
+  const temp = n;
   while (n) {
-    j = temp;
+    let j = temp;
     while (j) {
       console.log(n, j);
       j--;
@@ -50,11 +50,11 @@ function quadraticComplex(n) {
  * 采用递归实现 n!
  * TODO: 如何按递归顺序输出
  */
-function factorial(n) {
+function factorial (n) {
   if (n < 1) {
     return console.log(n);
   }
-  let temp = n;
+  const temp = n;
   while (n--) {
     factorial(temp - 1);
   }

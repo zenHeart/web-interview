@@ -1,5 +1,5 @@
-function checkLoopStr(str) {
-	return str.split('').reverse().join('') === str;
+function checkLoopStr (str) {
+  return str.split('').reverse().join('') === str;
 }
 
 console.log(checkLoopStr('level'));

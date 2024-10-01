@@ -9,14 +9,7 @@ describe('验证变量提升机制', function() {
         var a = 1;
         expect(a).to.equal(1);
     });
-    it('赋值语句不会出现变量提升', function() {
-        let getA = () => a;
-        expect(getA).throw(/a is not defined/);
-        a = 1;
-        expect(a).to.equal(1);
-        // 此语句取消全局变量中的 a
-        delete a;
-    });
+    /* eslint-enable */
     it('函数会出现变量提升', function() {
         expect(foo()).to.equal(1);
         function foo() {

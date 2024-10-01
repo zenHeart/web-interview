@@ -3,7 +3,7 @@
  */
 
 class LinkedList {
-  constructor(values) {
+  constructor (values) {
     // 格式化单个节点或非数组元素为数组
     if (!Array.isArray(values)) {
       values = [values];
@@ -23,8 +23,9 @@ class LinkedList {
     this.val = backHead.val;
     this.next = backHead.next;
   }
+
   // 在末尾追加节点
-  add(node) {
+  add (node) {
     let head = this;
     // 遍历到尾节点 null
     while (head.next) {
@@ -34,8 +35,9 @@ class LinkedList {
     head.next = node;
     return this;
   }
+
   // 连接两个链表
-  concat(node) {
+  concat (node) {
     let head = this;
     while (head.next) {
       head = head.next;
@@ -43,8 +45,9 @@ class LinkedList {
     head.next = node;
     return this;
   }
+
   // 删除链表中值等于 val 的所有节点
-  removeByVal(val) {
+  removeByVal (val) {
     let head = this;
     let prev = null;
     while (head) {
@@ -53,7 +56,7 @@ class LinkedList {
         if (prev === null) {
           // 如果头节点有后继节点则此后继节点变为头结点
           if (head.next) {
-            let newHead = head.next;
+            const newHead = head.next;
             this.val = newHead.val;
             this.next = newHead.next;
             continue;
@@ -74,8 +77,9 @@ class LinkedList {
     }
     return this;
   }
+
   // 删除链表第 n 个节点
-  removeByNum(n) {
+  removeByNum (n) {
     let i = 1;
     let head = this;
     let prev = null;
@@ -86,7 +90,7 @@ class LinkedList {
         if (prev === null) {
           // 如果头节点有后继节点则此后继节点变为头结点
           if (head.next) {
-            let newHead = head.next;
+            const newHead = head.next;
             this.val = newHead.val;
             this.next = newHead.next;
             return this;
@@ -111,7 +115,7 @@ class LinkedList {
 }
 
 class Node {
-  constructor(val) {
+  constructor (val) {
     this.val = val;
     this.next = null;
   }

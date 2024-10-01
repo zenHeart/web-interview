@@ -4,9 +4,9 @@
  */
 function bindPloyfill () {
   if (!Function.prototype.bind) {
-      Function.prototype.bind = function(thisArg) {
-
-
-      }
+    // eslint-disable-next-line no-extend-native
+    Function.prototype.bind = function (thisArg) {
+      // none
+    };
   }
 }

@@ -5,9 +5,6 @@
  * 3. 对象递归返回值
  * 4. 函数则返回值
  */
-function deepClone(obj) {
-	let cloneObj;
-
-    
-
+function deepClone (obj) {
+  let cloneObj;
 }
