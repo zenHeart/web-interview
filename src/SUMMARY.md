@@ -9,7 +9,7 @@
 * [前端基础](./frontend-basic/README.md)
   * [css](./frontend-basic/css.md)
   * [js](./frontend-basic/js.md)
-  * [html](./frontend-basic/html.md)
+  * [html](./frontend-basic/html/index.md)
 * [前端进阶](./frontend-advanced/README.md)
   * [vue](./frontend-advanced/vue.md)
   * [工程化](./frontend-advanced/engineering.md)

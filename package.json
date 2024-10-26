@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha  -t 10000  -w src/**/*.test.js",
-    "start": " mdbook serve",
+    "start": "mdbook serve  -n 0.0.0.0",
     "build": "mdbook build",
     "deploy": "./scripts/deploy-book.sh",
     "lint": "eslint .",
