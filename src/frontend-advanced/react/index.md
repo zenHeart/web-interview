@@ -1,6 +1,7 @@
 # react
 
 ## 题目
+
 1. react element 和 component 的区别
 2. react jsx 语法
    1. jsx 返回 null undefined false 区别
@@ -17,17 +18,17 @@
 12. 高阶组件是什么
 13. 错误边界组件如何使用
 14. react 组件通信方式
-    1.  父子组件
-    2.  兄弟组件
-    3.  跨级通信
-    4.  无级通信
+    1. 父子组件
+    2. 兄弟组件
+    3. 跨级通信
+    4. 无级通信
 15. react refs 的作用
 16. react 中的 key 有什么作用
 17. react 如何获得 dom
 18. react 中如何引入样式
-    1.  内联样式
-    2.  css 类
-    3.  css in js
+    1. 内联样式
+    2. css 类
+    3. css in js
 19. react 虚拟 dom 如何对比，diff 算法
 20. react hooks 原理
 21. react fiber 的作用和原理
@@ -36,5 +37,8 @@
 24. redux
 25. mobx
 
+{{#include ./1.how-react-work.md }}
+
 ## 题库来源
-* [剑指前端 Offer](https://febook.hzfe.org/awesome-interview/)
+
+- [剑指前端 Offer](https://febook.hzfe.org/awesome-interview/)
