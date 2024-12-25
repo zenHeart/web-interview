@@ -1,0 +1,335 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>前言</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+
+
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc.js"></script>
+    </head>
+    <body>
+    <div id="body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title"></h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="前端面试"><a class="header" href="#前端面试">前端面试</a></h1>
+<h2 id="项目概述"><a class="header" href="#项目概述">项目概述</a></h2>
+<p>项目汇总了 github 及网络上大量的前端面试题。除了简单的汇总,笔者做了如下工作。</p>
+<ol>
+<li>
+<p><strong>去粗取精</strong> 并不是简单的问题罗列,而是对所有问题进行了分类,并将多个类似或考点相近的问题合并为了单一问题,方便更有针对性的复习，详见<a href="#%E9%A2%98%E5%BA%93%E8%AF%B4%E6%98%8E">题库说明</a></p>
+</li>
+<li>
+<p><strong>格物致知</strong> 提供完善的答案和延伸阅读材料,虽然面试是短期准备,但是 <strong>功在平时</strong></p>
+</li>
+<li>
+<p><strong>面面俱到</strong> 不局限域题目本身，除了硬技能，也包含整体面试流程软技能考察等相关知识</p>
+</li>
+</ol>
+<p>面试资料分为如下几部分</p>
+<ol>
+<li><a href="./computer-basic/README.html">计算机基础</a> 放置通用的计算机知识</li>
+<li><a href="./frontend-basic/README.html">前端基础</a> 放置前端相关技术栈的基本领域知识,重点考察基本技能</li>
+<li><a href="./frontend-advanced/README.html">前端进阶</a> 在掌握基础知识的前提下,重点考察项目经验和前端开发过程中的工程经验,设计开发流程中各环节即延伸知识,不局限于前端领域</li>
+<li><a href="./interview-skills/README.html">面试技巧</a> 包含软技能的知识点,例如开发习惯,编程品质,面试技巧等方面的知识。</li>
+<li><a href="./company/README.html">公司题库</a> 收集网络中相关公司的试题,帮助面试者知晓面试流程</li>
+</ol>
+<h2 id="题库说明"><a class="header" href="#题库说明">题库说明</a></h2>
+<h3 id="收录标准"><a class="header" href="#收录标准">收录标准</a></h3>
+<ol>
+<li><strong>技术相关性</strong>： 题目是否涉及岗位所需的核心技术栈，能否考察候选人实际开发能力。题目应与岗位技术需求高度匹配，避免涉及过时技术或无关的技术栈。
+<ol>
+<li>0-5 分：与岗位技术栈无关，考察不到实际工作能力。</li>
+<li>6-8 分：与岗位技术栈相关，但涉及的技术过于简单。</li>
+<li>9-10 分：与岗位技术栈完全契合，能有效评估候选人实际工作能力。</li>
+</ol>
+</li>
+<li><strong>知识点的深度与广度</strong>
+<ol>
+<li>0-5 分：考察基础知识点，难以体现深度。</li>
+<li>6-8 分：覆盖较为复杂的知识点，深度有限，可能无法全面考察候选人的综合能力。</li>
+<li>9-10 分：涉及核心知识点，并能够深入考察候选人的技术水平。</li>
+</ol>
+</li>
+<li><strong>实际开发中的应用场景</strong>
+<ol>
+<li>0-5 分：题目脱离实际开发，考察的内容难以反映开发中会遇到的实际问题。</li>
+<li>6-8 分：题目贴近实际开发，但没有全面考察候选人在开发中的综合能力。</li>
+<li>9-10 分：题目紧密结合实际开发，考察解决问题的综合能力。</li>
+</ol>
+</li>
+<li><strong>题目的复杂度与开放性</strong>
+<ol>
+<li>0-5 分：题目过于简单或单一，难以评估多种解决方案。</li>
+<li>6-8 分：题目有一定开放性，能够体现候选人的基本解决能力。</li>
+<li>9-10 分：题目具有高度开放性，能够评估候选人解决复杂问题的能力。</li>
+</ol>
+</li>
+<li><strong>可解性与明确性</strong>
+<ol>
+<li>0-5 分：题目描述不清，导致理解困难或无法解答。</li>
+<li>6-8 分：描述较为清晰，但可能存在少许歧义或不同理解方式。</li>
+<li>9-10 分：题目描述清晰明确，确保问题的可解性。</li>
+</ol>
+</li>
+</ol>
+<h3 id="题库等级"><a class="header" href="#题库等级">题库等级</a></h3>
+<p>按照面试准备的重要性和时间投入比例，将知识点分为以下优先级：</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: left">优先级</th><th style="text-align: left">重要程度</th><th style="text-align: left">校招生</th><th style="text-align: left">应届生</th><th style="text-align: left">社招(1-3年)</th><th style="text-align: left">社招(3年以上)</th></tr></thead><tbody>
+<tr><td style="text-align: left">P0</td><td style="text-align: left">核心必备</td><td style="text-align: left">必须精通</td><td style="text-align: left">必须精通</td><td style="text-align: left">必须精通</td><td style="text-align: left">必须精通</td></tr>
+<tr><td style="text-align: left">P1</td><td style="text-align: left">重要</td><td style="text-align: left">必须掌握</td><td style="text-align: left">必须掌握</td><td style="text-align: left">必须掌握</td><td style="text-align: left">深入理解</td></tr>
+<tr><td style="text-align: left">P2</td><td style="text-align: left">常考</td><td style="text-align: left">需要掌握</td><td style="text-align: left">需要掌握</td><td style="text-align: left">按岗位准备</td><td style="text-align: left">按岗位准备</td></tr>
+<tr><td style="text-align: left">P3</td><td style="text-align: left">加分项</td><td style="text-align: left">建议了解</td><td style="text-align: left">建议了解</td><td style="text-align: left">需要掌握</td><td style="text-align: left">需要掌握</td></tr>
+<tr><td style="text-align: left">P4</td><td style="text-align: left">拓展知识</td><td style="text-align: left">可选</td><td style="text-align: left">可选</td><td style="text-align: left">建议了解</td><td style="text-align: left">需要了解</td></tr>
+</tbody></table>
+</div>
+<ul>
+<li>
+<p><strong>校招生/实习生</strong>：</p>
+<ul>
+<li>优先级：重点准备 P0-P1，P2 选择性准备</li>
+<li>时间分配：P0(50%) &gt; P1(30%) &gt; P2(20%)</li>
+<li>重点：基础知识扎实度和编程能力</li>
+</ul>
+</li>
+<li>
+<p><strong>应届生</strong>：</p>
+<ul>
+<li>优先级：重点准备 P0-P2</li>
+<li>时间分配：P0(40%) &gt; P1(30%) &gt; P2(20%) &gt; P3(10%)</li>
+<li>重点：基础知识 + 实习/项目经验</li>
+</ul>
+</li>
+<li>
+<p><strong>社招(1-3年经验)</strong>：</p>
+<ul>
+<li>优先级：P0-P2 必备，P3 要有了解</li>
+<li>时间分配：P0(30%) &gt; P1(30%) &gt; P2(25%) &gt; P3(15%)</li>
+<li>重点：项目经验 + 技术深度</li>
+</ul>
+</li>
+<li>
+<p><strong>社招(3年以上)</strong>：</p>
+<ul>
+<li>优先级：P0-P3 全面准备</li>
+<li>时间分配：P0-P3 平均分配</li>
+<li>重点：技术广度 + 架构设计 + 技术决策</li>
+</ul>
+</li>
+</ul>
+<h2 id="本地运行"><a class="header" href="#本地运行">本地运行</a></h2>
+<p>项目地址: <code>&lt;https://github.com/zenHeart/web-interview&gt;</code></p>
+<pre><code class="language-bash"># 本地编辑文档
+npm start
+
+# 运行测试
+npm  test
+</code></pre>
+<h2 id="资料清单"><a class="header" href="#资料清单">资料清单</a></h2>
+<ul>
+<li><a href="https://github.com/h5bp/Front-end-Developer-Interview-Questions">Front-end-Developer-Interview-Questions</a> 已收录</li>
+<li><a href="https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86">前端面试手册</a> 上一条项目的答案
+Front-end-Developer-Interview-Questions)</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+                            <a rel="next prefetch" href="computer-basic/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+                    <a rel="next prefetch" href="computer-basic/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+    </div>
+    </body>
+</html>

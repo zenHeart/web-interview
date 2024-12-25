@@ -4,8 +4,8 @@
 该部分包含前端基础知识的问题,对于各类问题做了如下分类。
 
 * [css](./css.md) 汇总 css 相关的问题
-* [js](./js.md) 汇总 js 语言本身的相关问题
-* [html](./html.md) 汇总 html 相关问题
+* [js](./js/READEME.md) 汇总 js 语言本身的相关问题
+* [html](./html/README.md) 汇总 html 相关问题
 * [web-api](./web-api.md) 汇总 web 接口相关知识例如 dom 等
 
 各类型知识细分为四大块
