@@ -1,4 +1,4 @@
-* [前言](./README.md)
+* [前言](../README.md)
 
 ## 面试部分
 * [计算机基础](./computer-basic/README.md)
