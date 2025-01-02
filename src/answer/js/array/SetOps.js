@@ -13,7 +13,7 @@ const ELE = {
   BELONG_A: 1,
   BELONG_B: 2,
   BELONG_AB: 3
-};
+}
 
 module.exports = class SetOps {
   /**
@@ -23,7 +23,7 @@ module.exports = class SetOps {
      */
   union (a, b) {
     // 返回并集
-    return this._process(a, b, () => true);
+    return this._process(a, b, () => true)
   }
 
   /**
@@ -32,7 +32,7 @@ module.exports = class SetOps {
      * @param {Array} b 数组 b
      */
   intersection (a, b) {
-    return this._process(a, b, (type) => type === ELE.BELONG_AB);
+    return this._process(a, b, (type) => type === ELE.BELONG_AB)
   }
 
   /**
@@ -41,7 +41,7 @@ module.exports = class SetOps {
      * @param {Array} b 数组 b
      */
   complements (a, b) {
-    return this._process(a, b, (type) => type === ELE.BELONG_A);
+    return this._process(a, b, (type) => type === ELE.BELONG_A)
   }
 
   /**
@@ -50,7 +50,7 @@ module.exports = class SetOps {
      * @param {Array} b 数组 b
      */
   symmetricDifference (a, b) {
-    return this._process(a, b, (type) => type !== ELE.BELONG_AB);
+    return this._process(a, b, (type) => type !== ELE.BELONG_AB)
   }
 
   /**
@@ -61,44 +61,44 @@ module.exports = class SetOps {
      * @private
      */
   _process (a, b, filter) {
-    const hist = Object.create(null); const out = []; let ukey; let k;
+    const hist = Object.create(null); const out = []; let ukey; let k
     // 提取 a 中不重复的元素集,保存到 hist
     a.forEach((value) => {
-      ukey = value;
+      ukey = value
       // 只记录不重复的元素
       if (!hist[ukey]) {
         hist[ukey] = {
           value,
           type: ELE.BELONG_A
-        };
+        }
       }
-    });
+    })
 
     // 提取 b 中的元素集,保存到 hist,并且对重复出现的元素进行标注
     b.forEach((value) => {
-      ukey = value;
+      ukey = value
       if (hist[ukey]) { // 元素在 b 中也存在
         if (hist[ukey].type === ELE.BELONG_A) {
-          hist[ukey].type = ELE.BELONG_AB;
+          hist[ukey].type = ELE.BELONG_AB
         }
       } else { // 元素在 b 中首次出现
         hist[ukey] = {
           value,
           type: ELE.BELONG_B
-        };
+        }
       }
-    });
+    })
 
     // 利用过滤函数,筛选需要的元素类型
     if (filter) {
       for (k in hist) {
         if (filter(hist[k].type)) {
-          out.push(hist[k].value);
+          out.push(hist[k].value)
         }
       }
-      return out;
+      return out
     } else {
-      return hist;
+      return hist
     }
   }
-};
+}

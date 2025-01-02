@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('chai')
 
 describe('显示类型转换', function () {
   describe('转成整形', function () {
@@ -48,23 +48,24 @@ describe('显示类型转换', function () {
           input: [0.42e-23],
           expect: 4 // 同上
         }
-      ];
+      ]
 
       testData.forEach(ele => {
         if (isNaN(ele.expect)) {
-          expect(isNaN(parseInt.apply(this, ele.input))).to.true;
+          // eslint-disable-next-line
+          expect(isNaN(parseInt.apply(this, ele.input))).to.true
         } else {
-          expect(parseInt.apply(this, ele.input)).to.equal(ele.expect);
+          expect(parseInt.apply(this, ele.input)).to.equal(ele.expect)
         }
-      });
-    });
-  });
+      })
+    })
+  })
 
   describe('构造函数', function () {
     it('Object', function () {
-      expect(Object(3)).instanceOf(Number);
-    });
-  });
+      expect(Object(3)).instanceOf(Number)
+    })
+  })
 
   describe('对象装换为原始值', function () {
     /**
@@ -75,9 +76,9 @@ describe('显示类型转换', function () {
       const obj = {
         toString: () => ({}),
         valueOf: () => 'obj'
-      };
-      expect(obj + '').to.equal('obj');
-    });
+      }
+      expect(obj + '').to.equal('obj')
+    })
 
     it('object to number', function () {
       /**
@@ -88,25 +89,25 @@ describe('显示类型转换', function () {
       const obj = {
         valueOf: () => ({}),
         toString: () => 1
-      };
-      expect(obj * 1).to.equal(1);
-    });
-  });
-});
-
-describe('隐式类型转换', function () {
-  describe('对象隐式类型转换', function () {
-    const obj = {
-      valueOf () {
-        return { a: 1 };
-      },
-      toString () {
-        return 'string-obj';
       }
-    };
+      expect(obj * 1).to.equal(1)
+    })
+  })
 
-    it('隐式转换规则', function () {
-      expect(obj + '').to.eq('string-obj');
-    });
-  });
-});
+  describe('隐式类型转换', function () {
+    describe('对象隐式类型转换', function () {
+      const obj = {
+        valueOf () {
+          return { a: 1 }
+        },
+        toString () {
+          return 'string-obj'
+        }
+      }
+
+      it('隐式转换规则', function () {
+        expect(obj + '').to.eq('string-obj')
+      })
+    })
+  })
+})

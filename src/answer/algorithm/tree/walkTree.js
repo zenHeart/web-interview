@@ -2,7 +2,7 @@ module.exports = {
   preOrderTree,
   inOrderTree,
   postOrderTree
-};
+}
 
 /**
  * 先序遍历,
@@ -11,17 +11,17 @@ module.exports = {
  * 3. 右子树
  */
 function preOrderTree (tree) {
-  let res = [];
-  res.push(tree.data);
-  const leftTree = tree.children && tree.children[0];
-  const rightTree = tree.children && tree.children[1];
+  let res = []
+  res.push(tree.data)
+  const leftTree = tree.children && tree.children[0]
+  const rightTree = tree.children && tree.children[1]
   if (leftTree) {
-    res = res.concat(preOrderTree(leftTree));
+    res = res.concat(preOrderTree(leftTree))
   }
   if (rightTree) {
-    res = res.concat(preOrderTree(rightTree));
+    res = res.concat(preOrderTree(rightTree))
   }
-  return res;
+  return res
 }
 
 /**
@@ -31,17 +31,17 @@ function preOrderTree (tree) {
  * 3. 右子树
  */
 function inOrderTree (tree) {
-  let res = [];
-  const leftTree = tree.children && tree.children[0];
-  const rightTree = tree.children && tree.children[1];
+  let res = []
+  const leftTree = tree.children && tree.children[0]
+  const rightTree = tree.children && tree.children[1]
   if (leftTree) {
-    res = res.concat(preOrderTree(leftTree));
-    res.push(tree.data);
+    res = res.concat(preOrderTree(leftTree))
+    res.push(tree.data)
   }
   if (rightTree) {
-    res = res.concat(preOrderTree(rightTree));
+    res = res.concat(preOrderTree(rightTree))
   }
-  return res;
+  return res
 }
 
 /**
@@ -51,17 +51,17 @@ function inOrderTree (tree) {
  * 3. 根节点
  */
 function postOrderTree (tree) {
-  let res = [];
-  const leftTree = tree.children && tree.children[0];
-  const rightTree = tree.children && tree.children[1];
+  let res = []
+  const leftTree = tree.children && tree.children[0]
+  const rightTree = tree.children && tree.children[1]
   if (leftTree) {
-    res = res.concat(preOrderTree(leftTree));
+    res = res.concat(preOrderTree(leftTree))
   }
   if (rightTree) {
-    res = res.concat(preOrderTree(rightTree));
+    res = res.concat(preOrderTree(rightTree))
   }
-  res.push(tree.data);
-  return res;
+  res.push(tree.data)
+  return res
 }
 
 /**
@@ -71,18 +71,19 @@ function postOrderTree (tree) {
  * 3. 按照节点层级逐级向下遍历
  * */
 
+// eslint-disable-next-line
 function levelOrderTree (tree) {
   // 将对应的层节点存入数组
-  let levelNodes = [tree];
-  const res = [];
+  let levelNodes = [tree]
+  const res = []
   // 遍历层节点直到为空
   while (levelNodes.length) {
     // 退出一个层节点
-    const node = levelNodes.shift();
-    res.push(node.data);
+    const node = levelNodes.shift()
+    res.push(node.data)
     if (node.children) {
-      levelNodes = levelNodes.concat(node.children);
+      levelNodes = levelNodes.concat(node.children)
     }
   }
-  return res;
+  return res
 }

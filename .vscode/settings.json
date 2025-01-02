@@ -1,5 +1,18 @@
 {
-    "liveServer.settings.port": 5502,
-    "eslint.nodePath": "./node_modules",
-    "eslint.nodeEnv":  "./node_modules"
+  "eslint.nodePath": "./node_modules",
+  "eslint.nodeEnv": "./node_modules",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.options": {
+    "resolvePluginsRelativeTo": "./node_modules"
+  },
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  },
+  "markdownlint.config": {
+    "default": true
+  }
 }

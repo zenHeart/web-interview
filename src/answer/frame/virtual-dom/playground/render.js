@@ -4,6 +4,7 @@
  * @param {object} options 属性配置,可选
  * @param {array} children 子节点,可选
  */
+// eslint-disable-next-line
 function render (tagName, options, children) {
   if (
     typeof tagName !== 'string' ||
@@ -11,6 +12,6 @@ function render (tagName, options, children) {
     !options ||
     !Array.isArray(children)
   ) {
-    throw new TypeError('input error');
+    throw new TypeError('input error')
   }
 }

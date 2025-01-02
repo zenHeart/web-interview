@@ -1,7 +1,7 @@
 const sortArr = Array(100)
   .fill(1)
-  .map((ele, index) => index);
-const randomArr = shuffleArr(sortArr);
+  .map((ele, index) => index)
+const randomArr = shuffleArr(sortArr)
 
 module.exports = {
   非数组直接返回: {
@@ -24,14 +24,14 @@ module.exports = {
     input: [...randomArr, 100],
     expect: [...sortArr, 100]
   }
-};
+}
 
 function shuffleArr (arr) {
-  const originArr = arr.slice();
-  const res = [];
+  const originArr = arr.slice()
+  const res = []
   while (res.length < arr.length) {
-    const randomIndex = ~~(Math.random() * originArr.length);
-    res.push(originArr.splice(randomIndex, 1)[0]);
+    const randomIndex = ~~(Math.random() * originArr.length)
+    res.push(originArr.splice(randomIndex, 1)[0])
   }
-  return res;
+  return res
 }

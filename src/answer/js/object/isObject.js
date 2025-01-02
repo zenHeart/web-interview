@@ -4,5 +4,5 @@
  * 2. 对象类型为
  */
 exports.isObject = function isObject (obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]';
-};
+  return Object.prototype.toString.call(obj) === '[object Object]'
+}

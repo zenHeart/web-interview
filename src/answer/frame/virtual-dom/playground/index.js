@@ -1,8 +1,8 @@
-const h = require('virtual-dom/h');
-const createElement = require('virtual-dom/create-element');
+const h = require('virtual-dom/h')
+const createElement = require('virtual-dom/create-element')
 
 function render () {
-  return h('div', 'test');
+  return h('div', 'test')
 }
 
-console.log(createElement(render()));
+console.log(createElement(render()))

@@ -1,10 +1,13 @@
 /* eslint-disable eqeqeq */
-const { expect } = require('chai');
+const { expect } = require('chai')
 
 describe('测试 == ', function () {
   it('test number equal string', function () {
-    expect(0 == '0').to.true;
-    expect([] == 0).to.true;
-    expect([] == '0').to.false;
-  });
-});
+    // eslint-disable-next-line
+    expect(0 == '0').to.true
+    // eslint-disable-next-line
+    expect([] == 0).to.true
+    // eslint-disable-next-line
+    expect([] == '0').to.false
+  })
+})

@@ -1,5 +1,5 @@
-exports.splitMultiply = splitMultiply;
-exports.persistence = persistence;
+exports.splitMultiply = splitMultiply
+exports.persistence = persistence
 
 /**
  * 返回整数的乘法持久性.
@@ -14,15 +14,15 @@ exports.persistence = persistence;
  * @param {Number} num 无符号正整形
  */
 function persistence (num) {
-  let n = 0;
+  let n = 0
   if (Number.isSafeInteger(num) && num > 0) {
     while ((num + '').length > 1) {
-      num = splitMultiply(num);
-      n++;
+      num = splitMultiply(num)
+      n++
     }
-    return n;
+    return n
   } else {
-    throw new Error('input must be positive safe integer');
+    throw new Error('input must be positive safe integer')
   }
 }
 
@@ -31,11 +31,11 @@ function persistence (num) {
  * @param  {Number} num 无符号整数
  */
 function splitMultiply (num) {
-  let product = 1;
+  let product = 1
 
   for (const i of num.toString()) {
-    product *= Number(i);
+    product *= Number(i)
   }
 
-  return product;
+  return product
 }

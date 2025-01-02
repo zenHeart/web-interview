@@ -1,9 +1,9 @@
 /**
  * 单链表反转
  */
-const { expect } = require('chai');
-const { LinkedList } = require('./linked-list');
-const reverseLinkedList = require('./reverse-linked-list');
+const { expect } = require('chai')
+const { LinkedList } = require('./linked-list')
+const reverseLinkedList = require('./reverse-linked-list')
 
 const testData = {
   多节点链表: {
@@ -18,14 +18,14 @@ const testData = {
     input: null,
     expect: null
   }
-};
+}
 
 describe('单链表翻转测试', function () {
   for (const testUnitName in testData) {
     it(testUnitName, function () {
-      const data = testData[testUnitName];
-      const res = reverseLinkedList(data.input);
-      expect(res).to.deep.eq(data.expect);
-    });
+      const data = testData[testUnitName]
+      const res = reverseLinkedList(data.input)
+      expect(res).to.deep.eq(data.expect)
+    })
   }
-});
+})

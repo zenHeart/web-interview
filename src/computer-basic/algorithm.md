@@ -59,17 +59,17 @@ n=3 3
  * @param {number} n 乘积
  * @return {Array} 拆解后的乘数
  */
- 
-function calc(n){  }
-console.log(calc(7));
+
+function calc (n) { }
+console.log(calc(7))
 // [7]
-console.log(calc(8));
+console.log(calc(8))
 // [2, 2, 2]
 
-console.log(calc(24));
+console.log(calc(24))
 // [2, 2, 2, 3]
 
-console.log(calc(30));
+console.log(calc(30))
 // [2, 3, 5]
 ```
 

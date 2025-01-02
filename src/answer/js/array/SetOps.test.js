@@ -1,8 +1,8 @@
-const SetOps = require('./SetOps');
-const { expect } = require('chai');
+const SetOps = require('./SetOps')
+const { expect } = require('chai')
 
-const setOps = new SetOps();
-let testData = [];
+const setOps = new SetOps()
+let testData = []
 describe.skip('SetOps 集合类', function () {
   it('union', function () {
     testData = [
@@ -13,12 +13,12 @@ describe.skip('SetOps 集合类', function () {
         },
         expect: [1, 2, 3, 4]
       }
-    ];
+    ]
 
     testData.forEach((ele) => {
-      expect(setOps.union(ele.input.a, ele.input.b)).toEqual(ele.expect);
-    });
-  });
+      expect(setOps.union(ele.input.a, ele.input.b)).toEqual(ele.expect)
+    })
+  })
   it('intersection', function () {
     testData = [
       {
@@ -35,12 +35,12 @@ describe.skip('SetOps 集合类', function () {
         },
         expect: [3]
       }
-    ];
+    ]
 
     testData.forEach((ele) => {
-      expect(setOps.intersection(ele.input.a, ele.input.b)).toEqual(ele.expect);
-    });
-  });
+      expect(setOps.intersection(ele.input.a, ele.input.b)).toEqual(ele.expect)
+    })
+  })
   it('complements', function () {
     testData = [
       {
@@ -57,12 +57,12 @@ describe.skip('SetOps 集合类', function () {
         },
         expect: [1, 2]
       }
-    ];
+    ]
 
     testData.forEach((ele) => {
-      expect(setOps.complements(ele.input.a, ele.input.b)).toEqual(ele.expect);
-    });
-  });
+      expect(setOps.complements(ele.input.a, ele.input.b)).toEqual(ele.expect)
+    })
+  })
   it('symmetricDifference', function () {
     testData = [
       {
@@ -79,10 +79,10 @@ describe.skip('SetOps 集合类', function () {
         },
         expect: [1, 2, 4]
       }
-    ];
+    ]
 
     testData.forEach((ele) => {
-      expect(setOps.symmetricDifference(ele.input.a, ele.input.b)).toEqual(ele.expect);
-    });
-  });
-});
+      expect(setOps.symmetricDifference(ele.input.a, ele.input.b)).toEqual(ele.expect)
+    })
+  })
+})

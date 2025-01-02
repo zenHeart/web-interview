@@ -1,5 +1,5 @@
-const { parseKey, parse } = require('./parse');
-const { expect } = require('chai');
+const { parseKey, parse } = require('./parse')
+const { expect } = require('chai')
 
 describe.skip('parse test', function () {
   it('parseKey', function () {
@@ -24,17 +24,17 @@ describe.skip('parse test', function () {
         input: 'fd[1][2][3].g[3][12][6]',
         expect: ['fd', '1', '2', '3', 'g', '3', '12', '6']
       }
-    ];
+    ]
 
     testData.forEach(ele => {
-      expect(parseKey(ele.input)).toEqual(ele.expect);
-    });
-  });
+      expect(parseKey(ele.input)).toEqual(ele.expect)
+    })
+  })
   it('parse', function () {
     const object = {
       b: { c: 4 },
       d: [{ e: 5 }, { e: 6 }]
-    };
+    }
     const testData = [
       {
         input: 'b.c',
@@ -64,10 +64,10 @@ describe.skip('parse test', function () {
         input: 'f.d.f',
         expect: 'undefined'
       }
-    ];
+    ]
 
     testData.forEach(ele => {
-      expect(parse(object, ele.input)).toEqual(ele.expect);
-    });
-  });
-});
+      expect(parse(object, ele.input)).toEqual(ele.expect)
+    })
+  })
+})

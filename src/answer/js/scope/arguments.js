@@ -4,17 +4,18 @@
  */
 
 const a = function (arg1) {
-  arg1 = { a: 1 };
-  console.log(b);
-  const c = { a: 1 };
+  arg1 = { a: 1 }
+  console.log(b)
+  // eslint-disable-next-line
+  const c = { a: 1 }
 
-  b({});
-};
+  b({})
+}
 
 function b (arg) {
-  console.log('arg:', arg);
+  console.log('arg:', arg)
   // eslint-disable-next-line
   console.log('arg1:', c);
 }
 
-a({ b: 1 });
+a({ b: 1 })

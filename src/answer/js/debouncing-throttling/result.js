@@ -8,46 +8,45 @@
  *
  * 带参数的函数如何触发
  */
-function debounce (func, time) {
-  const canRunning = true;
-  let startTime = new Date().getTime();
+exports.debounce = function debounce (func, time) {
+  let startTime = new Date().getTime()
   function debounceRun () {
-    const callTime = new Date().getTime();
+    const callTime = new Date().getTime()
 
     if (callTime - startTime < time) {
       // none
     } else {
-      startTime = callTime;
-      func.apply(this, arguments);
+      startTime = callTime
+      func.apply(this, arguments)
     }
   }
-  return debounceRun;
+  return debounceRun
 }
 
 /**
  * 节流,当函数高频次触发时,
  * 按照固定的时间间隔执行函数
  */
-function throttling (func, time) {
-  const runQueue = [];
-  let isRunning = false;
+exports.throttling = function throttling (func, time) {
+  const runQueue = []
+  let isRunning = false
   function throttlingFunc () {
     if (isRunning) {
-      runQueue.push(arguments);
+      runQueue.push(arguments)
     } else {
-      isRunning = true;
+      isRunning = true
       if (runQueue.length) {
-        func.apply(this, runQueue.shift());
+        func.apply(this, runQueue.shift())
       } else {
-        func.apply(this, arguments);
+        func.apply(this, arguments)
       }
       setTimeout(() => {
-        isRunning = false;
+        isRunning = false
         if (runQueue.length) {
-          throttlingFunc();
+          throttlingFunc()
         }
-      }, time);
+      }, time)
     }
   }
-  return throttlingFunc;
+  return throttlingFunc
 }

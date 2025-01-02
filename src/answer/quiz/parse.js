@@ -1,5 +1,5 @@
-exports.parseKey = parseKey;
-exports.parse = parse;
+exports.parseKey = parseKey
+exports.parse = parse
 
 /**
  * 采用字符串模式读取对象键值.
@@ -26,14 +26,14 @@ exports.parse = parse;
  */
 function parse (obj, keyStr) {
   if (obj && typeof obj === 'object' && typeof keyStr === 'string') {
-    const keyArr = parseKey(keyStr); let res = obj;
+    const keyArr = parseKey(keyStr); let res = obj
 
     while (keyArr.length && res) {
-      res = res[keyArr.shift()];
+      res = res[keyArr.shift()]
     }
-    return res === undefined ? 'undefined' : res;
+    return res === undefined ? 'undefined' : res
   } else {
-    throw new Error('input error!');
+    throw new Error('input error!')
   }
 }
 
@@ -42,12 +42,12 @@ function parse (obj, keyStr) {
  * @param {String} keyStr 索引字符串
  */
 function parseKey (keyStr) {
-  const keyDelimiter = /\w+\b/g;
-  const keyArr = []; let res;
+  const keyDelimiter = /\w+\b/g
+  const keyArr = []; let res
 
   while ((res = keyDelimiter.exec(keyStr)) !== null) {
-    keyArr.push(res[0]);
+    keyArr.push(res[0])
   }
 
-  return keyArr;
+  return keyArr
 }

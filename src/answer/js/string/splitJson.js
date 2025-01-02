@@ -4,6 +4,6 @@
  */
 exports.splitJson = function (str) {
   // 利用 }{ 特征区分粘结的 json
-  const splitIndex = str.indexOf('}{');
-  return str.substr(0, splitIndex + 1);
-};
+  const splitIndex = str.indexOf('}{')
+  return str.substr(0, splitIndex + 1)
+}

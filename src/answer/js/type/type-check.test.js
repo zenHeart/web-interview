@@ -1,4 +1,4 @@
-const { expect } = require('chai');
+const { expect } = require('chai')
 
 describe('test typeof', function () {
   const testData = [
@@ -38,11 +38,11 @@ describe('test typeof', function () {
       input: () => {},
       expect: 'function'
     }
-  ];
+  ]
 
   it('test check type function', function () {
     testData.forEach((ele) => {
-      expect(typeof ele.input).to.equal(ele.expect);
-    });
-  });
-});
+      expect(typeof ele.input).to.equal(ele.expect)
+    })
+  })
+})

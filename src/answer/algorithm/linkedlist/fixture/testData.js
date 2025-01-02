@@ -20,7 +20,7 @@ exports.create = {
       }
     }
   }
-};
+}
 
 // 链表添加节点
 exports.add = {
@@ -38,7 +38,7 @@ exports.add = {
       }
     }
   }
-};
+}
 
 // 根据值删除节点
 exports.removeByVal = {
@@ -93,7 +93,7 @@ exports.removeByVal = {
       next: null
     }
   }
-};
+}
 
 // 根据节点位置删除元素
 exports.removeByNum = {
@@ -134,7 +134,7 @@ exports.removeByNum = {
       }
     }
   }
-};
+}
 
 // 测试循环链表
 
@@ -177,12 +177,11 @@ const cycle = {
     expectHasCycle: true,
     expectPos: null
   }
-};
-cycle['单节点循环'].input.next = cycle['单节点循环'].input;
-cycle['单节点循环'].expectPos = cycle['单节点循环'].input;
-cycle['循环索引为0'].input.next.next = cycle['循环索引为0'].input;
-cycle['循环索引为0'].expectPos = cycle['循环索引为0'].input;
-cycle['循环索引为1'].input.next.next.next = cycle['循环索引为1'].input.next;
-cycle['循环索引为1'].expectPos = cycle['循环索引为1'].input.next;
-exports.cycle = cycle;
-console.log(cycle['单节点循环']);
+}
+cycle['单节点循环'].input.next = cycle['单节点循环'].input
+cycle['单节点循环'].expectPos = cycle['单节点循环'].input
+cycle['循环索引为0'].input.next.next = cycle['循环索引为0'].input
+cycle['循环索引为0'].expectPos = cycle['循环索引为0'].input
+cycle['循环索引为1'].input.next.next.next = cycle['循环索引为1'].input.next
+cycle['循环索引为1'].expectPos = cycle['循环索引为1'].input.next
+exports.cycle = cycle

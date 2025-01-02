@@ -5,9 +5,9 @@
  * Output: 2->1->4->3
  *
  */
-const { LinkedList } = require('./linked-list');
+const { LinkedList } = require('./linked-list')
 
-module.exports = swapPairs;
+module.exports = swapPairs
 
 /**
  *
@@ -15,34 +15,34 @@ module.exports = swapPairs;
  * 然后按照偶数位置,奇数位置逐一推出数据即可
  */
 function swapPairs (list) {
-  const oddNodeValues = [];
-  const evenNodeValues = [];
+  const oddNodeValues = []
+  const evenNodeValues = []
   // 遍历链表
-  let head = list;
-  let position = 1;
+  let head = list
+  let position = 1
   while (head) {
     // 判断为奇数位置则推入元素
     if (position % 2) {
-      oddNodeValues.push(head.val);
+      oddNodeValues.push(head.val)
     } else {
-      evenNodeValues.push(head.val);
+      evenNodeValues.push(head.val)
     }
-    position++;
-    head = head.next;
+    position++
+    head = head.next
   }
   // 重新遍历链表按照相反顺序赋值
-  head = list;
-  position = 1;
+  head = list
+  position = 1
   while (head) {
     if (position % 2 && evenNodeValues.length) {
-      head.val = evenNodeValues.shift();
+      head.val = evenNodeValues.shift()
     } else {
-      head.val = oddNodeValues.shift();
+      head.val = oddNodeValues.shift()
     }
-    position++;
-    head = head.next;
+    position++
+    head = head.next
   }
-  return list;
+  return list
 }
 
-console.dir(swapPairs(new LinkedList([1, 2, 3, 4, 5])), { depth: 5 });
+console.dir(swapPairs(new LinkedList([1, 2, 3, 4, 5])), { depth: 5 })

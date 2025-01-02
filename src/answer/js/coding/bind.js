@@ -8,31 +8,27 @@
 if (!Function.prototype.myBind) {
   Function.prototype.myBind = function myBind (oThis) {
     // 防御检查,bind 必须在函数上被调用
-    console.log(typeof this);
+    console.log(typeof this)
     if (typeof this !== 'function') {
-      throw new TypeError('Bind must be called on a function');
+      throw new TypeError('Bind must be called on a function')
     }
     // 剔除 this 参数,后面参数作为函数参数
-    const aArgs = Array.prototype.slice.call(arguments, 1);
-    const fToBind = this;
-    const fNOP = function () {};
+    const aArgs = Array.prototype.slice.call(arguments, 1)
+    const fToBind = this
+    const fNOP = function () {}
     const fBound = function () {
       return fToBind.apply(this instanceof fBound
         ? this
         : oThis,
       aArgs.concat(Array.prototype.slice.call(arguments))
-      );
-    };
+      )
+    }
     if (this.prototype) { // 维持原型链
-      fNOP.prototype = this.prototype;
+      fNOP.prototype = this.prototype
     }
 
     // eslint-disable-next-line new-cap
-    fBound.prototype = new fNOP();
-    return fBound;
-  };
-}
-
-function say () {
-  console.log('say', arguments);
+    fBound.prototype = new fNOP()
+    return fBound
+  }
 }

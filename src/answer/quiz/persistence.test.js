@@ -1,5 +1,5 @@
-const { splitMultiply, persistence } = require('./persistence');
-const { expect } = require('chai');
+const { splitMultiply, persistence } = require('./persistence')
+const { expect } = require('chai')
 
 describe.skip('persistence test', function () {
   it('persistence', function () {
@@ -16,12 +16,12 @@ describe.skip('persistence test', function () {
         input: 999,
         expect: 4
       }
-    ];
+    ]
 
     testData.forEach(ele => {
-      expect(persistence(ele.input)).toBe(ele.expect);
-    });
-  });
+      expect(persistence(ele.input)).toBe(ele.expect)
+    })
+  })
   it('splitMultiply', function () {
     const testData = [
       {
@@ -36,10 +36,10 @@ describe.skip('persistence test', function () {
         input: 999,
         expect: 729
       }
-    ];
+    ]
 
     testData.forEach(ele => {
-      expect(splitMultiply(ele.input)).toBe(ele.expect);
-    });
-  });
-});
+      expect(splitMultiply(ele.input)).toBe(ele.expect)
+    })
+  })
+})

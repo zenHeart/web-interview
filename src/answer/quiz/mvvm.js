@@ -1,4 +1,4 @@
-class Render {
+module.exports = class Render {
   /**
      *
      * @param {Object} opts 渲染函数的配置对象
@@ -8,45 +8,45 @@ class Render {
      *
      */
   constructor (opts) {
-    this.opts = opts;
-    this.defuault = JSON.parse(JSON.stringify(opts.data));
-    this.showEle = document.querySelector(opts.showEle);
-    this.inputEle = document.querySelector(opts.inputEle);
-    this.key = null;
-    this.data = opts.data;
-    this.pattern = /^{{(\w+)}}/;
-    this.init();
+    this.opts = opts
+    this.defuault = JSON.parse(JSON.stringify(opts.data))
+    this.showEle = document.querySelector(opts.showEle)
+    this.inputEle = document.querySelector(opts.inputEle)
+    this.key = null
+    this.data = opts.data
+    this.pattern = /^{{(\w+)}}/
+    this.init()
   }
 
   init () {
     // 绑定事件变化
-    this.inputEle.oninput = this.onchange.bind(this);
-    this.show();
-    this.set();
+    this.inputEle.oninput = this.onchange.bind(this)
+    this.show()
+    this.set()
   }
 
   onchange (events) {
-    const val = events.target.value;
-    this.set(val);
+    const val = events.target.value
+    this.set(val)
   }
 
   show () {
-    const txt = this.showEle.textContent;
-    const self = this;
+    const txt = this.showEle.textContent
+    const self = this
     // todo 此处过于简陋
     if (!this.key) {
       this.showEle.textContent = txt.replace(this.pattern, (match, key) => {
-        self.key = key;
-        return self.data[key];
-      }).toString();
+        self.key = key
+        return self.data[key]
+      }).toString()
     } else {
-      this.showEle.textContent = self.data[this.key];
+      this.showEle.textContent = self.data[this.key]
     }
   }
 
   set (value = this.defuault[this.key]) {
-    this.data[this.key] = value;
-    this.inputEle.value = this.data[this.key];
-    this.show();
+    this.data[this.key] = value
+    this.inputEle.value = this.data[this.key]
+    this.show()
   }
 }
