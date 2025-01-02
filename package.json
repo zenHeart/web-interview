@@ -7,7 +7,7 @@
     "start": "mdbook serve  -n 0.0.0.0",
     "build": "mdbook build",
     "deploy": "./scripts/deploy-book.sh",
-    "lint": "eslint .",
+    "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
     "prepare": "husky"
   },
   "repository": {
