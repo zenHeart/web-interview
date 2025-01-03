@@ -2,10 +2,10 @@
 
 ## 计算机基础
 
-- [操作系统](./computer-basic/01.operate-system/system.md)
-- [网络](./computer-basic/03.network/net.md)
-- [算法](./computer-basic/algorithm/README.md)
-  - [编码](./computer-basic/algorithm/encode.md)
+- [操作系统](./operate-system/system.md)
+- [网络](./network/net.md)
+- [算法](./algorithm/README.md)
+  - [编码](./lgorithm/encode.md)
 
 ## 前端题库
 
@@ -14,10 +14,10 @@
 - [html](./html/README.md)
 - [vue](./vue/README.md)
 - [react](./react/README.md)
-- [node](./04.node/README.md)
-- [工程化](./05.engineering/README.md)
-  - [性能](./05.engineering/performance.md)
-  - [安全](./05.engineering/security.md)
+- [node](./node/README.md)
+- [工程化](./engineering/README.md)
+  - [性能](./engineering/performance.md)
+  - [安全](./engineering/security.md)
 - [面试技巧](./soft-skills/README.md)
   - [技术面试通用问题](./interview-skills/general-question.md)
   - [通用非技术问题](./interview-skills/general-tech-question.md)
