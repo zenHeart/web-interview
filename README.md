@@ -1,4 +1,4 @@
-# 前端面试
+# [前端面试](https://github.com/zenHeart/web-interview)
 
 ## 项目概述
 
@@ -9,18 +9,10 @@
 2. **格物致知** 提供完善的答案和延伸阅读材料,虽然面试是短期准备,但是 **功在平时**
 3. **面面俱到** 不局限域题目本身，除了硬技能，也包含整体面试流程软技能考察等相关知识
 
-面试资料分为如下几部分 
-1. [计算机基础](./computer-basic/README.md) 放置通用的计算机知识
-2. [前端基础](./frontend-basic/README.md) 放置前端相关技术栈的基本领域知识,重点考察基本技能
-3. [前端进阶](./frontend-advanced/README.md) 在掌握基础知识的前提下,重点考察项目经验和前端开发过程中的工程经验,设计开发流程中各环节即延伸知识,不局限于前端领域
-4. [面试技巧](./interview-skills/README.md) 包含软技能的知识点,例如开发习惯,编程品质,面试技巧等方面的知识。
-5. [公司题库](./company/README.md) 收集网络中相关公司的试题,帮助面试者知晓面试流程
-
-
 ## 题库说明
 
-
 ### 收录标准
+
 1. **技术相关性**： 题目是否涉及岗位所需的核心技术栈，能否考察候选人实际开发能力。题目应与岗位技术需求高度匹配，避免涉及过时技术或无关的技术栈。
     1. 0-5 分：与岗位技术栈无关，考察不到实际工作能力。
     2. 6-8 分：与岗位技术栈相关，但涉及的技术过于简单。
@@ -42,30 +34,24 @@
     2. 6-8 分：描述较为清晰，但可能存在少许歧义或不同理解方式。
     3. 9-10 分：题目描述清晰明确，确保问题的可解性。
 
-
-
-
-
 ### 题库等级
+
 按照面试准备的重要性和时间投入比例，将知识点分为以下优先级：
 
-| 优先级 | 重要程度 | 校招生 | 应届生 | 社招(1-3年) | 社招(3年以上) |
-|:--|:--|:--|:--|:--|:--|
-| P0 | 核心必备 | 必须精通 | 必须精通 | 必须精通 | 必须精通 |
-| P1 | 重要 | 必须掌握 | 必须掌握 | 必须掌握 | 深入理解 |
-| P2 | 常考 | 需要掌握 | 需要掌握 | 按岗位准备 | 按岗位准备 |
-| P3 | 加分项 | 建议了解 | 建议了解 | 需要掌握 | 需要掌握 |
-| P4 | 拓展知识 | 可选 | 可选 | 建议了解 | 需要了解 |
+| 优先级 | 重要程度
+|:--|:--|:--|
+| P0 | 核心必备
+| P1 | 重要
+| P2 | 常考
+| P3 | 加分项
+| P4 | 拓展知识
+
+经验性准则
 
 - **校招生/实习生**：
   - 优先级：重点准备 P0-P1，P2 选择性准备
   - 时间分配：P0(50%) > P1(30%) > P2(20%)
   - 重点：基础知识扎实度和编程能力
-
-- **应届生**：
-  - 优先级：重点准备 P0-P2
-  - 时间分配：P0(40%) > P1(30%) > P2(20%) > P3(10%)
-  - 重点：基础知识 + 实习/项目经验
 
 - **社招(1-3年经验)**：
   - 优先级：P0-P2 必备，P3 要有了解
@@ -79,9 +65,6 @@
 
 ## 本地运行
 
-项目地址: `<https://github.com/zenHeart/web-interview>`
-
-
 ```bash
 # 本地编辑文档
 npm start
@@ -90,11 +73,28 @@ npm start
 npm  test
 ```
 
-
 ## 资料清单
 
-* [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
-* [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86) 上一条项目的答案
-Front-end-Developer-Interview-Questions)
-
-
+- [ ] [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
+- [ ] [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
+- [ ] web 面试官系列 <https://vue3js.cn/interview/>
+- [ ] 前端进阶之旅 <https://interview.poetries.top/>
+- [ ] 大前端面试宝典 <https://lucifer.ren/fe-interview/#/>
+- [ ] 前端面试题库 <https://huruji.github.io/FE-Interview/#/>
+- [ ] 前端每日 3+ 1 <http://www.h-camel.com/index.html>
+- [ ] 前端面试题 <https://q.shanyue.tech/fe>
+- [ ] web 面试官系列 <https://github.com/febobo/web-interview>
+- [ ] js 面试题 <https://mp.weixin.qq.com/s?__biz=Mzg2NDAzMjE5NQ==&mid=2247485440&idx=1&sn=9481282943742b1523953751d825ac0b&utm_source=tuicool&utm_medium=referral>
+- [ ] 合并 <https://github.com/CavsZhouyou/Front-End-Interview-Notebook> 面试内容
+- [ ] [简历资料收集](https://github.com/abc-club/free-resources/blob/master/INTERVIEW.md) 看完所有资料
+- [ ] [高频试题](https://juejin.im/post/5d23e750f265da1b855c7bbe) 待整理
+- [ ] [awesome question](https://github.com/MaximAbramchuck/awesome-interview-questions#nodejs) 所有面试资料的清单
+- [ ] [tech-interview-handbook](https://yangshun.github.io/tech-interview-handbook) 包含面试流程和算法题,需整理
+- [ ] [coding-interview-university](https://github.com/jwasham/coding-interview-university) google 面试题及流程包含算法,需整理
+- [ ] [fe-interview](https://github.com/haizlin/fe-interview) 需要长期追踪的面试题库
+- [ ] hackerrank <https://www.hackerrank.com/interview/interview-preparation-kit>
+- [ ] <https://www.educative.io/path/ace-javascript-coding-interview>
+- [ ] github interview <https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer)>
+- [ ] awsome interview <https://github.com/Awesome-Interview/Awesome-Interview?tab=readme-ov-file>
+- [ ] frontend interview <https://github.com/evestorm/front-end-interview>
+- [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
