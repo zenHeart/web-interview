@@ -10,9 +10,12 @@
   "[markdown]": {
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.tabSize": 3,
+    "editor.insertSpaces": true
   },
   "markdownlint.config": {
     "default": true
-  }
+  },
+  "editor.detectIndentation": false
 }

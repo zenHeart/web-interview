@@ -34,7 +34,7 @@
     2. 6-8 分：描述较为清晰，但可能存在少许歧义或不同理解方式。
     3. 9-10 分：题目描述清晰明确，确保问题的可解性。
 
-### 题库等级
+### 优先级
 
 按照面试准备的重要性和时间投入比例，将知识点分为以下优先级：
 
@@ -48,20 +48,84 @@
 
 经验性准则
 
-- **校招生/实习生**：
-  - 优先级：重点准备 P0-P1，P2 选择性准备
-  - 时间分配：P0(50%) > P1(30%) > P2(20%)
-  - 重点：基础知识扎实度和编程能力
+* **校招生/实习生**：
+  * 优先级：重点准备 P0-P1，P2 选择性准备
+  * 时间分配：P0(50%) > P1(30%) > P2(20%)
+  * 重点：基础知识扎实度和编程能力
 
-- **社招(1-3年经验)**：
-  - 优先级：P0-P2 必备，P3 要有了解
-  - 时间分配：P0(30%) > P1(30%) > P2(25%) > P3(15%)
-  - 重点：项目经验 + 技术深度
+* **社招(1-3年经验)**：
+  * 优先级：P0-P2 必备，P3 要有了解
+  * 时间分配：P0(30%) > P1(30%) > P2(25%) > P3(15%)
+  * 重点：项目经验 + 技术深度
 
-- **社招(3年以上)**：
-  - 优先级：P0-P3 全面准备
-  - 时间分配：P0-P3 平均分配
-  - 重点：技术广度 + 架构设计 + 技术决策
+* **社招(3年以上)**：
+  * 优先级：P0-P3 全面准备
+  * 时间分配：P0-P3 平均分配
+  * 重点：技术广度 + 架构设计 + 技术决策
+
+## 知识结构
+
+所有内容按照如下层级结构组织
+
+1. **技术领域 (Domain)** 最高层级的技术范畴
+   * 必须是独立的完整技术方向
+   * 与其他领域有明确的界限
+   > 示例：前端开发、后端开发、移动开发
+2. **知识模块 (Module)** 领域内的主要技术组成部分
+   * 模块之间相对独立
+   * 有清晰的技术边界
+   * 可以独立学习和评估
+   > 示例：JavaScript、HTML/CSS、Vue、网络基础
+3. **知识主题 (Topic)** 模块内的具体技术专题
+   * 主题必须具有系统性
+   * 包含多个相关知识点
+   * 可以独立成章节讲解
+   > 示例：作用域、事件循环、类型系统
+4. **知识点 (Point)** 主题下的具体概念
+   * 必须是可以清晰定义的概念
+   * 有具体的技术实现或原理
+   * 可以独立考察和验证
+   > 示例：闭包、原型链、变量提升
+5. **考察项 (Question)** 针对知识点的具体考察维度
+   * 必须是可以明确回答的问题
+   * 有标准的评判标准
+   * 可以体现对知识点的理解深度
+   > 映射到具体的问题
+
+基于上述的知识结构目录树说明如下
+
+```markdown
+├── Module // 对应的知识域
+│  ├── point // 对应的知识点， 主题通过在知识点中添加 meta 信息来表示
+│  │   ├── README.md // 知识点说明
+|  |   ├── question.test.js // 知识点考察项问题测试合集
+│  │   ├── question // 对应的知识点考察项问题合集
+│  │   │   ├── quiz1.md // 考察点问题1
+│  │   │   ├── quiz2.md // 考察点问题2
+│  │   │   ├── quiz3.md // 考察点问题3
+│  │   │   ├── ...
+```
+
+每个知识点的 markdown 结构如下
+
+```md
+---
+topic: language # 所属主题
+priority: P0 # 优先级
+related: # 关联知识点
+  - scope
+  - operators
+---
+
+# 知识点
+
+## 知识点考察项
+
+
+## 补充说明
+
+
+```
 
 ## 本地运行
 
@@ -75,26 +139,26 @@ npm  test
 
 ## 资料清单
 
-- [ ] [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
-- [ ] [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
-- [ ] web 面试官系列 <https://vue3js.cn/interview/>
-- [ ] 前端进阶之旅 <https://interview.poetries.top/>
-- [ ] 大前端面试宝典 <https://lucifer.ren/fe-interview/#/>
-- [ ] 前端面试题库 <https://huruji.github.io/FE-Interview/#/>
-- [ ] 前端每日 3+ 1 <http://www.h-camel.com/index.html>
-- [ ] 前端面试题 <https://q.shanyue.tech/fe>
-- [ ] web 面试官系列 <https://github.com/febobo/web-interview>
-- [ ] js 面试题 <https://mp.weixin.qq.com/s?__biz=Mzg2NDAzMjE5NQ==&mid=2247485440&idx=1&sn=9481282943742b1523953751d825ac0b&utm_source=tuicool&utm_medium=referral>
-- [ ] 合并 <https://github.com/CavsZhouyou/Front-End-Interview-Notebook> 面试内容
-- [ ] [简历资料收集](https://github.com/abc-club/free-resources/blob/master/INTERVIEW.md) 看完所有资料
-- [ ] [高频试题](https://juejin.im/post/5d23e750f265da1b855c7bbe) 待整理
-- [ ] [awesome question](https://github.com/MaximAbramchuck/awesome-interview-questions#nodejs) 所有面试资料的清单
-- [ ] [tech-interview-handbook](https://yangshun.github.io/tech-interview-handbook) 包含面试流程和算法题,需整理
-- [ ] [coding-interview-university](https://github.com/jwasham/coding-interview-university) google 面试题及流程包含算法,需整理
-- [ ] [fe-interview](https://github.com/haizlin/fe-interview) 需要长期追踪的面试题库
-- [ ] hackerrank <https://www.hackerrank.com/interview/interview-preparation-kit>
-- [ ] <https://www.educative.io/path/ace-javascript-coding-interview>
-- [ ] github interview <https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer)>
-- [ ] awsome interview <https://github.com/Awesome-Interview/Awesome-Interview?tab=readme-ov-file>
-- [ ] frontend interview <https://github.com/evestorm/front-end-interview>
-- [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
+* [ ] [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
+* [ ] [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
+* [ ] web 面试官系列 <https://vue3js.cn/interview/>
+* [ ] 前端进阶之旅 <https://interview.poetries.top/>
+* [ ] 大前端面试宝典 <https://lucifer.ren/fe-interview/#/>
+* [ ] 前端面试题库 <https://huruji.github.io/FE-Interview/#/>
+* [ ] 前端每日 3+ 1 <http://www.h-camel.com/index.html>
+* [ ] 前端面试题 <https://q.shanyue.tech/fe>
+* [ ] web 面试官系列 <https://github.com/febobo/web-interview>
+* [ ] js 面试题 <https://mp.weixin.qq.com/s?__biz=Mzg2NDAzMjE5NQ==&mid=2247485440&idx=1&sn=9481282943742b1523953751d825ac0b&utm_source=tuicool&utm_medium=referral>
+* [ ] 合并 <https://github.com/CavsZhouyou/Front-End-Interview-Notebook> 面试内容
+* [ ] [简历资料收集](https://github.com/abc-club/free-resources/blob/master/INTERVIEW.md) 看完所有资料
+* [ ] [高频试题](https://juejin.im/post/5d23e750f265da1b855c7bbe) 待整理
+* [ ] [awesome question](https://github.com/MaximAbramchuck/awesome-interview-questions#nodejs) 所有面试资料的清单
+* [ ] [tech-interview-handbook](https://yangshun.github.io/tech-interview-handbook) 包含面试流程和算法题,需整理
+* [ ] [coding-interview-university](https://github.com/jwasham/coding-interview-university) google 面试题及流程包含算法,需整理
+* [ ] [fe-interview](https://github.com/haizlin/fe-interview) 需要长期追踪的面试题库
+* [ ] hackerrank <https://www.hackerrank.com/interview/interview-preparation-kit>
+* [ ] <https://www.educative.io/path/ace-javascript-coding-interview>
+* [ ] github interview <https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer)>
+* [ ] awsome interview <https://github.com/Awesome-Interview/Awesome-Interview?tab=readme-ov-file>
+* [ ] frontend interview <https://github.com/evestorm/front-end-interview>
+* [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
