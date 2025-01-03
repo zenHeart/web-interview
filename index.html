@@ -175,61 +175,42 @@
                     <main>
                         <h1 id="前端面试"><a class="header" href="#前端面试"><a href="https://github.com/zenHeart/web-interview">前端面试</a></a></h1>
 <h2 id="项目概述"><a class="header" href="#项目概述">项目概述</a></h2>
-<p>项目汇总了 github 及网络上大量的前端面试题。除了简单的汇总,笔者做了如下工作。</p>
+<p>前端面试题库，相比其他题库的差异点。</p>
 <ol>
-<li>
-<p><strong>去粗取精</strong> 并不是简单的问题罗列,而是对所有问题进行了分类,并将多个类似或考点相近的问题合并为了单一问题,方便更有针对性的复习，详见<a href="#%E9%A2%98%E5%BA%93%E8%AF%B4%E6%98%8E">题库说明</a></p>
-</li>
-<li>
-<p><strong>格物致知</strong> 提供完善的答案和延伸阅读材料,虽然面试是短期准备,但是 <strong>功在平时</strong></p>
-</li>
-<li>
-<p><strong>面面俱到</strong> 不局限域题目本身，除了硬技能，也包含整体面试流程软技能考察等相关知识</p>
-</li>
+<li>按照知识点组织题目。每个典型题目对应知识点的一个考察点，注重考察点的全面性，而不是题目数量。强调知识点间的关联性。以练带学，帮助面试者形成知识体系。</li>
+<li>不只是面试题，也包含整体面试流程软技能考察等相关知识</li>
 </ol>
-<h2 id="组织方式"><a class="header" href="#组织方式">组织方式</a></h2>
+<h2 id="项目结构"><a class="header" href="#项目结构">项目结构</a></h2>
 <p>所有内容按照如下层级结构组织</p>
 <ol>
-<li><strong>技术领域 (Domain)</strong> 最高层级的技术范畴
+<li><strong>知识领域 (Domain)</strong>
 <ul>
-<li>必须是独立的完整技术方向</li>
 <li>与其他领域有明确的界限</li>
-</ul>
-<blockquote>
-<p>示例：前端开发、后端开发、移动开发</p>
-</blockquote>
-</li>
-<li><strong>知识模块 (Module)</strong> 领域内的主要技术组成部分
-<ul>
-<li>模块之间相对独立</li>
-<li>有清晰的技术边界</li>
 <li>可以独立学习和评估</li>
 </ul>
 <blockquote>
-<p>示例：JavaScript、HTML/CSS、Vue、网络基础</p>
+<p>示例：JavaScript、HTML、CSS、Node、Vue、网络基础</p>
 </blockquote>
 </li>
-<li><strong>知识主题 (Topic)</strong> 模块内的具体技术专题
+<li><strong>知识主题 (Topic)</strong> 可选
 <ul>
-<li>主题必须具有系统性</li>
+<li>属于同一个知识领域</li>
 <li>包含多个相关知识点</li>
-<li>可以独立成章节讲解</li>
 </ul>
 <blockquote>
 <p>示例：作用域、事件循环、类型系统</p>
 </blockquote>
 </li>
-<li>知识点 (Point) 主题下的具体概念
+<li><strong>知识点 (Point)</strong>
 <ul>
 <li>必须是可以清晰定义的概念</li>
-<li>有具体的技术实现或原理</li>
-<li>可以独立考察和验证</li>
+<li>有具体的考察点</li>
 </ul>
 <blockquote>
 <p>示例：闭包、原型链、变量提升</p>
 </blockquote>
 </li>
-<li>考察项 (Question) 针对知识点的具体考察维度
+<li><strong>考察项 (Question)</strong> 针对知识点的具体考察项，每个考察项映射一个典型题目
 <ul>
 <li>必须是可以明确回答的问题</li>
 <li>有标准的评判标准</li>
@@ -240,47 +221,9 @@
 </blockquote>
 </li>
 </ol>
-<h2 id="题库说明"><a class="header" href="#题库说明">题库说明</a></h2>
-<h3 id="收录标准"><a class="header" href="#收录标准">收录标准</a></h3>
-<ol>
-<li><strong>技术相关性</strong>： 题目是否涉及岗位所需的核心技术栈，能否考察候选人实际开发能力。题目应与岗位技术需求高度匹配，避免涉及过时技术或无关的技术栈。
-<ol>
-<li>0-5 分：与岗位技术栈无关，考察不到实际工作能力。</li>
-<li>6-8 分：与岗位技术栈相关，但涉及的技术过于简单。</li>
-<li>9-10 分：与岗位技术栈完全契合，能有效评估候选人实际工作能力。</li>
-</ol>
-</li>
-<li><strong>知识点的深度与广度</strong>
-<ol>
-<li>0-5 分：考察基础知识点，难以体现深度。</li>
-<li>6-8 分：覆盖较为复杂的知识点，深度有限，可能无法全面考察候选人的综合能力。</li>
-<li>9-10 分：涉及核心知识点，并能够深入考察候选人的技术水平。</li>
-</ol>
-</li>
-<li><strong>实际开发中的应用场景</strong>
-<ol>
-<li>0-5 分：题目脱离实际开发，考察的内容难以反映开发中会遇到的实际问题。</li>
-<li>6-8 分：题目贴近实际开发，但没有全面考察候选人在开发中的综合能力。</li>
-<li>9-10 分：题目紧密结合实际开发，考察解决问题的综合能力。</li>
-</ol>
-</li>
-<li><strong>题目的复杂度与开放性</strong>
-<ol>
-<li>0-5 分：题目过于简单或单一，难以评估多种解决方案。</li>
-<li>6-8 分：题目有一定开放性，能够体现候选人的基本解决能力。</li>
-<li>9-10 分：题目具有高度开放性，能够评估候选人解决复杂问题的能力。</li>
-</ol>
-</li>
-<li><strong>可解性与明确性</strong>
-<ol>
-<li>0-5 分：题目描述不清，导致理解困难或无法解答。</li>
-<li>6-8 分：描述较为清晰，但可能存在少许歧义或不同理解方式。</li>
-<li>9-10 分：题目描述清晰明确，确保问题的可解性。</li>
-</ol>
-</li>
-</ol>
-<h3 id="题库等级"><a class="header" href="#题库等级">题库等级</a></h3>
-<p>按照面试准备的重要性和时间投入比例，将知识点分为以下优先级：</p>
+<h3 id="项目层级结构"><a class="header" href="#项目层级结构">项目层级结构</a></h3>
+<h3 id="优先级"><a class="header" href="#优先级">优先级</a></h3>
+<p>按照面试准备的重要性和时间投入比例，将考察点分为以下优先级：</p>
 <p>| 优先级 | 重要程度
 |:--|:--|:--|
 | P0 | 核心必备
@@ -315,6 +258,26 @@
 </ul>
 </li>
 </ul>
+<h2 id="知识结构"><a class="header" href="#知识结构">知识结构</a></h2>
+<p>基于上述的知识结构目录树说明如下</p>
+<p>每个知识点的 markdown 结构如下</p>
+<pre><code class="language-md">---
+topic: language # 所属主题
+priority: P0 # 优先级
+related: # 关联知识点
+  - scope
+  - operators
+---
+
+# 知识点
+
+## 知识点考察项
+
+
+## 补充说明
+
+
+</code></pre>
 <h2 id="本地运行"><a class="header" href="#本地运行">本地运行</a></h2>
 <pre><code class="language-bash"># 本地编辑文档
 npm start
