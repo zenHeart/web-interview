@@ -13,7 +13,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 11,
+    ecmaVersion: 2020,
     sourceType: 'module'
   },
   plugins: [
@@ -24,6 +24,18 @@ module.exports = {
     {
       files: ['**/*.md'],
       processor: 'markdown/markdown'
+    },
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins: ['@typescript-eslint'],
+      extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended'
+      ],
+      rules: {
+        // 在此处添加 TypeScript 特定的规则
+      }
     }
   ],
   rules: {

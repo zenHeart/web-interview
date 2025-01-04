@@ -3,7 +3,8 @@
 **站在面试官的角度考察候选人**
 
 ## 面试原则
-1. **招最合适的人** 
+
+1. **招最合适的人**
    1. 他的技能是否和招聘岗位完全匹配
    2. 如果技能不完全匹配，现有能力是否能够在短期之内迅速上手
    3. 你是否愿意与他作为同事工作
@@ -12,6 +13,7 @@
 3. **挖掘闪光点而不是能力比拼**
 
 ## 技能判断
+
 对面试者技能进行全方位评估。
 
 * **硬技能** 岗位必须具备的专业技能
@@ -31,6 +33,7 @@
 4. 按照技能层级询问问题
 
 ## 前端面试策略
+
 1. 除了最核心的JS水平，不要因为其他单一方面的薄弱而淘汰人
    1. 多问语法特性和常用 API
    2. 多问语言设计思想等
@@ -42,14 +45,13 @@
    2. 开源项目
    3. 前端之外的知识
 
-
-
 ## 面试官开放性问题
+
 1. 你有什么想要问我的?
 标准，期望面试者表达出对目前职位的热情和兴趣
 
-
 ## 知识点
+
 1. 流程
    1. 一面 主要判断对基础知识的掌握
       1. 基础
@@ -84,7 +86,7 @@
       6. 闭包
       7. 作用域
       8. Prototype
-      9.  RegExp
+      9. RegExp
       10. JSON
       11. 内存泄漏
       12. 跨域
@@ -94,8 +96,8 @@
       16. Flux
       17. 同构
       18. ECMAScript6
-      19. 严格模式与混杂模式 
-  1. 框架工具
+      19. 严格模式与混杂模式
+1. 框架工具
       1. 主流MVVM框架(React\Vue\Angular)
       2. Hybrid App\React Native\Weex
       3. TypeScript
@@ -122,7 +124,7 @@
    2. DOM
        1. DOM结构，两个节点之间可能存在哪些关系以及如何在节点之间任意移动
        2. 如何添加、移除、移动、复制、创建和查找节点等
-   3.  Ajax
+   3. Ajax
        1. XMLHttpRequest
        2. fetch
    4. 对Web标准的理解（结构、表现、行为）
@@ -130,7 +132,7 @@
    6. 渲染原理
    7. HTML5
    8. 离线 & 存储
-   9.  Histoy
+   9. Histoy
    10. 多媒体
    11. WebGL\SVG\Canvas
    12. BOM
@@ -149,7 +151,9 @@
       11. Document flow
       12. BFC
       13. CSS预处理器
+
 ## 延伸阅读
-* [Interviewing the front-end engineer](https://humanwhocodes.com/blog/2010/01/05/interviewing-the-front-end-engineer/) 
+
+* [Interviewing the front-end engineer](https://humanwhocodes.com/blog/2010/01/05/interviewing-the-front-end-engineer/)
 * [知乎-如何面试前端工程师](https://www.zhihu.com/question/19568008)
 * [twitter facebook interview](https://twitter.com/dan_abramov/status/1095133998584602626)
