@@ -2,11 +2,19 @@
   "name": "web-interview",
   "version": "1.0.0",
   "description": "web 面试题目汇总",
+  "private": true,
   "scripts": {
-    "test": "mocha  -t 10000  -w src/**/*.test.js",
-    "start": "mdbook serve  -n 0.0.0.0",
-    "build": "mdbook build",
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "swizzle": "docusaurus swizzle",
     "deploy": "./scripts/deploy-book.sh",
+    "clear": "docusaurus clear",
+    "serve": "docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc",
+    "test": "mocha  -t 10000  -w src/**/*.test.js",
     "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
     "prepare": "husky"
   },
@@ -33,6 +41,34 @@
     "husky": "^9.1.6",
     "lerna": "^3.14.1",
     "mocha": "^7.0.1",
-    "virtual-dom": "^2.1.1"
+    "virtual-dom": "^2.1.1",
+    "@docusaurus/module-type-aliases": "3.7.0",
+    "@docusaurus/tsconfig": "3.7.0",
+    "@docusaurus/types": "3.7.0",
+    "typescript": "~5.6.2"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.7.0",
+    "@docusaurus/preset-classic": "3.7.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "prism-react-renderer": "^2.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "engines": {
+    "node": ">=18.0"
   }
 }

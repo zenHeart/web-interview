@@ -2,7 +2,7 @@
 
 事件委托是指在父节点集中处理子节点事件
 
-参考 <https://johnresig.com/apps/workshop/adv-talk/#19> 定义。
+参考 [adv-talk](https://johnresig.com/apps/workshop/adv-talk/#19) 定义。
 事件委托一种机制,将原应在多个子节点上绑定的事件回调,统一在父节点上进行绑定。
 
 ## 注意事项
@@ -37,7 +37,7 @@ $('#thing').click(
 
 ### focus blur 委派
 
-参加 <https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html>
+参加 [delegating_the](https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html)
 
 ## 参考资料
 

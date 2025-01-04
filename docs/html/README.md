@@ -12,9 +12,7 @@
 
 ### 事件冒泡? ⭐️⭐️⭐️⭐️⭐️
 
-
 ### doctype(文档类型) 的作用是什么？⭐️⭐️
-
 
 ### 说明 load,ready,DOMContentLoaded 的区别 ⭐️⭐️⭐️⭐️⭐️
 
@@ -22,23 +20,23 @@
 
 ### 属性(attribute)和特性(property) 区别? ⭐️⭐️⭐️⭐️
 
-
 ### 什么是渐进式渲染 (progressive rendering)？
 
 ### getComputedStyle用法?
-### addEventListener绑定事件?参数不同的执行顺序.
+
+### addEventListener绑定事件?参数不同的执行顺序
 
 ### DOM 操作
 
 ## 应用
 
-### 请解释 `<script>、<script async> 和 <script defer>` 的区别 
+### 请解释 `<script>、<script async> 和 <script defer>` 的区别
 
 ### 为什么通常推荐将 CSS `<link>` 放置在 `<head></head>` 之间，而将 JS `<script>` 放置在 `</body>` 之前？你知道有哪些例外吗？
 
 ### 解释 cookies session storage local storage 的区别 ?⭐️⭐️⭐️
 
-### 如何实现浏览器内多个标签页之间的通信? 
+### 如何实现浏览器内多个标签页之间的通信?
 
 ### iframe有那些缺点？
 
@@ -56,28 +54,25 @@
 
 ### data- 属性的好处是什么？
 
--   <https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese/>
+* [data-](https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese)
 
 ### 你用过哪些不同的 HTML 模板语言？
 
 ## 编码题
+
 ## 拖拽组件设计
 
 ## 取出一个 html 树，并返回标签类型和各标签出现次数？ ⭐️⭐️⭐️
 
 ### 显示列表,返回显示已看过?  ⭐️⭐️⭐️
 
-
 ### 如果网页内容需要支持多语言，你会怎么做？
 
 1. 采用语言代码划分不同命名空间，标准参见 [List of ISO 639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 
-
-
 ### 长列表渲染解决方案?
 
 ### 写一个幻灯片效果
-
 
 ## 待整理
 
@@ -86,7 +81,7 @@
 * meta 元素
 * 测试数据
 
-
 ## 参考资料
-* [html5 规范](https://html.spec.whatwg.org/)
+
+* [html5 规范](https://html.spec.whatwg.org)
 * [learn-html](https://web.dev/learn/html)

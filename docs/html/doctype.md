@@ -13,7 +13,7 @@
 详见：
 
 - [ ] [quirks mode](https://developer.mozilla.org/en-US/docs/Web/HTML/Quirks_Mode_and_Standards_Mode)
-- [ ] <https://hsivonen.fi/doctype/>
-- [ ] <https://quirks.spec.whatwg.org/>
+- [ ] [doctype](https://hsivonen.fi/doctype)
+- [ ] [whatwg](https://quirks.spec.whatwg.org)
 
 浏览器标准模式 (standards mode) 、几乎标准模式（almost standards mode）和怪异模式 (quirks mode) 之间的区别是什么？
