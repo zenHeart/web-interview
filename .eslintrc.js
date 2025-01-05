@@ -7,7 +7,8 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'standard',
-    'plugin:mocha/recommended'
+    'plugin:mocha/recommended',
+    'plugin:mdx/recommended'
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -23,7 +24,10 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.md'],
-      processor: 'markdown/markdown'
+      processor: 'markdown/markdown',
+      rules: {
+        'no-multiple-empty-lines': 'off'
+      }
     },
     {
       files: ['**/*.ts', '**/*.tsx'],
@@ -40,5 +44,8 @@ module.exports = {
   ],
   rules: {
     'mocha/no-setup-in-describe': 'off'
+  },
+  settings: {
+    'mdx/code-blocks': true
   }
 }

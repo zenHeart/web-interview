@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
+    "start": "docusaurus start --host 0.0.0.0",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "./scripts/deploy-book.sh",
@@ -42,6 +42,7 @@
     "eslint": "^8.5.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-mdx": "^3.1.5",
     "eslint-plugin-mocha": "^10.5.0",
     "husky": "^9.1.6",
     "lerna": "^3.14.1",
@@ -53,8 +54,10 @@
     "@docusaurus/core": "3.7.0",
     "@docusaurus/faster": "^3.7.0",
     "@docusaurus/preset-classic": "3.7.0",
+    "@docusaurus/theme-live-codeblock": "^3.7.0",
     "@mdx-js/react": "^3.0.0",
     "clsx": "^2.0.0",
+    "js-yaml": "^4.1.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

@@ -1,8 +1,4 @@
-<!-- import CodeImport from '@site/src/components/templates/CodeImport' -->
-
 # 实现 call 或 apply 方法?
-
-<!-- <CodeImport file="./answer.js" /> -->
 
 核心考点:
 

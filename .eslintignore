@@ -2,3 +2,4 @@
 // ...existing code...
 book/
 *.json
+_*.mdx

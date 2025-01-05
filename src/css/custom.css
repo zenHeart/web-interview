@@ -28,3 +28,32 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.question-wrapper {
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: 8px;
+}
+
+.question-content,
+.question-answer,
+.question-reference {
+  margin: 1rem 0;
+}
+
+details summary {
+  cursor: pointer;
+  color: var(--ifm-color-primary);
+  font-weight: bold;
+}
+
+details[open] summary {
+  margin-bottom: 1rem;
+}
+
+.question-wrapper h2 {
+  margin-top: 0;
+  color: var(--ifm-color-primary);
+  font-size: 1.5rem;
+}
