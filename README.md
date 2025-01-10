@@ -78,6 +78,10 @@ npm  test
 
 ## 资料清单
 
+* [front-end-handbook](https://frontendmasters.com/guides/front-end-handbook/2024/)
+* js
+  * [X] [26 Important JavaScript Questions](https://www.toptal.com/javascript/interview-questions) 已收录
+
 * [ ] [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
 * [ ] [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
 * [ ] web 面试官系列 <https://vue3js.cn/interview/>
@@ -101,3 +105,4 @@ npm  test
 * [ ] awsome interview <https://github.com/Awesome-Interview/Awesome-Interview?tab=readme-ov-file>
 * [ ] frontend interview <https://github.com/evestorm/front-end-interview>
 * [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
+* [ ] [interview quesiont](https://github.com/pro-collection/interview-question)

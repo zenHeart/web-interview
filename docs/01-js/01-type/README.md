@@ -45,6 +45,8 @@ import Answer from '@site/src/components/templates/Answer.tsx';
 
 ## Number
 
+### IEEE 754
+
 ```js
 // 说出下面语句的执行结果，并解释原因
 console.log(0.1 + 0.2)
@@ -72,6 +74,10 @@ console.log(0.1 + 0.2 === 0.3)
 整数的加法运算符?
 
 </Answer>
+
+### 什么是 NaN ，它的类型，如何判断 NaN?
+
+### 如何判断一个数值是整数，实现 isInteger
 
 ## js 中类型转换规则？
 

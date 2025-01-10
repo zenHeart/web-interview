@@ -1,7 +1,5 @@
 # 网络
 
-
-
 ## tcp
 
 tcp 和 udp 基础
@@ -33,6 +31,7 @@ tcp 和 udp 基础
 ## Long-Polling、Websockets 和 Server-Sent Event 之间有什么区别？
 
 ## 请描述以下 request 和 response headers?
+
 * Diff. between Expires, Date, Age and If-Modified-…
 * Do Not Track
 * Cache-Control

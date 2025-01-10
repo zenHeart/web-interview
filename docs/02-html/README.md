@@ -74,6 +74,38 @@
 
 ### 写一个幻灯片效果
 
+* Cookie和Session区别？‘
+
+## URL 从解析到渲染过程
+
+1. URL 解析
+2. DNS 解析
+3. TCP 连接建立
+4. 发送 HTTP 请求
+5. 服务器处理请求并响应
+6. 浏览器解析响应
+   * HTML 解析
+   * CSS 解析
+   * JavaScript 解析
+7. 构建 DOM 树和 CSSOM 树
+8. 生成渲染树
+9. 布局（Layout）
+10. 绘制（Paint）
+
+## JavaScript async/defer
+
+async:
+
+* 异步加载
+* 加载完立即执行
+* 不保证执行顺序
+
+defer:
+
+* 异步加载
+* DOM 解析完成后执行
+* 按照顺序执行
+
 ## 待整理
 
 * 元素的分类

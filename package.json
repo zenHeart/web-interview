@@ -16,7 +16,8 @@
     "typecheck": "tsc",
     "test": "mocha  -t 10000  -w src/**/*.test.js",
     "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "demo:tfo": "node docs/network/tcp/examples/tfo.js"
   },
   "repository": {
     "type": "git",
