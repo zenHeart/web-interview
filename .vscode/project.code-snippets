@@ -1,14 +1,14 @@
 {
    "import Anwer": {
-      "prefix": "ia",
+      "prefix": "importAnswer",
       "scope": "markdown",
       "body": [
-         "import Question from '@site/src/components/templates/Answer.tsx';",
+         "import Answer from '@site/src/components/templates/Answer.tsx';",
       ],
       "description": "import answer component"
    },
    "Answer": {
-      "prefix": "nquestion",
+      "prefix": "answer",
       "scope": "markdown",
       "body": [
          "<Answer>",

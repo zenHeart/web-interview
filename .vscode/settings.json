@@ -15,5 +15,8 @@
   "markdownlint.config": {
     "default": true
   },
-  "editor.tabSize": 3
+  "editor.tabSize": 3,
+  "files.exclude": {
+    "**/issuesData.md": true
+  }
 }

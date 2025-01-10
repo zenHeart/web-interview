@@ -1,7 +1,7 @@
 import { themes as prismThemes } from 'prism-react-renderer'
 import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
-
+import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
@@ -19,29 +19,67 @@ const config: Config = {
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  // exclude: [
+  //   '**/*.test.{js,jsx,ts,tsx}', // 排除测试文件
+  //   '**/questions/**', // 排除所有 questions 目录
+  //   '**/quiz/**', // 排除所有例题目录
+  //   '**/answers/**', // 排除所有 answers 目录
+  //   '**/*.question.{md,mdx}' // 排除所有 questions 目录
+  // ],
+
   i18n: {
     defaultLocale: 'zh-hans',
     locales: ['zh-hans']
   },
-
+  plugins: [
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'contributors',
+        path: 'contributors',
+        routeBasePath: 'contributors',
+        sidebarPath: './sidebarsContributors.ts',
+        breadcrumbs: true,
+        editUrl: ({ docPath }) => {
+          return `'https://github.com/zenHeart/web-interview/edit/main/${docPath}`
+        },
+        // 添加其他必要的文档配置
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true
+      } satisfies DocsOptions
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'company',
+        path: 'company',
+        routeBasePath: 'company',
+        sidebarPath: './sidebarsCompany.ts',
+        breadcrumbs: true,
+        editUrl: ({ docPath }) => {
+          return `'https://github.com/zenHeart/web-interview/edit/main/${docPath}`
+        },
+        // 添加其他必要的文档配置
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true
+      } satisfies DocsOptions
+    ]
+  ],
   presets: [
     [
       'classic',
       {
         docs: {
+          path: 'docs',
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/zenHeart',
           exclude: [
             '**/*.test.{js,jsx,ts,tsx}', // 排除测试文件
-            '**/questions/**', // 排除所有questions目录
-            '**/*.question.{md,mdx}' // 排除所有questions目录
-          ]
+            '**/questions/**', // 排除所有 questions 目录
+            '**/quiz/**', // 排除所有例题目录
+            '**/answers/**', // 排除所有 answers 目录
+            '**/*.question.{md,mdx}' // 排除所有 questions 目录
+          ],
+          editUrl: 'https://github.com/zenHeart'
         },
         theme: {
           customCss: './src/css/custom.css'
@@ -58,7 +96,21 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial'
+          label: 'questions'
+        },
+        {
+          type: 'doc',
+          docId: 'index',
+          docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
+          position: 'left',
+          label: 'contributors'
+        },
+        {
+          type: 'doc',
+          docId: 'index',
+          docsPluginId: 'company', // 确保这里指向正确的插件 ID
+          position: 'left',
+          label: 'company'
         },
         {
           href: 'https://github.com/zenHeart/web-interview',
@@ -69,32 +121,13 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
-      links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro'
-            }
-          ]
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/zenHeart/web-interview'
-            }
-          ]
-        }
-      ],
       copyright: `Copyright © ${new Date().getFullYear()} Web Interview, Inc. Built with ZenHeart.`
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula
     }
+
   } satisfies Preset.ThemeConfig
 }
 

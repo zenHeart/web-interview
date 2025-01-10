@@ -3,3 +3,4 @@
 book/
 *.json
 _*.mdx
+docs/issuesData.md
