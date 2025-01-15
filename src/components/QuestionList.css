@@ -1,0 +1,40 @@
+.api-reference {
+  padding: 20px;
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.api-group {
+  margin-top: 30px;
+  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.group-title {
+  font-size: 1.5em;
+  color: #4caf50; /* 绿色 */
+  margin-bottom: 10px;
+}
+
+.question-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.question-item {
+  margin: 5px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: background-color 0.3s;
+}
+
+.question-item:hover {
+  background-color: #f0f0f0; /* 悬停效果 */
+}

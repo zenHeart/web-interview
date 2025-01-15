@@ -2,9 +2,12 @@ import { themes as prismThemes } from 'prism-react-renderer'
 import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+import extractQuestionsPlugin from './src/plugins/extractQuestions/index'
 
 const config: Config = {
+  customFields: {
+    questions: []
+  },
   themes: ['@docusaurus/theme-live-codeblock'],
   future: {
     experimental_faster: true
@@ -32,6 +35,7 @@ const config: Config = {
     locales: ['zh-hans']
   },
   plugins: [
+    extractQuestionsPlugin,
     [
       '@docusaurus/plugin-content-docs',
       {
