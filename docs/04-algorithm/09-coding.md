@@ -2,7 +2,7 @@
 
 ### [leetcode Fizz Buzz 问题](https://leetcode-cn.com/problems/fizz-buzz/)
 
-[fizz-buzz 解答](./fizz-buzz.js)
+> ./fizz-buzz.js
 
 ### 寻找首次匹配子序列
 

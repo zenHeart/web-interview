@@ -93,7 +93,9 @@ console.log(0.1 + 0.2 === 0.3)
    1. 采用 Boolean,Number,String 等构造器初始化
    2. 利用 [parseInt](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/parseInt) 转换为整形
 
-类型转换测试用例参见 [type-convert](type-convert.test.js)
+类型转换测试用例参见
+
+> type-convert.test.js
 
 对象在隐式类型转换中会涉及如下三个函数:
 

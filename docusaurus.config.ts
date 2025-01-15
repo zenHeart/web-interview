@@ -11,7 +11,7 @@ const config: Config = {
   },
   title: 'web-interview',
   url: 'https://blog.zenheart.site',
-  baseUrl: '/',
+  baseUrl: '/web-interview/',
 
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
   projectName: 'wweb-interview', // Usually your repo name.
@@ -40,9 +40,6 @@ const config: Config = {
         routeBasePath: 'contributors',
         sidebarPath: './sidebarsContributors.ts',
         breadcrumbs: true,
-        editUrl: ({ docPath }) => {
-          return `'https://github.com/zenHeart/web-interview/edit/main/${docPath}`
-        },
         // 添加其他必要的文档配置
         showLastUpdateAuthor: true,
         showLastUpdateTime: true
@@ -56,9 +53,6 @@ const config: Config = {
         routeBasePath: 'company',
         sidebarPath: './sidebarsCompany.ts',
         breadcrumbs: true,
-        editUrl: ({ docPath }) => {
-          return `'https://github.com/zenHeart/web-interview/edit/main/${docPath}`
-        },
         // 添加其他必要的文档配置
         showLastUpdateAuthor: true,
         showLastUpdateTime: true
@@ -78,8 +72,7 @@ const config: Config = {
             '**/quiz/**', // 排除所有例题目录
             '**/answers/**', // 排除所有 answers 目录
             '**/*.question.{md,mdx}' // 排除所有 questions 目录
-          ],
-          editUrl: 'https://github.com/zenHeart'
+          ]
         },
         theme: {
           customCss: './src/css/custom.css'
