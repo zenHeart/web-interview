@@ -35,7 +35,12 @@ const config: Config = {
     locales: ['zh-hans']
   },
   plugins: [
-    extractQuestionsPlugin,
+    [
+      extractQuestionsPlugin,
+      {
+        exclude: ['issueData']
+      }
+    ],
     [
       '@docusaurus/plugin-content-docs',
       {
@@ -110,6 +115,11 @@ const config: Config = {
           label: 'company'
         },
         {
+          to: '/reference',
+          label: 'reference',
+          position: 'left'
+        },
+        {
           href: 'https://github.com/zenHeart/web-interview',
           label: 'GitHub',
           position: 'right'
@@ -124,7 +134,6 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula
     }
-
   } satisfies Preset.ThemeConfig
 }
 

@@ -1,44 +1,49 @@
 import React from 'react'
+import './QuestionList.css'
 import { usePluginData } from '@docusaurus/useGlobalData'
-import './QuestionList.css' // 引入样式文件
+import type { Question } from '../plugins/extractQuestions'
 
-const getGroup = (title) => {
-  if (title.toLowerCase().includes('vue')) return 'Vue'
-  if (title.toLowerCase().includes('react')) return 'React'
-  if (title.toLowerCase().includes('js')) return 'JavaScript'
-  if (title.toLowerCase().includes('html')) return 'HTML'
-  if (title.toLowerCase().includes('css')) return 'CSS'
-  if (title.toLowerCase().includes('.net')) return 'NET'
-  return 'Other'
-}
 function QuestionList () {
-  const { questions = [] } = usePluginData('extract-questions-plugin')
-  if (!questions || !Array.isArray(questions)) {
-    return null // 或者返回一个加载中的提示组件
-  }
-  const groups = {}
-  // 将问题按组分类
-  questions.forEach(({ title }) => {
-    const group = getGroup(title)
-    if (!groups[group]) {
-      groups[group] = { group, items: [] }
-    }
-    groups[group].items.push({ title })
-  })
+  const { questions = [] } = usePluginData('extract-questions-plugin') as { questions: Question[] }
 
-  const groupList = Object.values(groups)
+  // 按 domain 和 topic 组织数据
+  const organizedQuestions = questions.reduce((acc, question) => {
+    const { domain, topic, title } = question
+
+    if (!acc[domain]) {
+      acc[domain] = {}
+    }
+
+    const topicName = topic
+    if (!acc[domain][topicName]) {
+      acc[domain][topicName] = []
+    }
+
+    acc[domain][topicName].push(title)
+    return acc
+  }, {} as Record<string, Record<string, string[]>>)
 
   return (
     <div className="api-reference">
-      <h1>Questions Reference</h1>
-      {groupList.map(({ group, items }) => (
-        <div key={group} className="api-group">
-          <h2 className="group-title">{group}</h2>
-          <ul className="question-list">
-            {items.map(({ title }) => (
-              <li key={title} className="question-item">{title}</li>
+      {Object.entries(organizedQuestions).map(([domain, topics]) => (
+        <div key={domain} className="domain-section">
+          <h1 className="domain-title">{domain}</h1>
+          <div className="topics-container">
+            {Object.entries(topics).map(([topic, titles]) => (
+              <div key={topic} className="topic-block">
+                <h2 className="topic-title">{topic}</h2>
+                <div className="question-list-container">
+                  <ul className="question-list">
+                    {titles.map((title) => (
+                      <li key={title} className="question-item">
+                        {title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       ))}
     </div>

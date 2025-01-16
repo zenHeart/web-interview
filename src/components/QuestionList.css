@@ -1,40 +1,105 @@
 .api-reference {
   padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
+/* Domain 部分样式 */
+.domain-section {
+  margin-bottom: 48px;
 }
 
-.api-group {
-  margin-top: 30px;
-  border: 1px solid #e0e0e0;
-  padding: 15px;
-  border-radius: 5px;
-  background-color: #f9f9f9;
+.domain-title {
+  font-size: 2.5em;
+  color: #213547;
+  margin-bottom: 24px;
+  font-weight: 600;
 }
 
-.group-title {
-  font-size: 1.5em;
-  color: #4caf50; /* 绿色 */
-  margin-bottom: 10px;
+/* Topics 容器样式 */
+.topics-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin: 0 -12px;
 }
 
+/* Topic 块样式 */
+.topic-block {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 24px;
+  height: fit-content;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topic 标题样式 */
+.topic-title {
+  color: #42b883;
+  font-size: 1.2em;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* 问题列表容器 */
+.question-list-container {
+  flex: 1;
+  overflow-y: auto;
+  /* 自定义滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: #42b883 #f9f9f9;
+}
+
+/* Webkit 浏览器的滚动条样式 */
+.question-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.question-list-container::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+.question-list-container::-webkit-scrollbar-thumb {
+  background-color: #42b883;
+  border-radius: 3px;
+}
+
+/* 问题列表样式 */
 .question-list {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
+  margin: 0;
 }
 
+/* 问题项样式 */
 .question-item {
-  margin: 5px 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #fff;
-  transition: background-color 0.3s;
+  color: #476582;
+  padding: 8px 0;
+  font-size: 0.95em;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
 .question-item:hover {
-  background-color: #f0f0f0; /* 悬停效果 */
+  color: #42b883;
+}
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+  .topics-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .topics-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .topic-block {
+    max-height: 70vh;
+  }
 }
