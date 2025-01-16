@@ -507,93 +507,6 @@ console.log(merged.get(3)) // three
 
 不过 Map 和 Object 有一些重要的区别，在下列情况中使用 Map 会是更好的选择：
 
-<table class="standard-table">
- <thead>
- <tr>
- <th scope="row"></th>
- <th scope="col">Map</th>
- <th scope="col">Object</th>
- </tr>
- </thead>
- <tbody>
- <tr>
- <th scope="row">意外的键</th>
- <td><code>Map</code> 默认情况不包含任何键。只包含显式插入的键。</td>
- <td>
- <p>一个 <code>Object</code> 有一个原型，原型链上的键名有可能和你自己在对象上的设置的键名产生冲突。</p>
- <div class="notecard note" id="sect1">
- <p><strong>备注：</strong>虽然可以用 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create"><code>Object.create(null)</code></a> 来创建一个没有原型的对象，但是这种用法不太常见。</p>
- </div>
- </td>
- </tr>
- <tr>
- <th scope="row">键的类型</th>
- <td>一个 <code>Map</code> 的键可以是<strong>任意值</strong>，包括函数、对象或任意基本类型。</td>
- <td>一个 <code>Object</code> 的键必须是一个 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String"><code>String</code></a> 或是 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol"><code>Symbol</code></a>。</td>
- </tr>
- <tr>
- <th scope="row">键的顺序</th>
- <td>
- <p><code>Map</code> 中的键是有序的。因此，当迭代的时候，一个 <code>Map</code> 对象以插入的顺序返回键值。</p>
- </td>
- <td>
- <p>虽然 <code>Object</code> 的键目前是有序的，但并不总是这样，而且这个顺序是复杂的。因此，最好不要依赖属性的顺序。</p>
- <p>
- 自 ECMAScript 2015 规范以来，对象的属性被定义为是有序的；ECMAScript 2020 则额外定义了继承属性的顺序。参见 <a href="https://tc39.es/ecma262/#sec-ordinaryownpropertykeys" class="external" target="_blank">OrdinaryOwnPropertyKeys</a>
- 和
- <a href="https://tc39.es/ecma262/#sec-enumerate-object-properties" class="external" target="_blank">EnumerateObjectProperties</a> 抽象规范说明。但是，请注意没有可以迭代对象所有属性的机制，每一种机制只包含了属性的不同子集。（<a href="/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in"><code>for-in</code></a>
- 仅包含了以字符串为键的属性；<a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys"><code>Object.keys</code></a>
- 仅包含了对象自身的、可枚举的、以字符串为键的属性；<a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertyNames"><code>Object.getOwnPropertyNames</code></a>
- 包含了所有以字符串为键的属性，即使是不可枚举的；<a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/getOwnPropertySymbols"><code>Object.getOwnPropertySymbols</code></a>
- 与前者类似，但其包含的是以 <code>Symbol</code> 为键的属性，等等。）
- </p>
- </td>
- </tr>
- <tr>
- <th scope="row">Size</th>
- <td><code>Map</code> 的键值对个数可以轻易地通过 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map/size"><code>size</code></a> 属性获取。</td>
- <td><code>Object</code> 的键值对个数只能手动计算。</td>
- </tr>
- <tr>
- <th scope="row">迭代</th>
- <td><code>Map</code> 是 <a href="/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols">可迭代的</a> 的，所以可以直接被迭代。</td>
- <td>
- <p><code>Object</code> 没有实现 <a href="/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols#the_iterable_protocol">迭代协议</a>，所以使用 JavaSctipt 的 <a href="/zh-CN/docs/Web/JavaScript/Reference/Statements/for...of">for...of</a> 表达式并不能直接迭代对象。</p>
- <div class="notecard note" id="sect2">
- <p><strong>备注：</strong></p>
- <ul>
- <li>对象可以实现迭代协议，或者你可以使用 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/keys"><code>Object.keys</code></a> 或 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/entries"><code>Object.entries</code></a>。</li>
- <li>
- <a href="/zh-CN/docs/Web/JavaScript/Reference/Statements/for...in">for...in</a>
- 表达式允许你迭代一个对象的<em>可枚举</em>属性。
- </li>
- </ul>
- </div>
- </td>
- </tr>
- <tr>
- <th scope="row">性能</th>
- <td>
- <p>在频繁增删键值对的场景下表现更好。</p>
- </td>
- <td>
- <p>在频繁添加和删除键值对的场景下未作出优化。</p>
- </td>
- </tr>
- <tr>
- <th scope="row">序列化和解析</th>
- <td>
- <p>没有元素的序列化和解析的支持。</p>
- <p>（但是你可以使用携带 <em>replacer</em> 参数的 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"><code>JSON.stringify()</code></a> 创建一个自己的对 <code>Map</code> 的序列化和解析支持。参见 Stack Overflow 上的提问：<a href="https://stackoverflow.com/q/29085197/" class="external" target="_blank">How do you JSON.stringify an ES6 Map?</a>）</p>
- </td>
- <td>
- <p>原生的由 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object"><code>Object</code></a> 到 JSON 的序列化支持，使用 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify"><code>JSON.stringify()</code></a>。</p>
- <p>原生的由 JSON 到 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object"><code>Object</code></a> 的解析支持，使用 <a href="/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse"><code>JSON.parse()</code></a>。</p>
- </td>
- </tr>
- </tbody>
-</table>
-
 ## 6 如何检测对象是否循环引用？
 
 * created_at: 2023-03-06T15:19:30Z
@@ -1347,7 +1260,7 @@ et 和 const 与 var 的区别
 分区过程：将比这个“基准”大的数全放到“基准”的右边，小于或等于“基准”的数全放到“基准”的左边。
 再对左右区间重复第二步，直到各区间只有一个数。
 ```javascript
-var quickSort = function (arr) {
+const quickSort = function (arr) {
   if (arr.length <= 1) { return arr }
   const pivotIndex = Math.floor(arr.length / 2) // 基准位置（理论上可任意选取）
   const pivot = arr.splice(pivotIndex, 1)[0] // 基准数
@@ -1697,16 +1610,19 @@ frame 是否可以使用 postMessage 通信？
 不同的 iframe 和同一个页面之间也可以通过 postMessage 方法进行通信。这种情况下，通信的流程和同一页面中不同窗口的通信流程基本相同。只不过发送方和接收方不在同一页面中，而是在不同的 iframe 中。假设页面 A 中有两个 iframe，一个是 B 页面，另一个是 C 页面，现在需要在这两个 iframe 之间进行通信，具体的实现过程如下：
 
 在 B 页面的脚本中使用 postMessage 方法向父级页面 A 发送消息：
+
 ```js
 window.parent.postMessage('message from B', 'http://localhost:3000')
 ```
 
 在 C 页面的脚本中使用 postMessage 方法向父级页面 A 发送消息：
+
 ```js
 window.parent.postMessage('message from C', 'http://localhost:3000')
 ```
 
 在页面 A 的脚本中监听 message 事件，接收来自不同 iframe 的消息：
+
 ```js
 window.addEventListener('message', function (event) {
   // 判断消息来源是否是指定的 iframe
@@ -7643,58 +7559,6 @@ new Promise((resolve, reject) => {
 
 面是一个简单的表格对比
 
-<table>
- <thead>
- <tr>
- <th>浏览器内核</th>
- <th>开发公司</th>
- <th>代表浏览器</th>
- <th>支持程度</th>
- <th>渲染引擎</th>
- <th>JavaScript引擎</th>
- <th>浏览器兼容性</th>
- </tr>
- </thead>
- <tbody>
- <tr>
- <td>Trident</td>
- <td>Microsoft</td>
- <td>Internet Explorer</td>
- <td>一般</td>
- <td>一般</td>
- <td>出色</td>
- <td>差</td>
- </tr>
- <tr>
- <td>Gecko</td>
- <td>Mozilla</td>
- <td>Firefox</td>
- <td>较好</td>
- <td>较好</td>
- <td>出色</td>
- <td>好</td>
- </tr>
- <tr>
- <td>WebKit</td>
- <td>Apple</td>
- <td>Safari</td>
- <td>出色</td>
- <td>出色</td>
- <td>出色</td>
- <td>好</td>
- </tr>
- <tr>
- <td>Blink</td>
- <td>Google and Opera Software</td>
- <td>Chrome and Opera</td>
- <td>出色</td>
- <td>出色</td>
- <td>出色</td>
- <td>好</td>
- </tr>
- </tbody>
-</table>
-
 ## 66 重绘与重排的区别？
 
 * created_at: 2023-03-11T07:47:40Z
@@ -8732,7 +8596,7 @@ const show = function (target) {
   target.style.display = 'inline-block'
 }
 // 回调函数
-var removeCallback = function () {
+const removeCallback = function () {
   removeBtn.removeEventListener('click', removeCallback, false)
   addBtn.removeEventListener('click', addCallback, false)
   hide(addBtn)
@@ -10166,9 +10030,11 @@ UI 组件有以下几个特征。
 * 不使用任何 Redux 的 API
 
 下面就是一个 UI 组件的例子。
+
 ```javascript
 const Title = value => <h1>{value}</h1>
 ```
+
 因为不含有状态，UI 组件又称为"纯组件"，即它纯函数一样，纯粹由参数决定它的值。
 
  容器组件
@@ -10570,11 +10436,9 @@ componentWillUnmount() // 组件被卸载的时候调用，一般在componentDid
 **2.子向父**
 . 使用自定义事件
 . 每个 Vue 实例都接入了一个事件接口(events interface)，也就是说，这些 Vue 实例可以做到：
-. 使用 <mi>o</mi><mi>n</mi><mo>(</mo><mi>e</mi><mi>v</mi><mi>e</mi><mi>n</mi><mi>t</mi><mi>N</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>)</mo><mrow><mo>&#x76D1;</mo></mrow><mrow><mo>&#x542C;</mo></mrow><mrow><mo>&#x4E00;</mo></mrow><mrow><mo>&#x4E2A;</mo></mrow><mrow><mo>&#x4E8B;</mo></mrow><mrow><mo>&#x4EF6;</mo></mrow><mo>&#x2212;</mo><mrow><mo>&#x4F7F;</mo></mrow><mrow><mo>&#x7528;</mo></mrow>" role="presentation" style="position: relative;"><nobr>on(eventName)监听一个事件−使用</nobr><math><mi>o</mi><mi>n</mi><mo>(</mo><mi>e</mi><mi>v</mi><mi>e</mi><mi>n</mi><mi>t</mi><mi>N</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>)</mo><mrow><mo>监</mo></mrow><mrow><mo>听</mo></mrow><mrow><mo>一</mo></mrow><mrow><mo>个</mo></mrow><mrow><mo>事</mo></mrow><mrow><mo>件</mo></mrow><mo>−</mo><mrow><mo>使</mo></mrow><mrow><mo>用</mo></mrow></math>emit(eventName) 触发一个事件
 
 **3. 非父子组件通信**
-. 可以使用一个空的 Vue 实例作为一个事件总线中心(central event bus)，用<mi>e</mi><mi>m</mi><mi>i</mi><mi>t</mi><mrow><mo>&#x89E6;</mo></mrow><mrow><mo>&#x53D1;</mo></mrow><mrow><mo>&#x4E8B;</mo></mrow><mrow><mo>&#x4EF6;</mo></mrow><mrow><mo>&#xFF0C;</mo></mrow>" role="presentation" style="position: relative;"><nobr>emit触发事件，</nobr><math><mi>e</mi><mi>m</mi><mi>i</mi><mi>t</mi><mrow><mo>触</mo></mrow><mrow><mo>发</mo></mrow><mrow><mo>事</mo></mrow><mrow><mo>件</mo></mrow><mrow><mo>，</mo></mrow></math>on监听事件
-
+. 可以使用一个空的 Vue 实例作为一个事件总线中心(central event bus)
  2.2.5 单向数据流
 
 单向数据流示意图：
@@ -13267,6 +13131,7 @@ for (const value of iterable) {
 
 Map 对象就是保存 key-value(键值) 对。对象和原始值可以用作 key(键)或 value(值)。
 Map 对象根据其插入方式迭代元素。换句话说， for...of 循环将为每次迭代返回一个 key-value(键值) 数组。
+
 ```js
 // map-example.js
 const iterable = new Map([['one', 1], ['two', 2]])
@@ -16111,7 +15976,7 @@ myVue.prototype._complie = function (root) { root 为 id为app的Element元素�
 
 附上全部代码，不到150行
 
-```xml
+```html
 <!DOCTYPE html>
 <head>
  <title>myVue</title>
@@ -16137,6 +16002,7 @@ myVue.prototype._complie = function (root) { root 为 id为app的Element元素�
 </body>
 
 <script>
+
  function myVue(options) {
  this._init(options);
  }
@@ -16263,8 +16129,7 @@ myVue.prototype._complie = function (root) { root 为 id为app的Element元素�
  }
  })
  }
-</script>
-
+ </script>
 ```
 
 如果喜欢请关注我的[Github](https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Flouzhedong%2Fblog "https://github.com/louzhedong/blog")，给个[Star](https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Flouzhedong%2Fblog "https://github.com/louzhedong/blog")吧，我会定期分享一些JS中的知识，^\_^
@@ -16328,7 +16193,7 @@ console.log(a) // 抛出错误："Uncaught ReferenceError: a is not defined"
 
 ```javascript
 (function (window) {
-  var jQuery = function (selector, context) {
+  const jQuery = function (selector, context) {
     return new jQuery.fn.init(selector, context)
   }
   jQuery.fn = jQuery.prototype = function () {
@@ -52194,7 +52059,7 @@ JavaScript 的加载、解析和执行默认情况下会阻塞浏览器的渲染
 1. **Utility Types（工具类型）**：
 
 * **Partial\<T>**: 将类型 T 的所有属性变为可选。
-* **Required\<T>**: 将类型 T 的所有属性变为必选。
+* **Requied\<T>**: 将类型 T 的所有属性变为必选。
 * **Readonly\<T>**: 将类型 T 的所有属性变为只读。
 * **Record\<K, T>**: 创建一个具有指定键类型 K 和值类型 T 的新对象类型。
 * **Pick\<T, K>**: 从类型 T 中选择指定属性 K 形成新类型。
@@ -64870,7 +64735,7 @@ const map = ref(new Map())
 map.value.set('key', 'value') // 不会触发视图更新，除非重新赋值给 map.value
 ```
 
- 总结
+总结
 
 当处理深层嵌套的对象、数组或内置数据结构时：
 
@@ -64923,11 +64788,11 @@ map.value.set('key', 'value') // 不会触发视图更新，除非重新赋值�
 > 前三条是官网自己总结的限制， 属于核心限制
 > 后面提交是作者自行补充
 
- 1. 基本数据类型不是响应式的
+1. 基本数据类型不是响应式的
 
 `reactive` 只能将对象或数组转换为响应式对象。对于基本数据类型（如字符串、数字、布尔值等），`reactive` 无法将其转换为响应式的。如果需要使基本类型数据响应式，应使用 `ref`。
 
- 2. 不能替换整个对象
+2. 不能替换整个对象
 
 当你使用 `reactive` 创建响应式对象后，如果尝试直接替换掉整个响应式对象，新对象不会自动成为响应式的。这是因为 `reactive` 返回的是原始对象的代理（Proxy），直接替换原始对象并不会改变已经建立的代理关系。解决办法是通过修改对象的属性来实现，或者使用 `ref` 并对其 `.value` 进行替换，后者可以保持响应性。
 
@@ -64943,7 +64808,7 @@ state = { count: 1 }
 state.count = 1
 ```
 
- 3. 对解构操作不友好
+3. 对解构操作不友好
 
 Vue 3 `reactive` 对象在进行解构操作时会失去其响应性，这是因为解构操作本质上是对对象属性的值进行了一次拷贝。如果对一个响应式对象进行解构赋值，那么得到的新变量不会是响应式的。为了在解构后保持响应性，Vue 3 提供了 `toRefs` 和 `toRef` 函数。
 

@@ -16,8 +16,5 @@
     "default": true
   },
   "editor.tabSize": 3,
-  "files.exclude": {
-    "**/issuesData.md": true
-  },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

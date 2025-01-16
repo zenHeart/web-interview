@@ -40,3 +40,4 @@ npm  test
 * [ ] frontend interview <https://github.com/evestorm/front-end-interview>
 * [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
 * [ ] [interview quesiont](https://github.com/pro-collection/interview-question)
+* [ ] [javascript  中文网](https://www.javascriptcn.com/interview/)
