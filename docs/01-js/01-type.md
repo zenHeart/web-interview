@@ -1,6 +1,6 @@
 # 类型
 
-## javascript 中有几种类型 ?
+## javascript 中有几种数据类型 ?
 
 <Answer>
 
@@ -17,7 +17,9 @@
     - Object
     - Function
     - Set
+    - WeackSet
     - Map
+    - WeakMap
     - Array
     - Regexp
   - 宿主对象 取决于运行环境，如浏览器、Node.js
@@ -40,6 +42,11 @@
 详细区别参考 [阮一峰 undefined 与 null 的区别](https://www.ruanyifeng.com/blog/2014/03/undefined-vs-null.html)
 
 </Answer>
+
+## Symbol
+
+1. 定义无冲突的属性名
+2. 自定义内部方法
 
 ## Number
 

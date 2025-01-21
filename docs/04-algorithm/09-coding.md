@@ -653,3 +653,15 @@ class Twitter {
     - 难度：中等
     - 考点：树的遍历、递归
     - 应用场景：DOM树操作、组件树处理
+
+## [leetcode 单链表反转](https://leetcode.com/problems/reverse-linked-list/)
+
+## [leetcode 链表相邻元素交换](https://leetcode-cn.com/problems/swap-nodes-in-pairs/)
+
+## [leetcode 是否有环](https://leetcode-cn.com/problems/linked-list-cycle/)
+
+## [leetcode 返回环的开始点](https://leetcode-cn.com/problems/linked-list-cycle-ii/)
+
+## [leetcode 链表中元素 k 为一组交换](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
+
+## 有序数组合并，双指针

@@ -2,6 +2,8 @@
 
 该部分放置 css 相关概念的考察点
 
+## 层叠优先级
+
 ### css 选择器优先级如何计算? ⭐️⭐️⭐️⭐️⭐️
 
 详见 [css 选择器优先级](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#css-%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E6%98%AF%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E7%9A%84)

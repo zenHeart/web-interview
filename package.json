@@ -14,7 +14,7 @@
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
-    "test": "mocha  -t 10000  -w docs/**/07-coding/*.test.js",
+    "test": "mocha  -t 10000  -w docs/01-js/**/*.test.js",
     "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
     "prepare": "husky",
     "demo:tfo": "node docs/network/tcp/examples/tfo.js"
@@ -60,6 +60,7 @@
     "clsx": "^2.0.0",
     "fast-glob": "^3.3.3",
     "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
     "prism-react-renderer": "^2.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
