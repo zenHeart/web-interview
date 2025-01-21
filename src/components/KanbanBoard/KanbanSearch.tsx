@@ -98,7 +98,7 @@ function KanbanSearch ({ onSearch }: SearchProps) {
         placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
       />
       {shouldShowHelp && (
-        <div 
+        <div
           className="search-help"
           onMouseEnter={() => setIsHoveringHelp(true)}
           onMouseLeave={() => setIsHoveringHelp(false)}
@@ -111,8 +111,8 @@ function KanbanSearch ({ onSearch }: SearchProps) {
           <ul className="help-list">
             {SearchExamples.map((example, index) => (
               <li key={index}>
-                <code 
-                  className="example-text" 
+                <code
+                  className="example-text"
                   onClick={() => {
                     setSearchText(example.search)
                     setIsFocused(false)
