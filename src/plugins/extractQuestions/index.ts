@@ -57,7 +57,7 @@ export default function extractQuestionsPlugin (
               const titleWithAnchor = match.slice(3).trim()
               const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)
               const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
-              const priority = anchorMatch.toUpperCase() : undefined
+              const priority = anchorMatch?.toUpperCase?.() || undefined
               const link = `/web-interview/docs/${domain}/${topic}#${title.toLowerCase().replace(/\s+/g, '-')}`
 
               return {
