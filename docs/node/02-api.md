@@ -1,3 +1,3 @@
 # node
 
-## stream {#p1-stream} ?
+## stream {#p1-stream}
