@@ -1,5 +1,12 @@
-## ready 和 load 区别?
+# 事件
 
+## 事件冒泡? {#p0-event-bubble}
+
+## 事件委托的作用和意义？ {#p1-event-delegate}
+
+## 说明 load,ready,DOMContentLoaded 的区别 {#p1-event-load-ready-domcontentloaded}
+
+<Answer>
 * ready  为 jqury 事件,为 domcontentLoad 触发 完成了 html 文档的解析就会触发,样式等元素还未加载
 * window loaded 在页面完全加载成功后触发包括图片脚本等
 
@@ -14,6 +21,8 @@
 
 参看 [资源加载和页面事件load, ready, DOMContentLoaded...
 ](https://zhuanlan.zhihu.com/p/30283138)
+
+</Answer>
 
 ## 事件冒泡机制?
 
@@ -57,7 +66,9 @@
 
 * [冒泡和捕获](https://javascript.info/bubbling-and-capturing)
 
-## 什么是事件委托
+## 什么是事件委托 {#p1-event-delegate}
+
+<Answer>
 
 事件委托是指在父节点集中处理子节点事件
 
@@ -67,40 +78,15 @@
 * 并非所有事件都会冒泡 blur，focus，load 和 unload 事件不冒泡像其他事件
 * 管理某些鼠标事件时需要谨慎。如果您的代码正在处理 mousemove 事件，那么您将面临创建性能瓶颈的严重风险，因为 mousemove 事件经常被触发。该 mouseout 事件具有奇怪的行为，难以通过事件委派来管理。
 
-## 典型示例
-
-### demo
-
-### jquery
-
-```js
-// eslint-disable-next-line
-$('#thing').click(
-  // eslint-disable-next-line
-  $.delegate({
-    '.quit': function () {
-      /* do quit stuff */
-    },
-    '.edit': function () {
-      /* do edit stuff */
-    }
-  })
-)
-```
-
-### 列表循环
-
-资料来源于 [Javascript: Closures vs Event Delegation](https://lists.evolt.org/archive/Week-of-Mon-20090209/127331.html)
-
-### focus blur 委派
-
-参加 [delegating_the](https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html)
-
-## 参考资料
-
+* [Javascript: Closures vs Event Delegation](https://lists.evolt.org/archive/Week-of-Mon-20090209/127331.html)
+* [delegating_the](https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html)
 * [event delegation](https://humanwhocodes.com/blog/2009/06/30/event-delegation-in-javascript/)
 * [stackoverflow event delegation](https://stackoverflow.com/questions/1687296/what-is-dom-event-delegation)
 * [ ] [事件委托模式](https://zh.javascript.info/event-delegation)
 * [ ] [jquery delegate](https://api.jquery.com/delegate/)
 * [ ] [jquery on](https://api.jquery.com/on/#direct-and-delegated-events)
 * [ ] [github delegate 源码](https://github.com/dgraham/delegated-events#readme)
+
+</Answer>
+
+## addEventListener绑定事件?参数不同的执行顺序 {#p1-event-add-event-listener}

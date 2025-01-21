@@ -1,4 +1,8 @@
-## attribute property 区别?
+# 属性
+
+## attribute property 区别? {#p0-attribute-property}
+
+<Answer>
 
 1. 从规范的角度 `attributes` 由 html 定义,`properties` 由 dom 定义
    * 少数 html `attribute` 有对应 `id` 映射,例如 id
@@ -32,3 +36,9 @@ attribute 方法
 2. `properties` 是 DOM 元素中所包含的信息,值有多种可能,大小写敏感
 
 > 参考 [attributes 和 properties](https://javascript.info/dom-attributes-and-properties)
+
+</Answer>
+
+## data- 属性的好处是什么？{#p1-data-attribute}
+
+* [data-](https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese)
