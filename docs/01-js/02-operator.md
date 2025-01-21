@@ -1,7 +1,7 @@
 
 # 操作符
 
-## `==` 和 `===` 区别
+## == 和 === 区别 {#p0-operator-equal}
 
 <Answer>
 
@@ -36,7 +36,14 @@
 
 ## typeof
 
-### 1. null 判断
+## 操作符优先级 {#p2-operator-priority}
+
+```js
+console.log(1 < 2 < 3)
+console.log(3 > 2 > 1)
+```
+
+## null 判断
 
 ```js
 typeof null

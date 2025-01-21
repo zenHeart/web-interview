@@ -1,15 +1,7 @@
 # js-草稿箱
 
-此处放置待整理内容
 
-* [ ] [JavaScript Quizzes](https://quiz.typeofnan.dev/)
 
-## 操作符优先级
-
-```js
-console.log(1 < 2 < 3)
-console.log(3 > 2 > 1)
-```
 
 ## 软技能，细心程度
 

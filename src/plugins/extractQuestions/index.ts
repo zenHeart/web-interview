@@ -55,11 +55,11 @@ export default function extractQuestionsPlugin (
 
             return matches.map(match => {
               const titleWithAnchor = match.slice(3).trim()
-              const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)
+              const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
               const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
-              const priority = anchorMatch?.toUpperCase?.() || undefined
-              const link = `/web-interview/docs/${domain}/${topic}#${title.toLowerCase().replace(/\s+/g, '-')}`
-
+              const priority = anchorMatch?.toUpperCase?.() || 'P4'
+              const fragments = anchorMatch ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1] : `#${title.toLowerCase().replace(/\s+/g, '-')}`
+              const link = `/web-interview/docs/${domain}/${topic}${fragments}`
               return {
                 title,
                 domain: domain || 'Other',
@@ -77,6 +77,7 @@ export default function extractQuestionsPlugin (
         return []
       }
     },
+
     async contentLoaded ({ content, actions }) {
       const { createData, setGlobalData } = actions
 

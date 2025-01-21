@@ -70,3 +70,12 @@
   font-size: 0.9em;
   color: var(--ifm-color-primary);
 }
+
+.example-text {
+  color: #1890ff;
+  cursor: pointer;
+}
+
+.example-text:hover {
+  opacity: 0.8;
+}

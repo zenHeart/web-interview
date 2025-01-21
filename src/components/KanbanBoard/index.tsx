@@ -3,6 +3,9 @@ import "./KanbanBoard.css";
 import { usePluginData } from "@docusaurus/useGlobalData";
 import type { Question } from "../plugins/extractQuestions";
 import KanbanSearch from "./KanbanSearch";
+import PriorityTag from "../PriorityTag";
+
+
 
 function KanbanBoard() {
   const { questions = [] } = usePluginData("extract-questions-plugin") as {
@@ -42,6 +45,10 @@ function KanbanBoard() {
           q.domain?.toLowerCase().includes(searchTerm) ||
           q.topic?.toLowerCase().includes(searchTerm)
       );
+    }
+
+    if (filters.priority) {
+      results = results.filter((q) => q.priority === filters.priority);
     }
 
     setFilteredQuestions(results);
@@ -138,6 +145,9 @@ function KanbanBoard() {
                           <div key={index} className="task-card">
                             <div className="task-title">
                               <a href={question.link}>{question.title}</a>
+                              {question.priority && (
+                                <PriorityTag priority={question.priority} />
+                              )}
                             </div>
                             <div className="task-meta">
                               <span className="task-topic">

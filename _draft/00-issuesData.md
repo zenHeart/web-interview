@@ -219,7 +219,6 @@ function run (generator) {
       return go(it.next(value))
     }, function (error) {
       return go(it.throw(error))
-    })
   }
 
   go(it.next())

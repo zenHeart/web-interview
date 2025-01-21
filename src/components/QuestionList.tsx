@@ -8,7 +8,7 @@ function QuestionList () {
 
   // 按 domain 和 topic 组织数据
   const organizedQuestions = questions.reduce((acc, question) => {
-    const { domain, topic, title } = question
+    const { domain, topic } = question
 
     if (!acc[domain]) {
       acc[domain] = {}
@@ -21,7 +21,7 @@ function QuestionList () {
 
     acc[domain][topicName].push(question)
     return acc
-  }, {} as Record<string, Record<string, string[]>>)
+  }, {} as Record<string, Record<string, Question[]>>)
 
   return (
     <div className="api-reference">
