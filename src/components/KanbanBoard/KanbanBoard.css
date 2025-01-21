@@ -1,13 +1,12 @@
 .kanban-board {
   display: flex;
   gap: 1rem;
-  padding: 1rem;
   min-height: 70vh;
 }
 
 .kanban-column {
   flex: 1;
-  min-width: 300px;
+  min-width: 250px;
   background: var(--ifm-background-surface-color);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

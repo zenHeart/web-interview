@@ -33,6 +33,10 @@ const SearchExamples = [
   {
     search: '问题',
     explain: '等效于 title:问题'
+  },
+  {
+    search: 'domain:js topic:type priority:p0',
+    explain: '支持复合搜索，多个条件之间用空格分隔。匹配所有条件'
   }
 ]
 
@@ -133,7 +137,7 @@ function KanbanSearch ({ onSearch }: SearchProps) {
           placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
         />
         {searchText && (
-          <button 
+          <button
             className="clear-button"
             onClick={handleClear}
             aria-label="Clear search"
