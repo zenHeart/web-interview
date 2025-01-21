@@ -30,8 +30,8 @@ const SearchExamples = [
     explain: '搜索优先级(p0-p4)'
   },
   {
-    search: 'raw:搜索关键词',
-    explain: '直接输入关键词搜索所有字段'
+    search: '问题',
+    explain: '等效于 title:问题'
   }
 ]
 
@@ -55,7 +55,7 @@ function KanbanSearch ({ onSearch }: SearchProps) {
       // 处理优先级搜索，忽略大小写
       if (field.toLowerCase() === 'priority') {
         const priorityValue = value.toLowerCase()
-        if (/^p[0-4]$/.test(priorityValue)) {
+        if (/^p[0-4]$/i.test(priorityValue)) {
           filters.priority = priorityValue
         }
       } else {
@@ -117,7 +117,8 @@ function KanbanSearch ({ onSearch }: SearchProps) {
                     setSearchText(example.search)
                     setIsFocused(false)
                     setIsHoveringHelp(false)
-                    onSearch(example.search)
+                    const filters = parseSearch(example.search)
+                    onSearch(filters)
                   }}
                 >
                   {example.search}

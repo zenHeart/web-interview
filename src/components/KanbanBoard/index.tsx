@@ -48,7 +48,10 @@ function KanbanBoard() {
     }
 
     if (filters.priority) {
-      results = results.filter((q) => q.priority === filters.priority);
+      const searchPriority = filters.priority.toUpperCase();
+      results = results.filter((q) => 
+        q.priority?.toUpperCase() === searchPriority
+      );
     }
 
     setFilteredQuestions(results);
