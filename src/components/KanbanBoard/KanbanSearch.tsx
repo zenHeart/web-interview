@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./KanbanSearch.css";
+import React, { useState, useEffect } from 'react'
+import './KanbanSearch.css'
 
 interface SearchFilters {
   domain?: string;
@@ -11,42 +11,42 @@ interface SearchProps {
   onSearch: (filters: SearchFilters) => void;
 }
 
-function KanbanSearch({ onSearch }: SearchProps) {
-  const [searchText, setSearchText] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
+function KanbanSearch ({ onSearch }: SearchProps) {
+  const [searchText, setSearchText] = useState('')
+  const [isFocused, setIsFocused] = useState(false)
 
   // 解析搜索语法
   const parseSearch = (query: string): SearchFilters => {
-    const filters: SearchFilters = {};
+    const filters: SearchFilters = {}
 
     // 处理特定字段搜索
-    const fieldMatches = query.match(/(\w+):\s*([^\s]+)/g) || [];
+    const fieldMatches = query.match(/(\w+):\s*([^\s]+)/g) || []
 
     // 移除已处理的字段搜索
-    let remaining = query;
+    let remaining = query
 
     fieldMatches.forEach((match) => {
-      const [field, value] = match.split(":").map((s) => s.trim());
-      filters[field as keyof SearchFilters] = value;
-      remaining = remaining.replace(match, "");
-    });
+      const [field, value] = match.split(':').map((s) => s.trim())
+      filters[field as keyof SearchFilters] = value
+      remaining = remaining.replace(match, '')
+    })
 
     // 处理剩余的搜索词作为原始搜索
-    const rawSearch = remaining.trim();
+    const rawSearch = remaining.trim()
     if (rawSearch) {
-      filters.raw = rawSearch;
+      filters.raw = rawSearch
     }
 
-    return filters;
-  };
+    return filters
+  }
 
   useEffect(() => {
-    const filters = parseSearch(searchText);
-    onSearch(filters);
-  }, [searchText]);
+    const filters = parseSearch(searchText)
+    onSearch(filters)
+  }, [searchText])
 
   // 只在输入框为空且聚焦时显示提示框
-  const shouldShowHelp = isFocused && !searchText;
+  const shouldShowHelp = isFocused && !searchText
 
   return (
     <div className="search-container">
@@ -58,7 +58,7 @@ function KanbanSearch({ onSearch }: SearchProps) {
         onFocus={() => setIsFocused(true)}
         onBlur={() => {
           // 使用setTimeout来确保点击提示框内容时能够正常工作
-          setTimeout(() => setIsFocused(false), 200);
+          setTimeout(() => setIsFocused(false), 200)
         }}
         placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
       />
@@ -80,7 +80,7 @@ function KanbanSearch({ onSearch }: SearchProps) {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default KanbanSearch;
+export default KanbanSearch

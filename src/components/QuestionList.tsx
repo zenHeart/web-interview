@@ -19,7 +19,7 @@ function QuestionList () {
       acc[domain][topicName] = []
     }
 
-    acc[domain][topicName].push(title)
+    acc[domain][topicName].push(question)
     return acc
   }, {} as Record<string, Record<string, string[]>>)
 
@@ -29,14 +29,20 @@ function QuestionList () {
         <div key={domain} className="domain-section">
           <h1 className="domain-title">{domain}</h1>
           <div className="topics-container">
-            {Object.entries(topics).map(([topic, titles]) => (
+            {Object.entries(topics).map(([topic, topicQuestions]) => (
               <div key={topic} className="topic-block">
-                <h2 className="topic-title">{topic}</h2>
+                <h2 className="topic-title">
+                  <a href={topicQuestions[0]?.link?.split('#')[0]}>
+                    {topic}
+                  </a>
+                </h2>
                 <div className="question-list-container">
                   <ul className="question-list">
-                    {titles.map((title) => (
-                      <li key={title} className="question-item">
-                        {title}
+                    {topicQuestions.map((topicQuestion) => (
+                      <li key={topicQuestion.title} className="question-item">
+                        <a href={topicQuestion.link}>
+                          {topicQuestion.title}
+                        </a>
                       </li>
                     ))}
                   </ul>

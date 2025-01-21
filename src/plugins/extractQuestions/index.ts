@@ -7,6 +7,8 @@ export interface Question {
   domain: string;
   topic: string;
   title: string;
+  priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
+  link: string;
 }
 
 export interface GroupedQuestion {
@@ -14,24 +16,6 @@ export interface GroupedQuestion {
     [topic: string]: Question[];
   };
 }
-
-// function groupQuestion (questions: Question[]): GroupedQuestion {
-//   const grouped: GroupedQuestion = {}
-
-//   questions.forEach((question) => {
-//     if (!grouped[question.domain]) {
-//       grouped[question.domain] = {}
-//     }
-
-//     if (!grouped[question.domain][question.topic]) {
-//       grouped[question.domain][question.topic] = []
-//     }
-
-//     grouped[question.domain][question.topic].push(question)
-//   })
-
-//   return grouped
-// }
 
 interface PluginOptions {
   exclude?: string[];
@@ -65,23 +49,25 @@ export default function extractQuestionsPlugin (
         const questions = (await Promise.all(
           files.map(async (filePath) => {
             const content = await fs.promises.readFile(filePath, 'utf-8')
-            const matches = content.match(/^## (.+)$/gm)
-            const domain = path.basename(path.dirname(filePath)) // 获取一级目录名
-            const topic = path.basename(filePath, path.extname(filePath)) // 获取文件名作为 topic
+            const matches = content.match(/^## (.+)$/gm) || []
+            const domain = path.basename(path.dirname(filePath)).replace(/^\d+-/, '') // 获取一级目录名并移除前缀数字
+            const topic = path.basename(path.basename(filePath, path.extname(filePath))).replace(/^\d+-/, '') // 获取文件名作为 topic，并移除前缀数字
 
-            if (!matches) {
-              return [{
-                title: path.basename(filePath, path.extname(filePath)),
+            return matches.map(match => {
+              const titleWithAnchor = match.slice(3).trim()
+              const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)
+              const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
+              const priority = anchorMatch.toUpperCase() : undefined
+              const link = `/web-interview/docs/${domain}/${topic}#${title.toLowerCase().replace(/\s+/g, '-')}`
+
+              return {
+                title,
                 domain: domain || 'Other',
-                topic
-              }]
-            }
-
-            return matches.map(match => ({
-              title: match.slice(3).trim(),
-              domain: domain || 'Other',
-              topic
-            }))
+                topic,
+                priority,
+                link
+              }
+            })
           })
         )).flat()
 
@@ -94,7 +80,7 @@ export default function extractQuestionsPlugin (
     async contentLoaded ({ content, actions }) {
       const { createData, setGlobalData } = actions
 
-      // console.log('Content loaded:', content)
+      console.log('Content loaded:', content)
 
       await createData(
         'src/data/questions.json',

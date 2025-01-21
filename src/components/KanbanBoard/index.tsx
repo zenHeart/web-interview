@@ -136,10 +136,14 @@ function KanbanBoard() {
                       <div className="domain-items">
                         {items.map((question, index) => (
                           <div key={index} className="task-card">
-                            <div className="task-title">{question.title}</div>
+                            <div className="task-title">
+                              <a href={question.link}>{question.title}</a>
+                            </div>
                             <div className="task-meta">
                               <span className="task-topic">
-                                {question.topic}
+                                <a href={question.link?.split('#')[0]}>
+                                  {question.topic}
+                                </a>
                               </span>
                             </div>
                           </div>

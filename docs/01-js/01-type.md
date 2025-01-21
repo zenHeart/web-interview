@@ -1,6 +1,6 @@
 # 类型
 
-## javascript 中有几种数据类型 ?
+## javascript 中有几种数据类型 ? {#p0-types}
 
 <Answer>
 

@@ -29,7 +29,6 @@ const config: Config = {
   //   '**/answers/**', // 排除所有 answers 目录
   //   '**/*.question.{md,mdx}' // 排除所有 questions 目录
   // ],
-
   i18n: {
     defaultLocale: 'zh-hans',
     locales: ['zh-hans']
