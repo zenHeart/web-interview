@@ -89,7 +89,6 @@ const config: Config = {
       } satisfies Preset.Options
     ]
   ],
-
   themeConfig: {
     navbar: {
       title: 'web interview',
@@ -117,6 +116,11 @@ const config: Config = {
         {
           to: '/reference',
           label: 'reference',
+          position: 'left'
+        },
+        {
+          to: '/kanban',
+          label: 'kanban',
           position: 'left'
         },
         {

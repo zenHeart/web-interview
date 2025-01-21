@@ -1,15 +1,6 @@
 
 # 草稿箱
 
-此处汇总所有 html 相关面试问题。
-问题分为三类:
-
-* **概念** 关于 HTML 规范等涉及的常见概念及术语
-* **应用** web api 等使用问题,例如 DOM, 浏览器存储等
-* **编码题** html 相关问题
-
-## 概念
-
 ### 事件冒泡? ⭐️⭐️⭐️⭐️⭐️
 
 ### doctype(文档类型) 的作用是什么？⭐️⭐️
@@ -47,8 +38,6 @@
 
 ### DOM 操作
 
-## 应用
-
 ### 请解释 `<script>、<script async> 和 <script defer>` 的区别
 
 ### 为什么通常推荐将 CSS `<link>` 放置在 `<head></head>` 之间，而将 JS `<script>` 放置在 `</body>` 之前？你知道有哪些例外吗？
@@ -76,8 +65,6 @@
 * [data-](https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese)
 
 ### 你用过哪些不同的 HTML 模板语言？
-
-## 编码题
 
 ## 拖拽组件设计
 
