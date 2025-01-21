@@ -2,6 +2,7 @@
 
 ## 1 Promise 了解多少？
 
+*
 * created_at: 2023-03-06T15:19:13Z
 * updated_at: 2023-03-08T15:28:22Z
 * labels: JavaScript

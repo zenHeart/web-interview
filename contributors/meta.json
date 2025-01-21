@@ -1,7 +1,0 @@
-{
-  "topic": "language",
-  "priority": "P0",
-  "related": ["scope", "operators"],
-  "tags": ["js", "es6"],
-  "prerequisites": ["scope", "operators"]
-}
