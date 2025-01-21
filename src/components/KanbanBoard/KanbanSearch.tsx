@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory, useLocation } from '@docusaurus/router'
 import './KanbanSearch.css'
 
 interface SearchFilters {
@@ -36,9 +37,48 @@ const SearchExamples = [
 ]
 
 function KanbanSearch ({ onSearch }: SearchProps) {
+  const history = useHistory()
+  const location = useLocation()
   const [searchText, setSearchText] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const [isHoveringHelp, setIsHoveringHelp] = useState(false)
+
+  // 从 URL 读取初始搜索内容
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const querySearch = params.get('search')
+    if (querySearch) {
+      setSearchText(querySearch)
+      const filters = parseSearch(querySearch)
+      onSearch(filters)
+    }
+  }, [location.search])
+
+  // 更新 URL 查询参数
+  const updateSearchQuery = (query: string) => {
+    const params = new URLSearchParams(location.search)
+    if (query) {
+      params.set('search', query)
+    } else {
+      params.delete('search')
+    }
+    history.replace({
+      search: params.toString()
+    })
+  }
+
+  // 处理搜索文本变化
+  const handleSearchChange = (value: string) => {
+    setSearchText(value)
+    updateSearchQuery(value)
+    const filters = parseSearch(value)
+    onSearch(filters)
+  }
+
+  // 清除搜索
+  const handleClear = () => {
+    handleSearchChange('')
+  }
 
   // 解析搜索语法
   const parseSearch = (query: string): SearchFilters => {
@@ -73,39 +113,41 @@ function KanbanSearch ({ onSearch }: SearchProps) {
     return filters
   }
 
-  useEffect(() => {
-    const filters = parseSearch(searchText)
-    onSearch(filters)
-  }, [searchText])
-
   // 修改显示条件
   const shouldShowHelp = (isFocused || isHoveringHelp) && !searchText
 
   return (
     <div className="search-container">
-      <input
-        type="text"
-        className="search-input"
-        value={searchText}
-        onChange={(e) => setSearchText(e.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => {
-          // 不在这里重置状态，让点击事件来处理
-          setTimeout(() => {
-            setIsFocused(false)
-          }, 100)
-        }}
-        placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
-      />
+      <div className="search-input-wrapper">
+        <input
+          type="text"
+          className="search-input"
+          value={searchText}
+          onChange={(e) => handleSearchChange(e.target.value)}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => {
+            setTimeout(() => {
+              setIsFocused(false)
+            }, 100)
+          }}
+          placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
+        />
+        {searchText && (
+          <button 
+            className="clear-button"
+            onClick={handleClear}
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
       {shouldShowHelp && (
         <div
           className="search-help"
           onMouseEnter={() => setIsHoveringHelp(true)}
           onMouseLeave={() => setIsHoveringHelp(false)}
-          onClick={(e) => {
-            // 阻止事件冒泡，确保点击提示框时不会触发外部点击事件
-            e.stopPropagation()
-          }}
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="help-title">搜索语法:</div>
           <ul className="help-list">
@@ -114,11 +156,9 @@ function KanbanSearch ({ onSearch }: SearchProps) {
                 <code
                   className="example-text"
                   onClick={() => {
-                    setSearchText(example.search)
+                    handleSearchChange(example.search)
                     setIsFocused(false)
                     setIsHoveringHelp(false)
-                    const filters = parseSearch(example.search)
-                    onSearch(filters)
                   }}
                 >
                   {example.search}
