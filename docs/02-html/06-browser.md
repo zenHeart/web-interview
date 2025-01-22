@@ -40,7 +40,7 @@
 
 ## 常见的浏览器内核有哪些？{#p0-browser-kernel}
 
-## jS 浏览器事循环有哪些使用案例 {p2-js-event-loop}
+## jS 浏览器事循环有哪些使用案例 {#p2-js-event-loop}
 
 **一、异步操作处理**
 
