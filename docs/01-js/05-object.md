@@ -4,22 +4,20 @@
 
 ## 对象的可变和不可变
 
-## 深拷贝
+## 深拷贝和浅拷贝区别?
 
-所谓深拷贝的重点是循环克隆值。
+1. 深拷贝的重点是循环克隆值。
 
 1. 采用 `JSON.parse(JSON.stringfy(obj))` 的方式解决,该解决方案存在如下漏洞
    1. 键值为 undefined 的项会被忽略
    2. 键名为 Symbol 类型会被忽略
    3. 不能序列化函数
    4. 不能解决循环引用对象
-
 详见此文 [javascript 深拷贝](https://dassur.ma/things/deep-copy/)
 
-## 浅拷贝
-
-1. Object.assign()
-2. 对象扩展
+2. 浅拷贝
+   1. Object.assign()
+   2. 对象扩展
 
 ## instanceof 的使用
 
@@ -138,13 +136,11 @@ Set 的时间复杂度为什么是 O(1)
 
 </Answer>
 
-* 
-* es6 generator
-* Map 了解多少
-* Set 了解多少
-* Proxy 和 Reflect 了解多少
+## es6 generator
 
+## Map 了解多少
 
+## Set 了解多少
 
 ## let const var 区别
 
@@ -163,4 +159,304 @@ Set 的时间复杂度为什么是 O(1)
 
 ## Reflect
 
-1. 非对象无法使用 new 构造
+* created_at: 2024-10-29T23:47:01Z
+* updated_at: 2024-10-29T23:47:01Z
+* labels: JavaScript
+* milestone: 中
+
+**关键词**：Reflect 函数
+
+`Reflect`是 ES6 引入的一个内置对象，它提供了一组与对象操作对应的方法，这些方法与`Object`上的某些方法类似，但有一些重要的区别。
+
+以下是对`Reflect`内置函数的详细介绍：
+
+**一、获取属性（`Reflect.get()`）**
+
+1. 作用：
+
+* 用于获取对象的属性值。
+* 类似于传统的对象属性访问操作符（`obj.property`或`obj[property]`）。
+
+2. 示例：
+
+ ```javascript
+ const obj = { name: 'John' }
+ console.log(Reflect.get(obj, 'name')) // 'John'
+ ```
+
+3. 与传统方式的区别：
+
+* 返回值：如果属性不存在，`Reflect.get()`返回`undefined`，而直接访问属性可能会导致错误（如果在严格模式下）或返回`undefined`（非严格模式下）。
+* 可接受第三个参数`receiver`，用于指定属性访问的上下文对象，这在某些情况下（如使用代理时）非常有用。
+
+**二、设置属性（`Reflect.set()`）**
+
+1. 作用：
+
+* 用于设置对象的属性值。
+* 类似于传统的属性赋值操作符（`obj.property = value`或`obj[property] = value`）。
+
+2. 示例：
+
+ ```javascript
+ const obj = {}
+ Reflect.set(obj, 'name', 'Jane')
+ console.log(obj.name) // 'Jane'
+ ```
+
+3. 与传统方式的区别：
+
+* 返回值：返回一个布尔值，表示属性设置是否成功。如果目标对象不可扩展、属性不可写或属性为访问器属性且设置器函数返回`false`，则返回`false`；否则返回`true`。
+* 同样可接受第三个参数`receiver`，用于指定属性设置的上下文对象。
+
+**三、判断对象是否具有某个属性（`Reflect.has()`）**
+
+1. 作用：
+
+* 相当于`in`操作符，用于检查对象是否具有某个属性。
+
+2. 示例：
+
+ ```javascript
+ const obj = { age: 30 }
+ console.log(Reflect.has(obj, 'age')) // true
+ console.log(Reflect.has(obj, 'gender')) // false
+ ```
+
+**四、获取对象的原型（`Reflect.getPrototypeOf()`）**
+
+1. 作用：
+
+* 获取对象的原型，与`Object.getPrototypeOf()`方法类似。
+
+2. 示例：
+
+ ```javascript
+ function Person () {}
+ const person = new Person()
+ console.log(Reflect.getPrototypeOf(person) === Person.prototype) // true
+ ```
+
+**五、设置对象的原型（`Reflect.setPrototypeOf()`）**
+
+1. 作用：
+
+* 设置对象的原型，与`Object.setPrototypeOf()`方法类似。
+
+2. 示例：
+
+ ```javascript
+ function Person () {}
+ function Employee () {}
+ const person = new Person()
+ Reflect.setPrototypeOf(person, Employee.prototype)
+ console.log(Reflect.getPrototypeOf(person) === Employee.prototype) // true
+ ```
+
+3. 注意事项：
+
+* 频繁地设置对象的原型可能会对性能产生负面影响，并且可能会导致代码难以理解和维护。
+
+**六、判断对象是否可扩展（`Reflect.isExtensible()`）**
+
+1. 作用：
+
+* 确定一个对象是否可以添加新的属性。
+
+2. 示例：
+
+ ```javascript
+ const obj = {}
+ console.log(Reflect.isExtensible(obj)) // true
+ Object.preventExtensions(obj)
+ console.log(Reflect.isExtensible(obj)) // false
+ ```
+
+**七、使对象不可扩展（`Reflect.preventExtensions()`）**
+
+1. 作用：
+
+* 使一个对象不可扩展，即不能再添加新的属性。
+
+2. 示例：
+
+ ```javascript
+ const obj = {}
+ Reflect.preventExtensions(obj)
+ try {
+   obj.newProperty = 'value'
+ } catch (e) {
+   console.log('Cannot add new property to non-extensible object.')
+ }
+ ```
+
+**八、判断对象的属性是否可配置（`Reflect.ownKeys()`）**
+
+1. 作用：
+
+* 返回一个对象自身的所有属性的键名，包括不可枚举属性和 Symbol 属性。
+
+2. 示例：
+
+ ```javascript
+ const obj = { name: 'John', [Symbol('secret')]: 'secret value' }
+ console.log(Reflect.ownKeys(obj)) // ['name', Symbol(secret)]
+ ```
+
+总的来说，`Reflect`对象提供了一种更统一、更规范的方式来进行对象操作，并且在某些情况下（如与代理一起使用时）具有特殊的用途。它的方法通常与`Object`上的对应方法具有相似的功能，但在返回值和行为上可能会有所不同，这使得开发者可以更精确地控制对象的操作。
+
+## Reflect.get() 和直接通过对象 [.] 访问获取属性， 有何区别 {#p2-reflect-get}
+
+`Reflect.get()`和直接通过对象`[.]`访问获取属性有以下一些区别：
+
+**一、返回值**
+
+1. `Reflect.get()`：
+
+* 如果属性不存在，返回`undefined`。
+* 例如：
+
+ ```javascript
+ const obj = {}
+ const value = Reflect.get(obj, 'property')
+ console.log(value) // undefined
+ ```
+
+2. 对象直接访问：
+
+* 如果属性不存在，在非严格模式下返回`undefined`；在严格模式下，会抛出一个`ReferenceError`错误。
+* 例如：
+
+ ```javascript
+ const obj = {}
+ // 非严格模式下
+ console.log(obj.property); // undefined
+ // 严格模式下
+ ('use strict')
+ console.log(obj.property) // ReferenceError: property is not defined
+ ```
+
+**二、可接受的参数和功能扩展**
+
+1. `Reflect.get()`：
+
+* 可以接受第三个参数`receiver`，用于指定属性访问的上下文对象，这在某些情况下非常有用，比如在使用代理时可以控制属性访问的行为。
+* 例如：
+
+ ```javascript
+ const obj = { name: 'John' }
+ const proxy = new Proxy(obj, {})
+ console.log(Reflect.get(proxy, 'name', { name: 'Jane' })) // 'Jane'
+ ```
+
+2. 对象直接访问：
+
+* 没有类似的参数来指定上下文对象。
+
+**三、与代理的交互**
+
+1. `Reflect.get()`：
+
+* 与代理对象配合使用时，会触发代理对象上定义的相应拦截方法，使得可以对属性访问进行更精细的控制。
+* 例如：
+
+ ```javascript
+ const obj = { name: 'John' }
+ const handler = {
+   get (target, property, receiver) {
+     if (property === 'name') {
+       return 'Modified Name'
+     }
+     return Reflect.get(target, property, receiver)
+   }
+ }
+ const proxy = new Proxy(obj, handler)
+ console.log(proxy.name) // 'Modified Name'
+ ```
+
+2. 对象直接访问：
+
+* 当通过直接访问属性的方式访问代理对象时，不一定会触发代理对象上的拦截方法，具体行为取决于代理的实现和配置。
+
+**四、一致性和规范性**
+
+1. `Reflect.get()`：
+
+* 作为一种更规范的方法，它与其他`Reflect`方法一起提供了一种统一的方式来进行对象操作，有助于提高代码的可读性和可维护性。
+
+2. 对象直接访问：
+
+* 虽然直接访问属性的方式更加简洁，但在一些复杂的场景下可能会导致不一致的行为，并且不太容易与其他高级特性（如代理）进行良好的集成。
+
+## getter setter {#p2-getter-setter}
+
+## Object.keys 与 Object.getOwnPropertyNames() 有何区别 {#p2-object-keys-getOwnPropertyNames}
+
+`Object.keys()`和`Object.getOwnPropertyNames()`都是用于获取对象自身属性名的方法，但它们之间存在一些区别：
+
+**一、返回值类型**
+
+1. `Object.keys()`：
+
+* 返回一个由对象自身可枚举属性名组成的数组。
+* 可枚举属性是指那些可以通过`for...in`循环遍历到的属性。
+
+2. `Object.getOwnPropertyNames()`：
+
+* 返回一个由对象自身所有属性名组成的数组，无论属性是否可枚举。
+
+**二、可枚举性处理**
+
+1. `Object.keys()`：
+
+* 只返回可枚举属性的名称。如果一个属性被设置为不可枚举，它将不会出现在`Object.keys()`的返回结果中。
+* 例如，使用`Object.defineProperty()`定义的不可枚举属性不会被包含在`Object.keys()`的结果中。
+
+2. `Object.getOwnPropertyNames()`：
+
+* 返回所有属性的名称，包括可枚举和不可枚举的属性。
+* 这使得它在需要获取对象的所有属性，无论其可枚举性如何时非常有用。
+
+**三、示例**
+
+1. 以下是一个使用`Object.keys()`和`Object.getOwnPropertyNames()`的示例：
+
+```javascript
+const obj = {
+  property1: 'value1',
+  property2: 'value2'
+}
+
+Object.defineProperty(obj, 'nonEnumerableProperty', {
+  value: 'value3',
+  enumerable: false
+})
+
+console.log(Object.keys(obj)) // ['property1', 'property2']
+console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonEnumerableProperty']
+```
+
+在这个例子中，`Object.keys()`只返回了可枚举的属性`property1`和`property2`，而`Object.getOwnPropertyNames()`返回了所有属性，包括不可枚举的`nonEnumerableProperty`。
+
+## Javascript 数组中有那些方法可以改变自身，那些不可以 {#p2-javascript-array-change-self}
+
+在 JavaScript 中，数组的方法可以分为两类：改变自身的方法和不改变自身的方法。
+
+**一、改变自身的方法**
+
+1. `push()`：在数组末尾添加一个或多个元素，并返回新的数组长度。
+2. `pop()`：删除数组的最后一个元素，并返回这个元素。
+3. `shift()`：删除数组的第一个元素，并返回这个元素。
+4. `unshift()`：在数组开头添加一个或多个元素，并返回新的数组长度。
+5. `splice()`：通过删除或替换现有元素或者原地添加新的元素来修改数组，并以数组形式返回被修改的内容。
+6. `sort()`：对数组的元素进行排序，并返回排序后的数组。默认按照字符串编码的顺序进行排序。
+7. `reverse()`：反转数组中的元素顺序，并返回反转后的数组。
+
+**二、不改变自身的方法**
+
+1. `concat()`：返回一个新数组，这个新数组是由调用该方法的数组和其他数组或值连接而成。
+2. `slice()`：返回一个新的数组，包含从原数组中提取的元素。可以指定起始位置和结束位置（不包括结束位置的元素）。
+3. `indexOf()`：返回在数组中首次出现的指定元素的索引，如果不存在则返回 -1。
+4. `lastIndexOf()`：返回在数组中最后一次出现的指定元素的索引，如果不存在则返回 -1。
+5. `includes()`：判断数组是否包含指定的元素，返回一个布尔值。
+6. `join()`：将数组的所有元素连接成一个字符串，并返回这个字符串。可以指定连接元素的分隔符。

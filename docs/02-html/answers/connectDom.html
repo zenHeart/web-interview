@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .node {
+            width: 100px;
+            height: 100px;
+            background: #eee;
+            border: 1px solid #ccc;
+            position: absolute;
+            cursor: move;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        
+        #node1 { left: 100px; top: 100px; }
+        #node2 { left: 300px; top: 300px; }
+        
+        .connector {
+            width: 10px;
+            height: 10px;
+            background: #666;
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 2;
+            transition: all 0.2s;
+        }
+        
+        .connector:hover {
+            background: #000;
+            transform: scale(1.5);
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        
+        .line {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* 连接点位置 */
+        .top { top: -5px; left: 45px; }
+        .right { top: 45px; right: -5px; }
+        .bottom { bottom: -5px; left: 45px; }
+        .left { top: 45px; left: -5px; }
+    </style>
+</head>
+<body>
+    <svg id="lines" style="position: absolute; width: 100%; height: 100%; pointer-events: none;"></svg>
+    
+    <script>
+        const svg = document.getElementById('lines');
+        let isDragging = false;
+        let selectedConnector = null;
+        let connections = [];
+        
+        // 等待 DOM 加载完成后再初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach(node => {
+                addConnectors(node);
+                enableDrag(node);
+            });
+        });
+        
+        function addConnectors(node) {
+            ['top', 'right', 'bottom', 'left'].forEach(position => {
+                const connector = document.createElement('div');
+                connector.className = `connector ${position}`;
+                connector.dataset.position = position;
+                connector.dataset.nodeId = node.id;
+                
+                connector.addEventListener('mousedown', (e) => {
+                    e.stopPropagation(); // 阻止事件冒泡到节点
+                    startConnection(e);
+                });
+                
+                node.appendChild(connector);
+            });
+        }
+        
+        function startConnection(e) {
+            e.stopPropagation();
+            selectedConnector = e.target;
+            document.addEventListener('mousemove', drawTempLine);
+            document.addEventListener('mouseup', endConnection);
+        }
+        
+        function endConnection(e) {
+            e.stopPropagation();
+            if (selectedConnector && e.target.classList.contains('connector')) {
+                const start = selectedConnector;
+                const end = e.target;
+                
+                // 避免自连接和重复连接
+                if (start.dataset.nodeId !== end.dataset.nodeId && 
+                    !connections.some(conn => 
+                        (conn.start === start && conn.end === end) ||
+                        (conn.start === end && conn.end === start)
+                    )) {
+                    createConnection(start, end);
+                }
+            }
+            
+            cleanupTempLine();
+            document.removeEventListener('mouseup', endConnection);
+        }
+        
+        function createConnection(start, end) {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('stroke', '#000');
+            path.setAttribute('stroke-width', '2');
+            path.setAttribute('fill', 'none');
+            
+            connections.push({ start, end, path });
+            svg.appendChild(path);
+            updateConnection({ start, end, path });
+        }
+        
+        function getConnectorPosition(connector) {
+            const rect = connector.getBoundingClientRect();
+            const position = connector.dataset.position;
+            
+            return {
+                x: rect.left + rect.width / 2,
+                y: rect.top + rect.height / 2,
+                position
+            };
+        }
+        
+        function calculateControlPoints(start, end) {
+            const dx = end.x - start.x;
+            const dy = end.y - start.y;
+            let c1x, c1y, c2x, c2y;
+            
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const offset = distance * 0.3;
+            
+            switch(start.position) {
+                case 'right':
+                    c1x = start.x + offset;
+                    c1y = start.y;
+                    break;
+                case 'left':
+                    c1x = start.x - offset;
+                    c1y = start.y;
+                    break;
+                case 'top':
+                    c1x = start.x;
+                    c1y = start.y - offset;
+                    break;
+                case 'bottom':
+                    c1x = start.x;
+                    c1y = start.y + offset;
+                    break;
+            }
+            
+            switch(end.position) {
+                case 'right':
+                    c2x = end.x + offset;
+                    c2y = end.y;
+                    break;
+                case 'left':
+                    c2x = end.x - offset;
+                    c2y = end.y;
+                    break;
+                case 'top':
+                    c2x = end.x;
+                    c2y = end.y - offset;
+                    break;
+                case 'bottom':
+                    c2x = end.x;
+                    c2y = end.y + offset;
+                    break;
+            }
+            
+            return { c1x, c1y, c2x, c2y };
+        }
+        
+        function updateConnection(connection) {
+            const startPos = getConnectorPosition(connection.start);
+            const endPos = getConnectorPosition(connection.end);
+            const { c1x, c1y, c2x, c2y } = calculateControlPoints(startPos, endPos);
+            
+            const d = `M ${startPos.x} ${startPos.y} ` +
+                     `C ${c1x} ${c1y}, ${c2x} ${c2y}, ${endPos.x} ${endPos.y}`;
+            
+            connection.path.setAttribute('d', d);
+        }
+        
+        function enableDrag(element) {
+            let currentX, currentY, initialX, initialY;
+            
+            element.addEventListener('mousedown', (e) => {
+                if (e.target === element) {
+                    startDragging(e);
+                }
+            });
+            
+            function startDragging(e) {
+                isDragging = true;
+                initialX = e.clientX - element.offsetLeft;
+                initialY = e.clientY - element.offsetTop;
+                
+                document.addEventListener('mousemove', drag);
+                document.addEventListener('mouseup', stopDragging);
+            }
+            
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    
+                    element.style.left = currentX + 'px';
+                    element.style.top = currentY + 'px';
+                    
+                    // 更新与该节点相关的所有连线
+                    connections.forEach(conn => {
+                        if (conn.start.closest('.node') === element || 
+                            conn.end.closest('.node') === element) {
+                            updateConnection(conn);
+                        }
+                    });
+                }
+            }
+            
+            function stopDragging() {
+                isDragging = false;
+                document.removeEventListener('mousemove', drag);
+                document.removeEventListener('mouseup', stopDragging);
+            }
+        }
+        
+        let tempLine = null;
+        
+        function drawTempLine(e) {
+            if (!tempLine) {
+                tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                tempLine.setAttribute('stroke', '#666');
+                tempLine.setAttribute('stroke-width', '2');
+                tempLine.setAttribute('stroke-dasharray', '5,5');
+                tempLine.setAttribute('fill', 'none');
+                svg.appendChild(tempLine);
+            }
+            
+            const startPos = getConnectorPosition(selectedConnector);
+            const endPos = { x: e.clientX, y: e.clientY, position: 'temp' };
+            const { c1x, c1y, c2x, c2y } = calculateControlPoints(startPos, endPos);
+            
+            const d = `M ${startPos.x} ${startPos.y} ` +
+                     `C ${c1x} ${c1y}, ${c2x} ${c2y}, ${endPos.x} ${endPos.y}`;
+            
+            tempLine.setAttribute('d', d);
+        }
+        
+        function cleanupTempLine() {
+            if (tempLine) {
+                tempLine.remove();
+                tempLine = null;
+            }
+            selectedConnector = null;
+            document.removeEventListener('mousemove', drawTempLine);
+        }
+        
+        // 点击空白处取消连线操作
+        document.addEventListener('mouseup', (e) => {
+            if (e.target.classList.contains('connector')) return;
+            cleanupTempLine();
+        });
+    </script>
+    
+    <div id="node1" class="node">节点1</div>
+    <div id="node2" class="node">节点2</div>
+</body>
+</html>
+
