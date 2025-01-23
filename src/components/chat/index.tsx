@@ -2,28 +2,14 @@ import React, { useState, useRef } from 'react'
 import Chat, { Bubble, useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
+import ThinkingBlock from './messages/ThinkBlock'
 
 interface MessageContent {
   text: string;
   thinking?: string;
 }
 
-// 思考区块组件
-const ThinkingBlock: React.FC<{ content: string }> = ({ content }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
 
-  return (
-    <div className={styles.thinkingBlock} onClick={() => setIsExpanded(!isExpanded)}>
-      <div className={styles.thinkingHeader}>
-        <span className={`${styles.thinkingIcon} ${isExpanded ? styles.expanded : ''}`}>▶</span>
-        查看思考过程
-      </div>
-      <div className={`${styles.thinkingContent} ${isExpanded ? styles.expanded : ''}`}>
-        {content}
-      </div>
-    </div>
-  );
-};
 
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
