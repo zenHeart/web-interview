@@ -44,3 +44,4 @@ npm  test
 * [ ] [hpbn](https://hpbn.co/)
 * [ ] [可访问性问题列表](https://scottaohara.github.io/accessibility_interview_questions/)
 * [ ] [awsome list](https://github.com/DopplerHQ/awesome-interview-questions?tab=readme-ov-file#html)
+* [ ] [前端面试手册](https://github.com/lgwebdream/FE-Interview)

@@ -38,7 +38,7 @@ const ChatWindow: React.FC = () => {
         })
 
         // 调用 Ollama API
-        const response = await fetch('http://localhost:11434/api/generate', {
+        const response = await fetch('/api/generate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -15,6 +15,5 @@
   "markdownlint.config": {
     "default": true
   },
-  "editor.tabSize": 3,
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "editor.tabSize": 3
 }

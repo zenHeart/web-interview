@@ -3,6 +3,7 @@ import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
 import extractQuestionsPlugin from './src/plugins/extractQuestions/index'
+import devProxy from './src/plugins/devProxy/index'
 
 const config: Config = {
   customFields: {
@@ -26,6 +27,7 @@ const config: Config = {
     locales: ['zh-hans']
   },
   plugins: [
+    devProxy,
     [
       extractQuestionsPlugin,
       {

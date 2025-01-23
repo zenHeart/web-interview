@@ -24,10 +24,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.md'],
-      processor: 'markdown/markdown',
-      rules: {
-        'no-multiple-empty-lines': 'off'
-      }
+      processor: 'markdown/markdown'
     },
     {
       files: ['**/*.ts', '**/*.tsx'],
