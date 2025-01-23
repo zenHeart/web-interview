@@ -418,3 +418,31 @@ console.log(shuffledArray);
 ```
 
 在这个例子中，定义了一个`shuffleArray`函数，该函数使用 Fisher-Yates 洗牌算法随机打乱输入的数组，并返回打乱后的数组。
+
+
+
+## 铺平嵌套数组 {#p2-flatten-array}
+
+以下是用 JavaScript 手写实现类似于 `lodash.flattenDeep` 的函数来将数组递归展平为一维数组：
+
+```javascript
+function flattenDeep (arr) {
+  let result = []
+  for (const item of arr) {
+    if (Array.isArray(item)) {
+      result = result.concat(flattenDeep(item))
+    } else {
+      result.push(item)
+    }
+  }
+  return result
+}
+```
+
+你可以使用以下方式测试这个函数：
+
+```javascript
+const nestedArray = [1, [2, [3, [4]]]]
+const flattenedArray = flattenDeep(nestedArray)
+console.log(flattenedArray) // [1, 2, 3, 4]
+```

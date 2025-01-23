@@ -2,6 +2,74 @@
 
 ## flex {#p0-flex}
 
+Flex 布局（即 Flexible Box 布局）提供了一种更有效的方式来布置、对齐和分布容器内项目的空间，即使它们的大小是未知或者动态变化的。以下是 Flex 布局中一些常用属性及其作用的简介：
+
+ 容器属性（应用于 flex 容器）
+
+1. **`display`**：
+
+* 设置为`flex`或`inline-flex`以启用 flex 布局。
+* `flex`使容器成为块级元素；
+* `inline-flex`使容器成为行内元素。
+
+2. **`flex-direction`**：
+
+* 确定主轴的方向（即项目的排列方向）。
+* 可选值包括`row`（默认，水平方向）、`row-reverse`（水平方向，反向）、`column`（垂直方向）、`column-reverse`（垂直方向，反向）。
+
+3. **`flex-wrap`**：
+
+* 控制容器是单行还是多行，以及如何换行。
+* 可选值包括`nowrap`（默认，不换行）、`wrap`（换行，第一行在上方）、`wrap-reverse`（换行，第一行在下方）。
+
+4. **`flex-flow`**：
+
+* 是`flex-direction`和`flex-wrap`两个属性的简写形式。
+* 默认值为`row nowrap`。
+
+5. **`justify-content`**：
+
+* 定义了项目在主轴上的对齐方式。
+* 可选值包括`flex-start`（默认，起点对齐）、`flex-end`（终点对齐）、`center`（居中对齐）、`space-between`（两端对齐，项目之间的间隔相等）、`space-around`（每个项目两侧的间隔相等）、`space-evenly`（所有项目之间及周围的空间完全相等）。
+
+6. **`align-items`**：
+
+* 定义项目在交叉轴上如何对齐。
+* 可选值包括`flex-start`（交叉轴的起点对齐）、`flex-end`（交叉轴的终点对齐）、`center`（交叉轴的中点对齐）、`baseline`（项目的第一行文字的基线对齐）、`stretch`（默认，如果项目未设置高度或设为 auto，将占满整个容器的高度）。
+
+7. **`align-content`**：
+
+* 定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。
+* 可选值和`justify-content`类似，包括：`flex-start`、`flex-end`、`center`、`space-between`、`space-around`、`stretch`（默认值）。
+
+ 项目属性（应用于 flex 项目）
+
+1. **`order`**：
+
+* 定义项目的排列顺序。数值越小，排列越靠前，默认为 0。
+
+2. **`flex-grow`**：
+
+* 定义项目的放大比例，默认为 0，即如果存在剩余空间，也不放大。
+
+3. **`flex-shrink`**：
+
+* 定义项目的缩小比例，默认为 1，即如果空间不足，该项目将缩小。
+
+4. **`flex-basis`**：
+
+* 设置或检索弹性盒伸缩基准值，默认值为`auto`，即项目本来的大小。
+
+5. **`flex`**：
+
+* 是`flex-grow`、`flex-shrink` 和 `flex-basis`的简写，默认值为`0 1 auto`。后两个属性可选。
+
+6. **`align-self`**：
+
+* 允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。
+* 默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。
+* 可选的值除了`auto`，还有`flex-start`、`flex-end`、`center`、`baseline`和`stretch`。
+
 ## 媒体查询 {#p0-media-query}
 
 ## z-index: 999 元素一定会置于 z-index: 0 元素之上吗 {#p2-z-index}
@@ -84,6 +152,148 @@
   * **initial** 初始值,取决于规范的默认设定,对于 position 属性取 static
   * **inherit** 继承父元素的值
   * **unset** 由于 position 为非集成属性,此处取值和 initial 相同为 static
+
+`position: sticky;` 是 CSS 中的一个定位属性值，它允许元素在页面滚动到某个阈值时“固定”在位置上，而在达到这个阈值之前，元素会像正常文档流中的元素一样表现（也就是说，在特定条件下它表现得像 `position: relative;`，在另一些条件下表现得像 `position: fixed;`）。这种特性使 `sticky` 定位成为实现网页上吸顶或吸底效果的一种非常实用的手段。
+
+ 特性
+
+* **吸顶效果**：最常见的用途之一是导航栏吸顶。当用户向下滚动页面时，导航栏到达视口顶部后就会固定在那里，直到用户向上滚动至原始位置。
+* **滚动容器**：`sticky` 元素将相对于离其最近的拥有滚动机制（例如，`overflow: auto;` 或 `overflow: scroll;`）的祖先元素进行定位。
+
+ 如何使用
+
+要使元素具有 `sticky` 定位，你需要为它指定 `position: sticky;` 以及至少一个“边缘”属性（`top`, `right`, `bottom`, `left`）的值。这个值决定了元素在满足“粘性”条件前与边缘的距离。
+
+ 示例
+
+```css
+.sticky-element {
+ position: -webkit-sticky; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var Safari */
+ position: sticky;
+ top: 0; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 距离顶部 0px 时生效 */
+ z-index: 1000; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 确保在其他内容之上 */
+ background-color: white; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 可选：为了视觉效果更明显 */
+}
+
+.container {
+ overflow-y: auto; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 确保是滚动容器 */
+ height: 500px; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 举例，根据实际需求设置 */
+}
+```
+
+```html
+<div class="container">
+ <div class="sticky-element">我在滚动时会吸顶</div>
+ <!-- 其他内容 -->
+</div>
+```
+
+ 注意事项
+
+* **兼容性**：`position: sticky;` 在大多数现代浏览器上都得到了支持，但在一些旧版浏览器中可能需要使用前缀或不被支持。
+* **父元素的 `overflow`**: 如果一个元素的任何父元素具有 `overflow: hidden`、`overflow: scroll` 或 `overflow: auto` 样式，则 `position: sticky` 可能不会生效。
+* **祖先的 `display`**: 某些 `display` 值（如 `display: table-cell` 等）也可能影响 `position: sticky` 的行为。
+* **使用时机**：虽然 `sticky` 提供了一种便捷的方式来实现吸附效果，但在一些复杂的布局中，可能需要额外的样式调整或脚本支持来达到预期的效果。
+
+通过灵活运用 `position: sticky;`，可以在无需 JavaScript 的情况下，实现许多响应用户滚动的交互效果。
+
+## 885 如何做静态资源预加载【热度: 696】
+
+* created_at: 2024-09-15T07:39:24Z
+* updated_at: 2024-09-15T07:39:24Z
+* labels: web应用场景, 腾讯
+* milestone: 高
+
+**关键词**：资源预加载
+
+ 预加载
+
+预加载是指在用户需要数据或资源之前，提前加载这些数据或资源的过程。
+
+这个过程可以提高应用程序或网站的响应速度和用户体验
+
+ 预加载的优点
+
+* **提升加载速度**：通过提前加载资源，用户在访问页面时可以更快地看到完整内容。
+* **提高用户体验**：减少页面加载时的延迟，使用户感到更流畅。
+* **优化资源使用**：合理安排资源加载顺序，提高网络利用率。
+
+ WebWorker 实现预加载
+
+下面的示例将展示如何使用 Web Worker 来预加载静态资源。我们将创建一个简单的 Web Worker 脚本，用于在后台预加载一些指定的静态资源（例如图片、CSS、JavaScript 文件等）。这个过程不会阻塞主线程，使得主线程可以继续处理其他任务，如用户交互，从而提升页面的响应性能。
+
+ 3 步骤 1：创建 Web Worker 脚本
+
+首先，创建一个 JS 文件作为 Web Worker 的脚本。我们把这个文件命名为 `preloadWorker.js`。
+
+```javascript
+// preloadWorker.js
+
+self.addEventListener('message', (e) => {
+  const urls = e.data
+  urls.forEach((url) => {
+    fetch(url)
+      .then((response) => {
+        // 一个简单的操作，标识资源已被预加载
+        if (response.status === 200) {
+          postMessage(`Resource preloaded: ${url}`)
+        } else {
+          postMessage(`Resource failed: ${url}`)
+        }
+      })
+      .catch((error) => {
+        postMessage(`Resource fetch error: ${url}`)
+      })
+  })
+})
+```
+
+这个脚本监听来自主线程的消息，该消息包含了要预加载的资源的 URL 列表。对于每个 URL，它使用 `fetch` 请求该资源。根据请求的结果，它会通过 `postMessage` 向主线程发送一条消息，表明该资源已被预加载，或者载入失败。
+
+ 步骤 2：在主线程中使用 Web Worker
+
+接下来，在 HTML 页面中使用这个 Web Worker。
+
+首先，确保在你的 HTML 中引入一个脚本，初始化并使用这个 Web Worker。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="UTF-8" />
+ <title>Web Worker Preload Demo</title>
+ </head>
+ <body>
+ <script src="main.js"></script>
+ </body>
+</html>
+```
+
+然后，创建主线程脚本 `main.js` 用于启动和与 Web Worker 交互。
+
+```javascript
+// main.js
+
+if (window.Worker) {
+  const worker = new Worker('preloadWorker.js')
+
+  const resources = [
+    'image.png', // 示例资源，确保替换为实际的 URL
+    'style.css',
+    'script.js'
+  ]
+
+  worker.postMessage(resources)
+
+  worker.onmessage = (e) => {
+    console.log(e.data)
+  }
+} else {
+  console.log("Your browser doesn't support web workers.")
+}
+```
+
+这段脚本首先检查浏览器是否支持 Web Worker。如果支持，它会创建一个指向 `preloadWorker.js` 的新 Worker 实例，然后将要预加载的资源列表发送给这个 Worker。最后，它设置一个事件监听器来接收并处理 Worker 发出的消息。
 
 ## float   {#p0-float}
 

@@ -428,3 +428,305 @@
 
 * 可以通过 API 方式获取页面的性能分析结果。
 * 方便集成到自定义的工具或流程中，进行大规模的性能监测和优化。
+
+## 动画性能如何检测 {#p1-detect-animation-performance}
+
+**一、使用浏览器开发者工具**
+
+1. Chrome 开发者工具：
+
+* 打开 Chrome 浏览器，进入要检测动画性能的页面。
+* 按下 F12 打开开发者工具，切换到“Performance”（性能）选项卡。
+* 点击“Record”（录制）按钮开始录制页面的交互和动画。
+* 进行页面上的动画操作，如滚动、拖动、动画播放等。
+* 停止录制后，开发者工具会生成一个性能分析报告，其中包括 CPU 使用率、FPS（每秒帧数）、帧时间线等信息，可以帮助你分析动画的性能瓶颈。
+
+**二、使用 JavaScript 性能分析工具**
+
+Frame Timing API 可以用于检测动画性能。
+
+**2.1、Frame Timing API 的作用**
+
+Frame Timing API 提供了一种方式来测量浏览器渲染每一帧所花费的时间。这对于分析动画性能非常有用，因为它可以帮助你确定动画是否流畅，是否存在卡顿或掉帧的情况。
+
+**2.2、如何使用 Frame Timing API 进行性能检测**
+
+1. 获取帧时间数据：
+
+* 使用 `performance.getEntriesByType('frame')` 方法可以获取帧时间数据的数组。每个条目代表一帧的信息，包括帧的开始时间、持续时间等。
+
+ ```javascript
+ const frameEntries = performance.getEntriesByType('frame')
+ frameEntries.forEach((entry) => {
+   console.log(`Frame start time: ${entry.startTime}`)
+   console.log(`Frame duration: ${entry.duration}`)
+ })
+ ```
+
+2. 分析帧时间数据：
+
+* 通过分析帧的持续时间，可以判断动画是否在预期的时间内渲染。如果帧的持续时间过长，可能表示动画出现了卡顿。
+* 可以计算平均帧时间、最大帧时间等指标，以评估动画的整体性能。
+
+3. 结合其他性能指标：
+
+* Frame Timing API 可以与其他性能指标一起使用，如 FPS（每秒帧数）、CPU 使用率等，以全面了解动画性能。
+* 例如，可以使用 `requestAnimationFrame` 来计算 FPS，并结合帧时间数据来确定动画的流畅度。
+
+**2.3、优势和局限性**
+
+1. 优势：
+
+* 提供精确的帧时间信息，有助于深入了解动画的性能细节。
+* 可以在浏览器中直接使用，无需安装额外的工具。
+
+2. 局限性：
+
+* 并非所有浏览器都完全支持 Frame Timing API，可能存在兼容性问题。
+* 仅提供帧时间数据，对于复杂的动画性能问题，可能需要结合其他工具和技术进行分析。
+
+**三、使用在线性能检测工具**
+
+1. WebPageTest：
+
+* WebPageTest 是一个在线工具，可以对网页的性能进行全面的测试，包括加载时间、动画性能、资源加载等。
+* 输入要测试的网页 URL，选择测试参数，如浏览器类型、地理位置等，然后启动测试。
+* 测试完成后，会生成详细的报告，包括视频录制、性能指标图表等，可以帮助你分析动画性能问题。
+
+2. Lighthouse：
+
+* Lighthouse 是一个由 Google 开发的开源工具，可以作为 Chrome 浏览器的扩展或命令行工具使用。
+* 运行 Lighthouse 对网页进行审计，它会评估网页的性能、可访问性、最佳实践等方面，并提供详细的报告和建议。
+* 在性能部分，会包括对动画性能的评估，如 FPS、主线程忙碌时间等指标。
+
+## 需要详细记录多个操作链路的性能耗时，进行结构化场景分析，该如何做 {#p2-detect-performance-of-multiple-operations}
+
+操作节点指标
+
+首先对一个操作链路切片：比如一个操作流程， 分拆为第一步， 第二步， 第三步.......
+然后对每一步一个事件点。
+然后统计每一个时间点之间的时间差， 就可以得出用户早操作每一步操作停留的时间。
+
+甚至可以统计一个串行流程， 实际上是一样的。
+
+ 阶段耗时统计
+
+**推荐： `performance.mark()`**
+
+`performance.mark()` 是 Web Performance API 的一部分，它允许你在浏览器的性能条目缓冲区中创建一个具有特定名称的时间戳（也就是一个"标记"）。这些标记可用于精确测量页面或应用中的特定流程、操作、或某段代码的执行时间。通过使用`performance.mark()`来标记关键的代码执行点，你可以准确地测量出这些点之间的耗时，从而评估性能和识别瓶颈。
+
+ 如何使用 `performance.mark()`
+
+**创建标记**
+
+要使用`performance.mark()`，直接调用此函数并传入一个字符串作为标记的名称即可：
+
+```javascript
+performance.mark('startLoad')
+// 执行一些操作
+performance.mark('endLoad')
+```
+
+在上述示例中，`startLoad`和`endLoad`是两个标记点，分别表示加载操作的开始和结束。
+
+**测量两个标记间的耗时**
+
+创建标记后，你可以使用`performance.measure()`方法来测量这两个标记点之间的耗时。`performance.measure()`方法同样需要一个名称，并且可以接受两个额外的参数：起始标记和结束标记的名称。
+
+```javascript
+performance.measure('loadDuration', 'startLoad', 'endLoad')
+```
+
+在上面的代码中，`loadDuration`是测量的名称，表示从`startLoad`到`endLoad`之间的耗时。
+
+**获取和分析测量结果**
+
+通过`performance.getEntriesByName()`或其他类似的 API，你可以获取到性能条目并分析结果：
+
+```javascript
+const measure = performance.getEntriesByName('loadDuration')[0]
+console.log(`加载耗时：${measure.duration}毫秒`)
+```
+
+`performance.getEntriesByName('loadDuration')`会返回一个数组，其中包含所有名为`loadDuration`的性能条目。在这个例子中，我们取数组的第一个元素，并通过`duration`属性获取实际的测量时间。
+
+ 清理标记和测量
+
+为了避免性能条目缓冲区满了或是数据混乱，你可以在完成测量和分析后，使用`performance.clearMarks()`和`performance.clearMeasures()`来清除标记和测量结果。
+
+```javascript
+performance.clearMarks('startLoad')
+performance.clearMarks('endLoad')
+performance.clearMeasures('loadDuration')
+```
+
+ 使用场景
+
+`performance.mark()`非常适合用于测量页面加载、脚本执行、用户交互处理或任何自定义流程的性能。通过准确地标记和测量这些操作的起始和结束时间，开发者可以识别出性能瓶颈和潜在的优化点，从而改进应用的性能表现。
+
+ 注意事项
+
+* 并非所有浏览器都支持 Web Performance API 的全部特性。使用这些 API 之前，建议检查兼容性。
+* 对于高频率的性能标记和测量，要注意性能条目缓冲区可能会被快速填满，从而影响数据的收集和分析。确保适时清理不再需要的性能条目。
+
+## 统计全站每一个静态资源加载耗时， 该如何做 {#p3-detect-performance-of-static-resources}
+
+要统计全站每一个静态资源（如图片、JS 脚本、CSS 样式表等）的加载耗时，你可以借助浏览器的 Performance API，特别是利用 `PerformanceResourceTiming` 接口来获取资源加载的详细时间信息。以下是一个基本的步骤指导和示例代码，展示如何实现这一功能：
+
+ 步骤
+
+1. **使用 `PerformanceObserver`：** 创建一个 `PerformanceObserver` 实例来监听资源加载事件，能够实时收集性能数据，而且对性能影响较小。
+
+2. **过滤静态资源类型：** 通过检查 `initiatorType` 属性，筛选出静态资源（例如 `img`、`script`、`css` 等）的加载事件。
+
+3. **计算和展示耗时：** 对每个静态资源的加载耗时进行计算并展示。资源的耗时可以通过 `duration` 属性直接获取。
+
+ 示例代码
+
+以下是一个简单的 JavaScript 代码示例，展示了如何使用 `PerformanceObserver` 来统计全站静态资源的加载耗时：
+
+```javascript
+// 创建性能观察者实例来监听资源加载事件
+const observer = new PerformanceObserver((list) => {
+  const entries = list.getEntries()
+  for (const entry of entries) {
+    // 过滤静态资源类型
+    if (['img', 'script', 'css', 'link'].includes(entry.initiatorType)) {
+      console.log(`资源 ${entry.name} 类型 ${entry.initiatorType} 耗时：${entry.duration.toFixed(2)} 毫秒`)
+    }
+  }
+})
+
+// 开始观察 Resource Timing 类型的性能条目
+observer.observe({ entryTypes: ['resource'] })
+```
+
+ 注意事项
+
+* **性能数据的准确性：** 确保性能数据的准确性和实时性，你应该在页面加载的早期就开始监听资源加载事件，例如在 `<head>` 标签中就引入或嵌入这段脚本。
+* **跨域资源的时间信息：** 如果你需要获取跨域资源的详细时间信息（如第三方字体或脚本），那么这些资源的服务器需要在响应头中包含 `Timing-Allow-Origin` 头。
+* **大量数据的处理：** 如果页面包含大量静态资源，考虑如何存储、传输和分析这些数据，避免对性能和用户体验造成影响。
+
+## 如何统计用户 pv 访问的发起请求数量（所有域名的） {#p2-pv}
+
+统计用户 PV（页面访问量）期间发起的请求数量（涵盖所有域名）可以通过几种方法实现，包括使用浏览器的 `Performance API`、监听网络请求、或者通过服务端日志分析。每种方法有其优点和适用场景。下面是一些方法的简要说明和示例：
+
+ 方法 1: 使用 Performance API
+
+`Performance API` 提供了丰富的接口来访问和利用浏览器的性能数据。通过使用这个 API，可以获取到用户 PV 时所有资源请求的详细信息，包括请求的域名信息。
+
+ 使用 PerformanceObserver 监听资源加载
+
+```javascript
+const observer = new PerformanceObserver((list) => {
+  const entries = list.getEntriesByType('resource')
+  console.log(`当前页面共发起了 ${entries.length} 个资源请求。`)
+})
+observer.observe({ entryTypes: ['resource'] })
+```
+
+这段代码会统计所有类型的资源加载（如图片、脚本、样式表等），不过它不会区别处理各个域名的请求。
+
+ 方法 2: 监听所有网络请求 (XMLHttpRequest 和 Fetch API)
+
+可以通过重新定义 `XMLHttpRequest` 和拦截 `fetch` API 的调用来监控所有通过这两种常见方法发起的网络请求。
+
+ 拦截 XMLHttpRequest
+
+```javascript
+(function () {
+  const oldOpen = XMLHttpRequest.prototype.open
+  window.requestCount = 0
+  XMLHttpRequest.prototype.open = function () {
+    window.requestCount++
+    console.log(`请求数量: ${window.requestCount}`)
+    return oldOpen.apply(this, arguments)
+  }
+})()
+```
+
+ 拦截 Fetch API
+
+```javascript
+const oldFetch = window.fetch
+window.fetch = function () {
+  window.requestCount++
+  console.log(`请求数量: ${window.requestCount}`)
+  return oldFetch.apply(this, arguments)
+}
+```
+
+这两段代码分别拦截了 `XMLHttpRequest` 和 `fetch` API 的请求，从而可以统计请求的总量。为了覆盖所有域名，代码没有对请求的 URL 进行筛选，但如果需要，可以通过分析 URL 来对请求进行分类统计。
+
+ 方法 3: 服务端日志分析
+
+如果你有权访问服务器日志，或者使用了像 Google Analytics 这样的分析工具，也可以通过分析服务端日志来统计 PV 过程中的请求数量。这种方法可能更适合统计对外部 API 的请求或者整体网站流量的分析。
+
+ 方法选择建议
+
+* 如果你想要实时在前端捕获和反馈统计数据，建议使用`Performance API`或者通过拦截网络请求的方法。
+* 如果希望进行更全面的数据分析或长期趋势跟踪，服务端日志分析可能是更合适的选择。
+
+## 可有办法判断用户的网络条件, 判断网速快慢，网络状态？ {#p1-network-condition}
+
+确定用户的网络条件，包括网络速度和连接状态，对于提供优质用户体验至关重要。以下是一些方法可以帮助你判断用户的网络条件：
+
+ 1. **Navigator Connection API**
+
+这个 API 提供有关系统的网络连接的信息，如网络的类型和下载速度。这个 API 的支持度不是全局性的，但在许多现代浏览器上可用。使用这个 API，你可以获取到有关用户网络连接的详细信息。
+
+```javascript
+if ('connection' in navigator) {
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+
+  console.log(`网络类型: ${connection.effectiveType}`)
+  console.log(`估计的下行速度: ${connection.downlink}Mbps`)
+  console.log(`RTT: ${connection.rtt}ms`)
+
+  // 监听网络类型变化
+  connection.addEventListener('change', (e) => {
+    console.log(`网络类型变化为: ${connection.effectiveType}`)
+  })
+}
+```
+
+* `connection.effectiveType` 提供了网络的类型，如 `'4g'`，`'3g'`，代表网络速度。
+* `connection.downlink` 提供了网络的下载速度信息，单位是 Mbps。
+* `connection.rtt` 提供了来回时间信息，单位是毫秒。
+
+ 2. **观测发送请求的速度**
+
+通过发送一个小请求（可能是一个小文件或 API 请求）并测量它完成的时间，可以粗略地估计当前的网络速度。
+
+```javascript
+const startTime = new Date().getTime() // 记录开始时间
+fetch('your-small-file-or-api-url').then((response) => {
+  const endTime = new Date().getTime() // 记录结束时间
+  const duration = endTime - startTime // 请求持续时间
+  console.log(`请求持续时间: ${duration}ms`)
+  // 根据持续时间和文件大小估计网速
+})
+```
+
+ 3. **监听在线和离线事件**
+
+HTML5 引入了在线和离线事件监听，可以用来简单判断用户是否连接到网络。
+
+```javascript
+window.addEventListener('online', () => console.log('网络已连接'))
+window.addEventListener('offline', () => console.log('网络已断开'))
+```
+
+根据`navigator.onLine`的属性值，你可以检测用户是否在线。
+
+```javascript
+if (navigator.onLine) {
+  console.log('用户在线')
+} else {
+  console.log('用户离线')
+}
+```
+
+ 结论
+
+虽然无法精确地测量用户的网速，但以上方法提供了一些手段来估计用户的网络状况。这样的信息可以用来动态调整网站或应用的行为，例如，通过降低图像质量、推迟非关键资源的加载或取消某些动画，以改善慢速连接下的用户体验。

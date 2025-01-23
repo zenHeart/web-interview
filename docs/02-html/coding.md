@@ -554,3 +554,423 @@ console.log(memoizedOperation()) // 直接返回上次的结果 42，不再执�
 
 * CDN 通常会对文件进行缓存，进一步提高文件的加载速度。当文件内容发生变化时，需要及时更新 CDN 上的缓存。
 * 可以通过设置 CDN 的缓存策略或使用版本号等方式来管理 CDN 缓存。
+
+## 计算一段文本渲染之后的长度 {#p2-calculate-the-length-of-a-piece-of-text-after-rendering}
+
+> 追加描述
+> 需要根据这个长度来动态计算文本是否折叠， 所以这个文本没有计算出长度是否折叠之前，还不能在用户可视区域渲染出来
+
+要在 JavaScript 中计算一段文本渲染之后的长度，可以通过几种方法来实现。这里的“长度”可以是文本渲染后的像素宽度，它取决于具体的字体、字号、文本内容等因素。以下是一些可行的方法：
+
+ 1. 创建一个临时元素来计算文本尺寸
+
+这个方法涉及到创建一个与目标文本拥有相同样式（字体、字号等）的临时 DOM 元素，将目标文本内容设置到临时元素中，然后插入到文档流（不可见状态下）来测量其尺寸。测量完成后，再从文档中移除该临时元素。
+
+```javascript
+function getTextWidth (text, font) {
+  // 创建一个临时的span元素
+  const tempEl = document.createElement('span')
+  tempEl.style.visibility = 'hidden' // 确保元素不可见
+  tempEl.style.whiteSpace = 'nowrap' // 防止文本换行
+  tempEl.style.font = font // 应用字体样式
+  tempEl.textContent = text
+
+  document.body.appendChild(tempEl)
+  const width = tempEl.offsetWidth // 获取元素的宽度
+  document.body.removeChild(tempEl)
+
+  return width
+}
+
+// 示例用法
+const font = '16px Arial'
+const text = '这是一段测试文本'
+console.log(getTextWidth(text, font))
+```
+
+ 2. 使用 Canvas 的 measureText 方法
+
+如果你不想与 DOM 打交道，也可以使用 Canvas 的 API 来测量文本宽度。`CanvasRenderingContext2D.measureText()` 方法返回一个对象，该对象包含了给定文本渲染后的宽度（以像素为单位）。
+
+```javascript
+function measureTextWidth (text, font) {
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  ctx.font = font // 应用字体样式，格式与 CSS font 属性相同
+  const metrics = ctx.measureText(text)
+  return metrics.width
+}
+
+// 示例用法
+const font = '16px Arial'
+const text = '这是一段测试文本'
+console.log(measureTextWidth(text, font))
+```
+
+ 注意事项
+
+* 尽量在文档加载完毕后使用这些方法，特别是如果你依赖于页面上的样式信息时。
+* 如果文本在页面上多次出现且样式一致，可以考虑缓存测量结果来提升性能。
+
+## 长文本场景，中间显示省略号..., 两端正常展示 {#p3-long-text-scene-middle-display-ellipsis-in-two-directions-normal-display}
+
+在前端处理长文本且需要在中间显示省略号（...），两端保留完整文本的情况，通常有下面几种方法可以达到效果：
+
+ 1. 纯 CSS 解决方案（对于单行文本）
+
+对于单行的文本，可以使用 CSS 的`text-overflow`属性来实现，但这种方法一般只能实现末尾的省略号，无法直接实现中间省略的效果。
+
+ 2. JavaScript + CSS
+
+当需要在文本中间显示省略号时，就需要结合使用 JavaScript 和 CSS 来处理。以下是一种可能的实现方法：
+
+1. **确定保留文本的长度。** 首先确定需要在文本的开始和结束保留多少字符。
+2. **使用 JavaScript 计算并处理文本。** 根据上面确定的长度，使用 JavaScript 截取字符串，并添加省略号。
+3. **使用 CSS 来保证文本的美观展示。**
+
+下面是一个简单的示例代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Document</title>
+ <style>
+ .text-container {
+ width: 60%;
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ margin: 20px auto;
+ }
+ </style>
+ </head>
+ <body>
+ <div id="text" class="text-container">
+ <!-- 动态生成的文本会放在这里 -->
+ </div>
+
+ <script>
+ function truncateText(selector, text, frontLen, backLen) {
+ const totalLen = frontLen + backLen;
+ if (text.length > totalLen) {
+ const startText = text.substr(0, frontLen);
+ const endText = text.substr(-backLen);
+ document.querySelector(selector).textContent = `${startText}...${endText}`;
+ } else {
+ document.querySelector(selector).textContent = text;
+ }
+ }
+
+ const exampleText = "这是一个长文本示例，需要在中间显示省略号，同时保留两端的文本内容。";
+ truncateText("#text", exampleText, 10, 10);
+ </script>
+ </body>
+</html>
+```
+
+在这个例子中，`truncateText`函数接收一个选择器（在这里是指容器的 ID）、要处理的文本、前端和后端应保留文本的长度。函数计算并生成了新的文本内容，其中间部分被省略号（...）替代。
+
+这个方法给予了你灵活性去确定前后端保留的文本长度，以及省略的部分。但需要注意，这是针对简单场景的解决方案，对于更复杂的布局或特殊字体，可能需要更细致的处理来保证良好的显示效果。
+
+ 其他复杂实现可以参考下面的文档
+
+* [资料](https://juejin.cn/post/7329967013923962895)
+
+## 要实时统计用户浏览器窗口大小，该如何做
+
+要实时统计用户浏览器窗口大小，可以利用 JavaScript 中的 `resize` 事件。当浏览器窗口尺寸变化时，此事件会被触发。通过侦听此事件，可以实时获取并处理浏览器窗口的宽度和高度。
+
+ 基础示例
+
+下面是一个简单的示例，展示如何使用 `resize` 事件来获取并打印当前浏览器窗口的宽度和高度：
+
+```javascript
+// 定义一个函数来处理窗口大小变化
+function handleResize () {
+  const width = window.innerWidth
+  const height = window.innerHeight
+  console.log(`当前窗口大小：宽度 = ${width}, 高度 = ${height}`)
+}
+
+// 在窗口 resize 事件上添加监听器
+window.addEventListener('resize', handleResize)
+
+// 初始化时执行一次，确保获取初始窗口大小
+handleResize()
+```
+
+ 节流优化
+
+如果你担心 `resize` 事件触发得太频繁，可能会影响页面性能，可以引入“节流”（throttle）机制来限制事件处理函数的执行频率。节流确保了即使事件持续触发，事件处理函数也只在每隔一段时间执行一次。
+
+以下是如何应用节流优化的示例：
+
+```javascript
+function throttle (fn, wait) {
+  let inThrottle, lastFn, lastTime
+  return function () {
+    const context = this
+    const args = arguments
+    if (!inThrottle) {
+      fn.apply(context, args)
+      lastTime = Date.now()
+      inThrottle = true
+    } else {
+      clearTimeout(lastFn)
+      lastFn = setTimeout(function () {
+        if (Date.now() - lastTime >= wait) {
+          fn.apply(context, args)
+          lastTime = Date.now()
+        }
+      }, Math.max(wait - (Date.now() - lastTime), 0))
+    }
+  }
+}
+
+// 使用节流函数包装我们的处理器
+const throttledHandleResize = throttle(handleResize, 100)
+
+// 添加节流化的事件监听
+window.addEventListener('resize', throttledHandleResize)
+```
+
+这个 `throttle` 函数通过确保被包装的 `handleResize` 函数在指定的时间间隔（本例中为 100 毫秒）内最多只执行一次，来减少 `resize` 事件处理函数的调用频率。
+
+ 应用场景
+
+这样实时统计用户浏览器窗口大小的方法可以用于多种应用场景，如响应式布局调整、基于窗口大小动态加载资源、或者其他需要根据视窗大小变化进行调整的交互效果实现。
+
+使用这种方法时，重要的是平衡事件处理函数的执行频率和页面的性能，特别是当你的窗口大小调整处理函数中包含复杂操作时。通过合理利用“节流”或“防抖”（debounce）技术，可以有效地解决这个问题。
+
+## 如何实现鼠标拖拽 {#p2-mouse-drag}
+
+**关键词**：拖拽 api、`mousedown`、`mousemove`和`mouseup`事件
+
+实现鼠标拖拽功能通常涉及到监听和处理鼠标事件，比如：`mousedown`、`mousemove`和`mouseup`事件。下面是一个基本的步骤指南以及一个简易的示例代码（使用 HTML 和 JavaScript），展示了如何实现一个元素的鼠标拖拽功能。
+
+ 基本步骤
+
+1. **监听`mousedown`事件：** 当用户按下鼠标按钮时，记录被拖拽元素的初始位置，并设置一个标志（如`isDragging`）表示拖拽开始。
+
+2. **监听`mousemove`事件：** 当用户移动鼠标时，如果拖拽已开始，则根据鼠标当前位置和初始位置的差值，更新被拖拽元素的位置。
+
+3. **监听`mouseup`事件：** 当用户释放鼠标按钮时，清除拖拽开始的标志（如`isDragging`），表示拖拽结束。
+
+ 示例代码
+
+这里是一个简单的 HTML 和 JavaScript 示例，演示了如何让一个`div`元素可拖拽：
+
+```html
+<!DOCTYPE html>
+<html>
+ <head>
+ <title>鼠标拖拽示例</title>
+ <style>
+ #draggable {
+ width: 100px;
+ height: 100px;
+ background-color: red;
+ position: absolute;
+ cursor: pointer;
+ }
+ </style>
+ </head>
+ <body>
+ <div id="draggable"></div>
+
+ <script>
+ // 获取元素
+ var draggable = document.getElementById("draggable");
+ var isDragging = false;
+ var offset = { x: 0, y: 0 };
+
+ draggable.addEventListener("mousedown", function (e) {
+ isDragging = true;
+ offset.x = e.clientX - draggable.getBoundingClientRect().left;
+ offset.y = e.clientY - draggable.getBoundingClientRect().top;
+ });
+
+ document.addEventListener("mousemove", function (e) {
+ if (isDragging) {
+ draggable.style.left = e.clientX - offset.x + "px";
+ draggable.style.top = e.clientY - offset.y + "px";
+ }
+ });
+
+ document.addEventListener("mouseup", function () {
+ isDragging = false;
+ });
+ </script>
+ </body>
+</html>
+```
+
+ 注意事项
+
+* 这个示例仅作为演示使用，实际应用可能需要更多的错误处理和边界条件判断。
+* 为了防止拖拽时的文本选中现象，可能需要监听并阻止`mousemove`事件的默认行为。
+* 记得附加适当的样式（如`cursor: move;`），提升用户体验。
+
+根据你的需要，这个基本的逻辑和代码可以进行调整和扩展，以实现更复杂的拖拽功能。
+
+## 长文本溢出，展开/收起如何实现 {#p2-long-text-overflow}
+
+长文本溢出展开/收起功能通常需要使用一些 JavaScript 来动态控制文本的显示状态，及 CSS 来处理文本的默认显示样式。以下是一个基本实现示例，展示了如何结合 HTML、CSS 和 JavaScript 来实现这个功能。
+
+ HTML 结构
+
+我们定义一个容器来显示文本，并添加一个用于触发展开/收起操作的按钮。
+
+```html
+<div id="textContainer" class="text-overflow">
+ 这是一段可能很长的文本，我们希望在一开始时只显示部分，点击“展开”按钮后显示全部内容，再次点击则“收起”文本。
+</div>
+<button id="toggleButton">展开</button>
+```
+
+ CSS 样式
+
+使用 CSS 设置文本的默认显示状态为隐藏超出部分，并且用省略号表示溢出。
+
+```css
+.text-overflow {
+ /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 设置一个高度限制，模拟文本“收起”时的状态 */
+ max-height: 60px; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 这个值根据需要调整 */
+ overflow: hidden;
+ position: relative;
+ line-height: 20px; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 根据实际情况调整 */
+ padding-right: 20px;
+}
+```
+
+ JavaScript 代码
+
+使用 JavaScript 来控制文本的“展开”和“收起”状态。我们监听按钮的点击事件来切换文本的显示状态。
+
+```javascript
+document.getElementById('toggleButton').addEventListener('click', function () {
+  const textContainer = document.getElementById('textContainer')
+  const button = document.getElementById('toggleButton')
+
+  // 检查当前是展开还是收起状态
+  if (button.textContent === '展开') {
+    // 修改文本容器的最大高度以显示全部文本
+    textContainer.style.maxHeight = 'none'
+    button.textContent = '收起'
+  } else {
+    // 重新设置最大高度以隐藏文本
+    textContainer.style.maxHeight = '60px' // 与CSS中定义的相同
+    button.textContent = '展开'
+  }
+})
+```
+
+这只是实现长文本溢出展开/收起的一种基本方法。根据具体需求，这个示例可以进一步扩展或修改，比如添加动画效果使展开/收起操作更平滑，或者根据文本长度动态决定是否显示“展开/收起”按钮等。
+
+还有其他方法可以实现这一功能，包括使用纯 CSS 的技巧（虽然可能不那么灵活），或者利用现成的 JavaScript 库和框架来简化实现过程。
+
+ 更有多实现细节， 可以参考以下文档
+
+[资料](https://juejin.cn/post/7407259487193399333)
+
+## 在页面关闭时执行方法，该如何做 {#p3-page-close-exe
+
+cute-method}
+
+在页面关闭时执行特定的方法，你可以使用 `window` 对象的 `beforeunload` 和 `unload` 事件。不过，这两个事件有一些微妙的区别和适用场景。
+
+ 使用 `beforeunload` 事件
+
+`beforeunload` 事件在窗口、文档或其资源即将卸载时触发，这一点让它成为在页面关闭前提示用户保存未保存更改的理想选择。在绑定到该事件的处理函数中，你可以执行特定的逻辑，但请注意，按照现代浏览器的安全策略，除非你设置了 `event.returnValue`，否则不会显示自定义的离开提示信息。
+
+```javascript
+window.addEventListener('beforeunload', (event) => {
+  // 在这里执行你的清理逻辑或者其他操作
+  // 例如，发送一个统计日志
+  navigator.sendBeacon('/log', '用户即将离开页面')
+
+  // 显示离开提示（大多数现代浏览器不支持自定义文本）
+  event.returnValue = '您确定要离开此页面吗？'
+})
+```
+
+ 使用 `unload` 事件
+
+`unload` 事件在用户即将从页面导航走，或关闭页面时触发。你可以在这个事件的处理函数中执行不能阻止页面卸载的清理逻辑。不过需要注意，这个事件的执行时间非常短，某些操作（例如异步操作）可能无法完成。
+
+```javascript
+window.addEventListener('unload', (event) => {
+  // 执行简短的同步操作，例如发送统计信息
+  // 注意：这种情况下 navigator.sendBeacon 是更好的选择
+})
+```
+
+ 使用 `navigator.sendBeacon`
+
+对于在页面卸载时需要发送数据到服务器的情况，使用 `navigator.sendBeacon` 方法是一种更可靠的方式。它有效地解决了通过异步 AJAX 请求可能导致的数据不被送出的问题。
+
+```javascript
+window.addEventListener('unload', (event) => {
+  navigator.sendBeacon('/log-out', '用户离开')
+})
+```
+
+ 注意事项
+
+* 不是所有浏览器都完全一样地支持这些事件和 `navigator.sendBeacon` 方法。实施时应当考虑兼容性。
+* 在 `beforeunload` 和 `unload` 事件中执行大量的同步操作或长时间运行的脚本可能会导致用户体验下降。推荐尽量使用简洁快速的逻辑。
+* `beforeunload` 事件可以控制是否提示用户离开页面的确认对话框，但自定义的确认对话框信息可能不被所有浏览器支持。
+* 使用 `navigator.sendBeacon` 来发送数据是因为它能在请求中携带足够的数据量，且即使页面卸载过程中也能确保数据被发送。
+
+根据你的应用需求，选择合适的事件和方法，确保页面关闭时能够执行你的逻辑。
+
+## 大文件切片上传的时候，确定切片数量的时候，有那些考量因素 {#p2-big-file-slice-upload}
+
+大文件切片上传时，切片数量取决于几个关键因素：文件总大小、每个切片的大小（即切片大小），以及任何特定于应用或服务的限制。计算切片数量的过程包括确定合理的切片大小，然后根据文件总大小来计算需要多少个这样大小的切片。以下是一些步骤和考虑因素，可以帮助你确定切片数量：
+
+ 1. 确定切片大小
+
+* **切片大小**：首先，需要确定每个切片的大小。这通常是一个权衡的结果，考虑到效率、可靠性和服务器限制。太小的切片会增加请求的数量，降低效率；而太大的切片可能会增加单个请求失败的风险，并且对于每次请求消耗更多的内存和带宽。
+* 通常，切片大小选取在 `1MB` 至 `10MB` 之间比较合适，当然这取决于具体应用和网络环境。
+
+ 2. 计算切片数量
+
+* **文件总大小**：知道文件的总大小后，可以通过简单的数学计算来决定切片的数量。公式如下：
+
+ ```
+ 切片数量 = 向上取整（文件总大小 / 每个切片的大小）
+ ```
+
+* 例如，如果文件是 `50MB`，每个切片大小为 `5MB`，则切片数量为 `10`。
+
+ 3. 考虑特殊情况
+
+* 最后一个切片可能会小于你设定的标准切片大小，这是正常情况，需要在上传逻辑中进行处理。
+
+ 4. 示例代码
+
+```javascript
+function calculateChunks(fileSize, chunkSize) {
+ // 文件总大小（byte），切片大小（byte）
+ const chunksCount = Math.ceil(fileSize / chunkSize);
+ return chunksCount;
+}
+
+// 示例：文件大小 52MB，切片大小 5MB
+const fileSize = 52 issues_data.csv proCollectionInterviewQuesiont.sh 1024 issues_data.csv proCollectionInterviewQuesiont.sh 1024; // 52MB
+const chunkSize = 5 issues_data.csv proCollectionInterviewQuesiont.sh 1024 issues_data.csv proCollectionInterviewQuesiont.sh 1024; // 5MB
+const chunksCount = calculateChunks(fileSize, chunkSize);
+
+console.log(`需要切片数量: ${chunksCount}`);
+```
+
+ 注意事项
+
+* **网络条件**：切片大小可能需要根据网络环境调整。在网络条件较差的情况下，选择更小的切片大小可能更加可靠。
+* **服务器限制**：某些服务器或云服务可能对上传文件的大小有限制。确保了解和遵守这些限制，以避免上传失败。
+* **并发上传**：在选择切片大小和数量时，考虑是否会并行上传多个切片，因为这也会影响上传速度和效率。
+
+通过以上步骤和考虑因素，你可以合理地决定大文件上传时的切片数量，以优化上传过程的效率和可靠性。

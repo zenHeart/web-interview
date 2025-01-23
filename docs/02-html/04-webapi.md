@@ -20,6 +20,45 @@ web 下常用 api
 
 ## intersection observer api? {#p3-intersection-observer-api}
 
+## ResizeObserver 作用是什么 {#p2-resizeobserver}
+
+`ResizeObserver` 的作用是监测元素的尺寸变化。这是一种强大的 Web API，允许开发者在元素的尺寸发生改变时（无论是因为元素内容的变化、窗口大小的调整还是其他原因导致的尺寸改变），执行一些操作或布局更新。在过去，开发者通常需要依赖定时器或者窗口的 `resize` 事件来间接监测元素尺寸的变化，这种方法不仅不够精确，而且效率低下。`ResizeObserver` 提供了一种更为直接和高效的方式来响应尺寸变化。
+
+ 如何使用 `ResizeObserver`
+
+使用 `ResizeObserver` 很简单，你只需要创建一个 `ResizeObserver` 实例，并为它提供一个回调函数。在回调函数中，你可以基于元素尺寸的变化来执行相应的操作。然后，使用 `observe` 方法来指定需要被观察尺寸变化的元素。
+
+ 示例代码
+
+下面的示例代码展示了如何使用 `ResizeObserver` 来监测一个元素的尺寸变化，并在尺寸变化时输出新的尺寸信息：
+
+```javascript
+// 监测的目标元素
+const targetElement = document.querySelector('.resizable')
+
+// 创建 ResizeObserver 实例
+const resizeObserver = new ResizeObserver((entries) => {
+  for (const entry of entries) {
+    // entry.target 是被观察的元素
+    // entry.contentRect 包含了元素的尺寸信息
+    console.log('Element size changed:', entry.target)
+    console.log(`New width: ${entry.contentRect.width}`)
+    console.log(`New height: ${entry.contentRect.height}`)
+  }
+})
+
+// 开始观察目标元素
+resizeObserver.observe(targetElement)
+```
+
+ 应用场景
+
+`ResizeObserver` 的常见应用场景包括：
+
+* **响应式布局**：当容器的尺寸改变时，动态调整内容或布局，提供更好的响应式设计。
+* **图表和可视化**：在图表或数据可视化的容器大小改变时，重新绘制图表来适应新的尺寸。
+* **动态元素（如弹出窗口和下拉菜单）**：监测并根据内容大小自动调整元素的尺寸。
+
 ## HTML5的离线储存怎么使用，工作原理能不能解释一下？{#p2-html5-offline-storage}
 
 ## Cookie和Session区别？{#p1-cookie-session-difference}
@@ -380,3 +419,20 @@ console.log(url.toString())
 * 这需要使用`keydown`或`keyup`事件，并检查按下的键是否是复制快捷键。但这种方法可能会受到浏览器的安全限制，并且不同浏览器对快捷键的处理方式可能不同。
 
 通过以上方法，可以在浏览器中实现剪切板复制内容的功能。根据具体的需求和浏览器的兼容性，可以选择合适的方法来实现复制操作。同时，需要注意用户的隐私和安全问题，确保复制操作是在用户许可的情况下进行的。
+
+## localStorage 是同步还是异步 {#p1-localstorage-is-synchronous-or-asynchronous}
+
+在大多数现代浏览器中，`localStorage`的操作是同步的。
+
+当你使用`localStorage.setItem()`来存储数据或者`localStorage.getItem()`来获取数据时，这些操作会立即执行并且不会返回一个 Promise 或者使用回调函数来处理异步操作。
+
+例如：
+
+```javascript
+localStorage.setItem('key', 'value')
+console.log(localStorage.getItem('key'))
+```
+
+在上面的代码中，设置和获取`localStorage`中的数据的操作会按顺序立即执行，不会像异步操作那样需要等待一段时间后再执行后续代码。
+
+然而，需要注意的是，虽然`localStorage`操作本身是同步的，但如果存储的数据量较大，可能会导致性能问题，因为这些操作会阻塞浏览器的主线程。在这种情况下，可能会感觉操作像是异步的，因为浏览器可能会出现卡顿或响应缓慢的情况。

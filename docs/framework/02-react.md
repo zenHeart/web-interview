@@ -417,3 +417,43 @@ function withSubscription(WrappedComponent, selectData) {
 * 检查应用中的网络请求是否高效。避免频繁的重复请求，使用缓存策略来减少请求次数。确保网络请求的响应时间合理，可以使用工具来监测网络请求的性能，并考虑优化服务器端的响应时间。
 
 通过以上方法，可以系统地排查 React 应用中的性能问题，并采取相应的优化措施来提高应用的性能和响应速度。
+
+## 性能调优中，如何确定哪个数据变化引起的组件渲染 {#p2-react-performance-problem-determine}
+
+帮助开发者排查是哪个属性改变导致了组件的 rerender。
+
+直接接受 ahooks 里面的一个方法： [useWhyDidYouUpdate](https://ahooks.js.org/zh-CN/hooks/use-why-did-you-update)
+
+源码实现：
+
+```tsx
+import { useEffect, useRef } from 'react'
+
+export type IProps = Record<string, any>;
+
+export default function useWhyDidYouUpdate (componentName: string, props: IProps) {
+  const prevProps = useRef<IProps>({})
+
+  useEffect(() => {
+    if (prevProps.current) {
+      const allKeys = Object.keys({ ...prevProps.current, ...props })
+      const changedProps: IProps = {}
+
+      allKeys.forEach((key) => {
+        if (!Object.is(prevProps.current[key], props[key])) {
+          changedProps[key] = {
+            from: prevProps.current[key],
+            to: props[key]
+          }
+        }
+      })
+
+      if (Object.keys(changedProps).length) {
+        console.log('[why-did-you-update]', componentName, changedProps)
+      }
+    }
+
+    prevProps.current = props
+  })
+}
+```
