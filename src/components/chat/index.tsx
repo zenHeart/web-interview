@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Chat, { Bubble, useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
 
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
-  const { messages, appendMsg, setTyping } = useMessages([])
+  const { messages, appendMsg, setTyping, updateMsg } = useMessages([])
 
   // 处理发送消息
-  const handleSend = (type: string, val: string) => {
+  const handleSend = async (type: string, val: string) => {
     if (type === 'text' && val.trim()) {
+      // 添加用户消息
       appendMsg({
         type: 'text',
         content: { text: val },
@@ -18,13 +19,68 @@ const ChatWindow: React.FC = () => {
 
       setTyping(true)
 
-      // 模拟回复
-      setTimeout(() => {
+      try {
+        // 添加一条空的助手消息，用于后续更新
+        const assistantMsgId = Date.now().toString()
+        appendMsg({
+          _id: assistantMsgId,
+          type: 'text',
+          content: { text: '' },
+        })
+
+        // 调用 Ollama API
+        const response = await fetch('http://localhost:11434/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'deepseek-r1:8b',
+            prompt: val,
+          }),
+        })
+
+        if (!response.body) throw new Error('No response body')
+
+        const reader = response.body.getReader()
+        let accumulatedText = ''
+
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
+
+          // 将 Uint8Array 转换为文本
+          const chunk = new TextDecoder().decode(value)
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (!line) continue
+            
+            try {
+              const data = JSON.parse(line)
+              if (data.response) {
+                accumulatedText += data.response
+                // 更新助手消息
+                updateMsg(assistantMsgId, {
+                  type: 'text',
+                  content: { text: accumulatedText },
+                })
+              }
+            } catch (e) {
+              console.error('JSON parse error:', e)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error calling Ollama:', error)
+        // 显示错误消息
         appendMsg({
           type: 'text',
-          content: { text: '收到消息：' + val },
+          content: { text: '抱歉，发生了一些错误，请稍后重试。' },
         })
-      }, 1000)
+      } finally {
+        setTyping(false)
+      }
     }
   }
 
