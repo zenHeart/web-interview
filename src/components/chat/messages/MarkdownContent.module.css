@@ -1,0 +1,26 @@
+.markdownBubble {
+  line-height: 1.6;
+}
+
+/* 继承 Docusaurus 的主题样式 */
+.markdownBubble :global(.markdown) {
+  margin-bottom: 0;
+}
+
+.markdownBubble pre {
+  margin: 1em 0;
+  padding: 1em;
+  background-color: var(--ifm-pre-background);
+  border-radius: var(--ifm-pre-border-radius);
+}
+
+.markdownBubble code {
+  background-color: var(--ifm-code-background);
+  border-radius: var(--ifm-code-border-radius);
+  padding: var(--ifm-code-padding-vertical) var(--ifm-code-padding-horizontal);
+}
+
+.codeBlockWrapper {
+  position: relative;
+  margin: 1em 0;
+}

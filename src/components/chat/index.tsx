@@ -3,6 +3,7 @@ import Chat, { Bubble, useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
 import ThinkingBlock from './messages/ThinkBlock'
+import MarkdownContent from './messages/MarkdownContent'
 
 interface MessageContent {
   text: string;
@@ -132,7 +133,7 @@ const ChatWindow: React.FC = () => {
     return (
       <div>
         {content.thinking && <ThinkingBlock content={content.thinking} />}
-        {content.text && <Bubble content={content.text} />}
+        {content.text && <MarkdownContent content={content.text} />}
       </div>
     );
   }
