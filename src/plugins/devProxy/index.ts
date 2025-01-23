@@ -15,19 +15,12 @@ export default function devProxy(context: LoadContext, options: any): Plugin {
                    secure: false,
                    changeOrigin: true,
                    logLevel: "debug",
-                   on: {
-                     proxyReq() {
-                        console.log("Proxy request");
-                     },
-                     proxyRes: (proxyRes: any, req: { method: string; url: string }, res: any) => {
-                        res.setHeader('Access-Control-Allow-Origin', '*');
-                        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-                        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                   onProxyRes: (proxyRes: any, req: { method: string; url: string }, res: any) => {
                         console.log(
+                           proxyRes,
                           `[Proxy] ${req.method} ${req.url} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path}`
                         );
                      },
-                   },
                  },
                },
             },
