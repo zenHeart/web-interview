@@ -3,6 +3,28 @@ import Chat, { Bubble, useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
 
+interface MessageContent {
+  text: string;
+  thinking?: string;
+}
+
+// 思考区块组件
+const ThinkingBlock: React.FC<{ content: string }> = ({ content }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className={styles.thinkingBlock} onClick={() => setIsExpanded(!isExpanded)}>
+      <div className={styles.thinkingHeader}>
+        <span className={`${styles.thinkingIcon} ${isExpanded ? styles.expanded : ''}`}>▶</span>
+        查看思考过程
+      </div>
+      <div className={`${styles.thinkingContent} ${isExpanded ? styles.expanded : ''}`}>
+        {content}
+      </div>
+    </div>
+  );
+};
+
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
   const { messages, appendMsg, setTyping, updateMsg } = useMessages([])
@@ -25,7 +47,7 @@ const ChatWindow: React.FC = () => {
         appendMsg({
           _id: assistantMsgId,
           type: 'text',
-          content: { text: '' },
+          content: { text: '', thinking: '' },
         })
 
         // 调用 Ollama API
@@ -44,12 +66,14 @@ const ChatWindow: React.FC = () => {
 
         const reader = response.body.getReader()
         let accumulatedText = ''
+        let thinkingText = ''
+        let isThinking = false
+        let currentChunk = ''
 
         while (true) {
           const { value, done } = await reader.read()
           if (done) break
 
-          // 将 Uint8Array 转换为文本
           const chunk = new TextDecoder().decode(value)
           const lines = chunk.split('\n')
 
@@ -59,12 +83,44 @@ const ChatWindow: React.FC = () => {
             try {
               const data = JSON.parse(line)
               if (data.response) {
-                accumulatedText += data.response
-                // 更新助手消息
-                updateMsg(assistantMsgId, {
-                  type: 'text',
-                  content: { text: accumulatedText },
-                })
+                currentChunk += data.response
+                
+                // 检查是否包含完整的思考标签
+                if (currentChunk.includes('<think>')) {
+                  const parts = currentChunk.split('<think>')
+                  if (parts[0]) accumulatedText += parts[0]
+                  currentChunk = parts[1] || ''
+                  isThinking = true
+                }
+                
+                if (currentChunk.includes('</think>')) {
+                  const parts = currentChunk.split('</think>')
+                  if (parts[0]) thinkingText += parts[0]
+                  if (parts[1]) accumulatedText += parts[1]
+                  currentChunk = ''
+                  isThinking = false
+                  continue
+                }
+                
+                // 根据状态添加文本
+                if (isThinking) {
+                  thinkingText += currentChunk
+                  currentChunk = ''
+                } else {
+                  accumulatedText += currentChunk
+                  currentChunk = ''
+                }
+
+                // 只有当有内容时才更新消息
+                if (accumulatedText.trim() || thinkingText.trim()) {
+                  updateMsg(assistantMsgId, {
+                    type: 'text',
+                    content: { 
+                      text: accumulatedText.trim(),
+                      thinking: thinkingText.trim() 
+                    },
+                  })
+                }
               }
             } catch (e) {
               console.error('JSON parse error:', e)
@@ -84,10 +140,15 @@ const ChatWindow: React.FC = () => {
     }
   }
 
-  // 渲染消息内容
+  // 修改消息渲染组件
   const renderMessageContent = (msg: any) => {
-    const { content } = msg
-    return <Bubble content={content.text} />
+    const { content } = msg;
+    return (
+      <div>
+        {content.thinking && <ThinkingBlock content={content.thinking} />}
+        {content.text && <Bubble content={content.text} />}
+      </div>
+    );
   }
 
   return (
