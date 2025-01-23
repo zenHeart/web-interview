@@ -92,8 +92,15 @@ function QuestionList() {
       return true
     }
 
-    // 分配topics
-    topicEntries.forEach(([key, topic], index) => {
+    // 第一轮：前三个 topic 直接从左到右放置
+    topicEntries.slice(0, COLUMNS).forEach(([key, topic], index) => {
+      const topicHeight = estimateTopicHeight(topic)
+      columns[index].push([key, topic])
+      columnHeights[index] += topicHeight
+    })
+
+    // 后续轮次：考虑高度均衡
+    topicEntries.slice(COLUMNS).forEach(([key, topic]) => {
       const topicHeight = estimateTopicHeight(topic)
       let bestColumn = -1
       let minVariance = Infinity
@@ -105,15 +112,15 @@ function QuestionList() {
           newHeights[i] += topicHeight
           const variance = calculateVariance(newHeights)
           
-          // 如果是第一个有效位置或者能让方差更小，就选择这个位置
-          if (bestColumn === -1 || variance < minVariance) {
+          // 优先选择左边的列，除非方差差异显著（比如超过 20%）
+          if (bestColumn === -1 || 
+              variance < minVariance * 0.8) {  // 允许 20% 的方差容忍度
             minVariance = variance
             bestColumn = i
           }
         }
       }
 
-      // 放置topic
       if (bestColumn !== -1) {
         columns[bestColumn].push([key, topic])
         columnHeights[bestColumn] += topicHeight
