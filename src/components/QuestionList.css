@@ -20,19 +20,23 @@
 .topics-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  margin: 0 -12px;
+  gap: 0 16px;
+  margin: 0;
 }
 
 /* Topic 块样式 */
 .topic-block {
   background: #f9f9f9;
   border-radius: 8px;
-  padding: 24px;
-  height: fit-content;
-  max-height: 90vh;
+  padding: 20px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 12px;
+}
+
+/* 确保最后一个topic块没有底部间距 */
+.topics-column > .topic-block:last-child {
+  margin-bottom: 0;
 }
 
 /* Topic 标题样式 */

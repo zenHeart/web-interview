@@ -81,7 +81,7 @@ export default function extractQuestionsPlugin (
     async contentLoaded ({ content, actions }) {
       const { createData, setGlobalData } = actions
 
-      // console.log('Content loaded:', content)
+      console.log('Content loaded:', content)
 
       await createData(
         'src/data/questions.json',
