@@ -1,6 +1,16 @@
 # 布局
 
-## 水平垂直居中?
+## 水平垂直居中  {#p0-css-center}
+
+答案参见 [css 居中文档](https://www.w3.org/Style/Examples/007/center)
+
+可以参考下表进行记忆
+
+| 居中方式 | 内联元素                 | 块元素 |
+| :------- | :----------------------- | :----- |
+| 水平居中 | text-align 设置为 center | margin |
+|          |                          | 1      |
+| 垂直居中 | 当行采用 line-height     | sdf    |
 
 ## CSS 如何实现固定长宽比的元素 {#p2-css-fixed-aspect-ratio}
 
@@ -217,3 +227,26 @@
  </body>
 </html>
 ```
+
+## 有哪些清除浮动的技术，都适用哪些情况？  {#p1-clear-float}
+
+1. 采用 clear 清除浮动典型代码如下,
+
+    ```css
+    <!-- 在父容器添加 clear-float -->
+    .clear-float::after {
+        content: '';
+        clear: both;
+        display:block;
+    }
+    ```
+
+2. 使浮动元素的父容器为 BFC,元素变为 BFC 的方法参考 [mdn bfc](https://developer.mozilla.org/zh-CN/docs/Web/Guide/CSS/Block_formatting_context)  
+
+## 重置 css 和标准化 css 的区别?你会选择哪种?为什么?  {#p1-reset-css}
+
+* 重置是为了统一不同浏览器器的默认样式,需要重新定制所有元素的基础表现
+* 标准化是部分保留默认样式,并修复不同浏览器的显示差异
+    典型应用例如 [normalize css](https://github.com/necolas/normalize.css/)
+
+参考 [stackoverflow](https://stackoverflow.com/questions/6887336/what-is-the-difference-between-normalize-css-and-reset-css)
