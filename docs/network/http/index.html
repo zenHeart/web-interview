@@ -1,0 +1,990 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-network/http" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>http | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/network/http><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="http | web-interview"><meta data-rh=true name=description content="http 基本流程"><meta data-rh=true property=og:description content="http 基本流程"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/network/http><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/http hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/http hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.93f1f133.css><script src=/web-interview/assets/js/runtime~main.65427f71.js defer></script><script src=/web-interview/assets/js/main.906e9b7b.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/index>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/framework/vue>framework</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/security>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/network/concept>network</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/concept>概念</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/tcp>tcp</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/network/http>http</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/cdn>cdn</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/websocket>websocket</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/dns>dns</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>network</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>http</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>http</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=http-基本流程>http 基本流程<a href=#http-基本流程 class=hash-link aria-label="http 基本流程的直接链接" title="http 基本流程的直接链接">​</a></h2>
+<ul>
+<li>
+<p>建立TCP连接：客户端通过三次握手建立TCP连接。</p>
+</li>
+<li>
+<p>发送请求：客户端向服务器发送一个HTTP请求报文。</p>
+</li>
+<li>
+<p>服务器响应：服务器收到请求后，返回一个HTTP响应报文。</p>
+</li>
+<li>
+<p>客户端接收响应：客户端收到响应后，根据响应中的状态码判断请求是否成功。</p>
+</li>
+<li>
+<p>关闭连接：如果响应中包含 Connection: close 头部，那么连接关闭，否则保持连接，可以继续发送请求。</p>
+</li>
+</ul>
+<p>HTTP/2中</p>
+<p>建立连接过程使用了多路复用，可以在一个连接上同时处理多个请求和响应，具体过程如下：</p>
+<ul>
+<li>
+<p>客户端和服务器建立TCP连接。</p>
+</li>
+<li>
+<p>客户端发送一个HTTP/2的SETTINGS帧，其中包含一些配置信息，如帧的大小和流的并发数量等。</p>
+</li>
+<li>
+<p>服务器返回一个HTTP/2的SETTINGS帧，确认了客户端发送的设置。</p>
+</li>
+<li>
+<p>客户端发送一个HTTP/2的HEADERS帧，其中包含了第一个请求的信息，同时还包含了一个唯一的标识符，称为流ID。</p>
+</li>
+<li>
+<p>服务器返回一个HTTP/2的HEADERS帧，其中包含了响应的信息，同时也包含了与请求相同的流ID。</p>
+</li>
+<li>
+<p>客户端可以在同一个连接上发送多个请求和响应，每个请求和响应都包含一个流ID，用于标识请求和响应之间的关系。</p>
+</li>
+<li>
+<p>当客户端或服务器想要关闭连接时，它可以发送一个HTTP/2的GOAWAY帧，表示不再接受新的请求或响应，并且将连接关闭。</p>
+</li>
+</ul>
+<p>总之，HTTP/1.1是基于请求-响应模型的，每次请求都需要建立一个新的连接。而HTTP/2使用多路复用，可以在一个连接上处理多个请求和响应，提高了性能和效率。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=http-缓存控制>http 缓存控制<a href=#http-缓存控制 class=hash-link aria-label="http 缓存控制的直接链接" title="http 缓存控制的直接链接">​</a></h2>
+<p>HTTP 缓存策略有哪些？</p>
+<p>HTTP缓存策略是指浏览器和服务器之间在传输资源时，如何使用缓存的方式。HTTP缓存的主要目的是减少网络传输的数据量，提高页面的访问速度。</p>
+<p>存的主要策略有哪些？</p>
+<p>HTTP缓存策略主要包括以下几种：</p>
+<ul>
+<li>
+<p><code>强缓存：</code>通过设置 HTTP 头部中的 Expires 或 Cache-Control 字段来指定资源在本地缓存的有效期。当资源未过期时，浏览器直接从缓存中读取，不会向服务器发送请求，从而提高页面的访问速度。</p>
+</li>
+<li>
+<p><code>协商缓存：</code>当资源的缓存时间已经过期，浏览器会向服务器发送请求，服务器会检查资源是否有更新，如果没有更新，则返回 304 状态码，告诉浏览器直接使用本地缓存。</p>
+</li>
+<li>
+<p><code>Last-Modified / If-Modified-Since</code>：服务器在返回资源时，会添加 Last-Modified 头部字段，表示资源最后的修改时间。当浏览器下次请求该资源时，会在请求头部添加 If-Modified-Since 字段，表示上次请求时资源的修改时间。服务器检查这两个时间是否一致，如果一致，则返回 304 状态码，否则返回新的资源。</p>
+</li>
+<li>
+<p><code>ETag / If-None-Match</code>：服务器在返回资源时，会添加 ETag 头部字段，表示资源的唯一标识。当浏览器下次请求该资源时，会在请求头部添加 If-None-Match 字段，表示上次请求时资源的唯一标识。服务器检查这两个标识是否一致，如果一致，则返回 304 状态码，否则返回新的资源。</p>
+</li>
+<li>
+<p><code>离线缓存：</code>通过使用 HTML5 提供的 Application Cache API，可以将页面的资源缓存在本地，使得用户在没有网络连接的情况下也能够访问页面。</p>
+</li>
+<li>
+<p><code>Service Worker 缓存：</code>Service Worker 是一种在浏览器后台运行的 JavaScript 线程，可以拦截和处理浏览器发送的网络请求。通过使用 Service Worker，可以将页面的资源缓存在本地，提高页面的访问速度和用户体验。</p>
+</li>
+</ul>
+<p>缓存中 Expires 或 Cache-Control 有什么区别？</p>
+<p>在 HTTP 缓存策略中，强缓存是指在一定时间内，直接使用本地缓存而不发送请求到服务器。<code>Expires 和 Cache-Control</code> 是用于设置强缓存的两种方式。</p>
+<ul>
+<li>Expires: 是 HTTP/1 的产物，它是一个 HTTP 头字段，<code>表示资源过期时间，是一个绝对时间</code>。服务器返回的 HTTP 头中，如果包含 Expires 字段，则表示该资源在该过期时间之前可以直接从缓存中获取，而不需要再次请求服务器。</li>
+<li>Cache-Control: 是 <code>HTTP/1.1</code> 的产物，是一个 HTTP 头字段，用来控制文档缓存行为。它的值可以是很多不同的指令，例如 <code>max-age、no-cache、no-store、must-revalidate</code> 等等。其中，<code>max-age</code> 指令可以设置资源的最大有效时间，单位是秒。如果服务器返回的 HTTP 头中包含 Cache-Control 指令，则浏览器会根据该指令的值来决定是否直接使用本地缓存，而不需要再次请求服务器。</li>
+</ul>
+<p>Expires 是一个绝对时间，因此它的缺点是当服务器的时间与客户端的时间不一致时，缓存过期时间就可能会出现偏差。
+而 Cache-Control 是一个相对时间，因此它的缺点是需要服务器和客户端的时间保持一致，同时需要正确设置 max-age 的值。
+在实际应用中，建议使用 Cache-Control，因为它更加灵活和可控。</p>
+<p>线缓存 Application Cache API 是如何缓存 http 资源的？</p>
+<p><code>Application Cache API（应用程序缓存）</code>是 HTML5 标准中提供的一个用于离线缓存 Web 应用程序的技术。它可以将 Web 应用程序中的文件（包括 HTML、CSS、JavaScript 和图像等）保存到客户端浏览器中的缓存中，在没有网络连接的情况下，仍然能够访问应用程序。</p>
+<p>在 Application Cache API 中，通过在 <code>cache manifest 文件中列出需要缓存的资源列表来实现离线缓存</code>。该文件必须以 <code>.appcache</code> 为后缀名，<code>并且必须在 Web 服务器上进行访问。</code>浏览器会下载该文件，并将文件中列出的资源文件下载到本地缓存中。当应用程序在离线状态下打开时，浏览器会自动从本地缓存中加载缓存的文件。</p>
+<p>下面是一个简单的 cache manifest 文件示例：</p>
+<div class="codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-text codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token plain">CACHE MANIFEST</span><br></span><span class=token-line style=color:#393A34><span class="token plain">version 1.0.0</span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain">CACHE:</span><br></span><span class=token-line style=color:#393A34><span class="token plain">index.html</span><br></span><span class=token-line style=color:#393A34><span class="token plain">styles.css</span><br></span><span class=token-line style=color:#393A34><span class="token plain">script.js</span><br></span><span class=token-line style=color:#393A34><span class="token plain">image.jpg</span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain">NETWORK:</span><br></span><span class=token-line style=color:#393A34><span class="token plain">*</span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain">FALLBACK:</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>上面的示例文件将缓存 index.html、styles.css、script.js 和 image.jpg 等资源文件，同时指定 NETWORK 和 FALLBACK，这两个属性分别用于指定离线缓存不生效时的网络连接策略和替换资源文件。</p>
+<p>需要注意的是，Application Cache API 并不是一种完美的缓存技术，它也存在一些缺陷。例如，<strong>当更新 Web 应用程序时，需要手动清除客户端浏览器中的缓存才能生效</strong>，否则用户访问的仍然是旧版本的应用程序。同时，Application Cache API <strong>只能缓存 GET 请求</strong>，不支持 POST 等其他请求方法。因此，为了更好地实现离线缓存，可以使用其他技术，例如 Service Worker。</p>
+<p>ervice Worker 是如何缓存 http 请求资源的？</p>
+<p>Service Worker 是一种在浏览器后台运行的脚本，可以拦截和处理浏览器网络请求。因此，可以使用 Service Worker 来缓存 http 请求资源。</p>
+<p>Service Worker 可以通过以下步骤来缓存 http 请求资源：</p>
+<ol>
+<li>
+<p>注册 Service Worker：通过在页面中注册 Service Worker，可以告诉浏览器使用 Service Worker 来处理网络请求。</p>
+</li>
+<li>
+<p>安装 Service Worker：一旦 Service Worker 被注册，浏览器就会下载并安装它。在安装过程中，Service Worker 可以缓存一些静态资源（如 HTML、CSS 和 JavaScript 文件）。</p>
+</li>
+<li>
+<p>激活 Service Worker：一旦 Service Worker 安装成功，它就可以被激活。在激活过程中，Service Worker 可以删除旧版本的缓存，或者执行其他一些操作。</p>
+</li>
+<li>
+<p>拦截网络请求：一旦 Service Worker 被激活，它就可以拦截浏览器发送的网络请求。</p>
+</li>
+<li>
+<p>处理网络请求：当 Service Worker 拦截到网络请求时，它可以执行一些自定义的逻辑来处理这些请求。例如，它可以检查缓存中是否已经存在该请求的响应，如果存在，则直接返回缓存中的响应，否则，它可以将请求发送到服务器并缓存服务器的响应。</p>
+</li>
+<li>
+<p>更新缓存：如果缓存中的资源发生了变化，Service Worker 可以自动更新缓存。例如，它可以在后台下载最新的资源，并更新缓存中的文件。</p>
+</li>
+</ol>
+<p>需要注意的是，使用 Service Worker 来缓存 http 请求资源需要一些额外的工作。例如，<strong>需要编写 Service Worker 脚本来处理请求，并且需要将该脚本注册到浏览器中</strong>。此外，还需要考虑一些缓存策略，以确保缓存的数据与服务器上的数据保持同步。</p>
+<p><strong>下面是一个使用 Service Worker 实现缓存的示例代码：</strong></p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token comment" style=color:#999988;font-style:italic>// 注册 Service Worker</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword control-flow" style=color:#00009f>if</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'serviceWorker'</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>in</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>navigator</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'load'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token dom variable" style=color:#36acaa>navigator</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">serviceWorker</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>register</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'/service-worker.js'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>then</span><span class="token punctuation" style=color:#393A34>(</span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">registration</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker registration successful with scope: '</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> registration</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">scope</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">err</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker registration failed: '</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> err</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 安装 Service Worker</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">self</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'install'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">event</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker install'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>waitUntil</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    caches</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>open</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'my-cache'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>then</span><span class="token punctuation" style=color:#393A34>(</span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">cache</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> cache</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addAll</span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>[</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token string" style=color:#e3116c>'/'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token string" style=color:#e3116c>'/index.html'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token string" style=color:#e3116c>'/styles.css'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token string" style=color:#e3116c>'/script.js'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token string" style=color:#e3116c>'/image.png'</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>]</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 激活 Service Worker</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">self</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'activate'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">event</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker activate'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 拦截网络请求</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">self</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'fetch'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">event</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>respondWith</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    caches</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>match</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">request</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>then</span><span class="token punctuation" style=color:#393A34>(</span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">response</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token keyword control-flow" style=color:#00009f>if</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">response</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker fetch from cache:'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">request</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">url</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> response</span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"> </span><span class="token keyword control-flow" style=color:#00009f>else</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'ServiceWorker fetch from network:'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">request</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">url</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> </span><span class="token function" style=color:#d73a49>fetch</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">request</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 更新缓存</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">self</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'activate'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token parameter">event</span><span class="token plain"> </span><span class="token arrow operator" style=color:#393A34>=></span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  event</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>waitUntil</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    caches</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>keys</span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>then</span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">cacheNames</span><span class="token plain"> </span><span class="token arrow operator" style=color:#393A34>=></span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> </span><span class="token known-class-name class-name">Promise</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>all</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        cacheNames</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>filter</span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">cacheName</span><span class="token plain"> </span><span class="token arrow operator" style=color:#393A34>=></span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">          </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> cacheName</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>startsWith</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'my-cache'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>&&</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> cacheName </span><span class="token operator" style=color:#393A34>!==</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'my-cache'</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>map</span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">cacheName</span><span class="token plain"> </span><span class="token arrow operator" style=color:#393A34>=></span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">          </span><span class="token keyword control-flow" style=color:#00009f>return</span><span class="token plain"> caches</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>delete</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">cacheName</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">        </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">      </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">    </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>当网络请求到来时，会首先在缓存中查找对应的资源，如果有则直接返回缓存中的资源，否则从网络中获取资源并返回。这样就可以实现基本的离线缓存功能。</p>
+<p>在这个示例中，当 Service Worker 被安装时，我们打开一个新的缓存并将应用程序的静态资源添加到缓存中。在 fetch 事件中，我们拦截每个网络请求并尝试匹配它们到我们的缓存中，如果匹配到了则返回缓存的响应，否则通过 fetch 方法从网络中获取资源。在 activate 事件中，我们可以更新缓存，删除旧的缓存项并将新的缓存项添加到缓存中。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-http-cache-header-date-last-modified>http 缓存 header 中的 Date 与 Last-Modified 有什么不同<a href=#p1-http-cache-header-date-last-modified class=hash-link aria-label="http 缓存 header 中的 Date 与 Last-Modified 有什么不同的直接链接" title="http 缓存 header 中的 Date 与 Last-Modified 有什么不同的直接链接">​</a></h2>
+<p><strong>关键词</strong>：http 缓存 header</p>
+<p>在 HTTP 响应头中，<code>Date</code>和<code>Last-Modified</code>有以下不同：</p>
+<p><strong>一、含义不同</strong></p>
+<ul>
+<li><code>Date</code>：表示消息产生的时间。服务器用这个时间来标记响应报文的生成时间，它反映了服务器生成响应的时刻。例如，“Mon, 07 Oct 2024 12:34:56 GMT”，这个时间是服务器根据其自身的时钟生成的。</li>
+<li><code>Last-Modified</code>：指示资源的最后修改时间。它表示服务器上该资源最后被修改的时间。比如，一个网页文件最后一次被编辑的时间就可以通过这个字段告知客户端。例如，“Mon, 01 Sep 2024 10:20:30 GMT”。</li>
+</ul>
+<p><strong>二、用途不同</strong></p>
+<ul>
+<li><code>Date</code>：</li>
+<li>客户端可以根据这个时间来判断响应的新鲜度。例如，如果客户端本地有缓存，它可以通过比较缓存的时间和响应中的<code>Date</code>来确定是否需要使用缓存。</li>
+<li>用于计算响应的年龄等缓存相关的参数。</li>
+<li><code>Last-Modified</code>：</li>
+<li>主要用于缓存控制。客户端在后续的请求中可以通过<code>If-Modified-Since</code>请求头将这个时间发送给服务器，询问服务器资源是否在这个时间之后被修改过。如果没有被修改，服务器可以返回一个状态码为 304（Not Modified）的响应，告知客户端可以使用缓存中的资源，从而减少传输的数据量和提高响应速度。</li>
+<li>有助于客户端判断资源是否已经过期，以便决定是否需要重新获取资源。</li>
+</ul>
+<p>综上所述，<code>Date</code>主要表示响应的生成时间，而<code>Last-Modified</code>表示资源的最后修改时间，它们在 HTTP 通信中起着不同的作用，共同为缓存控制和资源管理提供重要信息。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=http-缓存中-no-cache-与-no-store-的区别是什么->http 缓存中 no-cache 与 no-store 的区别是什么 「<a href=#http-缓存中-no-cache-与-no-store-的区别是什么- class=hash-link aria-label="http 缓存中 no-cache 与 no-store 的区别是什么 「的直接链接" title="http 缓存中 no-cache 与 no-store 的区别是什么 「的直接链接">​</a></h2>
+<p>在 HTTP 缓存中，<code>no-cache</code>和<code>no-store</code>是两种不同的缓存指令，它们的区别如下：</p>
+<p><strong>一、<code>no-cache</code></strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>当设置了<code>no-cache</code>指令时，这并不意味着不使用缓存。相反，它表示在使用缓存之前，必须先与服务器进行验证，以确定缓存的资源是否仍然有效。</li>
+<li>这意味着浏览器在使用缓存的资源之前，会向服务器发送一个条件请求（通常是使用<code>If-Modified-Since</code>或<code>If-None-Match</code>头部），询问服务器该资源是否有更新。如果服务器返回 304 Not Modified 状态码，表示资源没有更新，浏览器可以使用缓存的资源；如果服务器返回新的资源内容，表示资源有更新，浏览器需要使用新的资源。</li>
+</ul>
+<ol start=2>
+<li><strong>使用场景</strong>：</li>
+</ol>
+<ul>
+<li>适用于需要确保获取到最新资源，但又不想每次都从服务器获取完整资源的情况。例如，对于一些经常更新但更新频率不高的资源，可以使用<code>no-cache</code>指令，以便在资源没有更新时可以快速使用缓存，而在资源有更新时可以获取到最新的资源。</li>
+<li>对于一些需要根据用户的特定请求参数来生成资源的情况，也可以使用<code>no-cache</code>指令，以便在每次请求时都让服务器根据请求参数来确定是否返回缓存的资源还是生成新的资源。</li>
+</ul>
+<p><strong>二、<code>no-store</code></strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li><code>no-store</code>指令表示绝对不允许缓存资源。这意味着浏览器在接收到带有<code>no-store</code>指令的响应后，不会将资源存储在任何缓存中，包括浏览器缓存、代理服务器缓存等。每次请求都必须从服务器获取最新的资源。</li>
+</ul>
+<ol start=2>
+<li><strong>使用场景</strong>：</li>
+</ol>
+<ul>
+<li>适用于对安全性要求非常高的资源，例如包含敏感信息的页面或需要严格保证每次都获取到最新数据的资源。</li>
+<li>对于一些动态生成的资源，其内容可能会根据不同的请求而变化，并且不希望这些资源被缓存，可以使用<code>no-store</code>指令。例如，一些在线银行页面、交易系统等可能会使用<code>no-store</code>指令来确保用户每次看到的都是最新的信息。</li>
+</ul>
+<p>总之，<code>no-cache</code>表示在使用缓存之前需要与服务器进行验证，而<code>no-store</code>表示绝对不允许缓存资源。根据不同的需求，可以选择合适的缓存指令来控制资源的缓存行为。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=http-content-type>http content-type<a href=#http-content-type class=hash-link aria-label="http content-type的直接链接" title="http content-type的直接链接">​</a></h2>
+<p>在 HTTP 响应头中，如果<code>Content-Type</code>为<code>application/octet-stream</code>，代表以下含义：</p>
+<p><strong>一、数据类型含义</strong></p>
+<ol>
+<li><strong>通用二进制流</strong>：</li>
+</ol>
+<ul>
+<li><code>application/octet-stream</code>表示这是一个通用的二进制流数据。它没有特定的格式或结构定义，只是表示数据是以二进制形式传输的。</li>
+<li>这意味着接收方不知道具体的数据格式，需要根据其他信息（如文件名扩展名、特定的协议约定等）来确定如何处理这个数据。</li>
+</ul>
+<ol start=2>
+<li><strong>任意二进制数据</strong>：</li>
+</ol>
+<ul>
+<li>可以用于传输各种类型的二进制文件，如图片、音频、视频、压缩文件、可执行文件等。</li>
+<li>例如，当下载一个未知类型的文件时，服务器可能会使用这个<code>Content-Type</code>来表示文件的内容是二进制数据，但不指定具体的文件类型。</li>
+</ul>
+<p><strong>二、使用场景</strong></p>
+<ol>
+<li><strong>文件下载</strong>：</li>
+</ol>
+<ul>
+<li>在文件下载场景中，服务器通常会将<code>Content-Type</code>设置为<code>application/octet-stream</code>，以便让客户端知道这是一个二进制文件，可以进行下载操作。</li>
+<li>客户端浏览器在接收到这种类型的响应时，通常会根据文件的扩展名或其他信息来决定如何处理这个文件，例如提示用户保存文件或使用特定的应用程序打开文件。</li>
+</ul>
+<ol start=2>
+<li><strong>上传和下载未知类型的数据</strong>：</li>
+</ol>
+<ul>
+<li>当通过 HTTP 上传或下载数据时，如果数据的类型未知或不确定，可以使用<code>application/octet-stream</code>来表示数据是二进制形式，而不指定具体的格式。</li>
+<li>例如，在一些文件上传接口中，如果允许用户上传任意类型的文件，服务器可能会将接收到的文件数据以<code>application/octet-stream</code>类型返回给客户端，以便客户端可以根据需要进行处理。</li>
+</ul>
+<ol start=3>
+<li><strong>与特定协议或应用程序交互</strong>：</li>
+</ol>
+<ul>
+<li>某些协议或应用程序可能会使用<code>application/octet-stream</code>来表示特定类型的二进制数据。</li>
+<li>例如，在一些自定义的网络协议中，或者与特定的服务器端应用程序交互时，可能会使用这个<code>Content-Type</code>来表示特定格式的二进制数据，但这种格式可能不是标准的 MIME 类型。</li>
+</ul>
+<p>总之，<code>Content-Type</code>为<code>application/octet-stream</code>表示这是一个通用的二进制流数据，没有特定的格式定义，通常用于文件下载、上传未知类型的数据或与特定协议和应用程序交互的场景。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-etag>ETag<a href=#p1-etag class=hash-link aria-label=ETag的直接链接 title=ETag的直接链接>​</a></h2>
+<p>如果 HTTP 响应头中的 ETag 值改变了，通常意味着资源（文件或其他内容）很可能发生了变化，但并不绝对意味着文件内容一定已经更改。</p>
+<p><strong>一、可能导致 ETag 变化但文件内容未更改的情况</strong></p>
+<ol>
+<li>生成方式的变化：</li>
+</ol>
+<ul>
+<li>如果服务器更改了生成 ETag 的方式，即使文件内容没有变化，ETag 也可能不同。例如，服务器原本使用文件的最后修改时间戳作为 ETag，后来改为使用文件内容的哈希值，那么即使文件内容未变，ETag 也会改变。</li>
+</ul>
+<ol start=2>
+<li>服务器配置或逻辑变化：</li>
+</ol>
+<ul>
+<li>服务器的某些配置更改或业务逻辑变化可能导致 ETag 的生成与之前不同，而与文件内容本身的变化无关。</li>
+<li>比如，服务器在不同的环境中可能有不同的 ETag 生成策略，从开发环境切换到生产环境时，ETag 可能会改变，即使文件内容相同。</li>
+</ul>
+<ol start=3>
+<li>动态资源的非内容相关变化：</li>
+</ol>
+<ul>
+<li>对于动态生成的资源，如由服务器端脚本生成的网页，ETag 可能受到一些与内容无关的因素影响。例如，服务器的负载、请求的时间等因素可能导致动态资源的 ETag 变化，而实际生成的内容可能并没有改变。</li>
+</ul>
+<p><strong>二、ETag 的作用和可靠性</strong></p>
+<ol>
+<li>缓存验证：</li>
+</ol>
+<ul>
+<li>ETag 主要用于缓存验证，客户端在后续请求中通过 <code>If-None-Match</code> 请求头将上次接收到的 ETag 发送给服务器，服务器比较 ETag 来判断资源是否发生了变化。如果 ETag 相同，服务器返回 <code>304 Not Modified</code>，客户端可以使用缓存中的资源，节省带宽和提高响应速度。</li>
+</ul>
+<ol start=2>
+<li>相对可靠性：</li>
+</ol>
+<ul>
+<li>虽然 ETag 的变化不能绝对确定文件内容的更改，但在大多数情况下，它是一个比较可靠的指示。如果 ETag 发生了变化，客户端应该重新获取资源以确保得到最新的内容。</li>
+</ul>
+<p>综上所述，ETag 值的改变不能确凿地证明文件内容一定更改，但它是一个重要的线索，提示客户端可能需要重新获取资源以验证其是否发生了变化。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-http-to-https-redirect>http 向 https 做重定向应该使用哪个状态码<a href=#p1-http-to-https-redirect class=hash-link aria-label="http 向 https 做重定向应该使用哪个状态码的直接链接" title="http 向 https 做重定向应该使用哪个状态码的直接链接">​</a></h2>
+<p>从 HTTP 向 HTTPS 做重定向，既可以使用 301 永久重定向状态码，也可以使用 302 临时重定向状态码。以下是对这两种状态码的具体介绍及使用场景分析：</p>
+<ol>
+<li><strong>301 永久重定向</strong>：</li>
+</ol>
+<ul>
+<li><strong>含义</strong>：表示请求的资源已被永久地移动到了新的 URL，搜索引擎等客户端会更新其索引，将旧的 URL 替换为新的 URL。未来所有对旧 URL 的访问都应该被定向到新 URL。</li>
+<li><strong>优点</strong>：一旦设置好 301 重定向，搜索引擎会将权重和排名等信息从旧 URL 转移到新 URL，有利于网站的 SEO。并且用户浏览器会缓存这个重定向信息，下次访问时可以直接跳转到新的 HTTPS 地址，减少了服务器的请求处理。</li>
+<li><strong>缺点</strong>：如果后续需要更改重定向设置，由于浏览器已经缓存了重定向信息，可能会导致一些用户在一段时间内仍然被重定向到旧的设置，直到缓存过期。</li>
+<li><strong>适用场景</strong>：如果您的网站已经确定永久地从 HTTP 迁移到 HTTPS，并且希望搜索引擎尽快更新索引，那么使用 301 永久重定向是比较合适的。例如，一个已经完成全站 HTTPS 改造，并且不再使用 HTTP 访问的网站，可以使用 301 重定向来引导用户和搜索引擎。</li>
+</ul>
+<ol start=2>
+<li><strong>302 临时重定向</strong>：</li>
+</ol>
+<ul>
+<li><strong>含义</strong>：表示请求的资源暂时被移动到了新的 URL，客户端在后续的请求中应该继续使用旧的 URL 进行访问，直到资源的位置被永久更改。</li>
+<li><strong>优点</strong>：302 重定向比较灵活，适用于一些临时的情况，比如网站正在进行 HTTPS 的部署或测试，还不确定是否会长期使用 HTTPS，或者在某些特殊情况下需要暂时将用户从 HTTP 引导到 HTTPS。</li>
+<li><strong>缺点</strong>：由于是临时重定向，搜索引擎可能不会将权重和排名等信息立即转移到新的 URL，并且用户浏览器也可能不会像对待 301 重定向那样缓存重定向信息，这可能会导致每次访问都需要进行重定向操作，增加了服务器的负担。</li>
+<li><strong>适用场景</strong>：对于一些短期的、过渡性的 HTTP 到 HTTPS 的重定向需求，或者在不确定是否要长期使用 HTTPS 的情况下，可以使用 302 临时重定向。比如，一个新上线的网站，正在测试 HTTPS 的性能和稳定性，此时可以使用 302 重定向来引导用户访问 HTTPS 版本，以便在测试过程中随时切换回 HTTP。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=什么是跨域资源共享-cors它用于解决什么问题>什么是跨域资源共享 (CORS)？它用于解决什么问题？<a href=#什么是跨域资源共享-cors它用于解决什么问题 class=hash-link aria-label="什么是跨域资源共享 (CORS)？它用于解决什么问题？的直接链接" title="什么是跨域资源共享 (CORS)？它用于解决什么问题？的直接链接">​</a></h2>
+<p>CORS（Cross-Origin Resource Sharing，跨域资源共享）是一种用于让浏览器绕过同源策略限制，实现跨域访问资源的机制。在浏览器端，JavaScript 的跨域请求必须要经过浏览器的同源策略限制，即只能向同一域名下的服务器发送请求，而不能向其它域名的服务器发送请求。CORS 提供了一种通过在服务端设置响应头的方式来实现浏览器端跨域请求的机制。</p>
+<p><strong>基本概念有哪些？</strong></p>
+<ol>
+<li>
+<p>预检请求（Preflight Request）：在实际请求之前，浏览器会发送一个预检请求OPTIONS，来确认服务端是否接受实际请求。</p>
+</li>
+<li>
+<p>简单请求（Simple Request）：满足以下条件的请求为简单请求：请求方法为GET、HEAD或POST；HTTP头信息不超出Accept、Accept-Language、Content-Language、Content-Type、Last-Event-ID、DPR、Save-Data、Viewport-Width、Width；Content-Type的值仅限于text/plain、multipart/form-data、application/x-www-form-urlencoded。</p>
+</li>
+<li>
+<p>非简单请求（Non-simple Request）：不满足简单请求条件的请求。</p>
+</li>
+<li>
+<p>CORS安全规则（CORS Safelisting Rules）：指的是CORS中服务端响应的Access-Control-Allow-Origin，指定是否允许跨域请求的源。</p>
+</li>
+<li>
+<p>withCredentials：指的是XMLHttpRequest中的一个属性，用于在请求中携带cookie信息。</p>
+</li>
+<li>
+<p>暴露Header（Exposed Headers）：在CORS响应中，Access-Control-Expose-Headers头用于暴露哪些响应头给客户端使用。</p>
+</li>
+<li>
+<p>存储 Cookies（Cookie Storage）：跨域请求中，浏览器默认不会发送cookie信息，需要在服务端设置Access-Control-Allow-Credentials和客户端设置withCredentials为true才能实现。</p>
+</li>
+<li>
+<p>跨域请求中的安全问题（CORS Security Issues）：CORS的出现，引入了一些安全问题，例如CSRF、XSS等，需要在开发中做好防范措施。</p>
+</li>
+</ol>
+<p>何实现跨域请求？</p>
+<p>在 HTTP 请求中，使用了 CORS 标准头部来告诉浏览器该请求是跨域请求，并且在服务端设置 Access-Control-Allow-Origin 头部来允许指定的域名访问资源。</p>
+<p><strong>客户端 CORS 标准头部有以下几个：</strong></p>
+<ul>
+<li>Origin：表示请求来自哪个域名。</li>
+<li>Access-Control-Request-Method：表示请求的方法类型（比如 GET、POST 等）。</li>
+<li>Access-Control-Request-Headers：表示请求头中的额外信息（比如 Content-Type 等）。</li>
+</ul>
+<p><strong>服务端返回的响应头部有以下几个：</strong></p>
+<ul>
+<li>Access-Control-Allow-Origin：表示允许的域名访问该资源，可以设置为表示任何域名都可以访问。</li>
+<li>Access-Control-Allow-Credentials：表示是否允许浏览器携带 Cookie 和认证信息等，默认为 false。</li>
+<li>Access-Control-Allow-Methods：表示允许的请求方法类型。</li>
+<li>Access-Control-Allow-Headers：表示允许的请求头中的额外信息。</li>
+</ul>
+<p>通过在服务端设置这些头部，可以实现跨域请求的授权和安全验证。</p>
+<p>检请求 作用是啥？</p>
+<p>预检请求（Preflight Request）是CORS中的一种特殊请求，主要用于在实际请求之前，增加一次HTTP查询请求，以检查实际请求是否可以被服务器接受。</p>
+<p>在CORS中，有些HTTP请求是简单请求（Simple Request），比如GET和POST请求，可以直接发送。而对于一些复杂请求，比如请求方法为PUT、DELETE、PATCH等，或者Content-Type类型为application/json、application/xml等，会在发送真正请求之前，增加一次HTTP查询请求，以便服务器能够知道是否允许该请求。这个查询请求就是预检请求，用来查询服务器是否支持该请求，并给出支持的条件。</p>
+<p>预检请求中包含了一些额外的HTTP头信息，比如Origin、Access-Control-Request-Method、Access-Control-Request-Headers等，这些信息告诉服务器实际请求中会包含哪些信息，并请求服务器在实际请求中是否能够接受这些信息。</p>
+<p>服务器接收到预检请求后，会根据请求头中的信息来判断是否允许实际请求。如果允许，会在响应头中加入一些额外的信息，比如Access-Control-Allow-Origin、Access-Control-Allow-Methods、Access-Control-Allow-Headers等，告诉浏览器实际请求可以被接受。如果不允许，则不会发送实际请求，而是直接返回一个错误响应。</p>
+<p>何避免 cors 中的一些安全问题？</p>
+<p>在CORS中有一些安全问题，例如CSRF（跨站点请求伪造）攻击和CORS劫持。以下是避免这些问题的一些方法：</p>
+<ol>
+<li>
+<p>CSRF攻击：使用CSRF令牌来验证请求，这样只有在正确的来源站点上发出的请求才会被视为有效请求。</p>
+</li>
+<li>
+<p>CORS劫持：在响应中添加Access-Control-Allow-Origin标头，并设置为信任的站点。另外，也可以使用Content-Security-Policy标头来限制JavaScript的执行。</p>
+</li>
+<li>
+<p>永远不要在CORS请求中使用敏感凭据（例如Cookie和HTTP身份验证信息）。</p>
+</li>
+<li>
+<p>限制跨域请求的范围，只允许特定的来源站点。</p>
+</li>
+<li>
+<p>在服务器上使用防火墙和其他安全措施来保护应用程序，例如SSL / TLS加密，HTTP Strict Transport Security（HSTS）等。</p>
+</li>
+</ol>
+<p>总之，应该采取适当的安全措施来防止CORS相关的安全问题。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=cookie>cookie<a href=#cookie class=hash-link aria-label=cookie的直接链接 title=cookie的直接链接>​</a></h2>
+<p>如果 Cookie 没有设置 <code>max-age</code>，它通常被视为会话 Cookie，其失效时间的计算方式如下：</p>
+<p><strong>一、会话 Cookie 的失效时间</strong></p>
+<ol>
+<li>浏览器关闭时：一般情况下，当用户关闭浏览器时，会话 Cookie 会被删除。这意味着只要浏览器处于打开状态，并且用户在与同一个网站进行交互，会话 Cookie 就会一直有效。</li>
+</ol>
+<ul>
+<li>例如，你在浏览一个在线购物网站时，登录后服务器设置了一个未设置 <code>max-age</code> 的 Cookie 用于标识你的登录状态。只要你不关闭浏览器，这个 Cookie 就会一直有效，让你在不同页面之间切换时保持登录状态。但是一旦你关闭浏览器，再次打开并访问该网站时，你可能需要重新登录，因为会话 Cookie 已经被删除。</li>
+</ul>
+<ol start=2>
+<li>特殊情况：有些浏览器可能会在一段时间内保留会话 Cookie，以便在用户重新打开浏览器时恢复会话状态。然而，这种行为并不是标准的，不同的浏览器可能有不同的处理方式。</li>
+</ol>
+<ul>
+<li>比如，某些浏览器可能会在用户关闭浏览器后几分钟或几小时内保留会话 Cookie。这可能是为了提供更好的用户体验，让用户在短时间内重新打开浏览器时不需要再次登录或重新执行某些操作。但这种保留时间是不确定的，并且可能因浏览器的设置、版本和用户的操作而有所不同。</li>
+</ul>
+<p><strong>二、需要注意的问题</strong></p>
+<ol>
+<li>
+<p>安全性考虑：由于会话 Cookie 在浏览器关闭时会被删除，相对来说比较安全。但是，如果在公共计算机上使用会话 Cookie，仍然存在被他人获取敏感信息的风险。因此，在使用会话 Cookie 时，要注意保护用户的隐私和安全。</p>
+</li>
+<li>
+<p>网站功能影响：对于依赖会话 Cookie 来保持用户状态或提供个性化体验的网站，用户关闭浏览器后可能会导致一些功能失效。例如，在线购物车中的商品可能会在浏览器关闭后丢失，或者用户需要重新设置一些个性化的偏好。在设计网站时，需要考虑到会话 Cookie 的特性，以便在用户关闭浏览器后提供适当的提示或恢复机制。</p>
+</li>
+</ol>
+<p>默认情况下，Cookie 不能在不同的顶级域名之间共享数据。</p>
+<p>但是，如果两个域名属于同一主域名下的子域名，并且您设置了正确的 <code>Domain</code> 属性，那么在这些子域名之间是可以共享 Cookie 的。</p>
+<p>例如，对于 <code>sub1.example.com</code> 和 <code>sub2.example.com</code> 这样的子域名，如果设置 <code>Cookie</code> 的 <code>Domain</code> 属性为 <code>.example.com</code> ，那么在这两个子域名之间，这个 <code>Cookie</code> 是可以共享和访问的。</p>
+<p>然而，如果是完全不同的顶级域名，如 <code>example.com</code> 和 <code>anotherdomain.com</code> 之间，Cookie 是不能直接共享的。</p>
+<p>此外，还需要注意 <code>Cookie</code> 的 <code>Path</code> 属性、安全属性（<code>Secure</code>）、<code>HttpOnly</code> 属性等，这些属性也会影响 <code>Cookie</code> 的使用范围和方式。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-how-sites-keep-login-state>站点是如何保持登录状态<a href=#p1-how-sites-keep-login-state class=hash-link aria-label=站点是如何保持登录状态的直接链接 title=站点是如何保持登录状态的直接链接>​</a></h2>
+<ul>
+<li>created_at: 2024-10-07T08:01:33Z</li>
+<li>updated_at: 2024-10-07T08:01:34Z</li>
+<li>labels: 网络, web应用场景, 腾讯</li>
+<li>milestone: 中</li>
+</ul>
+<p><strong>关键词</strong>：http 保持登录态</p>
+<p>虽然 HTTP 是无状态协议，但可以通过以下几种方式来保持登录状态：</p>
+<p><strong>一、Cookie</strong></p>
+<ol>
+<li>工作原理：</li>
+</ol>
+<ul>
+<li>当用户成功登录后，服务器在响应中设置一个 Cookie，通常包含用户的身份标识、会话信息等。</li>
+<li>客户端（浏览器）会存储这个 Cookie，并在后续的请求中自动将其发送给服务器。</li>
+<li>服务器通过检查 Cookie 中的信息来识别用户并确定其登录状态。</li>
+</ul>
+<ol start=2>
+<li>示例：</li>
+</ol>
+<ul>
+<li>用户登录时，服务器生成一个唯一的会话 ID，并将其存储在数据库中，同时在响应中设置一个名为“session_id”的 Cookie，值为该会话 ID。</li>
+<li>后续请求中，浏览器自动发送包含“session_id”的 Cookie，服务器根据这个会话 ID 查找对应的用户信息，从而确定用户已登录。</li>
+</ul>
+<p><strong>二、Session</strong></p>
+<ol>
+<li>结合 Cookie 使用：</li>
+</ol>
+<ul>
+<li>服务器端创建一个会话（Session）对象来存储用户的登录状态和其他相关信息。</li>
+<li>与 Cookie 类似，服务器在用户登录成功后设置一个包含会话 ID 的 Cookie，客户端在后续请求中携带这个 Cookie。</li>
+<li>服务器根据会话 ID 查找对应的 Session 对象，以确定用户的登录状态。</li>
+</ul>
+<ol start=2>
+<li>优点：</li>
+</ol>
+<ul>
+<li>相比直接使用 Cookie 存储用户信息，Session 更加安全，因为敏感信息存储在服务器端，而不是在客户端的 Cookie 中。</li>
+</ul>
+<p><strong>三、Token（令牌）</strong></p>
+<ol>
+<li>JWT（JSON Web Token）：</li>
+</ol>
+<ul>
+<li>用户登录成功后，服务器生成一个包含用户信息和签名的 JWT 令牌，并将其返回给客户端。</li>
+<li>客户端在后续请求中，将 JWT 令牌作为请求头或参数发送给服务器。</li>
+<li>服务器通过验证令牌的签名和有效性来确定用户的登录状态。</li>
+</ul>
+<ol start=2>
+<li>优点：</li>
+</ol>
+<ul>
+<li>无状态：服务器不需要存储会话信息，只需要验证令牌的有效性，因此可以轻松地进行水平扩展。</li>
+<li>跨域支持：JWT 令牌可以在不同的域之间传递，适用于前后端分离的架构。</li>
+</ul>
+<p><strong>四、HTTP 基本认证和摘要认证</strong></p>
+<ol>
+<li>基本认证：</li>
+</ol>
+<ul>
+<li>客户端在请求中包含用户名和密码，经过 Base64 编码后作为请求头的一部分发送给服务器。</li>
+<li>服务器验证用户名和密码的正确性，如果正确则认为用户已登录。</li>
+<li>缺点是密码以明文形式传输（虽然经过 Base64 编码，但仍然可以被轻易解码），不安全。</li>
+</ul>
+<ol start=2>
+<li>摘要认证：</li>
+</ol>
+<ul>
+<li>是对基本认证的改进，通过使用哈希函数对密码进行加密，提高了安全性。</li>
+<li>但仍然存在一些安全风险，并且在每次请求中都需要发送用户名和密码的哈希值，不够便捷。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=session>session<a href=#session class=hash-link aria-label=session的直接链接 title=session的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-http-1-2-3-difference>http1、2、3区别<a href=#p1-http-1-2-3-difference class=hash-link aria-label=http1、2、3区别的直接链接 title=http1、2、3区别的直接链接>​</a></h2>
+<ol>
+<li>HTTP/1.1<!-- -->
+<ul>
+<li>持久连接（Keep-Alive）</li>
+<li>管道化请求</li>
+<li>存在队头阻塞问题</li>
+</ul>
+</li>
+<li>HTTP/2<!-- -->
+<ul>
+<li>多路复用</li>
+<li>二进制分帧</li>
+<li>服务器推送</li>
+<li>头部压缩（HPACK）</li>
+</ul>
+</li>
+<li>HTTP/3<!-- -->
+<ul>
+<li>基于 QUIC 协议（UDP）</li>
+<li>0-RTT 快速握手</li>
+<li>避免队头阻塞</li>
+<li>内置加密（TLS 1.3）</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=url-的长度限制>url 的长度限制<a href=#url-的长度限制 class=hash-link aria-label="url 的长度限制的直接链接" title="url 的长度限制的直接链接">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=ajax-工作原理>ajax 工作原理？<a href=#ajax-工作原理 class=hash-link aria-label="ajax 工作原理？的直接链接" title="ajax 工作原理？的直接链接">​</a></h2>
+<p>详细的 ajax 学习参看 <a href=https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX target=_blank rel="noopener noreferrer">ajax</a></p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=jsonp原理回调过程>JSONP原理,回调过程？<a href=#jsonp原理回调过程 class=hash-link aria-label=JSONP原理,回调过程？的直接链接 title=JSONP原理,回调过程？的直接链接>​</a></h2>
+<p>JSONP 的实现原理是通过添加一个 script 标签，指定 src 属性为跨域请求的 URL，而这个 URL 返回的不是 JSON 数据，而是一段可执行的 JavaScript 代码，这段代码会调用一个指定的函数，并且将 JSON 数据作为参数传入函数中。</p>
+<p>例如，假设我们从 <a href=http://example.com target=_blank rel="noopener noreferrer">资料</a> 域名下请求数据，我们可以通过在 <a href=http://example.com target=_blank rel="noopener noreferrer">资料</a> 中添加如下代码实现 JSONP 请求：</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token function" style=color:#d73a49>handleData</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">data</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token comment" style=color:#999988;font-style:italic>// 处理获取到的数据</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> script </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>createElement</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'script'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">src</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'http://example.org/api/data?callback=handleData'</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">head</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>appendChild</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>其中，我们指定了一个名为 <code>handleData</code> 的回调函数，并将这个函数名作为参数传递给了跨域请求的 URL 中的 callback 参数。服务器端返回的数据将会被包装在这个回调函数中，例如：</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token function" style=color:#d73a49>handleData</span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token literal-property property" style=color:#36acaa>name</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'John'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token literal-property property" style=color:#36acaa>age</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>30</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>在这个例子中，我们可以在 handleData 函数中处理获取到的数据。需要注意的是，在使用 JSONP 时，<strong>需要保证服务器端返回的数据是一个可执行的 JavaScript 代码，并且必须使用指定的回调函数名来包装数据，否则无法正确处理数据。</strong></p>
+<p>如何获取 jsonp 的相应参数</p>
+<p>获取 JSONP 响应结果的方法有两种，<strong>一种是通过回调函数参数获取</strong>，<strong>另一种是通过 script 标签加载完成后解析全局变量获取</strong>。</p>
+<p>假设服务器返回以下 JSONP 响应：</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token function" style=color:#d73a49>callback</span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token literal-property property" style=color:#36acaa>name</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'Alice'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token literal-property property" style=color:#36acaa>age</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token number" style=color:#36acaa>20</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>其中 callback 是客户端定义的回调函数名，用于指定返回数据的处理方式。</p>
+<p>我们可以使用以下两种方式获取响应结果：</p>
+<p><strong>1. 通过回调函数参数获取</strong>
+在客户端定义一个全局函数作为回调函数，服务器返回的数据会作为回调函数的参数传入，这个参数可以在回调函数中处理。</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token function" style=color:#d73a49>handleResponse</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">data</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">data</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">name</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// Alice</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">data</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">age</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 20</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 创建 script 标签</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> script </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>createElement</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'script'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">src</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'http://example.com/api?callback=handleResponse'</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 插入到文档中开始加载数据</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">body</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>appendChild</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p><strong>2. 通过全局变量获取</strong>
+在客户端定义一个全局函数作为回调函数，服务器返回的数据会作为一个全局变量赋值给该函数所在的对象，我们可以在 script 标签加载完成后解析全局变量获取响应结果。</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token function" style=color:#d73a49>handleResponse</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">myData</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">name</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// Alice</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">myData</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">age</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 20</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 创建 script 标签</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> script </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>createElement</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'script'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">src</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'http://example.com/api?callback=handleResponse'</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 插入到文档中开始加载数据</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">body</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>appendChild</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// script 标签加载完成后解析全局变量</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">myData</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">script</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method-variable function-variable method function property-access" style=color:#d73a49>onload</span><span class="token plain"> </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token arrow operator" style=color:#393A34>=></span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token keyword" style=color:#00009f>delete</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">myData</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 删除全局变量</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>注意，使用 JSONP 时要注意安全问题，应该对返回的数据进行验证，避免接收到恶意代码。此外，JSONP <strong>只能发送 GET 请求</strong>，无法发送 POST 请求，<strong>也无法使用 HTTP 请求头和请求体传递数据</strong>。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-http-status-code-304-etag-modified>http 状态码<a href=#p2-http-status-code-304-etag-modified class=hash-link aria-label="http 状态码的直接链接" title="http 状态码的直接链接">​</a></h2>
+<p>304 是 HTTP 状态码中的“Not Modified”（未修改）状态码。</p>
+<p>当客户端（通常是浏览器）向服务器请求资源时，如果服务器判断该资源自上次客户端获取后没有被修改，就会返回 304 状态码，告诉客户端可以使用其本地缓存的版本，而无需再次传输整个资源。</p>
+<p>304 状态码主要与以下 HTTP 响应头有关：</p>
+<p><strong>一、<code>Last-Modified</code> 和 <code>If-Modified-Since</code></strong></p>
+<ol>
+<li><code>Last-Modified</code>：</li>
+</ol>
+<ul>
+<li>服务器在首次响应资源时，在响应头中添加这个字段，表明资源的最后修改时间。</li>
+<li>例如：<code>Last-Modified: Thu, 12 Oct 2023 10:30:00 GMT</code>。</li>
+</ul>
+<ol start=2>
+<li><code>If-Modified-Since</code>：</li>
+</ol>
+<ul>
+<li>当客户端再次请求该资源时，会在请求头中添加这个字段，其值为上次服务器返回的<code>Last-Modified</code>的值。</li>
+<li>服务器收到请求后，会比较资源的最后修改时间与<code>If-Modified-Since</code>的值。如果资源自该时间后没有被修改，就返回 304 状态码。</li>
+</ul>
+<p><strong>二、<code>ETag</code> 和 <code>If-None-Match</code></strong></p>
+<ol>
+<li><code>ETag</code>：</li>
+</ol>
+<ul>
+<li>服务器为资源生成的一个唯一标识符，通常基于资源的内容计算得出。</li>
+<li>例如：<code>ETag: "abcdef123456"</code>。</li>
+</ul>
+<ol start=2>
+<li><code>If-None-Match</code>：</li>
+</ol>
+<ul>
+<li>当客户端再次请求资源时，会在请求头中添加这个字段，其值为上次服务器返回的<code>ETag</code>的值。</li>
+<li>服务器收到请求后，会比较资源当前的<code>ETag</code>与<code>If-None-Match</code>的值。如果一致，说明资源未被修改，返回 304 状态码。</li>
+</ul>
+<p>HTTP 状态码中 4xx 类状态码表示客户端错误。常见的 4xx 状态码有：</p>
+<p><strong>一、400 Bad Request（错误请求）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>服务器无法理解客户端的请求，通常是由于请求格式错误、参数错误或缺少必要的信息导致的。</li>
+<li>例如，请求的 URL 语法错误、请求体格式不正确、缺少必需的请求头等情况都可能导致这个状态码。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>检查请求的 URL 是否正确，确保没有拼写错误或无效的路径。</li>
+<li>检查请求体的格式是否符合服务器的要求，例如 JSON 格式是否正确。</li>
+<li>确认是否提供了所有必需的请求参数和请求头。</li>
+</ul>
+<p><strong>二、401 Unauthorized（未授权）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>表示客户端请求需要身份验证，但未提供有效的身份验证信息，或者提供的身份验证信息不正确。</li>
+<li>例如，访问需要登录的资源但未提供登录凭证，或者登录凭证已过期。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>检查是否需要提供登录凭证，如果需要，确保提供了正确的用户名和密码。</li>
+<li>如果使用了 API 密钥或令牌，确认其是否有效且正确包含在请求中。</li>
+<li>检查服务器的身份验证机制是否正确配置。</li>
+</ul>
+<p><strong>三、403 Forbidden（禁止访问）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>服务器理解请求，但拒绝执行，通常是由于客户端没有足够的权限访问请求的资源。</li>
+<li>与 401 不同，403 表示客户端已经经过身份验证，但仍然没有权限执行请求。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>确认客户端是否具有访问请求资源的权限。这可能涉及到用户角色、权限设置等方面的问题。</li>
+<li>检查服务器的访问控制列表（ACL）是否正确配置，确保客户端的请求在允许的范围内。</li>
+</ul>
+<p><strong>四、404 Not Found（未找到）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>服务器无法找到请求的资源。这可能是由于请求的 URL 错误、资源已被删除或移动，或者服务器配置问题导致的。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>检查请求的 URL 是否正确，确保资源的路径和名称没有错误。</li>
+<li>如果资源已被删除或移动，可能需要更新链接或进行重定向。</li>
+<li>确认服务器的配置是否正确，确保资源能够被正确地映射到相应的 URL。</li>
+</ul>
+<p><strong>五、405 Method Not Allowed（方法不被允许）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>客户端使用了不被服务器支持的 HTTP 方法来请求资源。例如，使用 PUT 方法请求一个只支持 GET 和 POST 方法的资源。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>检查请求的方法是否正确，根据服务器的文档或 API 说明，使用正确的 HTTP 方法。</li>
+<li>如果需要使用特定的方法，确保服务器已正确配置以支持该方法。</li>
+</ul>
+<p><strong>六、408 Request Timeout（请求超时）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>客户端在规定的时间内没有发送完整的请求，或者服务器在规定的时间内没有响应客户端的请求。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>检查网络连接是否稳定，确保客户端能够及时发送请求。</li>
+<li>如果是服务器响应超时，可能需要优化服务器的性能，减少响应时间。</li>
+<li>调整超时时间设置，根据实际情况增加客户端或服务器的超时时间。</li>
+</ul>
+<p><strong>七、429 Too Many Requests（请求过多）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>客户端在一定时间内发送了过多的请求，超出了服务器的限制。</li>
+</ul>
+<ol start=2>
+<li><strong>可能的原因和解决方法</strong>：</li>
+</ol>
+<ul>
+<li>遵循服务器的请求速率限制，减少请求的频率。</li>
+<li>如果可能，使用缓存或异步处理来减少对服务器的请求次数。</li>
+<li>检查是否有不必要的重复请求，可以进行优化以减少请求数量。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=请描述以下-request-和-response-headers>请描述以下 request 和 response headers?<a href=#请描述以下-request-和-response-headers class=hash-link aria-label="请描述以下 request 和 response headers?的直接链接" title="请描述以下 request 和 response headers?的直接链接">​</a></h2>
+<ul>
+<li>Diff. between Expires, Date, Age and If-Modified-…</li>
+<li>Do Not Track</li>
+<li>Cache-Control</li>
+<li>Transfer-Encoding</li>
+<li>ETag</li>
+<li>X-Frame-Options</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=什么是-http-method请罗列出你所知道的所有-http-method并给出解释>什么是 HTTP method？请罗列出你所知道的所有 HTTP method，并给出解释?<a href=#什么是-http-method请罗列出你所知道的所有-http-method并给出解释 class=hash-link aria-label="什么是 HTTP method？请罗列出你所知道的所有 HTTP method，并给出解释?的直接链接" title="什么是 HTTP method？请罗列出你所知道的所有 HTTP method，并给出解释?的直接链接">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-http2-header-compression>http2 中的首部压缩是什么<a href=#p1-http2-header-compression class=hash-link aria-label="http2 中的首部压缩是什么的直接链接" title="http2 中的首部压缩是什么的直接链接">​</a></h2>
+<p>在 HTTP/2 中，首部压缩是一项重要的特性，它主要是为了减少在网络传输中重复的首部信息所占用的带宽，从而提高网络传输效率。</p>
+<p><strong>一、为什么需要首部压缩</strong></p>
+<p>在 HTTP/1.1 中，每次请求和响应都包含大量的首部信息，这些首部信息可能会重复出现，并且占用不少的网络带宽。例如，每次请求都可能包含的 User-Agent、Accept 等首部字段，在多个请求之间可能是相同的。随着现代网页应用的复杂性增加，请求的数量也越来越多，首部信息的重复传输问题就变得更加突出。</p>
+<p><strong>二、HTTP/2 首部压缩的原理</strong></p>
+<p>HTTP/2 使用了 HPACK（Header Compression for HTTP/2）算法进行首部压缩。HPACK 主要基于以下两个关键概念：</p>
+<ol>
+<li>静态表和动态表：</li>
+</ol>
+<ul>
+<li>静态表是一个预定义的首部名称和值的映射表，其中包含了一些常见的首部字段，如“:method: GET”“:status: 200”等。当在请求或响应中出现这些常见的首部字段时，可以通过索引值来引用静态表中的条目，而不是传输完整的首部名称和值，从而减少传输的数据量。</li>
+<li>动态表是在通信过程中动态构建的。当出现新的首部字段组合时，可以将其添加到动态表中。后续的请求或响应如果包含相同的首部字段组合，可以通过索引值来引用动态表中的条目。</li>
+</ul>
+<ol start=2>
+<li>整数编码和霍夫曼编码：</li>
+</ol>
+<ul>
+<li>整数编码用于对首部字段的索引值和长度进行编码，减少表示这些值所需的位数。</li>
+<li>霍夫曼编码是一种可变长度编码技术，它根据字符的出现频率为不同的字符分配不同长度的编码。在 HTTP/2 中，霍夫曼编码用于对首部字段的值进行编码，进一步减少数据量。</li>
+</ul>
+<p><strong>三、首部压缩的效果</strong></p>
+<p>通过首部压缩，HTTP/2 可以显著减少网络传输中的首部信息大小。在实际应用中，首部压缩可以将首部信息的大小减少到原来的几分之一甚至更小，从而提高网络传输效率，降低延迟。特别是对于频繁重复的首部字段，压缩效果更加明显。</p>
+<p>例如，在一个包含多个请求和响应的网页应用中，如果每个请求和响应都包含相同的 User-Agent 首部字段，在 HTTP/1.1 中，这个首部字段会在每次请求和响应中重复传输。而在 HTTP/2 中，只需要在第一次出现时传输完整的首部字段，后续可以通过索引值引用动态表中的条目，大大减少了传输的数据量。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3-http3-core-features>http3 有哪些核心的新特性<a href=#p3-http3-core-features class=hash-link aria-label="http3 有哪些核心的新特性的直接链接" title="http3 有哪些核心的新特性的直接链接">​</a></h2>
+<p>参考 <a href=https://zhuanlan.zhihu.com/p/32553477 target=_blank rel="noopener noreferrer">quic</a></p>
+<p><strong>一、基于 QUIC 协议</strong></p>
+<ol>
+<li><strong>多路复用无队头阻塞</strong>：</li>
+</ol>
+<ul>
+<li>HTTP/3 基于 QUIC（Quick UDP Internet Connections）协议，它继承了 QUIC 的多路复用特性。在 HTTP/2 中，虽然也有多路复用，但由于底层使用 TCP 协议，可能会出现队头阻塞问题。而 QUIC 的多路复用在一个连接上可以同时处理多个独立的流，并且各个流之间不会相互影响，即使某个流出现丢包，也不会阻塞其他流的传输。</li>
+<li>例如，当同时加载一个网页的多个资源时，如果其中一个资源的数据包丢失，在 HTTP/2 中可能会导致整个连接的传输受阻，直到丢失的数据包被重传成功。而在 HTTP/3 中，其他资源的传输不受影响，大大提高了传输效率。</li>
+</ul>
+<ol start=2>
+<li><strong>快速连接建立</strong>：</li>
+</ol>
+<ul>
+<li>QUIC 协议在连接建立方面比传统的 TCP 和 TLS 握手更快。它将 TLS 加密层整合到 QUIC 协议内部，减少了连接建立的往返次数。在首次连接时，虽然也需要一些时间进行密钥交换等操作，但后续连接可以利用之前的连接状态进行快速恢复，实现 0-RTT（Round-Trip Time）或 1-RTT 的连接建立时间。</li>
+<li>例如，在移动网络环境下，用户频繁切换网络或重新打开应用时，HTTP/3 可以更快地建立连接，减少用户等待时间，提供更流畅的体验。</li>
+</ul>
+<p><strong>二、改进的拥塞控制</strong></p>
+<ol>
+<li><strong>可插拔的拥塞控制算法</strong>：</li>
+</ol>
+<ul>
+<li>HTTP/3 允许使用不同的拥塞控制算法，并且可以根据网络环境动态切换。这使得它能够更好地适应各种网络条件，如高延迟、高丢包率的网络环境。</li>
+<li>例如，在无线网络环境下，可以选择更适合这种环境的拥塞控制算法，提高数据传输的效率和稳定性。</li>
+</ul>
+<ol start=2>
+<li><strong>更精准的拥塞控制</strong>：</li>
+</ol>
+<ul>
+<li>QUIC 协议的拥塞控制机制比 TCP 更加精细。它可以更好地感知网络的拥塞状态，及时调整发送速率，避免网络拥塞的发生。同时，它还可以对不同的流进行独立的拥塞控制，提高整体的网络利用率。</li>
+<li>例如，当网络出现拥塞时，HTTP/3 可以更快地降低发送速率，避免拥塞进一步恶化。而在网络状况好转时，又能迅速提高发送速率，充分利用网络带宽。</li>
+</ul>
+<p><strong>三、增强的安全性</strong></p>
+<ol>
+<li><strong>内置加密</strong>：</li>
+</ol>
+<ul>
+<li>QUIC 协议在设计上就内置了加密功能，从一开始就对数据进行加密传输，提供了更好的安全性。这避免了像 TCP 那样在连接建立后再进行加密协商的过程，减少了安全风险。</li>
+<li>例如，在网络中传输的数据更难被窃听或篡改，保护用户的隐私和数据安全。</li>
+</ul>
+<ol start=2>
+<li><strong>前向安全</strong>：</li>
+</ol>
+<ul>
+<li>HTTP/3 继承了 QUIC 的前向安全特性。即使一个密钥被泄露，也不会影响之前的通信安全。这意味着攻击者无法通过破解当前的密钥来获取之前的通信内容。</li>
+<li>例如，如果一个服务器的密钥在某个时间点被泄露，之前通过 HTTP/3 传输的通信内容仍然是安全的，不会被攻击者窃取。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-https>https<a href=#p0-https class=hash-link aria-label=https的直接链接 title=https的直接链接>​</a></h2>
+<p><a href=https://zhuanlan.zhihu.com/p/43789231 target=_blank rel="noopener noreferrer">https</a></p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-https-performance-optimization>https 层可以做哪些性能优化<a href=#p1-https-performance-optimization class=hash-link aria-label="https 层可以做哪些性能优化的直接链接" title="https 层可以做哪些性能优化的直接链接">​</a></h2>
+<p>以下是在 HTTPS 层可以进行的一些性能优化：</p>
+<p><strong>一、优化服务器配置</strong></p>
+<ol>
+<li><strong>选择合适的加密套件</strong>：</li>
+</ol>
+<ul>
+<li>服务器可以配置支持的加密套件。优先选择性能较好且安全的加密算法组合，如具有高效加密和认证的椭圆曲线密码（ECC）算法及现代的对称加密算法（如 AES-GCM）。避免使用老旧、性能低下或存在安全风险的加密套件。</li>
+<li>例如，可以根据服务器的性能和安全需求，调整 Nginx 或 Apache 服务器的 SSL/TLS 配置，选择合适的加密套件。</li>
+</ul>
+<ol start=2>
+<li><strong>启用 HTTP/2 或 HTTP/3</strong>：</li>
+</ol>
+<ul>
+<li>HTTP/2 和 HTTP/3 在 HTTPS 之上提供了更好的性能。HTTP/2 采用多路复用技术，可以在一个连接上同时传输多个请求和响应，减少了连接建立的开销。HTTP/3 则基于 QUIC 协议，进一步提高了连接的可靠性和性能。</li>
+<li>确保服务器支持并启用 HTTP/2 或 HTTP/3，可以显著提升 HTTPS 网站的性能。</li>
+</ul>
+<ol start=3>
+<li><strong>优化服务器硬件</strong>：</li>
+</ol>
+<ul>
+<li>使用性能强大的服务器硬件，包括更快的 CPU、更多的内存和高速存储设备，可以提高 HTTPS 服务器的处理能力和响应速度。</li>
+<li>考虑使用固态硬盘（SSD）来存储网站数据，以减少磁盘 I/O 延迟。</li>
+</ul>
+<p><strong>二、证书管理优化</strong></p>
+<ol>
+<li><strong>使用高效的证书颁发机构（CA）</strong>：</li>
+</ol>
+<ul>
+<li>选择响应速度快、可靠的 CA 来颁发证书。一些知名的 CA 可以提供快速的证书签发和更新服务，减少证书获取的时间。</li>
+<li>例如，Let's Encrypt 是一个免费、自动化的 CA，提供快速的证书签发服务，适用于小型网站和个人项目。</li>
+</ul>
+<ol start=2>
+<li><strong>优化证书链长度</strong>：</li>
+</ol>
+<ul>
+<li>减少证书链的长度可以降低证书验证的时间开销。确保服务器配置的证书链只包含必要的中间证书，避免过长的证书链。</li>
+<li>可以通过检查证书链中的证书数量和层级，以及与 CA 沟通来优化证书链的长度。</li>
+</ul>
+<ol start=3>
+<li><strong>证书缓存和预取</strong>：</li>
+</ol>
+<ul>
+<li>客户端和服务器可以利用证书缓存来减少证书验证的次数。浏览器通常会缓存证书一段时间，以避免在后续访问同一网站时重复验证证书。</li>
+<li>服务器也可以采取一些措施，如预取证书更新，以确保在证书即将过期时能够及时更新，避免因证书过期导致的连接中断。</li>
+</ul>
+<p><strong>三、TLS 会话复用</strong></p>
+<ol>
+<li><strong>会话票证（Session Tickets）</strong>：</li>
+</ol>
+<ul>
+<li>服务器可以使用会话票证来实现 TLS 会话复用。会话票证是一个加密的令牌，包含了之前建立的 TLS 会话的信息。当客户端再次连接时，它可以提交会话票证，服务器可以使用票证中的信息快速恢复之前的会话，而无需进行完整的 TLS 握手。</li>
+<li>配置服务器以支持会话票证，并确保会话票证的安全性和有效性。</li>
+</ul>
+<ol start=2>
+<li><strong>会话 ID 复用</strong>：</li>
+</ol>
+<ul>
+<li>类似地，服务器可以使用会话 ID 来实现会话复用。在首次 TLS 握手时，服务器生成一个会话 ID，并将其发送给客户端。客户端在后续连接时可以提交会话 ID，服务器如果识别到该 ID，可以快速恢复之前的会话。</li>
+<li>确保服务器正确配置会话 ID 的生成和存储，以实现高效的会话复用。</li>
+</ul>
+<p><strong>四、内容压缩和缓存</strong></p>
+<ol>
+<li><strong>启用压缩</strong>：</li>
+</ol>
+<ul>
+<li>在 HTTPS 层启用内容压缩可以减少传输的数据量，提高传输速度。服务器可以配置支持的压缩算法，如 Gzip 或 Brotli。</li>
+<li>确保客户端和服务器都支持所选的压缩算法，并正确配置服务器以对响应内容进行压缩。</li>
+</ul>
+<ol start=2>
+<li><strong>合理设置缓存策略</strong>：</li>
+</ol>
+<ul>
+<li>利用浏览器缓存和中间缓存服务器可以减少重复请求，提高性能。设置合适的缓存头，如<code>Cache-Control</code>和<code>Expires</code>，指示客户端和中间缓存服务器如何缓存资源。</li>
+<li>对于静态资源，可以设置较长的缓存时间，以减少对服务器的请求次数。</li>
+</ul>
+<p><strong>五、监控和优化</strong></p>
+<ol>
+<li><strong>性能监控</strong>：</li>
+</ol>
+<ul>
+<li>使用性能监控工具来监测 HTTPS 网站的性能指标，如连接建立时间、数据传输速度、证书验证时间等。常见的性能监控工具包括 WebPageTest、Pingdom 等。</li>
+<li>根据监控数据，分析性能瓶颈，并采取相应的优化措施。</li>
+</ul>
+<ol start=2>
+<li><strong>持续优化</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 性能优化是一个持续的过程。随着技术的发展和安全需求的变化，不断评估和调整优化策略，以确保网站始终保持良好的性能。</li>
+<li>关注安全漏洞和新的性能优化技术，及时更新服务器配置和软件版本。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-https-encryption-protocol>https 加密协议里面: TLS 和 SSL 分别是什么，有何区别<a href=#p2-https-encryption-protocol class=hash-link aria-label="https 加密协议里面: TLS 和 SSL 分别是什么，有何区别的直接链接" title="https 加密协议里面: TLS 和 SSL 分别是什么，有何区别的直接链接">​</a></h2>
+<p>在 HTTPS 加密协议中，TLS（Transport Layer Security，传输层安全协议）和 SSL（Secure Sockets Layer，安全套接字层）都是为了实现网络通信安全而设计的协议，它们的主要情况如下：</p>
+<p><strong>一、SSL</strong></p>
+<ol>
+<li><strong>定义与发展</strong>：</li>
+</ol>
+<ul>
+<li>SSL 由网景公司（Netscape）在 20 世纪 90 年代初开发，旨在为网络通信提供加密和安全认证。</li>
+<li>它经历了几个版本，如 SSL 2.0 和 SSL 3.0，但后来发现了一些安全漏洞。</li>
+</ul>
+<ol start=2>
+<li><strong>主要功能</strong>：</li>
+</ol>
+<ul>
+<li>数据加密：通过使用对称加密算法（如 DES、3DES、AES 等）对数据进行加密，确保数据在传输过程中不被窃取或篡改。</li>
+<li>身份验证：服务器可以使用数字证书向客户端证明自己的身份，客户端可以验证证书的有效性，以确保连接到的是真实的服务器。</li>
+</ul>
+<p><strong>二、TLS</strong></p>
+<ol>
+<li><strong>定义与发展</strong>：</li>
+</ol>
+<ul>
+<li>TLS 是在 SSL 3.0 的基础上发展而来的，由互联网工程任务组（IETF）进行标准化。</li>
+<li>它的目的是提供更安全、更可靠的网络通信安全协议，并修复 SSL 中发现的安全漏洞。</li>
+<li>TLS 经历了多个版本的演进，如 TLS 1.0、TLS 1.1、TLS 1.2 和 TLS 1.3。</li>
+</ul>
+<ol start=2>
+<li><strong>主要功能</strong>：</li>
+</ol>
+<ul>
+<li>与 SSL 类似，TLS 也提供数据加密和身份验证功能。但在加密算法、密钥交换机制和安全性能方面进行了改进和增强。</li>
+<li>支持更先进的加密算法，如 AES-GCM、ChaCha20-Poly1305 等，提供更好的安全性和性能。</li>
+<li>改进的密钥交换机制，如 Diffie-Hellman Ephemeral（DHE）和 Elliptic Curve Diffie-Hellman Ephemeral（ECDHE），提供前向保密性。</li>
+</ul>
+<p><strong>三、TLS 与 SSL 的区别</strong></p>
+<ol>
+<li><strong>安全性</strong>：</li>
+</ol>
+<ul>
+<li>TLS 通常被认为比 SSL 更安全。TLS 在设计上修复了 SSL 中的一些安全漏洞，并引入了新的安全特性。</li>
+<li>例如，TLS 1.3 完全移除了对不安全加密算法的支持，提供了更强的加密和认证机制。</li>
+</ul>
+<ol start=2>
+<li><strong>性能</strong>：</li>
+</ol>
+<ul>
+<li>TLS 在性能方面也有所改进。它采用了更高效的加密算法和密钥交换机制，减少了连接建立的时间和数据传输的延迟。</li>
+<li>例如，TLS 1.3 中的 0-RTT（Zero Round-Trip Time）模式可以在某些情况下实现更快的连接建立。</li>
+</ul>
+<ol start=3>
+<li><strong>标准化</strong>：</li>
+</ol>
+<ul>
+<li>SSL 是由网景公司开发的，没有经过正式的标准化过程。而 TLS 是由 IETF 进行标准化的，有明确的规范和标准，确保不同的实现之间具有更好的互操作性。</li>
+</ul>
+<ol start=4>
+<li><strong>兼容性</strong>：</li>
+</ol>
+<ul>
+<li>由于 TLS 是在 SSL 的基础上发展而来的，因此在一定程度上与 SSL 兼容。但是，为了获得更好的安全性和性能，建议使用最新版本的 TLS。</li>
+<li>现代的浏览器和服务器通常都支持 TLS，并逐渐淘汰对 SSL 的支持。</li>
+</ul>
+<p>TLS 和 SSL 都是为了实现网络通信安全而设计的协议，但 TLS 在安全性、性能和标准化方面都比 SSL 更优。在现代的网络环境中，建议使用 TLS 来确保通信的安全。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3-https-security-protocol>HTTPS 安全协议<a href=#p3-https-security-protocol class=hash-link aria-label="HTTPS 安全协议的直接链接" title="HTTPS 安全协议的直接链接">​</a></h2>
+<p>HTTPS（Hypertext Transfer Protocol Secure）安全协议主要包括以下几个关键方面：</p>
+<p><strong>一、加密通信</strong></p>
+<ol>
+<li><strong>TLS/SSL 加密</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 使用传输层安全（TLS）或安全套接层（SSL）协议对数据进行加密。这确保了在客户端（如浏览器）和服务器之间传输的数据是经过加密的，防止数据被窃听、篡改或劫持。</li>
+<li>加密过程通过使用对称加密算法（如 AES）和非对称加密算法（如 RSA）的组合来实现。在连接建立阶段，使用非对称加密算法交换对称密钥，然后使用对称密钥进行后续的数据加密和解密，以提高效率。</li>
+</ul>
+<ol start=2>
+<li><strong>数据完整性保护</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 还使用消息认证码（MAC）来确保数据的完整性。接收方可以通过验证 MAC 来确定数据在传输过程中是否被篡改。如果 MAC 验证失败，接收方将拒绝接收数据，从而防止恶意篡改的数据被接受。</li>
+</ul>
+<p><strong>二、身份验证</strong></p>
+<ol>
+<li><strong>服务器身份验证</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 通过服务器提供的数字证书来验证服务器的身份。数字证书由证书颁发机构（CA）签发，包含服务器的公钥和其他身份信息。</li>
+<li>客户端在连接到服务器时，会验证服务器证书的真实性。这包括检查证书的颁发机构是否可信、证书是否在有效期内以及证书中的域名是否与服务器的域名匹配等。如果证书验证失败，客户端可能会显示警告或拒绝连接。</li>
+</ul>
+<ol start=2>
+<li><strong>客户端身份验证（可选）</strong>：</li>
+</ol>
+<ul>
+<li>在某些情况下，HTTPS 也可以用于客户端身份验证。例如，在企业内部网络或金融交易等场景中，服务器可能要求客户端提供数字证书或其他身份验证信息，以确保只有授权的用户可以访问资源。</li>
+</ul>
+<p><strong>三、安全连接建立</strong></p>
+<ol>
+<li><strong>握手过程</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 的连接建立过程包括一个称为“握手”的阶段。在握手过程中，客户端和服务器交换信息，协商加密算法、密钥交换方式和其他安全参数。</li>
+<li>这个过程确保双方都支持相同的安全协议版本，并能够建立一个安全的连接。握手过程还包括服务器身份验证和密钥交换，为后续的数据传输做好准备。</li>
+</ul>
+<ol start=2>
+<li><strong>安全参数协商</strong>：</li>
+</ol>
+<ul>
+<li>在握手过程中，客户端和服务器协商各种安全参数，如加密算法、密钥长度、MAC 算法等。双方选择最强的安全配置，以确保通信的安全性。</li>
+<li>这个协商过程是动态的，可以根据客户端和服务器的能力以及安全需求进行调整。</li>
+</ul>
+<p><strong>四、安全优势和应用场景</strong></p>
+<ol>
+<li><strong>安全优势</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 提供了比 HTTP 更高的安全性，保护用户的隐私和数据安全。它可以防止敏感信息（如密码、信用卡号码、个人信息等）在传输过程中被窃取或篡改。</li>
+<li>此外，HTTPS 还可以防止中间人攻击，确保客户端和服务器之间的通信是直接的，没有被第三方拦截或篡改。</li>
+</ul>
+<ol start=2>
+<li><strong>应用场景</strong>：</li>
+</ol>
+<ul>
+<li>HTTPS 广泛应用于各种场景，包括电子商务、网上银行、社交媒体、企业内部网络等。任何涉及敏感信息传输或需要保护用户隐私的网站或应用都应该使用 HTTPS。</li>
+<li>搜索引擎也越来越重视 HTTPS，将其作为一个排名因素，鼓励网站所有者采用更安全的协议。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=重定向>重定向<a href=#重定向 class=hash-link aria-label=重定向的直接链接 title=重定向的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-redirect-code-what-is-the-difference>重定向 code 是多少，区别是啥<a href=#p2-redirect-code-what-is-the-difference class=hash-link aria-label="重定向 code 是多少，区别是啥的直接链接" title="重定向 code 是多少，区别是啥的直接链接">​</a></h2>
+<p>HTTP 重定向是指当客户端访问一个页面时，服务器返回一个重定向状态码，告诉客户端去访问另一个 URL。常见的 HTTP 重定向状态码有以下几种，每个状态码都有其特定的意义和使用场景：</p>
+<ol>
+<li><strong>301 Moved Permanently（永久移动）</strong></li>
+</ol>
+<ul>
+<li><strong>含义</strong>：请求的资源已被永久移动到新位置，未来任何对此资源的引用都应使用返回的新 URI。</li>
+<li><strong>使用场景</strong>：当你永久性地更改了网页的 URL 地址，比如网站改版后结构变化导致 URL 变更。</li>
+</ul>
+<ol start=2>
+<li><strong>302 Found（临时移动）/ 307 Temporary Redirect</strong></li>
+</ol>
+<ul>
+<li><strong>含义（302）</strong>：请求的资源临时移到了新的 URI 下，客户端应继续使用原有 URI。</li>
+<li><strong>含义（307）</strong>：与 302 类似，资源临时从不同的 URI 访问，但保证请求方法（如 POST）不变，307 在 HTTP/1.1 中引入，以明确分清与 302 的本意不同。</li>
+<li><strong>使用场景</strong>：当资源或页面需要临时性地从不同的 URI 访问时使用，且期望方法和消息主体不改变（特别适用 307）。</li>
+</ul>
+<ol start=3>
+<li><strong>303 See Other（查看其他位置）</strong></li>
+</ol>
+<ul>
+<li><strong>含义</strong>：这个状态码用于重定向，目的是让客户端访问新 URI 并使用 GET 方法获取资源，无论原始请求是什么方法。</li>
+<li><strong>使用场景</strong>：通常用于处理表单提交后的重定向，以避免刷新页面时重复提交表单。</li>
+</ul>
+<ol start=4>
+<li><strong>308 Permanent Redirect（永久重定向）</strong></li>
+</ol>
+<ul>
+<li><strong>含义</strong>：类似于 301，但它禁止改变请求的方法。因此，例如，应用在一个 POST 请求上时，接下来的请求仍然是一个 POST 请求。</li>
+<li><strong>使用场景</strong>：对于需要保留相同 HTTP 方法（如 POST）情况下的永久重定向。</li>
+</ul>
+<p>区分 301/302 与 307/308</p>
+<ul>
+<li><strong>301 和 308</strong>：这两个状态码表示资源已被永久移动。区别在于 308 要求后续请求使用与原始请求相同的方法。</li>
+<li><strong>302 和 307</strong>：这两个状态码表示资源临时移动。区别在于 307 明确规定客户端后续请求应使用与原始请求相同的方法，而 302 没有这样的强制规定，但在实际使用中客户端一般会将 POST 请求改变为 GET 请求，从而在一些情况下可能与预期不符。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3-sliced-upload-feels-like-the-whole-upload-and-consumes-the-same-time-is-this-statement-correct>如果在网络带宽一定的情况下， 切片上传感觉和整体上传， 消费的时间应该是差不多的。 这种说法正确吗<a href=#p3-sliced-upload-feels-like-the-whole-upload-and-consumes-the-same-time-is-this-statement-correct class=hash-link aria-label="如果在网络带宽一定的情况下， 切片上传感觉和整体上传， 消费的时间应该是差不多的。 这种说法正确吗的直接链接" title="如果在网络带宽一定的情况下， 切片上传感觉和整体上传， 消费的时间应该是差不多的。 这种说法正确吗的直接链接">​</a></h2>
+<p>这种说法在某些情况下是正确的，但实际上，切片上传相较于整体上传，在多种情况下可能更加高效，即使网络带宽固定。切片上传的优势并不仅仅在于可能节约的时间，还包括以下几点：</p>
+<ol>
+<li><strong>提高上传的可靠性</strong></li>
+</ol>
+<ul>
+<li>切片上传允许在遇到网络中断或其他传输错误时只重新上传失败的那一部分，而不是重新上传整个文件。这在大文件传输中尤其重要。</li>
+</ul>
+<ol start=2>
+<li><strong>实现上传进度的精确控制</strong></li>
+</ol>
+<ul>
+<li>通过切片上传，可以更精确地控制和显示上传进度，提高用户体验。</li>
+</ul>
+<ol start=3>
+<li><strong>带宽利用率</strong></li>
+</ol>
+<ul>
+<li>切片上传可以更有效地管理带宽，尤其是在网络条件不稳定的环境中。通过并行上传多个切片，可以更充分地利用可用带宽，从而在理论上减少等待时间，特别是在高延迟的环境中。</li>
+</ul>
+<ol start=4>
+<li><strong>服务器处理</strong></li>
+</ol>
+<ul>
+<li>对于服务器来说，处理多个小文件比处理一个大文件具有更高的灵活性和效率，尤其是在服务器负载高的情况下。此外，小文件的处理错误不会影响到整个文件，使得错误恢复更简单。</li>
+</ul>
+<ol start=5>
+<li><strong>安全性</strong></li>
+</ol>
+<ul>
+<li>切片上传还可以增强安全性，因为单个切片的加密和传输比一个大文件来得容易和安全；此外，即使攻击者截获了部分数据，也难以重构出原始文件。</li>
+</ul>
+<p>综合考虑</p>
+<p>然而，切片上传也有其缺点，例如增加了客户端和服务器端处理的复杂性，需要正确管理和重组文件的各个部分。此外，在某些情况下（尤其是文件较小时），切片上传相较于整体上传并不会带来明显的时间优势，且可能因为初始化多个连接而略微增加总体上传时间。</p>
+<p>所以，是否选择切片上传，取决于文件大小、网络稳定性、服务器能力以及应用场景。对于大文件上传、网络条件不佳或需要高可靠性的场景，切片上传通常是更优的选择。</div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/network/tcp><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>tcp</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/network/cdn><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>cdn</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#http-基本流程 class="table-of-contents__link toc-highlight">http 基本流程</a><li><a href=#http-缓存控制 class="table-of-contents__link toc-highlight">http 缓存控制</a><li><a href=#p1-http-cache-header-date-last-modified class="table-of-contents__link toc-highlight">http 缓存 header 中的 Date 与 Last-Modified 有什么不同</a><li><a href=#http-缓存中-no-cache-与-no-store-的区别是什么- class="table-of-contents__link toc-highlight">http 缓存中 no-cache 与 no-store 的区别是什么 「</a><li><a href=#http-content-type class="table-of-contents__link toc-highlight">http content-type</a><li><a href=#p1-etag class="table-of-contents__link toc-highlight">ETag</a><li><a href=#p1-http-to-https-redirect class="table-of-contents__link toc-highlight">http 向 https 做重定向应该使用哪个状态码</a><li><a href=#什么是跨域资源共享-cors它用于解决什么问题 class="table-of-contents__link toc-highlight">什么是跨域资源共享 (CORS)？它用于解决什么问题？</a><li><a href=#cookie class="table-of-contents__link toc-highlight">cookie</a><li><a href=#p1-how-sites-keep-login-state class="table-of-contents__link toc-highlight">站点是如何保持登录状态</a><li><a href=#session class="table-of-contents__link toc-highlight">session</a><li><a href=#p1-http-1-2-3-difference class="table-of-contents__link toc-highlight">http1、2、3区别</a><li><a href=#url-的长度限制 class="table-of-contents__link toc-highlight">url 的长度限制</a><li><a href=#ajax-工作原理 class="table-of-contents__link toc-highlight">ajax 工作原理？</a><li><a href=#jsonp原理回调过程 class="table-of-contents__link toc-highlight">JSONP原理,回调过程？</a><li><a href=#p2-http-status-code-304-etag-modified class="table-of-contents__link toc-highlight">http 状态码</a><li><a href=#请描述以下-request-和-response-headers class="table-of-contents__link toc-highlight">请描述以下 request 和 response headers?</a><li><a href=#什么是-http-method请罗列出你所知道的所有-http-method并给出解释 class="table-of-contents__link toc-highlight">什么是 HTTP method？请罗列出你所知道的所有 HTTP method，并给出解释?</a><li><a href=#p1-http2-header-compression class="table-of-contents__link toc-highlight">http2 中的首部压缩是什么</a><li><a href=#p3-http3-core-features class="table-of-contents__link toc-highlight">http3 有哪些核心的新特性</a><li><a href=#p0-https class="table-of-contents__link toc-highlight">https</a><li><a href=#p1-https-performance-optimization class="table-of-contents__link toc-highlight">https 层可以做哪些性能优化</a><li><a href=#p2-https-encryption-protocol class="table-of-contents__link toc-highlight">https 加密协议里面: TLS 和 SSL 分别是什么，有何区别</a><li><a href=#p3-https-security-protocol class="table-of-contents__link toc-highlight">HTTPS 安全协议</a><li><a href=#重定向 class="table-of-contents__link toc-highlight">重定向</a><li><a href=#p2-redirect-code-what-is-the-difference class="table-of-contents__link toc-highlight">重定向 code 是多少，区别是啥</a><li><a href=#p3-sliced-upload-feels-like-the-whole-upload-and-consumes-the-same-time-is-this-statement-correct class="table-of-contents__link toc-highlight">如果在网络带宽一定的情况下， 切片上传感觉和整体上传， 消费的时间应该是差不多的。 这种说法正确吗</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

@@ -1,0 +1,143 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-engineering/system-desing" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>系统设计 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/engineering/system-desing><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="系统设计 | web-interview"><meta data-rh=true name=description content=短链系统><meta data-rh=true property=og:description content=短链系统><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/engineering/system-desing><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/engineering/system-desing hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/engineering/system-desing hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.93f1f133.css><script src=/web-interview/assets/js/runtime~main.65427f71.js defer></script><script src=/web-interview/assets/js/main.906e9b7b.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/index>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/framework/vue>framework</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/engineering/security>engineering</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/security>安全</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/bundler>打包工具</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/performance>性能</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/git>git</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/CI-CD>部署集成</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/engineering/system-desing>系统设计</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/test>测试</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/typescript>typescript</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/architecture>架构</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/debug>调试能力</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/coding>编码</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>engineering</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>系统设计</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>系统设计</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=短链系统>短链系统<a href=#短链系统 class=hash-link aria-label=短链系统的直接链接 title=短链系统的直接链接>​</a></h2>
+<p>短地址设计,进一步采用 LRU 实现短地址替换功能</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-monitor>如何做好前端监控方案<a href=#p2-monitor class=hash-link aria-label=如何做好前端监控方案的直接链接 title=如何做好前端监控方案的直接链接>​</a></h2>
+<blockquote>
+<p>作者推荐可以直接参考下面这个文章就好了， 写的挺不错的。
+<a href=https://juejin.cn/post/7285608128040206391 target=_blank rel="noopener noreferrer">资料</a></p>
+</blockquote>
+<p>作者在这里， 对上面的文章进行一下简单的总结</p>
+<p><strong>全文总结：</strong>
+Web 前端监控的方案，包括前端监控的意义、内容、形式、总体方案设计、监控指标、前端埋点方案、上报逻辑、监控数据存储、管理平台展示、报警通知、优化整改等方面。</p>
+<p><strong>重要：</strong></p>
+<ul>
+<li><strong>前端监控的意义</strong>：如同城市探头，实时监测保证系统稳定高效，为业务赋能获取更多用户。能够快速解决用户线上问题、用户性能问题；给予产品决策提供数据支撑。</li>
+<li><strong>2-5-8 原则</strong>：阐述不同响应时间用户的感受和可能的行为。</li>
+<li><strong>监控的内容</strong>：包括用户行为程序异常、运行性能。</li>
+<li><strong>监控的形式</strong>：分为主动和被动监控。</li>
+<li><strong>总体方案设计</strong>：涵盖页面埋点、数据上报、后台存储、汇总统计、报警展示、优化整改等环节。</li>
+<li><strong>监控指标</strong>：性能指标如 FP、FCP、FMP 等以及 Google Web Vitals 中的 LCP、FID、CLS 等，还有用户指标如 UV、PV 等。</li>
+<li><strong>前端埋点方案</strong>：介绍了写死在业务代码、全量埋点、动态埋点三种方式，推荐动态埋点。</li>
+<li><strong>上报逻辑</strong>：ajax、fetch 上报、image 上报、jsonp 上报、sendBeacon 上报，推荐 sendBeacon 上报。</li>
+<li><strong>监控数据的存储</strong>：可存于 Hadoop 大数据平台、MySQL 关系数据库、NoSQL 存储。</li>
+<li><strong>管理平台展示</strong>：包括注册和管理业务项目、查看监控数据、配置监控规则和阈值。</li>
+<li><strong>报警通知</strong>：通过定时任务读取配置表，根据规则查询数据，有多种通知形式。</li>
+<li><strong>优化整改</strong>：针对性能不达标和用户留存低提出多种措施。</li>
+</ul>
+<p>制定监控的核心指标，包括：
+性能指标：如加载耗时，Web Vitals 定义了 LCP、FID、CLS 等指标
+错误指标：如加载成功率、JS 错误率、白屏频率、接口请求成功率等
+拆解指标为点位，基于 Sentry 或其它监控系统上报数据
+具备单点追查能力，点位具备足够的公共参数（上下文），通过 trace 或 logID 跟踪点位之间的关系，同时注意不能有敏感信息
+建立数据看板及配置报警规则</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3>技术选型上有一些什么标准<a href=#p3 class=hash-link aria-label=技术选型上有一些什么标准的直接链接 title=技术选型上有一些什么标准的直接链接>​</a></h2>
+<blockquote>
+<p>作者推荐一下五个标准，适用于编程语言、框架、大小工具库 等方向</p>
+</blockquote>
+<ul>
+<li>可控性</li>
+<li>稳定性</li>
+<li>适用性</li>
+<li>易用性</li>
+<li>唯一性</li>
+</ul>
+<p>当然，以下是对你提出的五个前端技术选型原则的详细描述：</p>
+<ol>
+<li><strong>可控性</strong>：</li>
+</ol>
+<ul>
+<li><strong>定义</strong>：选择的技术应该使团队能够对产品的开发过程有充分的控制，包括代码质量、部署流程、性能优化和错误处理等方面。</li>
+<li><strong>细节</strong>：</li>
+<li>允许定制化和扩展：技术栈应该支持自定义功能，以满足特定业务需求。</li>
+<li>易于维护：代码库应该易于维护和升级，方便团队应对长远的技术演进。</li>
+<li>开放源代码或支持社区：最好选择有活跃社区支持的开源技术，以便在遇到问题时可以获得帮助。</li>
+<li>文档和工具：有充分的文档和开发工具，帮助团队理解并控制技术实现。</li>
+<li></li>
+</ul>
+<ol start=2>
+<li><strong>稳定性</strong>：</li>
+</ol>
+<ul>
+<li><strong>定义</strong>：选用的技术需要稳固可靠，拥有良好的社区支持和持续的发展。</li>
+<li><strong>细节</strong>：</li>
+<li>成熟度：技术应该是经过时间检验，市场验证的成熟解决方案。</li>
+<li>庞大的用户基础：广泛的用户和使用案例保证了技术的稳定性和可靠性。</li>
+<li>正式的版本管理：应该有一个清晰的版本管理政策，以及频繁可靠的更新和安全补丁。</li>
+<li>抗脆弱性：即使在意外情况下也能表现出良好的弹性和错误恢复能力。</li>
+</ul>
+<ol start=3>
+<li><strong>适用性</strong>：</li>
+</ol>
+<ul>
+<li><strong>定义</strong>：技术选择应该针对特定项目的需求和团队的技能水平。</li>
+<li><strong>细节</strong>：</li>
+<li>业务需求匹配：选用的技术应能高效解决实际业务问题，并支持业务即将来临的挑战。</li>
+<li>团队的技能和经验：需要考量团队成员对技术栈的熟悉程度，以便能快速有效地产生结果。</li>
+<li>开发周期： 要考虑该技术是否能够在开发周期类完成对应需求开发。</li>
+</ul>
+<ol start=4>
+<li><strong>易用性</strong>：</li>
+</ol>
+<ul>
+<li><strong>定义</strong>：技术应该简单易懂，易于团队成员学习和使用。</li>
+<li><strong>细节</strong>：</li>
+<li>学习曲线：技术栈的学习曲线不应过于陡峭，以免增加新团队成员的入职门槛。</li>
+<li>开发效率：提供良好的开发体验，如源代码清晰、API 简洁、丰富的开发工具。</li>
+<li>调试和测试：应包含易于进行故障排除、调试和测试的工具或功能。</li>
+<li>文档和学习资源：应有良好、全面的文档和在线学习资源助于团队成员快速上手。</li>
+</ul>
+<ol start=5>
+<li><strong>唯一性</strong>：</li>
+</ol>
+<ul>
+<li><strong>定义</strong>：确保在项目开发过程中， 同一个类型的问题解决方向只选用一个技术体系。</li>
+<li><strong>细节</strong>：</li>
+<li>避免同类型库重复：选择最适合特定用例的工具和库，避免在项目中引入重复功能的库。</li>
+</ul>
+<p>在选择前端技术栈时，这些原则可以帮助团队做出更符合项目需求、更利于长期维护和开发效率的决策。需要注意的是，这些原则并不是孤立的，他们之间相互影响，有时候在某些方面需要妥协以满足其他更为重要的需求。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-base-constructure>如何从 0 到 1 搭建前端基建<a href=#p1-base-constructure class=hash-link aria-label="如何从 0 到 1 搭建前端基建的直接链接" title="如何从 0 到 1 搭建前端基建的直接链接">​</a></h2>
+<p>如何从 0 到 1 搭建前端基建</p>
+<p>有一个非常经典的文章， 直接参考即可： <a href=https://juejin.cn/post/7144881028661723167 target=_blank rel="noopener noreferrer">非大厂的我们，要如何去搞前端基建?</a></p>
+<p>这里简单总结一下文章里面的要点</p>
+<p>1.什么是基建？</p>
+<p><img decoding=async loading=lazy src=https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/1a1bf7ac7a6040c1b8cabb5e2c72ff65~tplv-k3u1fbpfcp-zoom-in-crop-mark:1512:0:0:0.awebp alt=01 class=img_GoKf></p>
+<p>2.为什么要做前端基建？</p>
+<p>业务复用；
+提升研发效率；
+规范研发流程；
+团队技术提升；
+团队的技术影响力；
+开源建设；</p>
+<p>3.前端基建如何推动落地？</p>
+<ul>
+<li>要合适的同学（资源）</li>
+<li>要解决的问题（问题）</li>
+<li>要解决问题方案计划书（方案）</li>
+<li>要具体执行的步骤（执行）</li>
+</ul>
+<p><strong>技术基建四大特性（切记）</strong></p>
+<ul>
+<li>技术的健全性</li>
+<li>基建的稳定性</li>
+<li>研发的效率性</li>
+<li>业务的体验性</li>
+</ul>
+<p>4.前端基建都有什么？</p>
+<ul>
+<li>前端规范（Standard）</li>
+<li>前端文档（Document）</li>
+<li>前端项目模板管理（Templates）</li>
+<li>前端脚手架（CLI）</li>
+<li>前端组件库（UI Design）</li>
+<li>前端响应式设计 or 自适应设计</li>
+<li>前端工具库（类 Hooks / Utils）</li>
+<li>前端工具自动化（Tools）</li>
+<li>接口数据聚合（BFF）</li>
+<li>前端 SSR 推进</li>
+<li>前端自动化构建部署（CI/CD）</li>
+<li>全链路前端监控/数据埋点系统</li>
+<li>前端可视化平台</li>
+<li>前端性能优化</li>
+<li>前端低代码平台搭建</li>
+<li>微前端（Micro App）</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/engineering/CI-CD><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>部署集成</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/engineering/test><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>测试</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#短链系统 class="table-of-contents__link toc-highlight">短链系统</a><li><a href=#p2-monitor class="table-of-contents__link toc-highlight">如何做好前端监控方案</a><li><a href=#p3 class="table-of-contents__link toc-highlight">技术选型上有一些什么标准</a><li><a href=#p1-base-constructure class="table-of-contents__link toc-highlight">如何从 0 到 1 搭建前端基建</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

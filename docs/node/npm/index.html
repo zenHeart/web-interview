@@ -1,0 +1,318 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-node/npm" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>npm | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/node/npm><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="npm | web-interview"><meta data-rh=true name=description content="package.json 依赖申明的方式有哪些， 他们有何却别"><meta data-rh=true property=og:description content="package.json 依赖申明的方式有哪些， 他们有何却别"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/node/npm><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/node/npm hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/node/npm hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.93f1f133.css><script src=/web-interview/assets/js/runtime~main.65427f71.js defer></script><script src=/web-interview/assets/js/main.906e9b7b.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/node/index>node</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/index>node</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/api>node</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/node/npm>npm</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/tool-chain>工具链</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/ssr>ssr</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/server>服务端</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/node/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/framework/vue>framework</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/security>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>node</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>npm</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>npm</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-package-json-dependencies>package.json 依赖申明的方式有哪些， 他们有何却别<a href=#p2-package-json-dependencies class=hash-link aria-label="package.json 依赖申明的方式有哪些， 他们有何却别的直接链接" title="package.json 依赖申明的方式有哪些， 他们有何却别的直接链接">​</a></h2>
+<p><strong>一、<code>dependencies</code>（生产依赖）</strong></p>
+<ol>
+<li><strong>定义和用途</strong>：</li>
+</ol>
+<ul>
+<li><code>dependencies</code>用于声明项目在生产环境中运行所必需的依赖项。</li>
+<li>这些依赖项是项目正常运行所不可或缺的，无论是在开发阶段还是在部署到生产环境后。</li>
+</ul>
+<ol start=2>
+<li><strong>示例</strong>：</li>
+</ol>
+<ul>
+<li>比如，如果你的项目使用了 Express.js 框架来构建服务器，那么 Express.js 就应该被声明在<code>dependencies</code>中。</li>
+<li><code>"express": "^4.17.1"</code>表示安装 Express 版本 4.17.1 或更高的兼容版本。</li>
+</ul>
+<ol start=3>
+<li><strong>安装和使用</strong>：</li>
+</ol>
+<ul>
+<li>当你运行<code>npm install</code>或<code>yarn install</code>时，这些依赖项会被自动安装到项目的<code>node_modules</code>目录中。</li>
+<li>在生产环境中部署项目时，这些依赖项也会被一同部署。</li>
+</ul>
+<p><strong>二、<code>devDependencies</code>（开发依赖）</strong></p>
+<ol>
+<li><strong>定义和用途</strong>：</li>
+</ol>
+<ul>
+<li><code>devDependencies</code>用于声明仅在开发过程中需要的依赖项。</li>
+<li>这些依赖项通常包括开发工具、测试框架、代码格式化工具等，它们不是项目在生产环境中运行所必需的。</li>
+</ul>
+<ol start=2>
+<li><strong>示例</strong>：</li>
+</ol>
+<ul>
+<li>例如，Jest 是一个流行的 JavaScript 测试框架，如果你的项目使用 Jest 进行测试，那么 Jest 应该被声明在<code>devDependencies</code>中。</li>
+<li><code>"jest": "^26.6.3"</code>表示安装 Jest 版本 26.6.3 或更高的兼容版本。</li>
+</ul>
+<ol start=3>
+<li><strong>安装和使用</strong>：</li>
+</ol>
+<ul>
+<li>同样，当你运行<code>npm install</code>或<code>yarn install</code>时，这些依赖项会被安装到项目的<code>node_modules</code>目录中。</li>
+<li>但是，在生产环境中部署项目时，通常不会部署这些开发依赖项，以减小项目的体积和复杂性。</li>
+</ul>
+<p><strong>区别总结</strong>：</p>
+<ol>
+<li><strong>使用场景不同</strong>：</li>
+</ol>
+<ul>
+<li><code>dependencies</code>中的依赖项是项目在生产环境中运行所必需的，而<code>devDependencies</code>中的依赖项仅在开发过程中使用。</li>
+</ul>
+<ol start=2>
+<li><strong>部署方式不同</strong>：</li>
+</ol>
+<ul>
+<li>生产环境部署时，通常只部署<code>dependencies</code>中的依赖项，而不部署<code>devDependencies</code>中的依赖项。</li>
+</ul>
+<ol start=3>
+<li><strong>影响项目体积和复杂性</strong>：</li>
+</ol>
+<ul>
+<li>将不必要的依赖项放在<code>devDependencies</code>中可以减小项目在生产环境中的体积和复杂性，提高性能和安全性。</li>
+</ul>
+<p><strong>三、<code>peerDependencies</code>（对等依赖）</strong></p>
+<ol>
+<li><strong>定义和用途</strong>：</li>
+</ol>
+<ul>
+<li><code>peerDependencies</code> 用于声明当前包所依赖的其他包，但这些依赖项不会被自动安装。</li>
+<li>它通常用于插件或扩展的场景，表明当前包与特定版本的其他包兼容，并且期望宿主环境已经安装了这些对等依赖。</li>
+</ul>
+<ol start=2>
+<li><strong>示例</strong>：</li>
+</ol>
+<ul>
+<li>假设你正在开发一个 React 插件，你的插件可能需要特定版本的 React 才能正常工作。在这种情况下，你可以在 <code>package.json</code> 的 <code>peerDependencies</code> 中声明对 React 的依赖。</li>
+<li><code>"peerDependencies": { "react": "^17.0.2" }</code> 表示这个插件期望宿主环境安装了 React 17.0.2 或更高的兼容版本。</li>
+</ul>
+<ol start=3>
+<li><strong>安装和使用</strong>：</li>
+</ol>
+<ul>
+<li>当用户安装你的包时，他们需要确保在自己的项目中手动安装了满足 <code>peerDependencies</code> 要求的包。如果没有安装或版本不匹配，可能会导致运行时错误。</li>
+</ul>
+<p><strong>区别总结</strong>：</p>
+<ul>
+<li><strong>与 <code>dependencies</code> 的区别</strong>：</li>
+<li><code>dependencies</code> 中的依赖项会在安装当前包时自动安装，而 <code>peerDependencies</code> 中的依赖项不会自动安装，需要用户在宿主项目中自行安装。</li>
+<li><strong>与 <code>devDependencies</code> 的区别</strong>：</li>
+<li><code>devDependencies</code> 是仅在开发过程中使用的依赖项，而 <code>peerDependencies</code> 是与当前包在运行时的兼容性相关的依赖项，不一定只在开发过程中使用。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-package-json-export-config>package.json 里面，表示导出包内容的配置有哪些<a href=#p1-package-json-export-config class=hash-link aria-label="package.json 里面，表示导出包内容的配置有哪些的直接链接" title="package.json 里面，表示导出包内容的配置有哪些的直接链接">​</a></h2>
+<p><strong>一、<code>main</code>字段</strong></p>
+<ol>
+<li>作用：</li>
+</ol>
+<ul>
+<li>指定当你的包被引入时，模块系统应该加载的主要入口文件。</li>
+<li>对于 CommonJS 和 ES6 模块系统，这个文件将作为默认的入口点。</li>
+</ul>
+<ol start=2>
+<li>示例：</li>
+</ol>
+<ul>
+<li><code>"main": "dist/index.js"</code>表示当你的包被引入时，会加载<code>dist</code>目录下的<code>index.js</code>文件作为主要入口。</li>
+</ul>
+<p><strong>二、<code>module</code>字段</strong></p>
+<ol>
+<li>作用：</li>
+</ol>
+<ul>
+<li>专门为 ES6 模块系统指定入口文件。</li>
+<li>一些现代的构建工具和环境（如 Webpack、Rollup 等）会优先使用这个字段来确定 ES6 模块的入口点。</li>
+</ul>
+<ol start=2>
+<li>示例：</li>
+</ol>
+<ul>
+<li><code>"module": "esm/index.js"</code>表示对于支持 ES6 模块的环境，会加载<code>esm</code>目录下的<code>index.js</code>文件。</li>
+</ul>
+<p><strong>三、<code>exports</code>字段（在 Node.js 12+ 和一些现代构建工具中支持）</strong></p>
+<ol>
+<li>作用：</li>
+</ol>
+<ul>
+<li>提供了一种更灵活的方式来指定包的不同入口点，可以根据不同的模块系统和环境来导出不同的文件。</li>
+<li>可以同时为 CommonJS、ES6 模块、不同的子路径等指定特定的入口文件。</li>
+</ul>
+<ol start=2>
+<li>示例：</li>
+</ol>
+<div class="language-json codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-json codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"exports"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"."</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"import"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"./esm/index.js"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"require"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"./cjs/index.js"</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"./submodule"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"import"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"./esm/submodule.js"</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token property" style=color:#36acaa>"require"</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>"./cjs/submodule.js"</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<ul>
+<li>在这个例子中，对于根路径（<code>.</code>），如果是 ES6 模块环境，会加载<code>./esm/index.js</code>；如果是 CommonJS 环境，会加载<code>./cjs/index.js</code>。对于<code>./submodule</code>子路径，也分别指定了不同模块系统的入口文件。</li>
+</ul>
+<p>这些配置允许你控制包的导出内容和入口点，以便其他开发者能够正确地引入和使用你的包。根据你的项目结构和目标环境，可以选择合适的配置来确保包的可维护性和兼容性。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-npm-hook>说一下你对 npm hook 的理解<a href=#p2-npm-hook class=hash-link aria-label="说一下你对 npm hook 的理解的直接链接" title="说一下你对 npm hook 的理解的直接链接">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-npm-workspaces>npm workspaces 是什么概念， 主要是解决什么问题<a href=#p2-npm-workspaces class=hash-link aria-label="npm workspaces 是什么概念， 主要是解决什么问题的直接链接" title="npm workspaces 是什么概念， 主要是解决什么问题的直接链接">​</a></h2>
+<p><strong>一、项目结构管理</strong></p>
+<ol>
+<li><strong>多包项目组织</strong>：</li>
+</ol>
+<ul>
+<li>在大型项目中，可能包含多个独立的软件包或模块。<code>npm workspaces</code>允许将这些包组织在一个统一的项目结构中，方便管理和开发。</li>
+<li>例如，一个企业级应用可能由一个前端库、一个后端服务和一个共享的工具包组成。使用<code>npm workspaces</code>，可以将这些包放在同一个项目目录下，而不是作为独立的项目进行管理。</li>
+</ul>
+<ol start=2>
+<li><strong>依赖共享</strong>：</li>
+</ol>
+<ul>
+<li>多个包之间可能存在共享的依赖项。<code>npm workspaces</code>可以自动管理这些共享依赖，避免重复安装和版本冲突。</li>
+<li>当一个包安装了某个依赖项时，其他包可以直接使用这个依赖，而不需要再次安装。这可以减少项目的体积和安装时间，提高开发效率。</li>
+</ul>
+<p><strong>二、开发效率提升</strong></p>
+<ol>
+<li><strong>单一命令行界面</strong>：</li>
+</ol>
+<ul>
+<li>使用<code>npm workspaces</code>，可以在项目的根目录下使用单一的<code>npm</code>命令来管理所有的包。这避免了在每个包的目录下分别运行<code>npm</code>命令的繁琐过程。</li>
+<li>例如，可以在根目录下运行<code>npm install</code>来安装所有包的依赖项，或者运行<code>npm run test</code>来执行所有包的测试。</li>
+</ul>
+<ol start=2>
+<li><strong>同时开发多个包</strong>：</li>
+</ol>
+<ul>
+<li>开发人员可以在同一个项目中同时开发多个包，而不需要在不同的项目目录之间切换。这可以提高开发效率，特别是在需要频繁修改多个包的情况下。</li>
+<li>例如，可以在一个编辑器中打开多个包的代码，进行同时编辑和调试。</li>
+</ul>
+<p><strong>三、版本管理和发布</strong></p>
+<ol>
+<li><strong>统一版本控制</strong>：</li>
+</ol>
+<ul>
+<li>在多包项目中，需要确保各个包的版本保持一致。<code>npm workspaces</code>可以帮助管理包的版本，确保在发布时所有的包都使用相同的版本号。</li>
+<li>可以在项目的根目录下使用<code>npm version</code>命令来统一更新所有包的版本号，并生成相应的版本标签。</li>
+</ul>
+<ol start=2>
+<li><strong>简化发布流程</strong>：</li>
+</ol>
+<ul>
+<li>发布多个包时，通常需要分别在每个包的目录下执行发布命令。使用<code>npm workspaces</code>，可以在项目的根目录下使用单一的发布命令来发布所有的包。</li>
+<li>例如，可以使用<code>npm publish --workspaces</code>来发布项目中的所有包，而不需要分别进入每个包的目录进行发布。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-pnpm-install-vs-npm-install>pnpm install 和 npm install 有何区别<a href=#p2-pnpm-install-vs-npm-install class=hash-link aria-label="pnpm install 和 npm install 有何区别的直接链接" title="pnpm install 和 npm install 有何区别的直接链接">​</a></h2>
+<p><code>pnpm install</code> 和 <code>npm install</code> 都是用于安装 JavaScript 项目依赖的命令，但它们背后的包管理器（分别是 <code>pnpm</code> 和 <code>npm</code>）在处理依赖安装、存储和优化方面有一些关键区别。</p>
+<ol>
+<li><strong>存储方式的区别</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>npm</strong>：在每个项目的 <code>node_modules</code> 文件夹中分别存储其依赖。这意味着如果你有多个项目，它们共享相同的依赖库，这些依赖库的多个副本将在你的文件系统中的每个项目内分别存储。这样做会占用更多的磁盘空间。</p>
+</li>
+<li>
+<p><strong>pnpm</strong>：采用一种称为<strong>内容寻址文件系统</strong>的方式来存储依赖。所有项目的依赖被存储在一个共享的位置，各个项目中的 <code>node_modules</code> 目录通过硬链接（hard links）或符号链接（symlinks）指向这个共享位置。该方法有效地减少了磁盘空间的占用，并加快了依赖的安装速度。</p>
+</li>
+</ul>
+<ol start=2>
+<li><strong>性能与速度</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>pnpm</strong>：由于对依赖进行了有效的复用，并且使用硬链接来减少磁盘上的副本数量，通常可以提供比 <code>npm</code> 更快的安装速度。</p>
+</li>
+<li>
+<p><strong>npm</strong>：近几个大版本中也进行了许多性能改进，但在多个项目中共享相同依赖时，它可能仍然比 <code>pnpm</code> 更慢，尤其是在首次安装依赖时。</p>
+</li>
+</ul>
+<ol start=3>
+<li><strong>依赖平面结构 vs. 嵌套结构</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>npm</strong>：自版本 3 以后，默认创建扁平的 <code>node_modules</code> 结构（尽可能），这样做是为了避免 Windows 系统中路径过长的问题。但在必要时， <code>npm</code> 仍然会创建嵌套的 <code>node_modules</code> 目录结构，以解决依赖冲突。</p>
+</li>
+<li>
+<p><strong>pnpm</strong>：通过使用符号链接，<code>pnpm</code> 维护了一个严格的嵌套依赖结构，更接近每个包的 <code>package.json</code> 文件所声明的依赖树形态。这提供了更高的一致性和在某些情况下更好的包隔离性。</p>
+</li>
+</ul>
+<ol start=4>
+<li><strong>依赖隔离与安全性</strong></li>
+</ol>
+<ul>
+<li>
+<p><strong>pnpm</strong>：更好地隔离了依赖，每个包只能访问其在 <code>package.json</code> 中声明的依赖。这一特性增强了项目的安全性，因为它阻止了未声明的依赖被意外引入的情况。</p>
+</li>
+<li>
+<p><strong>npm</strong>：虽然 <code>npm</code> 也遵循 <code>package.json</code> 中的声明，但其扁平化的 <code>node_modules</code> 结构有时可能会容易地让包访问到未明确声明的依赖。</p>
+</li>
+</ul>
+<ol start=5>
+<li><strong>命令行界面（CLI）和配置</strong></li>
+</ol>
+<ul>
+<li>这两个工具的命令行界面（CLI）和配置都非常直观且类似，但它们的某些命令和选项可能会有细微差别。<code>pnpm</code> 为了优化性能和安全性引入了一些特有的命令和配置选项。</li>
+</ul>
+<p>总的来说，<code>pnpm</code> 在多项目管理、磁盘空间和安装速度方面提供了优于 <code>npm</code> 的性能和利益。对于新项目或在寻求性能优化的既存项目，考虑试用 <code>pnpm</code> 可能是个不错的选择。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3-monorepo-工程有哪些工具架构-该如何选型>monorepo 工程有哪些工具架构， 该如何选型<a href=#p3-monorepo-工程有哪些工具架构-该如何选型 class=hash-link aria-label="monorepo 工程有哪些工具架构， 该如何选型的直接链接" title="monorepo 工程有哪些工具架构， 该如何选型的直接链接">​</a></h2>
+<p>工具推荐</p>
+<table><thead><tr><th>工具<th><strong>Turborepo</strong><th><strong>Rush</strong><th><strong>Nx</strong><th><strong>Lerna</strong><th><strong>Pnpm Workspace</strong><tbody><tr><td>依赖管理<td>❌<td>✅<td>❌<td>❌<td>✅<tr><td>版本管理<td>❌<td>✅<td>❌<td>✅<td>❌<tr><td>增量构建<td>✅<td>✅<td>✅<td>❌<td>❌<tr><td>插件扩展<td>✅<td>✅<td>✅<td>❌<td>❌<tr><td>云端缓存<td>✅<td>✅<td>✅<td>❌<td>❌<tr><td>Stars<td>20.4K<td>4.9K<td>17K<td>34.3K<td>22.7K</table>
+<p><img decoding=async loading=lazy src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d85551b9ce50496d8403956b571c4635~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=2610&h=1020&s=64366&e=webp&b=fdfdfd" alt=img class=img_GoKf></p>
+<p>工具选型</p>
+<p>选择合适的 Monorepo 管理工具对于确保项目的顺利进行是至关重要的。Monorepo 管理工具可以帮助你高效地管理项目依赖、统一代码风格、简化开发流程等。在进行 Monorepo 工具选型时，需要考虑几个重要的因素：</p>
+<ol>
+<li><strong>技术栈的兼容性</strong></li>
+</ol>
+<ul>
+<li><strong>Lerna</strong>：与任何技术栈兼容性都很好，特别是与前端项目协同工作时。它对 NPM 和 Yarn 都有良好支持，适用于需要独立版本管理或频繁发布的项目。</li>
+<li><strong>Yarn Workspaces</strong>：特别适合使用 Yarn 作为包管理器的 JavaScript 或 TypeScript 项目。它非常适合团队中包之间有很多交叉依赖的情形。</li>
+<li><strong>Nx</strong>：支持多种前端和后端框架，如 Angular、React、NestJS 等。如果项目采用多技术栈，Nx 提供了一套完整的解决方案，包含了构建、测试和 linting 等一站式服务。</li>
+<li><strong>Rush</strong>：同样适用于大型项目，兼容任何 NPM 包管理器，如 NPM、Yarn、pnpm。Rush 提供了灵活的版本控制策略，非常适合需要精细控制包版本策略的场景。</li>
+<li><strong>pnpm Workspaces</strong>：具有高效的节点模块解析机制，非常注重节省磁盘空间及速度优化。如果磁盘空间和安装速度是关键考虑因素，pnpm 会是一个不错的选择。</li>
+</ul>
+<ol start=2>
+<li><strong>项目的规模和复杂度</strong></li>
+</ol>
+<ul>
+<li>对于大型或复杂项目，<strong>Nx</strong> 和 <strong>Rush</strong> 提供了更多的高级特性，比如增量构建、依赖图可视化等，可以有效提升大团队的开发效率。</li>
+<li>对于中小型项目，<strong>Lerna</strong>、<strong>Yarn Workspaces</strong> 或 <strong>pnpm Workspaces</strong> 可能更易上手，配置和管理也较为简单。</li>
+</ul>
+<ol start=3>
+<li><strong>构建、测试和部署的需求</strong></li>
+</ol>
+<ul>
+<li>如果项目需要复杂的构建、测试流程，<strong>Nx</strong> 提供了一些很好的工具来优化这一过程。Nx 可以智能地只重新构建受影响的项目，节省 CI/CD 的时间和资源。</li>
+<li><strong>Rush</strong> 强调在大型仓库中提供稳定而灵活的版本策略和发布管理，对于需要精细控制不同环境部署的项目非常有用。</li>
+</ul>
+<ol start=4>
+<li><strong>团队协作和代码共享的便利性</strong></li>
+</ol>
+<ul>
+<li>所有这些工具都支持代码共享和重用，但是<strong>Nx</strong> 和 <strong>Rush</strong> 在支持大型团队和多项目协作方面有一些额外的优势，如更智能的依赖管理和版本控制。</li>
+</ul>
+<ol start=5>
+<li><strong>社区支持和文档</strong></li>
+</ol>
+<ul>
+<li><strong>Nx</strong> 拥有强大的社区支持和丰富的文档、教程，非常适合于新技术栈的团队。</li>
+<li><strong>Lerna</strong> 和 <strong>Yarn Workspaces</strong> 受众广泛，网上有很多资源和案例，学习曲线相对平缓。</li>
+</ul>
+<p>推荐策略</p>
+<p>如果你的项目非常关注于构建效率和对多种技术栈的支持，<strong>Nx</strong> 是非常好的选择。如果你更关心包的独立发布和版本管理，<strong>Lerna</strong> 和 <strong>Rush</strong> 可以满足你的需求。而对于那些偏好 Yarn 并且注重依赖管理的项目来说，<strong>Yarn Workspaces</strong> 提供了一套简单直接的解决方案。如果磁盘空间和安装速度是你的主要考虑，不妨试试 <strong>pnpm Workspaces</strong>。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-ghost-dependency>幽灵依赖是什么<a href=#p0-ghost-dependency class=hash-link aria-label=幽灵依赖是什么的直接链接 title=幽灵依赖是什么的直接链接>​</a></h2>
+<p>"幽灵依赖"（Ghost Dependency）是指在项目的<code>node_modules</code>目录中存在但未被实际使用的依赖包。</p>
+<p>在使用 npm 或者其他包管理工具安装依赖包时，有时会出现安装了一些不需要的或者不正确的依赖包的情况。这些依赖包在项目中没有被显式地引用或使用，但仍然存在于<code>node_modules</code>目录中，占用了项目的存储空间。</p>
+<p>幽灵依赖可能会产生以下问题：</p>
+<ol>
+<li>
+<p>占用存储空间：未使用的依赖包会增加项目的体积，占用存储空间。对于大型项目或频繁部署的项目来说，这可能会造成不必要的存储资源浪费。</p>
+</li>
+<li>
+<p>增加构建时间：未使用的依赖包可能会增加构建过程中的解析和处理时间，导致构建过程变慢。这会影响开发人员的开发效率和项目的部署速度。</p>
+</li>
+<li>
+<p>潜在的安全风险：未使用的依赖包可能包含漏洞或安全风险，但由于没有使用，可能没有及时更新或修复这些问题，增加了项目的安全隐患。</p>
+</li>
+</ol>
+<p>为了解决幽灵依赖的问题，可以采取以下措施：</p>
+<ol>
+<li>
+<p>定期检查依赖：定期检查项目的依赖，识别和删除未使用的依赖包。可以使用工具如<code>npm-check-unused</code>、<code>depcheck</code>等来帮助检测和清理未使用的依赖。</p>
+</li>
+<li>
+<p>精简依赖：审查项目的依赖关系，仅安装和保留必要的依赖包。避免过度依赖，只安装项目所需的模块，减少项目体积和构建时间。</p>
+</li>
+<li>
+<p>更新依赖包：确保项目中使用的依赖包都是最新版本，并及时更新已知的安全漏洞和问题。这可以通过定期检查依赖包的更新和使用工具如<code>npm audit</code>来实现。</p>
+</li>
+</ol>
+<p>通过处理幽灵依赖，可以提高项目的整洁性、性能和安全性，并减少不必要的开销和风险。</p>
+<p>pnpm 是如何解决幽灵依赖问题的</p>
+<p>pnpm 是一个基于 npm 的包管理工具，它采用了一种称为"快速硬链接（Fast Hard Links）"的机制来解决幽灵依赖问题。</p>
+<p>传统的 npm 或 yarn 安装依赖时，每个项目都会在<code>node_modules</code>目录下创建依赖包的副本。这导致了大量的重复文件，尤其是对于多个项目都使用同一依赖包时。</p>
+<p>而 pnpm 通过使用快速硬链接机制，在全局的存储位置（默认为<code>~/.pnpm-store</code>）只保存一份依赖包，而不是为每个项目都复制一份。这样就避免了幽灵依赖问题，减少了存储空间的占用。</p>
+<p>当使用 pnpm 安装依赖时，它会在项目的<code>node_modules</code>目录下创建一个<code>.modules.yaml</code>文件，记录项目所需的依赖包和版本信息。实际的依赖包文件通过硬链接指向全局存储位置中的依赖包。这意味着不同项目之间可以共享相同的依赖包，但每个项目都拥有自己的依赖版本。</p>
+<p>通过这种方式，pnpm 解决了幽灵依赖的问题，同时减少了存储空间的使用。它还具有一些其他的优点，如更快的安装速度、更少的网络传输和更好的缓存利用率。</p>
+<p>需要注意的是，pnpm 仍然会将项目中的所有依赖安装在<code>node_modules</code>目录下，但它使用硬链接的方式避免了重复文件的复制，从而解决了幽灵依赖问题。</div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/node/api><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>node</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/node/tool-chain><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>工具链</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p2-package-json-dependencies class="table-of-contents__link toc-highlight">package.json 依赖申明的方式有哪些， 他们有何却别</a><li><a href=#p1-package-json-export-config class="table-of-contents__link toc-highlight">package.json 里面，表示导出包内容的配置有哪些</a><li><a href=#p2-npm-hook class="table-of-contents__link toc-highlight">说一下你对 npm hook 的理解</a><li><a href=#p2-npm-workspaces class="table-of-contents__link toc-highlight">npm workspaces 是什么概念， 主要是解决什么问题</a><li><a href=#p2-pnpm-install-vs-npm-install class="table-of-contents__link toc-highlight">pnpm install 和 npm install 有何区别</a><li><a href=#p3-monorepo-工程有哪些工具架构-该如何选型 class="table-of-contents__link toc-highlight">monorepo 工程有哪些工具架构， 该如何选型</a><li><a href=#p0-ghost-dependency class="table-of-contents__link toc-highlight">幽灵依赖是什么</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>
