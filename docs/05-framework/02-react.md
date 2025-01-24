@@ -952,7 +952,7 @@ const ConsumerComponent = React.memo(({ contextValue }) => {
 * 服务器组件
 * Server Action（服务器操作）
 
-## useReducer {p3-useReducer}
+## useReducer {#p3-useReducer}
 
 `useReducer`是 React Hooks 的一个部分，它为状态管理提供了一个更加灵活的方法。`useReducer`特别适合处理包含多个子值的复杂状态逻辑，或者当下一个状态依赖于之前的状态时。与`useState`相比，`useReducer`更适合于复杂的状态逻辑，它使组件的状态管理更加清晰和可预测。
 
@@ -1235,7 +1235,7 @@ export default App
 
 在以上代码中，无论 `Modal` 组件在 `App` 组件中的位置如何，模态框的渲染位置总是在 `#modal-root` 中，这是一个典型的使用 React Portals 的例子。上述代码中的模态框在视觉上会覆盖整个应用程序的位置，但在组件层次结构中它仍然是 `App` 组件的子组件。
 
-## 介绍一下 HOC {p0-hoc}
+## 介绍一下 HOC {#p0-hoc}
 
 React 中的 HOC（高阶组件，Higher-Order Components）是一种基于 React 的组合特性而形成的设计模式，用于重用组件逻辑。一个高阶组件是一个函数，它接受一个组件并返回一个新组件。
 

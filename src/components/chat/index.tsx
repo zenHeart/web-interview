@@ -10,8 +10,6 @@ interface MessageContent {
   thinking?: string;
 }
 
-
-
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
   const { messages, appendMsg, setTyping, updateMsg } = useMessages([])
@@ -23,7 +21,7 @@ const ChatWindow: React.FC = () => {
       appendMsg({
         type: 'text',
         content: { text: val },
-        position: 'right',
+        position: 'right'
       })
 
       setTyping(true)
@@ -34,19 +32,19 @@ const ChatWindow: React.FC = () => {
         appendMsg({
           _id: assistantMsgId,
           type: 'text',
-          content: { text: '', thinking: '' },
+          content: { text: '', thinking: '' }
         })
 
         // 调用 Ollama API
         const response = await fetch('/api/generate', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             model: 'deepseek-r1:8b',
-            prompt: val,
-          }),
+            prompt: val
+          })
         })
 
         if (!response.body) throw new Error('No response body')
@@ -66,12 +64,12 @@ const ChatWindow: React.FC = () => {
 
           for (const line of lines) {
             if (!line) continue
-            
+
             try {
               const data = JSON.parse(line)
               if (data.response) {
                 currentChunk += data.response
-                
+
                 // 检查是否包含完整的思考标签
                 if (currentChunk.includes('<think>')) {
                   const parts = currentChunk.split('<think>')
@@ -79,7 +77,7 @@ const ChatWindow: React.FC = () => {
                   currentChunk = parts[1] || ''
                   isThinking = true
                 }
-                
+
                 if (currentChunk.includes('</think>')) {
                   const parts = currentChunk.split('</think>')
                   if (parts[0]) thinkingText += parts[0]
@@ -88,7 +86,7 @@ const ChatWindow: React.FC = () => {
                   isThinking = false
                   continue
                 }
-                
+
                 // 根据状态添加文本
                 if (isThinking) {
                   thinkingText += currentChunk
@@ -102,10 +100,10 @@ const ChatWindow: React.FC = () => {
                 if (accumulatedText.trim() || thinkingText.trim()) {
                   updateMsg(assistantMsgId, {
                     type: 'text',
-                    content: { 
+                    content: {
                       text: accumulatedText.trim(),
-                      thinking: thinkingText.trim() 
-                    },
+                      thinking: thinkingText.trim()
+                    }
                   })
                 }
               }
@@ -119,7 +117,7 @@ const ChatWindow: React.FC = () => {
         // 显示错误消息
         appendMsg({
           type: 'text',
-          content: { text: '抱歉，发生了一些错误，请稍后重试。' },
+          content: { text: '抱歉，发生了一些错误，请稍后重试。' }
         })
       } finally {
         setTyping(false)
@@ -129,13 +127,13 @@ const ChatWindow: React.FC = () => {
 
   // 修改消息渲染组件
   const renderMessageContent = (msg: any) => {
-    const { content } = msg;
+    const { content } = msg
     return (
       <div>
         {content.thinking && <ThinkingBlock content={content.thinking} />}
         {content.text && <MarkdownContent content={content.text} />}
       </div>
-    );
+    )
   }
 
   return (
@@ -148,12 +146,12 @@ const ChatWindow: React.FC = () => {
           </div>
         </div>
       )}
-      
+
       {isVisible && (
         <div className={styles.container}>
-          <Chat 
+          <Chat
             locale="zh-CN"
-            navbar={{ 
+            navbar={{
               title: '智能助手',
               leftContent: {
                 icon: 'close',
@@ -170,4 +168,4 @@ const ChatWindow: React.FC = () => {
   )
 }
 
-export default ChatWindow 
+export default ChatWindow

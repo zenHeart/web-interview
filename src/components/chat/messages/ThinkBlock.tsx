@@ -1,11 +1,11 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import styles from './ThinkBlock.module.css'
 
 // 思考区块组件
 const ThinkingBlock: React.FC<{ content: string }> = ({ content }) => {
-   const [isExpanded, setIsExpanded] = useState(false);
- 
-   return (
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  return (
      <div className={styles.thinkingBlock} onClick={() => setIsExpanded(!isExpanded)}>
        <div className={styles.thinkingHeader}>
          <span className={`${styles.thinkingIcon} ${isExpanded ? styles.expanded : ''}`}>▶</span>
@@ -15,6 +15,6 @@ const ThinkingBlock: React.FC<{ content: string }> = ({ content }) => {
          {content}
        </div>
      </div>
-   );
- };
- export default ThinkingBlock;
+  )
+}
+export default ThinkingBlock

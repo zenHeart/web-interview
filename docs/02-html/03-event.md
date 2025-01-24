@@ -163,7 +163,7 @@
 
 ## addEventListener绑定事件?参数不同的执行顺序 {#p1-event-add-event-listener}
 
-## mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？{p2-mouse}
+## mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？{#p2-mouse}
 
 这四个事件都与鼠标指针与元素的交互有关，不过它们之间有一些关键的差异：
 
