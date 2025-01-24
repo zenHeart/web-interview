@@ -57,6 +57,7 @@ Symbol 是 ECMAScript 6 引入的一种新的原始数据类型，用来表示�
 Symbol 的定义非常简单，只需要调用 Symbol() 方法即可，例如：
 
 ```js
+// eslint-disable-next-line
 const mySymbol = Symbol()
 ```
 

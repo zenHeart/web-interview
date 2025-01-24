@@ -57,6 +57,21 @@ BFC 是用于 css 块级盒布局的抽象概念。功能上需要掌握
 
 可以通过 [饥人谷 BFC](https://xiedaimala.com/tasks/4cdc74ef-b8b2-4cbd-aa4e-7a8ee7ad3a16) 理解 BFC。
 
+BFC是块级格式化上下文，是一个独立的渲染区域，让处于 BFC 内部的元素与外部的元素相互隔离，使内外元素的定位不会相互影响。(俗称：**脱离文档流**)
+
+**触发条件**
+
+* position: absolute/fixed：绝对定位
+* display: inline-block / table / flex
+* float 设置除none以外的值；（只要设置了浮动，当前元素就创建了BFC）
+* ovevflow !== visible (可为：hidden、auto、scroll)
+
+**特性和应用**
+
+* 阻止margin重叠：同一个 BFC 下外边距（margin）会发生折叠
+* 清除浮动 ：清除内部浮动(清除浮动的原理是两个div都位于同一个 BFC 区域之中)
+* 自适应两栏布局：左float+右BFC，是利用了BFC 的区域不会与 float 的元素区域重叠的机制
+
 ## IFC(Inline Formatting Context 内联格式化上下文)  {#p1-ifc}
 
 ## css 选择器性能 {#p1-css-selector-performance}

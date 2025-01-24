@@ -6,30 +6,6 @@
 
 
 
-## 29 请简述 HTTP 请求的过程
-
-* created_at: 2023-03-06T15:20:41Z
-* updated_at: 2023-03-06T15:20:42Z
-* labels: 网络
-* milestone: 初
-
-HTTP（Hypertext Transfer Protocol）是一种用于传输数据的协议。当我们在浏览器中输入 URL，点击链接或提交表单时，浏览器会发送 HTTP 请求，并等待服务器的响应。以下是 HTTP 请求的基本过程：
-
-`建立连接`：浏览器向服务器发出连接请求，服务器接受请求并建立连接。
-
-`发送请求`：浏览器向服务器发送 HTTP 请求。请求包括请求方法（GET、POST、PUT、DELETE等）、请求头（包含一些元数据，如 Accept、Content-Type、Authorization 等）、请求体（POST 和 PUT 请求会带上数据）等。
-
-`接受请求`：服务器接受请求并解析请求。服务器会根据请求的内容进行相应的处理，如查询数据库、读取文件等。
-
-`发送响应`：服务器向浏览器发送 HTTP 响应。响应包括响应状态码、响应头、响应体等。常见的响应状态码包括 200 OK、404 Not Found、500 Internal Server Error 等。
-
-`接受响应`：浏览器接受响应并解析响应。浏览器会根据响应的内容进行相应的处理，如渲染页面、执行 JavaScript 等。
-
-`断开连接`：请求处理完毕后，浏览器和服务器会断开连接。
-
-需要注意的是，HTTP 是一种无状态协议，即每次请求都是独立的，服务器不会保留任何关于请求的信息。为了保持客户端与服务器之间的状态，通常使用 Cookie 或 Session 等机制来保存状态信息。
-
-此外，现代浏览器通常会使用 HTTP 缓存来提高性能。当浏览器发送请求时，如果发现资源已经在本地缓存中存在，就会直接使用缓存的版本，而不是重新从服务器下载。可以使用 Cache-Control、Expires 等响应头控制缓存的行为。
 
 ## 30 实现一个双向链表， 具备添加节点、删除节点、在特定位置插入节点、查找节点、遍历等功能
 
@@ -8291,7 +8267,6 @@ Vue 的整体思想是拥抱经典的 Web 技术，并在其上进行扩展。
 . 更好的 SEO，由于搜索引擎爬虫抓取工具可以直接查看完全渲染的页面。
 . 更快的内容到达时间(time-to-content)，特别是对于缓慢的网络情况或运行缓慢的设备。无需等待所有的 JavaScript 都完成下载并执行，才显示服务器渲染的标记，所以你的用户将会更快速地看到完整渲染的页面。通常可以产生更好的用户体验，并且对于那些「内容到达时间(time-to-content)与转化率直接相关」的应用程序而言，服务器端渲染(SSR)至关重要。
 
-## 11. 附： react理念
 
  1. 把UI图划分出组件层级
 
@@ -11059,31 +11034,7 @@ this 是执行上下文中的一个属性，它指向最后一次调用这个方
 
 * http1.1 相对于 http1.0 还新**增了很多请求方法**，如 PUT、HEAD、OPTIONS 等。
 
-## 99 了解 BFC 吗？
 
-* created_at: 2023-03-14T15:07:53Z
-* updated_at: 2023-03-14T15:07:54Z
-* labels: CSS
-* milestone: 中
-
-> 小提示：先聊一聊BFC是什么；
-然后再说说触发BFC的条件；
-再说一说BFC的一些作用
-
-BFC是块级格式化上下文，是一个独立的渲染区域，让处于 BFC 内部的元素与外部的元素相互隔离，使内外元素的定位不会相互影响。(俗称：**脱离文档流**)
-
-**触发条件**
-
-* position: absolute/fixed：绝对定位
-* display: inline-block / table / flex
-* float 设置除none以外的值；（只要设置了浮动，当前元素就创建了BFC）
-* ovevflow !== visible (可为：hidden、auto、scroll)
-
-**特性和应用**
-
-* 阻止margin重叠：同一个 BFC 下外边距（margin）会发生折叠
-* 清除浮动 ：清除内部浮动(清除浮动的原理是两个div都位于同一个 BFC 区域之中)
-* 自适应两栏布局：左float+右BFC，是利用了BFC 的区域不会与 float 的元素区域重叠的机制
 
 ## 100 flex 布局了解多少？
 
@@ -15656,18 +15607,7 @@ class MyClass {
 
 通过类似这种方式，我们可以方便地实现各种类型的装饰器，以增强或修改类的行为。
 
-## 173 为什么小程序里拿不到dom相关的api
 
-* created_at: 2023-03-26T08:08:34Z
-* updated_at: 2023-09-19T07:16:43Z
-* labels: web框架
-* milestone: 中
-
-小程序为了追求更高的性能和更好的安全性，采用了类Webview的渲染方案，并使用了自己的渲染引擎，与浏览器的渲染引擎不同。因此，小程序的API和浏览器的API并不完全相同。
-
-在小程序中，开发者可以使用WXML语言构建页面，WXML是一种类似HTML的标记语言，但并不是真正的HTML。小程序中的组件是由开发者提前定义好的，而不是由开发者在运行时动态生成的，因此在小程序中无法直接访问和操作DOM。相反，开发者需要使用小程序提供的API来操作组件。
-
-同时，小程序为了保证安全性，也限制了一些操作，如不允许使用eval函数和Function构造函数等动态生成代码的方式。
 
 ## 174 Promise then 第二个参数和 Promise.catch 的区别是什么?
 
@@ -15717,221 +15657,6 @@ Promise.prototype.finally = function (callback) {
 
 这个实现方法中，使用了 `Promise.resolve()` 来返回一个新的 Promise 实例，因此可以避免了 Promise 链的状态改变。另外，由于 `finally()` 方法只是在 Promise 链的最后执行回调函数，因此不需要使用异步函数。
 
-## 176 WebWorker、SharedWorker 和 ServiceWorker 有哪些区别？
-
-* created_at: 2023-03-26T08:25:17Z
-* updated_at: 2023-03-26T08:25:18Z
-* labels: JavaScript
-* milestone: 资深
-
- 前言
-
-众所周知，JavaScript 是单线程的语言。当我们面临需要大量计算的场景时（比如视频解码等），UI 线程就会被阻塞，甚至浏览器直接卡死。现在前端遇到大量计算的场景越来越多，为了有更好的体验，HTML5 中提出了 Web Worker 的概念。Web Worker 可以使脚本运行在新的线程中，它们独立于主线程，可以进行大量的计算活动，而不会影响主线程的 UI 渲染。当计算结束之后，它们可以把结果发送给主线程，从而形成了高效、良好的用户体验。Web Worker 是一个统称，具体可以细分为普通的 `Worker、SharedWorker 和 ServiceWorker` 等，接下来我们一一介绍其使用方法和适合的场景。
-
- 普通 Worker
-
-1. 创建 Worker 通过 new 的方式来生成一个实例，参数为 url 地址，该地址必须和其创建者是同源的。
-
-```javascript
-const worker = new Worker('./worker.js') // 参数是url，这个url必须与创建者同源
-```
-
-2. Worker 的方法
-
-* onmessage 主线程中可以在 Worker 上添加 onmessage 方法，用于监听 Worker 的信息。
-* onmessageerror 主线程中可以在 Worker 上添加 onmessageerror 方法，用于监听 Worker 的错误信息。
-* postMessage() 主线程通过此方法给 Worker 发送消息，发送参数的格式不限（可以是数组、对象、字符串等），可以根据自己的业务选择。
-* terminate() 主线程通过此方法终止 Worker 的运行。
-
-3. 通信
-
-Worker 的作用域跟主线程中的 Window 是相互独立的，并且 Worker 中是获取不到 DOM 元素的。所以在 Worker 中你无法使用 Window 变量。取而代之的是可以用 self 来表示全局对象。self 上有哪些方法和属性，感兴趣的小伙伴可以自行输出查看。比较常用的方法是 onmessage、postMessage，主要用来跟主线程进行通信。
-
-4. Worker 中引用其他脚本的方式
-
-跟常用的 JavaScript 一样，Worker 中也是可以引入其他的模块的。但是方式不太一样，是通过 importScripts 来引入。这边我为了演示，新建了一个 constant.js。在 constant.js 定义了一些变量和函数。
-
-示例：
-
-```javascript
-// Worker.js
-importScripts('constant.js')
-// 下面就可以获取到 constant.js 中的所有变量了
-
-// constant.js
-// 可以在 Worker 中使用
-const a = 111
-
-// 不可以在 Worker 中使用，原因未知
-const b = function () {
-  console.log('test')
-}
-
-// 可以在 Worker 中使用
-function c () {
-  console.log('test')
-}
-```
-
-5. 调试方法
-
-写代码难免要进行调试。Worker 的调试在浏览器控制台中有专门展示的地方, 以 chrome 浏览器为例： `dev tools --> source --> worker.js`
-
-6. 常见使用场景
-一般的视频网站 以优酷为例，当我们开始播放优酷视频的时候，就能看到它会调用 Worker，解码的代码应该写在 Worker 里面。
-需要大量计算的网站 比如 imgcook 这个网站，它能在前端解析 sketch 文件，这部分解析的逻辑就写在 Worker 里。
-
- SharedWorker
-
-SharedWorker 是一种特定的 Worker。从它的命名就能知道，它是一种共享数据的 Worker。它可以同时被多个浏览器环境访问。这些浏览器环境可以是多个 window, iframes 或者甚至是多个 Worker，只要这些 Workers 处于同一主域。为跨浏览器 tab 共享数据提供了一种解决方案。
-
-1. 创建 SharedWorker
-
- 创建的方法跟上面普通 Worker 完全一模一样。
-
-```javaScript
- const worker = new SharedWorker("./shareWorker.js"); // 参数是url，这个url必须与创建者同源 
-
-```
-
-2. SharedWorker 的方法
-
- SharedWorker 的方法都在 port 上，这是它与普通 Worker 不同的地方。
-
-* port.onmessage
-
- 主线程中可以在 worker 上添加 onmessage 方法，用于监听 SharedWorker 的信息
-
-* port.postMessage()
-
- 主线程通过此方法给 SharedWorker 发送消息，发送参数的格式不限
-
-* port.start()
-
- 主线程通过此方法开启 SharedWorker 之间的通信
-
-* port.close()
-
- 主线程通过此方法关闭 SharedWorker
-
-3. 通信
-
- SharedWorker 跟普通的 Worker 一样，可以用 self 来表示全局对象。不同之处是，它需要等 port 连接成功之后，利用 port 的onmessage、postMessage，来跟主线程进行通信。当你打开多个窗口的时候，SharedWorker 的作用域是公用的，这也是其特点。
-
-4. Worker 中引用其他脚本
-
- 这个与普通的 Worker 方法一样，使用 importScripts
-
-5. 调试方法
-
- 在浏览器中查看和调试 SharedWorker 的代码，需要输入 chrome://inspect/
-
- ServiceWorker
-
-ServiceWorker 一般作为 Web 应用程序、浏览器和网络之间的代理服务。他们旨在创建有效的离线体验，拦截网络请求，以及根据网络是否可用采取合适的行动，更新驻留在服务器上的资源。他们还将允许访问推送通知和后台同步 API。
-
-1. 创建 ServiceWorker
-
-```javaScript
- // index.js
- if ('serviceWorker' in navigator) {
- window.addEventListener('load', function () {
- navigator.serviceWorker
- .register('./serviceWorker.js', { scope: '/page/' })
- .then(
- function (registration) {
- console.log(
- 'ServiceWorker registration successful with scope: ',
- registration.scope
- );
- },
- function (err) {
- console.log('ServiceWorker registration failed: ', err);
- }
- );
- });
- }
-
-```
-
-只要创建了 ServiceWorker，不管这个创建 ServiceWorker 的 html 是否打开，这个 ServiceWorker 是一直存在的。它会代理范围是根据 scope 决定的，如果没有这个参数，则其代理范围是创建目录同级别以及子目录下所有页面的网络请求。代理的范围可以通过registration.scope 查看。
-
-2. 安装 ServiceWorker
-
-```javascript
-// serviceWorker.js
-const CACHE_NAME = 'cache-v1'
-// 需要缓存的文件
-const urlsToCache = [
-  '/style/main.css',
-  '/constant.js',
-  '/serviceWorker.html',
-  '/page/index.html',
-  '/serviceWorker.js',
-  '/image/131.png'
-]
-self.oninstall = (event) => {
-  event.waitUntil(
-    caches
-      .open(CACHE_NAME) // 这返回的是promise
-      .then(function (cache) {
-        return cache.addAll(urlsToCache) // 这返回的是promise
-      })
-  )
-}
-```
-
-在上述代码中，我们可以看到，在 install 事件的回调中，我们打开了名字为 cache-v1 的缓存，它返回的是一个 promise。在打开缓存之后，我们需要把要缓存的文件 add 进去，基本上所有类型的资源都可以进行缓存，例子中缓存了 css、js、html、png。如果所有缓存数据都成功，就表示 ServiceWorker 安装成功；如果控制台提示 Uncaught (in promise) TypeError: Failed to execute 'Cache' on 'addAll': Request failed，则表示安装失败。
-
-3. 缓存和返回请求
-
-```javascript
-self.onfetch = (event) => {
-  event.respondWith(
-    caches
-      .match(event.request) // 此方法从服务工作线程所创建的任何缓存中查找缓存的结果
-      .then(function (response) {
-        // response为匹配到的缓存资源，如果没有匹配到则返回undefined，需要fetch资源
-        if (response) {
-          return response
-        }
-        return fetch(event.request)
-      })
-  )
-}
-```
-
-在 fetch 事件的回调中，我们去匹配 cache 中的资源。如果匹配到，则使用缓存资源；没有匹配到则用 fetch 请求。正因为 ServiceWorker 可以代理网络请求，所以为了安全起见，规范中规定它只能在 https 和 localhost 下才能开启。
-
-4. 调试方法
-
- 在浏览器中查看和调试 ServiceWorker 的代码，需要输入 chrome://inspect/#service-workers
-
-5. 常见使用场景
-
- 缓存资源文件，加快渲染速度
-
- 这个我们以语雀为例。我们在打开语雀网站的时候，可以看到它使用 ServiceWorker 缓存了很多 css、js 文件，从而达到优化的效果。
-
- 总结
-
-|类型|Worker|SharedWorker|ServiceWorker|
-|:---|:---|:---|:---|
-|通信方式|postMessage|port.postMessage|单向通信，通过addEventListener 监听serviceWorker 的状态|
-|使用场景|适合大量计算的场景|适合跨 tab、iframes之间共享数据|缓存资源、网络优化|
-|兼容性|>= IE 10>= Chrome 4|不支持 IE、Safari、Android、iOS>= Chrome 4|不支持 IE>= Chrome 40|
-
-本文介绍了 3 种 Worker，他们分别适合不同的场景，总结如上面表格。普通的 Worker 可以在需要大量计算的时候使用，创建新的线程可以降低主线程的计算压力，不会导致 UI 卡顿。SharedWorker 主要是为不同的 window、iframes 之间共享数据提供了另外一个解决方案。ServiceWorker 可以缓存资源，提供离线服务或者是网络优化，加快 Web 应用的开启速度，更多是优化体验方面的。
-
-示例代码：[github.com/Pulset/Web-…](https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2FPulset%2FWeb-Worker "https://github.com/Pulset/Web-Worker")
-
- 参考文献
-
-* [资料](https://juejin.cn/post/7091068088975622175)
-* [在网络应用中添加服务工作线程和离线功能](https://link.juejin.cn?target=https%3A%2F%2Fdevelopers.google.com%2Fweb%2Ffundamentals%2Fcodelabs%2Foffline "https://developers.google.com/web/fundamentals/codelabs/offline")
-* [Service worker overview](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.chrome.com%2Fdocs%2Fworkbox%2Fservice-worker-overview%2F "https://developer.chrome.com/docs/workbox/service-worker-overview/")
-* [Workers](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FWorker "https://developer.mozilla.org/zh-CN/docs/Web/API/Worker")
-* [SharedWorker](https://link.juejin.cn?target=https%3A%2F%2Fdeveloper.mozilla.org%2Fzh-CN%2Fdocs%2FWeb%2FAPI%2FSharedWorker "https://developer.mozilla.org/zh-CN/docs/Web/API/SharedWorker")
 
 ## 178 [React] useRef、ref、forwardsRef 的区别是什么?
 
@@ -17970,36 +17695,7 @@ circle.addEventListener('mouseover', function () {
 
 上面的代码中，通过给圆形添加 mouseover 事件监听器，当鼠标悬停在圆形上时，修改圆形的 fill 属性为红色，并将圆心的 x 坐标改为 70。由于圆形在 CSS 中定义了过渡效果，因此圆形会平滑地变为红色并向右移动。
 
-## 227 进程、线程、协程分别是什么概念？
 
-* created_at: 2023-03-29T15:03:05Z
-* updated_at: 2023-03-29T15:03:06Z
-* labels: JavaScript, 小米
-* milestone: 中
-
- 进程（Process）和 线程（Thread）
-
-进程（Process）和 线程（Thread）是操作系统中的重要概念。
-
-**进程是指计算机中已经运行的程序，它是操作系统资源分配的最小单位**。进程拥有独立的内存空间和系统资源，如打开的文件、网络连接等。在操作系统中，每个进程都拥有一个唯一的标识符，称为进程ID。
-
-**线程是进程中的执行单元**，一个进程可以包含多个线程，它们共享进程的内存空间和系统资源。线程是CPU调度的最小单位，它可以看作是进程中的一个独立执行流程。与进程不同的是，线程没有自己的系统资源，只有一部分与进程共享的资源。在操作系统中，每个线程都拥有一个唯一的标识符，称为线程ID。
-
-可以将进程和线程的关系类比为一家工厂。工厂代表一个进程，工厂中的工人代表线程。每个工人负责自己的一部分工作，但是他们共享工厂的资源，如原材料、设备等。
-
-总的来说，进程和线程都是操作系统资源分配和调度的基本单位，它们之间的关系是多对一的，即多个线程可以属于同一个进程，共享进程的资源。
-
- 协程（Coroutine）
-
-协程（Coroutine）是一种用户态的轻量级线程，也称为协作式多任务处理，与传统的抢占式多任务处理方式不同，协程的调度不由系统来控制，而是由程序员自己控制。在协程内部，程序可以自己决定在何处挂起、何时恢复执行。协程可以有效地避免多线程并发操作时出现的死锁、竞争、状态同步等问题，同时协程又可以充分利用 CPU 资源，提高程序执行效率。
-
-在协程中，所有任务共享一个线程，通过在任务之间切换来实现并发，这种方式可以避免线程切换时的性能损耗，也可以避免线程之间的同步问题。协程主要有以下特点：
-
-* 协程是一种轻量级的线程，其切换过程不需要操作系统介入，而是在用户态实现的。
-* 协程是一种非抢占式调度方式，需要程序员显式地让出执行权。
-* 协程可以共享全局变量等状态信息，但是需要程序员自己管理状态同步。
-
-协程在很多语言中都得到了广泛的应用，例如 Python 中的 asyncio、Lua 中的 coroutine 等。在前端领域中，JavaScript 的 Generator 函数就是一种协程实现方式。
 
 ## 228 单线程的 nodejs 是如何充分利用计算机 CPU 资源的呢？
 
@@ -19440,99 +19136,6 @@ web worker是运行在Main线程之外的一个线程，叫做worker线程。我
 * [资料](https://juejin.cn/post/7159807927908302884)
 * [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/PerformanceLongTaskTiming)
 
-## 256 Server-sent events(SSE) 了解多少（服务端推送）
-
-* created_at: 2023-04-05T15:19:25Z
-* updated_at: 2023-10-11T03:02:24Z
-* labels: web应用场景, 京东
-* milestone: 高
-
-一个网页获取新的数据通常需要发送一个请求到服务器，也就是向服务器请求的页面。使用 server-sent 事件，服务器可以在任何时刻向我们的 Web 页面推送数据和信息。这些被推送进来的信息可以在这个页面上作为 Events + data 的形式来处理。
-
- 从服务器接受事件
-
-服务器发送事件 API 也就是 EventSource 接口，在你创建一个新的 EventSource 对象的同时，你可以指定一个接受事件的 URI。例如：
-
-```js
-const evtSource = new EventSource('ssedemo.php')
-```
-
-如果发送事件的脚本不同源，应该创建一个新的包含 URL 和 options 参数的EventSource对象。例如，假设客户端脚本在 example.com 上：
-
-```js
-const evtSource = new EventSource('//api.example.com/ssedemo.php', { withCredentials: true })
-```
-
-一旦你成功初始化了一个事件源，就可以对 message 事件添加一个处理函数开始监听从服务器发出的消息了：
-
-```js
-evtSource.onmessage = function (event) {
-  const newElement = document.createElement('li')
-  const eventList = document.getElementById('list')
-
-  newElement.innerHTML = 'message: ' + event.data
-  eventList.appendChild(newElement)
-}
-```
-
-你也可以使用addEventListener()方法来监听其他类型的事件：
-
-```js
-evtSource.addEventListener('ping', function (event) {
-  const newElement = document.createElement('li')
-  const time = JSON.parse(event.data).time
-  newElement.innerHTML = 'ping at ' + time
-  eventList.appendChild(newElement)
-})
-```
-
-> 警告： 当不通过 HTTP / 2 使用时，SSE（server-sent events）会受到最大连接数的限制，这在打开各种选项卡时特别麻烦，因为该限制是针对每个浏览器的，并且被设置为一个非常低的数字（6）。该问题在 Chrome 和 Firefox中被标记为“无法解决”。此限制是针对每个浏览器 + 域的，因此这意味着您可以跨所有选项卡打开 6 个 SSE 连接到 `<www.example1.com，并打开>` 6 个 SSE 连接到 `www.example2.com。（来自 Stackoverflow）1`。使用 HTTP / 2 时，HTTP 同一时间内的最大连接数由服务器和客户端之间协商（默认为 100）。
->
- SSE 的 API
-
-**属性（只读）**
-
-|名称|作用|类型|备注|
-|:---|:---|:---|:---|
-|readyState|当前状态|Number|`0` — connecting`1` — open`2` — closed|
-|url|当前连接的地址|String||
-|withCredentials|是否开启凭据收集|Boolean||
-
-**方法**
-
-|名称|作用|返回值|
-|:---|:---|:---|
-|close|客户端主动关闭连接|\-|
-
-**事件**
-
-|名称|作用|返回值|
-|:---|:---|:---|
-|onclose|连接关闭触发|event|
-|onopen|连接开启触发|event|
-|onmessage|服务端消息推动消息触发|event|
-
- 服务端 API
-
-|名称|作用|类型|备注|
-|:---|:---|:---|:---|
-|data|传输的文本|String（默认）. 可以传输JSON|可以多行累加|
-|event|事件名称|String|可自定义|
-|id|当前推送 id|String|作为消息的标识|
-|retry|超时重试时间|Number|客户端在感知 server 连接异常后。会通过 retry 设定时间进行重新连接|
-
- 补充： SSE 与 WS 有什么区别？
-
-|方式|协议|交互通道|内容编码|重连|事件类型|总结|
-|:---|:---|:---|:---|:---|:---|:---|
-|SSE|HTTP|服务端单向推送|默认文本|默认支持断线重连|支持自定义消息类型|轻量级|
-|WebSocket|WS（基于 TCP 传输层的应用层协议，[RFC6455](https://link.juejin.cn?target=https%3A%2F%2Ftools.ietf.org%2Fhtml%2Frfc6455 "https://tools.ietf.org/html/rfc6455") `[1]` 对于它的定义标准）|双向推送|默认二进制|手动实现|NO|扩展性、功能性强大|
-
- 参考文档
-
-* [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Server-sent_events/Using_server-sent_events)
-
-* [资料](https://juejin.cn/post/7148762958470381575)
 
 ## 257 [React] 为什么不能在循环、条件或嵌套函数中调用 Hooks？
 
@@ -21081,212 +20684,6 @@ react 是委托到 document 上, 然后自己生成了合成事件, 冒泡到 do
 
 * 在v-for中，我们直接用一个for循环就能在模板中将每个元素都绑定上事件，并且当组件销毁时，vue也会自动给我们将所有的事件处理器都移除掉。所以事件代理能做到的第一点vue已经给我们做到了
 * 在v-for中，给元素绑定的都是相同的事件，所以除非上千行的元素需要加上事件，其实和使用事件代理的性能差别不大，所以也没必要用事件代理
-
-## 269 前端路由的实现原理
-
-* created_at: 2023-04-09T06:18:33Z
-* updated_at: 2023-04-09T06:18:34Z
-* labels: web框架, 腾讯
-* milestone: 高
-
-在使用Vue、React等前端框架时，我们都会发现项目中只有一个HTML文件，并且在该HTML中都存在一个根标签，起到了类似于容器的作用。容器内部的内容就由我们后续编写的每个视图决定，页面的切换就是容器中视图的切换。
-
-前端路由的实现原理简单来说，就是在不跳转或者刷新页面的前提下，为SPA应用中的每个视图匹配一个特殊的URL，之后的刷新、前进、后退等操作均通过这个特殊的URL实现。为实现上述要求，需要满足：
-
-改变URL且不会向服务器发起请求；
-
-可以监听到URL的变化，并渲染与之匹配的视图。
-
-主要有Hash路由和History路由两种实现方式。下文对两者的基本原理进行简单介绍，并分别实现了一个简易的路由Demo。
-
- Hash路由
-
-原理就是通过键值对的形式保存路由及对应要执行的回调函数，当监听到页面hash发生改变时，根据最新的hash值调用注册好的回调函数，即改变页面。
-
- 创建路由
-
-```js
-class Routers{
- constructor(){
- // 保存路由信息
- this.routes = {};
- this.currentUrl = '';
- window.addEventListener('load', this.refresh, false);
- window.addEventListener('hashchange', this.refresh, false);
- }
-
- // 用于注册路由的函数
- route = (path, callback) => {
- this.routes[path] = callback || function(){};
- }
-
- // 监听事件的回调，负责当页面hash改变时执行对应hash值的回调函数
- refresh = () => {
- this.currentUrl = location.hash.slice(1) || '/';
- this.routes[this.currentUrl]();
- }
-}
-
-window.Router = new Routers();
-```
-
- 注册路由
-
-使用route方法添加对应的路由及其回调函数即可。以下代码实现了一个根据不同hash改变页面颜色的路由，模拟了页面的切换，在实际的SPA应用中，对应的就是页面内容的变化了。
-
-```js
-const content = document.querySelector('body')
-
-function changeBgColor (color) {
-  content.style.background = color
-}
-
-// 添加路由
-Router.route('/', () => {
-  changeBgColor('yellow')
-})
-Router.route('/red', () => {
-  changeBgColor('red')
-})
-Router.route('/green', () => {
-  changeBgColor('green')
-})
-Router.route('/blue', () => {
-  changeBgColor('blue')
-})
-```
-
- History路由
-
-在H5之前，浏览器的history仅支持页面之前的跳转，包括前进和后退等功能。
-
-在HTML5中，新增以下API：
-
-```js
-history.pushState() // 添加新状态到历史状态栈
-history.replaceState() // 用新状态代替当前状态
-history.state // 获取当前状态对象
-```
-
-history.pushState()和history.replaceState()均接收三个参数：
-
-* state：一个与指定网址相关的状态对象，popstate事件触发时，该对象会传入回调函数。如果不需要这个对象，此处可以填null。
-* title：新页面的标题，但是所有浏览器目前都忽略这个值，因此这里可以填null。
-* url：新的网址，必须与当前页面处在同一个域。浏览器的地址栏将显示这个网址
-
-由于history.pushState()和 history.replaceState()都具有在改变页面URL的同时，不刷新页面的能力，因此也可以用来实现前端路由。
-
- 创建路由类
-
-```js
-class Routers {
-  constructor () {
-    this.routes = {}
-    window.addEventListener('popstate', e => {
-      const path = e.state && e.state.path
-      this.routes[path] && this.routes[path]()
-    })
-  }
-
-  init (path) {
-    history.replaceState({ path }, null, path)
-    this.routes[path] && this.routes[path]()
-  }
-
-  route (path, callback) {
-    this.routes[path] = callback || function () {}
-  }
-
-  go (path) {
-    history.pushState({ path }, null, path)
-    this.routes[path] && this.routes[path]()
-  }
-}
-
-window.Router = new Routers()
-```
-
- 注册路由
-
-```js
-function changeBgColor (color) {
-  content.style.background = color
-}
-
-Router.route(location.pathname, () => {
-  changeBgColor('yellow')
-})
-Router.route('/red', () => {
-  changeBgColor('red')
-})
-Router.route('/green', () => {
-  changeBgColor('green')
-})
-Router.route('/blue', () => {
-  changeBgColor('blue')
-})
-
-const content = document.querySelector('body')
-Router.init(location.pathname)
-```
-
- 触发事件
-
-在使用hash实现的路由中，我们通过hashchange事件来监听hash的变化，但是上述代码中history的改变本身不会触发任何事件，因此无法直接监听history的改变来改变页面。因此，对于不同的情况，我们选择不同的解决方案：
-
-* 点击浏览器的前进或者后退按钮：监听popstate事件，获取相应路径并执行回调函数
-* 点击a标签：阻止其默认行为，获取其href属性，手动调用history.pushState()，并执行相应回调。
-
-```js
-const ul = document.querySelector('ul')
-
-ul.addEventListener('click', e => {
-  if (e.target.tagName === 'A') {
-    e.preventDefault()
-    Router.go(e.target.getAttribute('href'))
-  }
-})
-```
-
- 对比
-
-基于hash的路由：
-
-缺点：
-
-* 看起来比较丑
-* 会导致锚点功能失效
-
-优点：
-
-* 兼容性更好
-* 无需服务器配合
-
-## 270 小程序的大概原理?
-
-* created_at: 2023-04-09T06:30:09Z
-* updated_at: 2023-04-09T06:30:10Z
-* labels: 工程化, 腾讯
-* milestone: 资深
-
-具体流程可以看下面这个图：
-![](https://foruda.gitee.com/images/1681021603016376642/cc6178f0_7819612.png)
-
-要了解小程序架构原理， 要从以下几个方面入手探索
-
-* 宿主环境
-* 执行环境
-* 小程序整体架构
-* 运行机制
-* 更新机制
-* 数据通信机制
-* 登录机制
-* 性能方向问题
-* JSCore
-
-具体内容可以参考文档:
-
-* [资料](https://juejin.cn/post/6976805521407868958)
 
 ## 271 [Vue] Vue3 的响应式原理?
 
@@ -30539,50 +29936,6 @@ console.log(obj instanceof Array) // false
 
 总结而言，`hasOwnProperty`用于检查对象是否拥有特定的属性，而`instanceof`用于检查对象的类型。
 
-## 372 幽灵依赖 是什么
-
-* created_at: 2023-05-23T15:04:38Z
-* updated_at: 2023-05-23T15:04:38Z
-* labels: 工程化, 美团
-* milestone: 高
-
- 幽灵依赖 是什么
-
-"幽灵依赖"（Ghost Dependency）是指在项目的`node_modules`目录中存在但未被实际使用的依赖包。
-
-在使用 npm 或者其他包管理工具安装依赖包时，有时会出现安装了一些不需要的或者不正确的依赖包的情况。这些依赖包在项目中没有被显式地引用或使用，但仍然存在于`node_modules`目录中，占用了项目的存储空间。
-
-幽灵依赖可能会产生以下问题：
-
-1. 占用存储空间：未使用的依赖包会增加项目的体积，占用存储空间。对于大型项目或频繁部署的项目来说，这可能会造成不必要的存储资源浪费。
-
-2. 增加构建时间：未使用的依赖包可能会增加构建过程中的解析和处理时间，导致构建过程变慢。这会影响开发人员的开发效率和项目的部署速度。
-
-3. 潜在的安全风险：未使用的依赖包可能包含漏洞或安全风险，但由于没有使用，可能没有及时更新或修复这些问题，增加了项目的安全隐患。
-
-为了解决幽灵依赖的问题，可以采取以下措施：
-
-1. 定期检查依赖：定期检查项目的依赖，识别和删除未使用的依赖包。可以使用工具如`npm-check-unused`、`depcheck`等来帮助检测和清理未使用的依赖。
-
-2. 精简依赖：审查项目的依赖关系，仅安装和保留必要的依赖包。避免过度依赖，只安装项目所需的模块，减少项目体积和构建时间。
-
-3. 更新依赖包：确保项目中使用的依赖包都是最新版本，并及时更新已知的安全漏洞和问题。这可以通过定期检查依赖包的更新和使用工具如`npm audit`来实现。
-
-通过处理幽灵依赖，可以提高项目的整洁性、性能和安全性，并减少不必要的开销和风险。
-
- pnpm 是如何解决幽灵依赖问题的
-
-pnpm 是一个基于 npm 的包管理工具，它采用了一种称为"快速硬链接（Fast Hard Links）"的机制来解决幽灵依赖问题。
-
-传统的 npm 或 yarn 安装依赖时，每个项目都会在`node_modules`目录下创建依赖包的副本。这导致了大量的重复文件，尤其是对于多个项目都使用同一依赖包时。
-
-而 pnpm 通过使用快速硬链接机制，在全局的存储位置（默认为`~/.pnpm-store`）只保存一份依赖包，而不是为每个项目都复制一份。这样就避免了幽灵依赖问题，减少了存储空间的占用。
-
-当使用 pnpm 安装依赖时，它会在项目的`node_modules`目录下创建一个`.modules.yaml`文件，记录项目所需的依赖包和版本信息。实际的依赖包文件通过硬链接指向全局存储位置中的依赖包。这意味着不同项目之间可以共享相同的依赖包，但每个项目都拥有自己的依赖版本。
-
-通过这种方式，pnpm 解决了幽灵依赖的问题，同时减少了存储空间的使用。它还具有一些其他的优点，如更快的安装速度、更少的网络传输和更好的缓存利用率。
-
-需要注意的是，pnpm 仍然会将项目中的所有依赖安装在`node_modules`目录下，但它使用硬链接的方式避免了重复文件的复制，从而解决了幽灵依赖问题。
 
 ## 373 Babel Polyfill 了解多少【热度: 200】
 
@@ -31765,30 +31118,6 @@ ReactDOM.render(<App2Button />, document.getElementById('root'))
 
 这只是一个简单的示例，实际使用中可能涉及更复杂的配置和场景。但通过以上配置，我们可以实现在不同应用程序之间共享模块，并通过动态加载的方式使用远程模块。
 
-## 391 小程序为什么会有两个线程
-
-* created_at: 2023-05-30T15:57:53Z
-* updated_at: 2023-05-30T15:57:54Z
-* labels: web应用场景, Shopee
-* milestone: 高
-
-小程序之所以有两个线程，是为了实现小程序的高效运行和良好的用户体验。
-
-1. 渲染线程（UI 线程）：
- 渲染线程负责小程序界面的渲染和响应用户的交互。它使用 WebView 进行页面渲染，包括解析和绘制 DOM、布局、样式计算和渲染等操作。渲染线程是单线程的，所有的界面操作都在这个线程中进行。
-
-2. 逻辑线程（JS 线程）：
- 逻辑线程负责小程序的逻辑运算和数据处理。它是基于 JavaScript 运行的，负责处理用户交互、业务逻辑、数据请求、事件处理等操作。逻辑线程是独立于渲染线程的，可以并行处理多个任务，避免阻塞界面的渲染和响应。
-
-将界面渲染和逻辑运算分离成两个线程的设计有以下好处：
-
-* 响应速度：逻辑线程和渲染线程分开，可以并行执行，提高了小程序的响应速度和用户体验。
-* 防止阻塞：逻辑线程的运行不会阻塞渲染线程，避免了长时间的计算或数据处理导致界面卡顿或无响应的情况。
-* 资源隔离：渲染线程和逻辑线程是独立的，它们有各自的资源和运行环境，可以避免相互干扰和影响。
-
-需要注意的是，小程序的渲染线程和逻辑线程之间通过微信客户端进行通信和交互。逻辑线程可以发送请求给微信客户端，然后客户端将渲染指令发送给渲染线程进行界面渲染，同时渲染线程可以将用户的交互事件发送给逻辑线程进行处理。这种通信方式保证了渲染和逻辑的协同工作，实现了小程序的正常运行。
-
-小程序之所以有两个线程，是为了提高渲染速度、避免阻塞和资源隔离。渲染线程负责界面渲染，逻辑线程负责业务逻辑和数据处理，两者通过微信客户端进行通信和交互，共同实现小程序的功能和性能。
 
 ## 392 [React] react-router 页面跳转时，是如何传递下一个页面参数的？
 
@@ -43355,78 +42684,8 @@ console.log(originResult2) // [1, 2, 3, 1, 2, 3, 4, 2, 3, 4]
 
 4. 交互操作：`Fabric.js` 提供了一些方便的方法来处理用户交互，如拖拽、缩放、旋转等。通过 `dragging`、`scaling`、`rotating` 等属性和方法，可以轻松地实现这些交互操作，并在事件处理程序中进行相应的处理。
 
-## 604 [微前端] 设计原则有哪些？【热度: 1,060】
 
-* created_at: 2023-10-29T09:24:30Z
-* updated_at: 2023-10-29T09:24:30Z
-* labels: web框架, 阿里巴巴
-* milestone: 高
 
-**关键词**：微前端设计原则
-
-《微前端设计与实现》一书中作者卢卡·梅扎利拉提出的关于微前端的实践原则。一共有七条原则， 这些原则可以帮助团队更好地设计和实施微前端架构。
-
-* 围绕业务领域建模：将前端应用程序按照业务领域进行划分，每个微前端子应用负责一个特定的业务领域。这样可以提高团队的独立性和聚焦性，降低开发和维护的复杂性。
-
-* 自动化文化：建立自动化的开发和部署流程，包括自动化测试、持续集成和持续部署。这样可以提高开发效率和质量，并且减少人为错误。
-
-* 隐藏实现细节：将微前端子应用的实现细节隐藏起来，提供简单的接口供其他子应用或者外部系统调用。这样可以减少依赖和耦合，提高系统的灵活性和可扩展性。
-
-* 分布式治理：微前端架构中的各个子应用可以由不同的团队负责开发和维护。需要建立一套分布式治理机制，包括版本控制、协作沟通和问题解决等，保证各个子应用能够有效地协同工作。
-
-* 独立部署：每个微前端子应用都可以独立地进行开发、测试和部署，而不会影响其他子应用。这样可以提高团队的独立性和灵活性，并且减少不同团队之间的交互和依赖。
-
-* 故障隔离：微前端架构中的一个子应用出现故障时，不会影响其他子应用的正常运行。需要建立故障隔离机制，确保故障的影响范围最小化。
-
-* 高度可观察：需要建立合适的监控和日志系统，对微前端架构中的各个子应用进行监测和分析。这样可以提前发现问题并进行及时处理，保证系统的稳定性和可靠性。
-
-## 605 [微前端] 路由加载流程是如何的？【热度: 971】
-
-* created_at: 2023-10-29T09:41:29Z
-* updated_at: 2023-10-31T15:44:19Z
-* labels: web框架, 阿里巴巴
-* milestone: 高
-
-**关键词**：微前端路由加载
-
-微前端是一种架构模式，旨在将大型前端应用程序拆分为更小、更容易维护的独立部分。微前端的路由原理可以通过以下步骤概括：
-
-1. 主应用加载：用户访问主应用时，主应用负责加载，并决定加载哪些微前端应用。
-
-2. 路由分发：主应用根据当前URL路径，将请求分发给相应的微前端应用。
-
-3. 微前端应用加载：被分发的微前端应用根据接收到的请求加载自己的代码和资源。
-
-4. 渲染内容：微前端应用接收到请求后，将自己的内容渲染到主应用的容器中。
-
-5. 子应用间通信：如果不同微前端应用之间需要进行通信，可以使用共享的状态管理工具或事件总线。
-
-6. 事件处理：主应用和微前端应用都可以处理路由变化事件，以便更新页面内容。
-
-## 606 [Webpack] chunk 是什么概念，介绍一下？【热度: 1,100】
-
-* created_at: 2023-10-31T15:38:22Z
-* updated_at: 2023-11-01T14:57:32Z
-* labels: 工程化, 阿里巴巴
-* milestone: 高
-
-在Webpack中，Chunk（代码块）是指Webpack在构建过程中生成的一个或多个独立的文件，它包含了一组相关的模块。每个Chunk都有一个唯一的标识符，可以通过该标识符来访问和加载对应的Chunk。
-
-Webpack根据指定的入口文件和依赖关系图来确定需要生成哪些Chunk。入口文件是Webpack构建的起点，而依赖关系图描述了每个模块之间的依赖关系。Webpack根据这些信息将模块分割为不同的代码块，并生成相应的Chunk。
-
-**Chunk的主要作用是实现代码的分割和按需加载**。通过将代码拆分为多个Chunk，Webpack可以进行按需加载，只有在需要时才加载对应的Chunk，从而减少了初始加载的大小和时间。这样可以提高应用程序的性能和加载速度。
-
-Webpack提供了多种代码分割的方式，包括使用入口配置、使用动态导入语法（如import()）和使用Webpack插件（如SplitChunksPlugin）。这些方式可以帮助开发者将代码分割为不同的Chunk，并根据实际需求进行配置和优化。
-
-具体而言，Webpack的代码分割机制通过两种方式来创建chunk：
-
-1. 静态代码分割（Static Code Splitting）：在Webpack配置中使用`splitChunks`或`optimization.splitChunks`选项，可以将第三方库、公共模块或重复的模块分割成独立的chunk。这些chunk可以在多个入口文件之间共享，从而减少重复加载的代码。
-
-2. 动态代码分割（Dynamic Code Splitting）：通过使用动态导入（Dynamic Import）语法，可以将应用程序的不同部分分割成独立的chunk。例如，在React中可以使用`React.lazy()`函数和`Suspense`组件来实现动态导入和渲染。
-
-分割成的chunk可以通过Webpack的内置功能（如代码分割插件、懒加载等）实现按需加载，即当需要时才加载对应的chunk，从而减少初始加载时间并提高网页性能。
-
-通过使用chunk，Webpack可以自动将代码分割成更小的部分，实现按需加载和并行加载，从而提高应用程序的性能和用户体验。
 
 ## 607 [Webpack] 为什么选择 webpack？【热度: 515】
 
@@ -46565,103 +45824,6 @@ webpack-dev-server并不适用于线上环境的原因有以下几点：
 [资料](https://juejin.cn/post/7195588906809032764)
 [资料](https://juejin.cn/post/7044328327762411534)
 
-## 659 OAuth2.0 是什么登录方式【热度: 210】
-
-* created_at: 2023-12-26T15:44:05Z
-* updated_at: 2023-12-26T15:44:06Z
-* labels: web应 用场景, TOP100互联网
-* milestone: 高
-
-**关键词**：OAuth2.0 登录实现、OAuth2.0 鉴权
-
-OAuth2.0并不是一种特定的登录方式，而是一种授权框架，用于授权第三方应用访问用户的资源。它被广泛应用于身份验证和授权的场景中。
-
-OAuth2.0通过引入授权服务器、资源服务器和客户端等角色，实现了用户授权和资源访问的分离。具体流程如下：
-
-1. 用户向客户端发起请求，请求访问某个资源。
-2. 客户端将用户重定向到授权服务器，并携带自己的身份凭证（客户端ID）。
-3. 用户在授权服务器登录，并授权客户端访问特定的资源。
-4. 授权服务器验证用户身份，并生成访问令牌（Access Token）。
-5. 授权服务器将访问令牌发送给客户端。
-6. 客户端使用访问令牌向资源服务器请求访问资源。
-7. 资源服务器验证访问令牌的有效性，并根据权限决定是否允许访问资源。
-8. 资源服务器向客户端返回请求的资源。
-
-在这个过程中，OAuth2.0通过访问令牌实现了用户和资源服务器之间的身份授权和资源访问分离。客户端无需知道或存储用户的凭证（如用户名和密码），而是使用访问令牌代表用户向资源服务器请求资源，提供了更安全和便捷的授权方式。
-
-**以下是使用Fetch API来发起请求的示例代码**：
-
-```javascript
-// 1. 客户端应用程序发起授权请求，重定向用户到授权服务器的登录页面
-
-const authorizationEndpoint = 'https://example.com/oauth2/auth'
-const clientId = 'your_client_id'
-const redirectUri = 'https://yourapp.com/callback'
-const scope = 'read write'
-const state = 'random_state_value'
-
-const authorizationUrl = `${authorizationEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`
-
-// 重定向用户到授权页面
-window.location.href = authorizationUrl
-
-// 2. 在回调URL中获取授权码
-
-const callbackUrl = window.location.href
-const urlParams = new URLSearchParams(callbackUrl.split('?')[1])
-const authorizationCode = urlParams.get('code')
-
-// 3. 客户端应用程序使用授权码向授权服务器请求访问令牌
-
-const tokenEndpoint = 'https://example.com/oauth2/token'
-const clientSecret = 'your_client_secret'
-
-const tokenData = {
-  grant_type: 'authorization_code',
-  code: authorizationCode,
-  redirect_uri: redirectUri,
-  client_id: clientId,
-  client_secret: clientSecret
-}
-
-// 使用Fetch API请求访问令牌
-fetch(tokenEndpoint, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  },
-  body: new URLSearchParams(tokenData)
-})
-  .then(response => response.json())
-  .then(data => {
-    const accessToken = data.access_token
-
-    // 4. 客户端应用程序使用访问令牌向资源服务器请求受保护的资源
-    const resourceEndpoint = 'https://example.com/api/resource'
-
-    // 使用Fetch API请求受保护的资源
-    fetch(resourceEndpoint, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    })
-      .then(response => response.json())
-      .then(resourceData => {
-        // 处理返回的资源数据
-        console.log(resourceData)
-      })
-      .catch(error => {
-        console.error('Failed to retrieve resource:', error)
-      })
-  })
-  .catch(error => {
-    console.error('Failed to retrieve access token:', error)
-  })
-```
-
-请注意，上述代码使用了Fetch API来发送HTTP请求。它使用了`fetch`函数来发送POST请求以获取访问令牌，并使用了`Authorization`头部来发送访问令牌获取受保护的资源。确保你的浏览器支持Fetch API，或者在旧版浏览器中使用polyfill库来兼容。与之前的代码示例一样，你需要根据你的情况替换URL和参数值。
-
 ## 660 请求 Header 的 Content-Type 常见的有哪几种?【热度: 617】
 
 * created_at: 2024-01-01T15:04:04Z
@@ -48205,26 +47367,6 @@ Policy-Based Access Control (PBAC) 是一种基于策略的访问控制模型，
 | WebSocket | 应用层 | 在单个 TCP 连接上进行全双工通信的协议，用于实时双向通信。 |
 | gRPC | 应用层 | 基于 HTTP/2 的远程过程调用（RPC）框架，支持多语言、双向流等特性。 |
 
-## 671 grpc 和 protobuf 是什么关系？【热度: 320】
-
-* created_at: 2024-01-14T16:01:29Z
-* updated_at: 2024-01-14T16:01:30Z
-* labels: 网络, TOP100互联网
-* milestone: 高
-
-`gRPC（gRPC Remote Procedure Call）`和 `Protocol Buffers（protobuf）`有密切的关系，可以理解为它们之间是一种上下游的关系：
-
-* **Protocol Buffers（protobuf）：** 这是一种由 Google 设计的数据序列化格式，用于结构化数据的序列化和反序列化。protobuf 使用 .proto 文件定义消息结构，然后通过编译器生成相应语言的代码，使得开发者可以在应用中使用这些结构化的消息。
-
-* **gRPC：** 这是一个由 Google 开发的基于 HTTP/2 的远程过程调用（RPC）框架。gRPC 使用 Protocol Buffers 作为默认的序列化格式，以便在客户端和服务器之间传递结构化的消息。 gRPC 通过生成的代码支持多语言，使得开发者可以轻松地定义 RPC 服务、消息和调用远程方法。
-
-因此，关系可以总结为：
-
-* **gRPC 使用 protobuf：** gRPC 首选 Protocol Buffers 作为其默认的序列化格式，这意味着 gRPC 中的消息通信使用 protobuf 格式定义，而 gRPC 编译器将根据 protobuf 文件生成相应语言的代码，包括消息结构和 RPC 服务接口。
-
-* **protobuf 不依赖于 gRPC：** 尽管 protobuf 最初是为 gRPC 设计的，但它本身并不限定于 gRPC。您可以使用 protobuf 来序列化和反序列化数据，而不仅限于在 gRPC 中使用。
-
-总的来说，gRPC 和 protobuf 是两个相关但独立的概念。gRPC 是一个使用 Protocol Buffers 的 RPC 框架，而 Protocol Buffers 是一个通用的数据序列化工具，可以在多种场景中使用。
 
 ## 672 JS 执行 100 万个任务， 如何保证浏览器不卡顿？【热度: 806】
 
