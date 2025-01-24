@@ -18,7 +18,71 @@ web 下常用 api
 
 ## 解释 cookies session storage local storage 的区别 ? {#p0-cookies-session-storage-local-storage}
 
-## intersection observer api? {#p3-intersection-observer-api}
+## IntersectionObserver api? {#p3-IntersectionObserver}
+
+`IntersectionObserver` API 是现代浏览器提供的一个强大的 API，用于性能友好地跟踪元素是否进入、离开或穿过另一个元素（通常是视口）的边界。这个 API 特别适用于执行懒加载、实现无限滚动、检测广告展示等功能，因为它避免了使用传统的滚动事件监听，后者可能会因频繁的计算和 DOM 操作导致性能问题。
+
+ 如何使用 `IntersectionObserver`
+
+1. **创建一个`IntersectionObserver`实例**:
+ 创建一个`IntersectionObserver`的新实例，你需要提供一个回调函数，该函数会在目标元素与其祖先或视口交叉状态变化时被调用。此外，你还可以提供一个选项对象来定义观察的具体条件。
+
+1. **观察元素**:
+ 使用`observe`方法来指定一直观察的目标 DOM 元素。代表当这个 DOM 元素的显示与否达到某个条件时，你的回调函数将会被执行。
+
+1. **处理交叉事件**:
+ 当观察的元素进入或离开另一个元素时，为创建`IntersectionObserver`实例时指定的回调函数将会被调用。
+
+1. **停止观察**:
+ 使用`unobserve`方法可以停止观察特定元素。如果你已完成观察任务，使用`disconnect`方法将停止所有观察，释放资源。
+
+ 示例代码
+
+以下是如何使用`IntersectionObserver`的示例：
+
+```javascript
+// 创建一个回调函数，当观察的元素交叉进入或离开另一个元素时，该函数会被触发
+const callback = (entries, observer) => {
+  entries.forEach((entry) => {
+    // 检查entry.isIntersecting属性
+    if (entry.isIntersecting) {
+      // 元素已进入视口
+      console.log('Element is in the viewport!')
+    } else {
+      // 元素已离开视口
+      console.log('Element is out of the viewport!')
+    }
+  })
+}
+
+// 创建IntersectionObserver实例
+const options = {
+  root: null, // 使用浏览器视口作为根
+  rootMargin: '0px', // 根的外边距，类似于CSS的margin
+  threshold: 1.0 // 目标完全可见时触发回调
+}
+
+const observer = new IntersectionObserver(callback, options)
+
+// 开始观察目标元素
+const target = document.getElementById('yourTargetElementId')
+observer.observe(target)
+
+// 停止观察目标元素
+// observer.unobserve(target);
+```
+
+在这个示例中，当目标元素（`id`为`yourTargetElementId`的元素）完全进入视口时，回调函数将被触发。`root`设为`null`意味着默认使用视口作为参照根元素。`rootMargin`设为`0px`表示根和目标的边界框触碰时回调就会被触发。`threshold`为`1.0`，表示目标完全可见时回调会被触发。
+
+ 注意事项
+
+* `IntersectionObserver`在性能上比传统的滚动事件检测方式有显著优势，因为它不依赖于`JavaScript`在主线程上的事件循环。
+* 使用时应当注意浏览器兼容性问题，对于不支持该 API 的旧浏览器，可能需要添加 polyfill 以保证功能的实现。
+
+ 参考文档
+
+* [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Intersection_Observer_API)
+* [资料](https://juejin.cn/post/7296058491289501696)
 
 ## ResizeObserver 作用是什么 {#p2-resizeobserver}
 
@@ -846,3 +910,182 @@ function myNonCriticalFunction (deadline) {
  参考文档
 
 * [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Background_Tasks_API)
+
+## scrollIntoView api
+
+scrollIntoView api
+
+`scrollIntoView` 是一个 Web API，允许网页开发者控制元素如何被滚动到浏览器的可视区域。这个方法可以对任何 `Element` 使用，以改变窗口的滚动位置，以便最终元素位于屏幕可见范围内。它对于某些需要用户立即看到的表单错误、警告，或者在执行完某些操作后需要用户注意的元素比如通知提示尤为有用。
+
+ 基本用法
+
+```javascript
+element.scrollIntoView(smoothScrollingOptions)
+```
+
+ 参数说明
+
+`smoothScrollingOptions` 是一个可选对象。当设定为 `false`、`undefined` 或一个计算值为 `false` 的值（比如 `0`）的时候，滚动操作将以最简单的方式立即执行，而不会平滑过渡。
+
+当为 `true` 或者一个与滚动行为不冲突的对象时，浏览器会执行一个平滑的滚动动作，逐渐将元素滚动到视野内。
+
+ 选项
+
+该方法接受一个可选的 `ScrollIntoViewOptions` 对象，它包含以下属性：
+
+1. **block**: 描述元素应当在其块级方向上的对齐方式。可以是 `"start"`、`"center"`、`"end"` 或 `"nearest"` 中的一个。
+
+* `start` — 元素顶部与包含块的顶部对齐，只有块级元素会被滚动到这个位置。
+* `center` — 元素将尽可能被居中对齐地显示。
+* `end` — 元素底部将与包含块的底部对齐。
+* `nearest` — 元素将滚动到最近的边缘。
+
+2. **inline**: 描述在元素行进方向的对齐方式。同样可以是 `"start"`、`"center"`、`"end"` 或 `"nearest"` 中的一个。
+
+3. **behavior**: 描述滚动行为。设置为 `"auto"` 时将使用默认滚动，设置为 `"smooth"` 时将平滑滚动。
+
+ 例子
+
+```javascript
+document.getElementById('myElement').scrollIntoView({
+  behavior: 'smooth', // 平滑滚动
+  block: 'start' // 元素顶部与包含块顶部对齐
+})
+```
+
+请注意，`scrollIntoView` 只能够使元素完全可见，但仍需留意元素灵感中其他内容可能超出视口之外。此外，滚动的方式也可能会受到 Web 浏览器和平台的不同而有所不同，例如一些浏览器可能有最高滚动速度的限制。
+
+* [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/scrollIntoView)
+
+ 基本原理
+
+页面是用户与程序进行交互的界面，在对应表单校验场景中，通常会因为有填写错误需要用户进行修改。为了提高用户体验，可以将页面滚动至对应表单报错的位置，使得用户立即可见错误并进行修改。这通常可以通过 JavaScript 编程实现。
+
+要注意的是，实现滚动至错误表单，一般需要几个步骤：
+
+1. **记录表单元素的位置**：在表单提交前的适当时间里记录所有表单元素的错误位置。
+2. **滚动到特定错误**：错误发生时，滚动到第一个错误的表单元素位置。
+3. **优化**：可为同一元素多次错误滚动优化，避免不必要的用户干扰。
+
+ 以下是这些步骤的代码示例
+
+ HTML
+
+```html
+<form id="myForm" onsubmit="return false;">
+ <input type="text" id="name" name="name" />
+ <input type="text" id="age" name="age" />
+ <!-- ... 其他表单元素 ... -->
+ <button type="submit" onclick="handleValidation()">Submit</button>
+</form>
+```
+
+ JavaScript
+
+```javascript
+// 一个假设的表单验证函数
+function validateInput (inputId) {
+  // 调用此处的校验逻辑，返回是否存在错误
+  // 这里以ID "inputId"来获取对应的DOM对象
+  const el = document.getElementById(inputId)
+  // 此处只是示例, 实际上应根据具体的校验逻辑返回一个布尔类型
+  return el.value === '预期值'
+}
+
+function handleValidation () {
+  let valid = true;
+
+  ['name', 'age'].forEach((key) => {
+    // 进行校验判断
+    if (!validateInput(key)) {
+      console.error(`Validation failed for: ${key}`)
+
+      // 标记校验失败
+      valid = false
+
+      // 滚动到出现问题的元素位置
+      const element = document.getElementById(key)
+      element.scrollIntoView({ block: 'center', behavior: 'smooth' })
+
+      // 增加一些提示效果, 比如错误边框, 可按需实现
+      // element.classList.add('error-highlight');
+    }
+  })
+
+  // 检查是否验证失败，如果失败则不提交表单
+  return valid
+}
+
+// 处理表单提交事件，与HTML中的onclick绑定
+document.getElementById('myForm').addEventListener('submit', (e) => {
+  e.preventDefault() // 阻止表单默认提交行为
+  handleValidation()
+})
+```
+
+## postmessage
+
+postMessage 是 HTML5 提供的一种跨窗口通信机制，可以在不同窗口、甚至不同域名之间进行通信，从而实现跨域通信。通过在一个窗口中调用 postMessage 方法向另一个窗口发送消息，接收窗口可以监听 message 事件，以接收发送过来的消息。
+
+使用 postMessage 可以解决一些跨域问题，如在一个域名下的网页与其他域名下的网页进行通信。具体来说，当两个窗口的协议、主机名或端口不同时，就会发生跨域问题。但使用 postMessage 可以突破同源策略的限制，实现不同域之间的通信。
+
+一般情况下，为了保证安全，使用 postMessage 进行跨域通信时，需要在目标窗口中设置 window.postMessage 的接收地址，只有来自该地址的消息才能被接收，从而避免了安全问题。同时，可以使用 origin 参数来限制消息来源，避免恶意攻击。
+
+码举例
+
+假设我们有两个域名为 [资料](https://domain-a.com) 和 [资料](https://domain-b.com) 的网站，现在需要在这两个网站之间进行跨域通信。
+
+在 [资料](https://domain-a.com) 的页面中，我们可以使用以下代码向 [资料](https://domain-b.com) 发送一条消息：
+
+```js
+const targetOrigin = 'https://domain-b.com'
+const message = 'Hello, domain-b!'
+
+window.parent.postMessage(message, targetOrigin)
+```
+
+这里的 window.parent 表示当前页面所在窗口的父级窗口，即指向 [资料](https://domain-a.com) 的窗口对象。
+
+在 [资料](https://domain-b.com) 的页面中，我们可以使用以下代码监听消息并做出相应处理：
+
+```js
+window.addEventListener('message', event => {
+  const origin = event.origin // 发送消息的域名
+  const data = event.data // 消息内容
+
+  if (origin === 'https://domain-a.com') {
+    console.log('Received message from domain-a:', data)
+  }
+})
+```
+
+使用 postMessage 进行跨域通信需要注意安全问题，特别是在确定目标域名时应该使用固定的字符串而不是动态生成的值，以避免被攻击者利用。
+
+frame 是否可以使用 postMessage 通信？
+
+不同的 iframe 和同一个页面之间也可以通过 postMessage 方法进行通信。这种情况下，通信的流程和同一页面中不同窗口的通信流程基本相同。只不过发送方和接收方不在同一页面中，而是在不同的 iframe 中。假设页面 A 中有两个 iframe，一个是 B 页面，另一个是 C 页面，现在需要在这两个 iframe 之间进行通信，具体的实现过程如下：
+
+在 B 页面的脚本中使用 postMessage 方法向父级页面 A 发送消息：
+
+```js
+window.parent.postMessage('message from B', 'http://localhost:3000')
+```
+
+在 C 页面的脚本中使用 postMessage 方法向父级页面 A 发送消息：
+
+```js
+window.parent.postMessage('message from C', 'http://localhost:3000')
+```
+
+在页面 A 的脚本中监听 message 事件，接收来自不同 iframe 的消息：
+
+```js
+window.addEventListener('message', function (event) {
+  // 判断消息来源是否是指定的 iframe
+  if (event.origin === 'http://localhost:3000') {
+    console.log('Received message: ' + event.data)
+  }
+})
+```
+
+需要注意的是，在这个过程中，B 和 C 两个 iframe 都需要和父级页面 A 都处于同一域名下，否则会触发跨域安全限制。

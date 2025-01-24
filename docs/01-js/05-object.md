@@ -124,8 +124,6 @@
 
 ## Set
 
-<Answer>
-
 Set 的时间复杂度为什么是 O(1)
 
 * Set 通常基于 HashMap 实现
@@ -134,21 +132,293 @@ Set 的时间复杂度为什么是 O(1)
 * 查找、插入、删除操作平均时间复杂度都是 O(1)
 * 注意：当发生哈希冲突时，最坏情况下可能退化到 O(n)
 
-</Answer>
+Map 对象保存键值对，并且能够记住键的原始插入顺序。任何值（对象或者基本类型）都可以作为一个键或一个值。
+
+Map 对象是键值对的集合。Map 中的一个键只能出现一次；它在 Map 的集合中是独一无二的。Map 对象按键值对迭代——一个 for...of 循环在每次迭代后会返回一个形式为 [key，value] 的数组。迭代按插入顺序进行，即键值对按 set() 方法首次插入到集合中的顺序（也就是说，当调用 set() 时，map 中没有具有相同值的键）进行迭代。
+
+pi
+
+**静态属性**
+
+* size 属性：size属性返回 Map 结构的成员总数。
+
+**实例方法**
+
+* set(key, value)：set方法设置key所对应的键值，然后返回整个 Map 结构。如果key已经有值，则键值会被更新，否则就新生成该键。
+
+* get(key)：get方法读取key对应的键值，如果找不到key，返回undefined。
+
+* has(key)：has方法返回一个布尔值，表示某个键是否在 Map 数据结构中。
+
+* delete(key)：delete方法删除某个键，返回 true 。如果删除失败，返回 false 。
+
+* clear()：clear方法清除所有成员，没有返回值。
+
+* forEach()：遍历 Map 的所有成员。
+
+**迭代方法**
+
+* keys()：返回键名的遍历器。
+* values()：返回键值的遍历器。
+* entries()：返回所有成员的遍历器。
+* `Map.prototype[@@iterator]()`：返回一个新的迭代对象，其为一个包含 Map 对象中所有键值对的 [key, value] 数组，并以插入 Map 对象的顺序排列。
+
+制或合并 Maps
+
+Map 能像数组一样被复制：
+
+```js
+const original = new Map([
+  [1, 'one']
+])
+
+const clone = new Map(original)
+
+console.log(clone.get(1)) // one
+console.log(original === clone) // false. 浅比较 不为同一个对象的引用
+```
+
+Map 对象间可以进行合并，但是会保持键的唯一性。
+
+```js
+const first = new Map([
+  [1, 'one'],
+  [2, 'two'],
+  [3, 'three']
+])
+
+const second = new Map([
+  [1, 'uno'],
+  [2, 'dos']
+])
+
+// 合并两个 Map 对象时，如果有重复的键值，则后面的会覆盖前面的。
+// 展开语法本质上是将 Map 对象转换成数组。
+const merged = new Map([...first, ...second])
+
+console.log(merged.get(1)) // uno
+console.log(merged.get(2)) // dos
+console.log(merged.get(3)) // three
+```
+
+Map 对象也能与数组合并：
+
+```js
+const first = new Map([
+  [1, 'one'],
+  [2, 'two'],
+  [3, 'three']
+])
+
+const second = new Map([
+  [1, 'uno'],
+  [2, 'dos']
+])
+
+// Map 对象同数组进行合并时，如果有重复的键值，则后面的会覆盖前面的。
+const merged = new Map([...first, ...second, [1, 'eins']])
+
+console.log(merged.get(1)) // eins
+console.log(merged.get(2)) // dos
+console.log(merged.get(3)) // three
+```
 
 ## es6 generator
 
 ## Map 了解多少
 
-## Set 了解多少
+Map 对象保存键值对，并且能够记住键的原始插入顺序。任何值（对象或者基本类型）都可以作为一个键或一个值。
+
+Map 对象是键值对的集合。Map 中的一个键只能出现一次；它在 Map 的集合中是独一无二的。Map 对象按键值对迭代——一个 for...of 循环在每次迭代后会返回一个形式为 [key，value] 的数组。迭代按插入顺序进行，即键值对按 set() 方法首次插入到集合中的顺序（也就是说，当调用 set() 时，map 中没有具有相同值的键）进行迭代。
+
+pi
+
+**静态属性**
+
+* size 属性：size属性返回 Map 结构的成员总数。
+
+**实例方法**
+
+* set(key, value)：set方法设置key所对应的键值，然后返回整个 Map 结构。如果key已经有值，则键值会被更新，否则就新生成该键。
+
+* get(key)：get方法读取key对应的键值，如果找不到key，返回undefined。
+
+* has(key)：has方法返回一个布尔值，表示某个键是否在 Map 数据结构中。
+
+* delete(key)：delete方法删除某个键，返回 true 。如果删除失败，返回 false 。
+
+* clear()：clear方法清除所有成员，没有返回值。
+
+* forEach()：遍历 Map 的所有成员。
+
+**迭代方法**
+
+* keys()：返回键名的遍历器。
+* values()：返回键值的遍历器。
+* entries()：返回所有成员的遍历器。
+* `Map.prototype[@@iterator]()`：返回一个新的迭代对象，其为一个包含 Map 对象中所有键值对的 [key, value] 数组，并以插入 Map 对象的顺序排列。
+
+制或合并 Maps
+
+Map 能像数组一样被复制：
+
+```js
+const original = new Map([
+  [1, 'one']
+])
+
+const clone = new Map(original)
+
+console.log(clone.get(1)) // one
+console.log(original === clone) // false. 浅比较 不为同一个对象的引用
+```
+
+Map 对象间可以进行合并，但是会保持键的唯一性。
+
+```js
+const first = new Map([
+  [1, 'one'],
+  [2, 'two'],
+  [3, 'three']
+])
+
+const second = new Map([
+  [1, 'uno'],
+  [2, 'dos']
+])
+
+// 合并两个 Map 对象时，如果有重复的键值，则后面的会覆盖前面的。
+// 展开语法本质上是将 Map 对象转换成数组。
+const merged = new Map([...first, ...second])
+
+console.log(merged.get(1)) // uno
+console.log(merged.get(2)) // dos
+console.log(merged.get(3)) // three
+```
+
+Map 对象也能与数组合并：
+
+```js
+const first = new Map([
+  [1, 'one'],
+  [2, 'two'],
+  [3, 'three']
+])
+
+const second = new Map([
+  [1, 'uno'],
+  [2, 'dos']
+])
+
+// Map 对象同数组进行合并时，如果有重复的键值，则后面的会覆盖前面的。
+const merged = new Map([...first, ...second, [1, 'eins']])
+
+console.log(merged.get(1)) // eins
+console.log(merged.get(2)) // dos
+console.log(merged.get(3)) // three
+```
+
+ Map 遍历
+
+在 JavaScript 中，`Map`对象当然可以被遍历。`Map` 对象持有键值对，任何值(对象或者原始值) 都可以作为一个键或一个值。你可以使用 `Map` 对象的几种方法遍历其中的键值对。
+
+以下是几种遍历 Map 对象的方法：
+
+1. **使用 `forEach()` 方法**：
+
+`Map` 对象有一个 `forEach` 方法，你可以像遍历数组一样使用它来遍历 `Map`。`forEach` 方法会按照插入顺序遍历 Map 对象。
+
+```javascript
+const myMap = new Map()
+myMap.set('a', 'alpha')
+myMap.set('b', 'beta')
+myMap.set('g', 'gamma')
+
+myMap.forEach((value, key) => {
+  console.log(key + ' = ' + value)
+})
+```
+
+1. **使用 `for...of` 循环**：
+
+你可以使用 `for...of` 循环来遍历 `Map` 对象的键值对(`entries`)，键(`keys`)或值(`values`)。
+
+* 遍历 `Map` 的键值对:
+
+```javascript
+for (const [key, value] of myMap) {
+  console.log(key + ' = ' + value)
+}
+```
+
+* 遍历 `Map` 的键:
+
+```javascript
+for (const key of myMap.keys()) {
+  console.log(key)
+}
+```
+
+* 遍历 `Map` 的值:
+
+```javascript
+for (const value of myMap.values()) {
+  console.log(value)
+}
+```
+
+1. **使用扩展运算符**：
+
+你还可以使用扩展运算符来将 `Map` 对象的键值对、键或值转换为数组。
+
+* 键值对数组:
+
+```javascript
+const keyValueArray = [...myMap]
+console.log(keyValueArray)
+```
+
+* 键数组:
+
+```javascript
+const keysArray = [...myMap.keys()]
+console.log(keysArray)
+```
+
+* 值数组:
+
+```javascript
+const valuesArray = [...myMap.values()]
+console.log(valuesArray)
+```
+
+每种方法的使用取决于你的具体需求。通常，`for...of` 和 `forEach()` 会用得更多，因为它们可以直接操作键和值。
 
 ## let const var 区别
+
+let 和 const 与 var 的区别
+
+1、不存在变量提升
+必须先定义后使用，否则报错
+
+2、暂时性死区
+在代码块内，使用let命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”（temporal dead zone，简称 TDZ）。
+
+3、不允许重复申明/不允许在函数内部重新申明参数（也算重复申明）
+
+4.1 SE5的作用域
+1）、内层变量覆盖外层的变量
+2）、用来计数的循环变量会泄露为全局变量
+
+5、const是一个常量，一旦声明，就不能改变。而且在申明的时候必须初始化，不能留到后面赋值。
+
+6、在ES5里面，var 在全局作用域下申明的变量，会自动生为window的属性:
+没法在编译过程爆出变量为申明的错误，语法上顶层对象有一个实体含义的对象这样肯定不合适。
+用var定义的依然会升级为顶层对象(全局对象)window的属性；但是let,const申明则不会。
 
 ## WeakSet
 
 1. WeackSet 如何实现弱引用的?
-
-## Map 了解多少
 
 1. map 和 object 的区别
 2. map 的 key 是稳定排序，可以用来实现 LRU
@@ -156,6 +426,340 @@ Set 的时间复杂度为什么是 O(1)
 ## WeakMap
 
 ## Proxy
+
+Proxy(代理) 是 ES6 中新增的一个特性。Proxy 让我们能够以简洁易懂的方式控制外部对对象的访问。其功能非常类似于设计模式中的代理模式。
+使用 Proxy 的好处是：对象只需关注于核心逻辑，一些非核心的逻辑 （如：读取或设置对象的某些属性前记录日志；设置对象的某些属性值前，需要验证；某些属性的访问控制等）可以让 Proxy 来做。 从而达到关注点分离，降级对象复杂度的目的。
+
+ api 有哪些？
+
+`var p = new Proxy(target, handler);`
+其中，target 为被代理对象。handler 是一个对象，其声明了代理 target 的一些操作。p 是代理后的对象。当外界每次对 p 进行操作时，就会执行 handler 对象上的一些方法。
+
+handler 能代理的一些常用的方法如下：
+
+* handler.getPrototypeOf(): Object.getPrototypeOf 方法的捕捉器。
+
+* handler.setPrototypeOf(): Object.setPrototypeOf 方法的捕捉器。
+
+* handler.isExtensible(): Object.isExtensible 方法的捕捉器。
+
+* handler.preventExtensions(): Object.preventExtensions 方法的捕捉器。
+
+* handler.getOwnPropertyDescriptor(): Object.getOwnPropertyDescriptor 方法的捕捉器。
+
+* handler.defineProperty(): Object.defineProperty 方法的捕捉器。
+
+* handler.has(): in 操作符的捕捉器。
+
+* handler.get(): 属性读取操作的捕捉器。
+
+* handler.set(): 属性设置操作的捕捉器。
+
+* handler.deleteProperty(): delete 操作符的捕捉器。
+
+* handler.ownKeys(): Object.getOwnPropertyNames 方法和 Object.getOwnPropertySymbols 方法的捕捉器。
+
+* handler.apply(): 函数调用操作的捕捉器。
+
+* handler.construct(): new 操作符的捕捉器。
+...
+
+ 基础使用
+
+```javascript
+const target = {
+  name: 'obj'
+}
+const logHandler = {
+  get: function (target, key) {
+    console.log(`${key} 被读取`)
+    return target[key]
+  },
+  set: function (target, key, value) {
+    console.log(`${key} 被设置为 ${value}`)
+    target[key] = value
+  }
+}
+const targetWithLog = new Proxy(target, logHandler)
+targetWithLog.name // 控制台输出：name 被读取
+targetWithLog.name = 'others' // 控制台输出：name 被设置为 others
+console.log(target.name) // 控制台输出: others
+```
+
+ 使用示例 - 实现虚拟属性
+
+```javascript
+const person = {
+  fisrsName: '张',
+  lastName: '小白'
+}
+const proxyedPerson = new Proxy(person, {
+  get: function (target, key) {
+    if (key === 'fullName') {
+      return [target.fisrsName, target.lastName].join(' ')
+    }
+    return target[key]
+  },
+  set: function (target, key, value) {
+    if (key === 'fullName') {
+      const fullNameInfo = value.split(' ')
+      target.fisrsName = fullNameInfo[0]
+      target.lastName = fullNameInfo[1]
+    } else {
+      target[key] = value
+    }
+  }
+})
+
+console.log('姓:%s, 名:%s, 全名: %s', proxyedPerson.fisrsName, proxyedPerson.lastName, proxyedPerson.fullName)// 姓:张, 名:小白, 全名: 张 小白
+proxyedPerson.fullName = '李 小露'
+console.log('姓:%s, 名:%s, 全名: %s', proxyedPerson.fisrsName, proxyedPerson.lastName, proxyedPerson.fullName)// 姓:李, 名:小露, 全名: 李 小露
+```
+
+ 使用示例 - 实现私有变量
+
+下面的 demo 实现了真正的私有变量。代理中把以 _ 开头的变量都认为是私有的。
+
+```javascript
+let api = {
+  _secret: 'xxxx',
+  _otherSec: 'bbb',
+  ver: 'v0.0.1'
+}
+
+api = new Proxy(api, {
+  get: function (target, key) {
+    // 以 _ 下划线开头的都认为是 私有的
+    if (key.startsWith('_')) {
+      console.log('私有变量不能被访问')
+      return false
+    }
+    return target[key]
+  },
+  set: function (target, key, value) {
+    if (key.startsWith('_')) {
+      console.log('私有变量不能被修改')
+      return false
+    }
+    target[key] = value
+  },
+  has: function (target, key) {
+    return key.startsWith('_') ? false : (key in target)
+  }
+})
+
+api._secret // 私有变量不能被访问
+console.log(api.ver) // v0.0.1
+api._otherSec = 3 // 私有变量不能被修改
+console.log('_secret' in api) // false
+console.log('ver' in api) // true
+```
+
+ 使用示例 - 抽离校验模块
+
+```javascript
+function Animal () {
+  return createValidator(this, animalValidator)
+}
+var animalValidator = {
+  name: function (name) {
+    // 动物的名字必须是字符串类型的
+    return typeof name === 'string'
+  }
+}
+
+function createValidator (target, validator) {
+  return new Proxy(target, {
+    set: function (target, key, value) {
+      if (validator[key]) {
+        // 符合验证条件
+        if (validator[key](value)) {
+          target[key] = value
+        } else {
+          throw Error(`Cannot set ${key} to ${value}. Invalid.`)
+        }
+      } else {
+        target[key] = value
+      }
+    }
+  })
+}
+
+const dog = new Animal()
+dog.name = 'dog'
+console.log(dog.name)
+dog.name = 123 // Uncaught Error: Cannot set name to 123. Invalid.
+```
+
+eflect
+
+ 概念
+
+Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。**这些方法与 `proxy handler` 的方法相同**。Reflect 不是一个函数对象，因此它是不可构造的。
+
+与大多数全局对象不同 Reflect 并非一个构造函数，所以不能通过 new 运算符对其进行调用，或者将 Reflect 对象作为一个函数来调用。**Reflect 的所有属性和方法都是静态的**（就像 Math 对象）。
+
+ api 有哪些？
+
+* Reflect.apply(target, thisArgument, argumentsList): 对一个函数进行调用操作，同时可以传入一个数组作为调用参数。和 Function.prototype.apply() 功能类似。
+
+* 举例
+
+ ```javascript
+ const ages = [11, 33, 12, 54, 18, 96]
+ 
+ // 旧写法
+ const youngest = Math.min.apply(Math, ages)
+ const oldest = Math.max.apply(Math, ages)
+ const type = Object.prototype.toString.call(youngest)
+ 
+ // 新写法
+//  const youngest = Reflect.apply(Math.min, Math, ages);
+//  const oldest = Reflect.apply(Math.max, Math, ages);
+//  const type = Reflect.apply(Object.prototype.toString, youngest, []);
+ ```
+
+* Reflect.construct(target, argumentsList[, newTarget]): 对构造函数进行 new 操作，相当于执行 new target(...args)。
+* Reflect.construct方法等同于new target(...args)，这提供了一种不使用new，来调用构造函数的方法。
+
+ ```javascript
+ function Greeting (name) {
+   this.name = name
+ }
+ 
+ // new 的写法
+ const instance = new Greeting('张三')
+ 
+ // Reflect.construct 的写法
+//  const instance = Reflect.construct(Greeting, ['张三']);
+ ```
+
+* Reflect.defineProperty(target, propertyKey, attributes): 和 Object.defineProperty() 类似。如果设置成功就会返回 true
+
+* Reflect.deleteProperty(target, propertyKey): 作为函数的delete操作符，相当于执行 delete target[name]。该方法返回一个布尔值。
+* Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象属性。
+
+ ```javascript
+ const myObj = { foo: 'bar' }
+ 
+ // 旧写法
+ delete myObj.foo
+ 
+ // 新写法
+ Reflect.deleteProperty(myObj, 'foo')
+ ```
+
+ 该方法返回一个布尔值。如果删除成功或删除的属性不存在，则返回true，如果删除失败，删除的属性依然还在，则返回false。
+
+* Reflect.get(target, propertyKey[, receiver]): 获取对象身上某个属性的值，类似于 target[name]。
+* Reflect.get方法查找并返回target的name属性，如果没有，则返回undefined。
+
+ ```javascript
+ const myObject = {
+   foo: 1,
+   bar: 2,
+   get baz () {
+     return this.foo + this.bar
+   }
+ }
+ 
+ Reflect.get(myObject, 'foo') // 1
+ Reflect.get(myObject, 'bar') // 2
+ Reflect.get(myObject, 'baz') // 3
+ ```
+
+* 读取函数的this绑定的receiver
+
+ ```js
+ const myObject = {
+   foo: 1,
+   bar: 2,
+   get baz () {
+     return this.foo + this.bar
+   }
+ }
+ 
+ const myReceiverObject = {
+   foo: 4,
+   bar: 4
+ }
+ 
+ Reflect.get(myObject, 'baz', myReceiverObject) // 8
+ ```
+
+* 如果第一个参数不是对象，则Reflect.get则会报错。
+
+* Reflect.getOwnPropertyDescriptor(target, propertyKey): 类似于 Object.getOwnPropertyDescriptor()。如果对象中存在该属性，则返回对应的属性描述符，否则返回 undefined。
+
+* Reflect.getPrototypeOf(target): 类似于 Object.getPrototypeOf()。
+
+* Reflect.has(target, propertyKey): 判断一个对象是否存在某个属性，和 in 运算符 的功能完全相同。
+* Reflect.has对应 name in obj 里面的in操作
+
+ ```javascript
+ const myObject = {
+   foo: 1
+ }
+ 
+ // 旧写法
+ 'foo' in myObject // true
+ 
+ // 新写法
+ Reflect.has(myObject, 'foo') // true
+ ```
+
+ 如果第一个参数不是对象，Reflect.has和in都会报错。
+
+* Reflect.isExtensible(target): 类似于 Object.isExtensible().
+
+* Reflect.ownKeys(target): 返回一个包含所有自身属性（不包含继承属性）的数组。(类似于 Object.keys(), 但不会受enumerable 影响).
+
+* Reflect.preventExtensions(target): 类似于 Object.preventExtensions()。返回一个Boolean。
+
+* Reflect.set(target, propertyKey, value[, receiver]): 将值分配给属性的函数。返回一个Boolean，如果更新成功，则返回true。
+* Reflect.set方法设置target对象的name属性等于value。
+
+```javascript
+const myObject = {
+  foo: 1,
+  // eslint-disable-next-line
+  set bar (value) {
+    // eslint-disable-next-line
+    return this.foo = value
+  }
+}
+
+myObject.foo // 1
+
+Reflect.set(myObject, 'foo', 2)
+myObject.foo // 2
+
+Reflect.set(myObject, 'bar', 3)
+myObject.foo // 3
+```
+
+* 如果name属性设置的赋值函数，则赋值函数的this绑定receiver。
+
+ ```javascript
+ const myObject = {
+   foo: 4,
+   // eslint-disable-next-line
+   set bar (value) {
+     // eslint-disable-next-line
+     return this.foo = value
+   }
+ }
+ 
+ const myReceiverObject = {
+   foo: 0
+ }
+ 
+ Reflect.set(myObject, 'bar', 1, myReceiverObject)
+ myObject.foo // 4
+ myReceiverObject.foo // 1
+ ```
+
+* Reflect.setPrototypeOf(target, prototype): 设置对象原型的函数。返回一个 Boolean，如果更新成功，则返回 true。
 
 是的，`Proxy` 能够监听到对象属性的读取和设置操作，包括对象中嵌套的对象的引用操作。但是，要注意的是，如果你想要监听一个嵌套对象内部的变化（例如，对象的属性或者数组的元素），那么你需要单独为这个嵌套对象也创建一个 `Proxy` 实例。因为 `Proxy` 只能直接监听它直接代理的对象的操作，对于嵌套对象的操作，需要嵌套地使用 `Proxy` 来实现深度监听。
 
@@ -195,13 +799,6 @@ console.log(original.address.city) // 输出 San Francisco
 此外，需要留意的是，由于每次访问嵌套对象时都会动态创建新的 `Proxy` 实例，这可能导致一些意料之外的行为，比如基于身份的比较或引用检查可能会失败。因此，在实际应用中，应根据需求精心设计 `Proxy` 的使用方式。
 
 ## Reflect
-
-* created_at: 2024-10-29T23:47:01Z
-* updated_at: 2024-10-29T23:47:01Z
-* labels: JavaScript
-* milestone: 中
-
-**关键词**：Reflect 函数
 
 `Reflect`是 ES6 引入的一个内置对象，它提供了一组与对象操作对应的方法，这些方法与`Object`上的某些方法类似，但有一些重要的区别。
 
@@ -341,6 +938,66 @@ console.log(original.address.city) // 输出 San Francisco
  ```
 
 总的来说，`Reflect`对象提供了一种更统一、更规范的方式来进行对象操作，并且在某些情况下（如与代理一起使用时）具有特殊的用途。它的方法通常与`Object`上的对应方法具有相似的功能，但在返回值和行为上可能会有所不同，这使得开发者可以更精确地控制对象的操作。
+
+`Proxy` 和 `Reflect` 是 ES6 (ECMAScript 2015) 中引入的两个不同的构造函数，它们密切相关，通常在某些操作中一起使用。
+
+1. **Proxy**：
+ `Proxy` 对象用于定义基本操作的自定义行为，例如属性查找、赋值、枚举、函数调用等。当你对一个`Proxy`对象执行这些操作时，你可以拦截并重新定义这些操作的行为。
+
+ 下面是一些你可以使用`Proxy`拦截的操作:
+
+* `get`：读取属性值
+* `set`：设置属性值
+* `has`：`in`操作符
+* `deleteProperty`：`delete`操作符
+* `apply`：调用一个函数
+* 诸如此类的其他捕获器（handlers）
+
+2. **Reflect**：
+ `Reflect`对象与`Proxy`捕获器（handlers）的方法一一对应。其目的是提供默认行为，对相应的对象操作进行默认的行为操作。在很多情况下，`Reflect`的方法与对应的直接对象操作是相同的。
+
+ 这里是一些`Reflect`提供的方法的例子：
+
+* `Reflect.get()`：获取对象属性的值，类似于`obj[prop]`
+* `Reflect.set()`：设置对象属性的值，类似于`obj[prop] = value`
+* `Reflect.has()`：类似于`prop in obj`
+* `Reflect.deleteProperty()`：类似于`delete obj[prop]`
+* `Reflect.apply()`：调用一个函数
+* 其他与`Proxy`捕获器相对应的方法
+
+**两者的关系**：
+`Proxy`和`Reflect`的关系体现在它们共同协作时。在`Proxy`的捕获器函数中，开发者可以调用对应的`Reflect`方法，以实现默认的行为，同时加入自己的操纵和侧面逻辑。`Reflect`方法提供了一种方便的方式来保持默认行为，而不需要手动编写这些语义。
+
+例如，当在`Proxy`捕获器中捕获属性的读取行为时，使用`Reflect.get()`可以非常容易地调用相应对象的默认读取行为：
+
+```javascript
+const obj = {
+  a: 1,
+  b: 2,
+  c: 3
+}
+
+const p = new Proxy(obj, {
+  get (target, prop, receiver) {
+    console.log(`读取了属性 ${prop}`)
+    return Reflect.get(target, prop, receiver) // 调用默认操作
+  },
+  set (target, prop, value, receiver) {
+    console.log(`将属性 ${prop} 设置为 ${value}`)
+    return Reflect.set(target, prop, value, receiver) // 调用默认操作
+  }
+})
+
+console.log(p.a) // 读取了属性 a，返回 1
+p.b = 4 // 将属性 b 设置为 4
+```
+
+上面的例子中，通过`Reflect`对象的方法，我们不仅可以保持默认的`get`和`set`行为，还可以在这个过程之前或之后添加自己的逻辑。这样的设计使得代理行为的实现既安全又易于管理。
+
+总而言之，`Proxy`和`Reflect`共同提供了一种强大的机制来拦截和定义基本的 JavaScript 操作，`Reflect`能提供操纵对象的默认方法，而`Proxy`则允许我们根据需要来定义这些操作的新行为。
+
+> 以前对两者进行过对比， 但是没有讨论起关联关系。
+> 以前对比的文章：[资料](https://github.com/pro-collection/interview-question/issues/8)
 
 ## Reflect.get() 和直接通过对象 [.] 访问获取属性， 有何区别 {#p2-reflect-get}
 
@@ -560,8 +1217,6 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
  ```javascript
  const obj = { prop: 'value' }
- // 以下操作会报错
- obj = { newProp: 'newValue' }
  
  // 这个操作是允许的
  obj.prop = 'newValue1'

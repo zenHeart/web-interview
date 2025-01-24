@@ -150,3 +150,20 @@ npm run lint # 运行 ESLint 检查代码
 以上脚本将确保代码在提交前通过了 linter 检查，并通过 prettier 快速格式化以及 TypeScript 编译。
 
 使用的时候，请确认你的项目已经有了 Node.js 环境，并且已经安装了 Husky 和相应的代码检查、格式化工具。
+
+## Husky 和 lint-staged 有什么区别？{#husky}
+
+Husky 和 lint-staged 都是与 Git 钩子 (hooks) 配合使用的 Node.js 库，但它们的用途和工作方式有所不同：
+
+1. **Husky**：
+
+* Husky 是一个 Git 钩子管理器，它允许你触发自定义脚本在 git 事件发生时运行，如 `pre-commit`, `pre-push`, `post-merge` 等。
+* 它的主要目的是自动化你的版本控制工作流程，例如在提交 (commit) 前运行代码检查、格式化代码或执行测试，以确保代码库的质量和一致性。
+
+2. **lint-staged**：
+
+* lint-staged 是一个运行在 Husky 钩子之上的工具，它专门用于对暂存区 (staged) 文件的检查。
+* 当你运行 `git commit` 并且 Husky 触发 `pre-commit` 钩子时，lint-staged 会检查你即将提交的代码（即 `git add` 后的文件列表），并运行你配置好的检查脚本，如代码格式化程序、linter 或其他工具。
+* 它的目的是确保在提交之前，只有没有检查错误的代码会被提交。
+
+简而言之，Husky 是一个可以触发多种钩子事件的工具，而 lint-staged 是一种专门用于检查 Git 暂存区文件的工具。它们通常是配合使用的，因为 lint-staged 需要通过 Husky 来触发钩子。在你初始化项目并配置 CI/CD 流程时，通常会同时用到它们。

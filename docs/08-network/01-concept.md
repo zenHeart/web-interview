@@ -2,6 +2,36 @@
 
 ## 网络七层模型 {#p0-network-seven-layer-model}
 
+计算机网络体系结构通常被划分为七层，即**OSI（Open System Interconnection，开放式系统互联）参考模型**和**TCP/IP（Transmission Control Protocol/Internet Protocol，传输控制协议/互联网协议）参考模型。**
+
+SI参考模型包含七层，从底层到顶层依次是
+
+物理层（Physical Layer）：负责将比特流传输到物理媒介上，如电缆、光纤等。
+
+数据链路层（Data Link Layer）：负责将比特流组装成帧，进行差错校验、流量控制等操作。
+
+网络层（Network Layer）：负责将数据包从源节点传输到目的节点，实现路由选择、拥塞控制等功能。
+
+传输层（Transport Layer）：负责为应用层提供可靠的端到端通信，常用的协议有TCP和UDP。
+
+会话层（Session Layer）：负责建立、管理、终止进程之间的会话连接，使不同应用程序之间能够进行数据交互。
+
+表示层（Presentation Layer）：负责对数据进行编码、解码和加密、解密，保证数据在传输过程中的安全性和正确性。
+
+应用层（Application Layer）：提供用户接口，实现用户与计算机网络之间的交互。
+
+P/IP参考模型包含四层，从底层到顶层依次是
+
+网络接口层（Network Interface Layer）：负责将数据帧封装成包，并进行物理层的传输。
+
+网络层（Internet Layer）：负责将数据包从源节点传输到目的节点，实现路由选择、拥塞控制等功能。
+
+传输层（Transport Layer）：负责为应用层提供可靠的端到端通信，常用的协议有TCP和UDP。
+
+应用层（Application Layer）：提供用户接口，实现用户与计算机网络之间的交互。
+
+**需要注意的是**: OSI参考模型和TCP/IP参考模型虽然不完全一致，但两者都包含了物理层、数据链路层、网络层和应用层。传输层和会话层、表示层在TCP/IP参考模型中被合并为了传输层。
+
 ## 网络五层模型 {#p0-network-five-layer-model}
 
 网络五层模型，也称为 OSI（Open System Interconnection，开放系统互连）参考模型，它将计算机网络通信的功能划分为五个层次，每个层次都有特定的功能和职责。以下是五层模型的具体介绍：

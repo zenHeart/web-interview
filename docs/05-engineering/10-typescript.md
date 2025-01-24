@@ -47,12 +47,14 @@ const animalFunction: () => Animal = getDog // 协变
 
 在 TypeScript 中，函数参数在默认情况下是双向协变的，但我们可以使用逆变的方式理解它们在特殊情况下的行为，比如在启用 `--strictFunctionTypes` 标志后，函数参数表现出逆变：
 
-```typescript
+```ts
 class Parent {}
 class Child extends Parent {}
 
 // 逆变：参数具有逆变的特性
-const fn1: (param: Parent) => void = (child: Child) => {}
+const fn1: (param: Parent) => void = (child: Child) => {
+  // no
+}
 ```
 
  双向协变（Bivariance）
@@ -65,11 +67,16 @@ const fn1: (param: Parent) => void = (child: Child) => {}
 
 默认情况下，TypeScript 中的函数参数是双向协变的：
 
-```typescript
-function fnA (param: Animal) {}
-function fnD (param: Dog) {}
+```ts
+function fnA (param: Animal) {
+  // nop
+}
+function fnD (param: Dog) {
+  // nop
+}
 
 // 双向协变：尽管参数类型不完全相同，但两个函数类型在TS中是兼容的
+// eslint-disable-next-line
 let fn: (param: Dog) => void = fnA // 双向协变允许这种赋值
 fn = fnD
 ```
@@ -222,12 +229,6 @@ const objectContainer: IContainer<object> = { value: { message: 'Hello, World!' 
 
 3. 导入包：
  在 TypeScript 文件中，使用 `import` 语句导入全局包。
-
- ```typescript
- importas PackageName from "<package-name>";
- // 或者
- import PackageName from "<package-name>";
- ```
 
 4. tsconfig.json 配置：
  确保你的 `tsconfig.json` 文件配置得当，以便 TypeScript 能够找到 `node_modules` 中的声明文件。
@@ -449,3 +450,203 @@ npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --
 * `unknown` 用在不确定类型时，比 `any` 更安全因为它不允许你随便操作这个值。
 * `null` 和 `undefined` 用于表示没有值或值未定义。
 * `void` 用于没有返回任何值的函数。
+
+在 TypeScript 中，`any`和`unknown`都代表可以赋予任何类型的值，但它们在使用上有明显的不同。
+
+1. **最不安全的类型**：`any`类型是 TypeScript 类型系统的逃逸舱口，使用`any`可以让任何表达式绕过类型检查，转而采用 JavaScript 动态类型的行为。
+2. **类型放弃**：当你把一个值声明为`any`类型，你本质上在告诉 TypeScript 编译器：“信任我，我知道我在做什么。”编译器不会对`any`类型的值进行类型检查，这意味着你可以对它执行任何操作，无论它的实际类型。
+
+```typescript
+let notSure: any = 4
+notSure = 'maybe a string instead'
+notSure = false // okay, definitely a boolean
+
+notSure.ifItExists() // okay, toExist might exist at runtime
+```
+
+上述代码没有错误，因为`notSure`被声明为`any`类型。
+
+ unknown 类型
+
+1. **类型安全的 any**：与`any`相比，`unknown`类型是类型安全的。它标志着一个值可以是任何类型，但与`any`不同的是，当值被声明为`unknown`时，你无法对该值执行任意的操作。
+
+2. **需要断言或类型细化**：在对`unknown`类型的值执行大部分操作之前，你需要使用类型断言或类型守卫来细化类型。这迫使开发者更积极地处理`unknown`类型的值，因此可以防止潜在的错误。
+
+```typescript
+let unsure: unknown = 4
+unsure = 'maybe a string instead'
+unsure = false; // okay, still uncertain
+
+// unsure.ifItExists(); // Error: Object is of type 'unknown'.
+// 下面是对unknown类型进行类型断言的示例
+(unsure as string).length // okay, we have asserted that unsure is a string
+
+// 或者使用类型守卫
+if (typeof unsure === 'string') {
+  console.log(unsure.length) // okay, we have checked it's a string
+}
+```
+
+如你所见，你不能像处理`any`类型那样直接调用 unknown 类型的方法或属性，必须先进行类型检查。
+
+ 总结
+
+`unknown`类型是`any`类型的类型安全对应物。当不确定一个值的类型时应首选使用`unknown`。这样，你会被迫在对该值执行操作之前进行适当的类型检查。这增加了一层类型安全性，可以帮助避免错误。相比之下，`any`类型则完全放弃了类型检查，通常应该尽量避免。
+
+1. **void**：
+
+ `void`类型用于标记函数没有任何返回值。这意呑着函数可能执行了一些操作但是没有返回任何内容。这不同于返回`undefined`或`null`，尽管在没有明确返回值时，JavaScript 函数默认返回`undefined`。
+
+ 如果一个函数的返回类型是`void`，它可能有一个`return`语句，但`return`语句不能返回任何值（或者根本就没有`return`语句）。
+
+ 例子：
+
+ ```typescript
+ function greet (): void {
+   console.log('Hello, World!')
+ }
+ ```
+
+ 这个函数打印一个字符串到控制台，但不返回任何值。
+
+2. **never**：
+
+ `never`类型表示永远不会返回任何值。它通常用于两种情况：函数总是抛出一个错误，这样就不会有返回值；或者函数有一个无法达到的终点，比如无限循环。
+
+ 例子：
+
+ ```typescript
+ function throwError (errorMsg: string): never {
+   throw new Error(errorMsg)
+ }
+
+ function infiniteLoop (): never {
+   while (true) {
+     // nop
+   }
+ }
+ ```
+
+ 这两个函数都不会正常结束：`throwError`函数会抛出异常，而`infiniteLoop`函数会永远循环。在这两种情况中，返回类型`never`正确地表明函数不会有任何返回执行路径。
+
+总结来说，`void`用于没有返回值的函数，这意味着函数的执行结束后不会给调用者任何值；而`never`表示函数永远不会有一个正常的结束，因此不会给调用者任何机会获得它的返回值。它们在类型系统中表达了不同的概念和意图。
+
+## TS 中的泛型 {#p1-ts-generic}
+
+TypeScript 的泛型是一种工具，它能够使代码更加灵活，能够适配多种类型而非单一的类型。泛型可以创建可重用的组件，这些组件可以支持多种类型的数据，而不失去类型检查时的安全性。
+
+ 泛型的基本概念
+
+在 TypeScript 中, 泛型使用一个类型变量，常见的类型变量有 `T`,`U`,`V` 等。通过类型变量，你可以创建一个可以适应任何类型的组件（比如函数、接口或类）。类型变量像是函数或类的一个特殊参数，但这个参数是类型而非具体的值。
+
+ 泛型的使用场景
+
+1. **函数**：你可以创建一个泛型函数，该函数可以接受任意类型的参数，同时保证输入参数和返回参数类型相同：
+
+```typescript
+function identity<T> (arg: T): T {
+  return arg
+}
+```
+
+这里 `T` 用作类型变量，可以捕获用户提供的类型（比如 `number`），然后这个类型将被用于函数的参数和返回类型。
+
+2. **接口**：使用泛型定义接口可以创建可用于多种类型的接口。
+
+```typescript
+interface GenericIdentityFn<T> {
+ (arg: T): T;
+}
+
+function identity<T> (arg: T): T {
+  return arg
+}
+
+const myIdentity: GenericIdentityFn<number> = identity
+```
+
+这里 `GenericIdentityFn` 接口定义了一个属性，它是一个接收 `T` 类型参数并返回 `T` 类型的函数。
+
+3. **type**：`type` 关键字可以用来创建类型别名，它确实支持泛型。你可以为类型别名定义泛型参数，然后在使用该类型别名时指定具体的类型。
+
+下面是使用泛型的类型别名的例子：
+
+```typescript
+// 这里定义了一个带有泛型参数 T 的类型别名
+type Container<T> = {
+ value: T;
+};
+
+// 可以这样使用类型别名
+const numberContainer: Container<number> = { value: 1 }
+const stringContainer: Container<string> = { value: 'Hello' }
+
+// 使用类型别名定义函数类型
+type ReturnFunction<T> = () => T;
+
+// 这个函数返回一个数字
+const myFunction: ReturnFunction<number> = () => 42
+
+// 使用带有两个参数的泛型
+type KeyValue<K, V> = {
+ key: K;
+ value: V;
+};
+
+const keyValue: KeyValue<string, number> = { key: 'testKey', value: 123 }
+```
+
+通过使用泛型，`type` 可以定义灵活的类型别名，使得别名能够用于各种不同的数据类型，同时保持类型的安全性。这使得你可以在类型别名中使用泛型来捕获传递给别名的类型信息。
+
+4. **类**：泛型也可以用于类定义中，使得类可以灵活地与多种类型协作。
+
+```typescript
+class GenericNumber<T> {
+  zeroValue: T
+  add: (x: T, y: T) => T
+}
+
+const myGenericNumber = new GenericNumber<number>()
+myGenericNumber.zeroValue = 0
+myGenericNumber.add = function (x, y) {
+  return x + y
+}
+```
+
+这里，`GenericNumber<T>` 类具有一个类型为 `T` 的属性 `zeroValue` 和一个用两个 `T` 类型参数返回 `T` 类型的方法 `add`。
+
+ 泛型约束
+
+有时你可能希望对泛型进行限制，只允许使用满足特定接口的类型。这称为泛型约束。
+
+```typescript
+interface Lengthwise {
+ length: number;
+}
+
+function loggingIdentity<T extends Lengthwise> (arg: T): T {
+  console.log(arg.length) // Now we know it has a .length property, so no more error
+  return arg
+}
+```
+
+在这里，我们约束了类型 `T` 必须遵从 `Lengthwise` 接口，确保传入的类型具有 `length` 属性。
+
+ 泛型中使用类型参数
+
+你还可以在泛型中使用类型参数本身。
+
+```typescript
+function getProperty<T, K extends keyof T> (obj: T, key: K) {
+  return obj[key]
+}
+
+const x = { a: 1, b: 2, c: 3 }
+
+getProperty(x, 'a') // Okay
+getProperty(x, 'm') // Error: Argument of type '"m"' isn't assignable to '"a" | "b" | "c"'
+```
+
+在这个示例中，`getProperty` 函数有两个参数：`obj` 和 `key`，`obj` 是对象 `T`，`key` 是 `T` 中键的集合 `keyof T` 的成员。
+
+通过泛型，TypeScript 允许你在保持类型安全的同时创建灵活，可适用于多种类型的组件。这样你就能够写出更加通用且易于复用的代码。

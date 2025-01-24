@@ -1660,3 +1660,347 @@ window.addEventListener('storage', function (event) {
  </body>
 </html>
 ```
+
+## 虚拟列表 {#p0-virtual-list}
+
+虚拟滚动（Virtual Scrolling）是一种性能优化的手段，通常用于处理长列表的显示问题。在传统的滚动加载中，当面对成千上万项的长列表时，直接在 DOM 中创建并展示所有项会导致严重的性能问题，因为浏览器需要渲染所有的列表项。而虚拟滚动的核心原理是仅渲染用户可视范围内的列表项，以此减少 DOM 操作的数量和提高性能。
+
+实现虚拟滚动，我们需要：
+
+1. 监听滚动事件，了解当前滚动位置。
+2. 根据滚动位置计算当前应该渲染哪些列表项目（即在视口内的项目）。
+3. 只渲染那些项目，并用占位符（比如一个空的 div）占据其它项目应有的位置，保持滚动条大小不变。
+4. 当用户滚动时，重新计算并渲染新的项目。
+
+ 基础版本实现
+
+以下是一个简单的虚拟滚动实现的 JavaScript 代码示例：
+
+```javascript
+class VirtualScroll {
+  constructor (container, itemHeight, totalItems, renderCallback) {
+    this.container = container // 容器元素
+    this.itemHeight = itemHeight // 每个项的高度
+    this.totalItems = totalItems // 总列表项数
+    this.renderCallback = renderCallback // 渲染每一项的回调函数
+
+    this.viewportHeight = container.clientHeight // 视口高度
+    this.bufferSize = Math.ceil(this.viewportHeight / itemHeight) * 3 // 缓冲大小
+    this.renderedItems = [] // 已渲染项的数组
+
+    this.startIndex = 0 // 当前渲染的开始索引
+    this.endIndex = this.bufferSize // 当前渲染的结束索引
+
+    container.addEventListener('scroll', () => this.onScroll())
+    this.update()
+  }
+
+  onScroll () {
+    const scrollTop = this.container.scrollTop
+    const newStartIndex = Math.floor(scrollTop / this.itemHeight) - this.bufferSize / 2
+    const newEndIndex = newStartIndex + this.bufferSize
+
+    if (newStartIndex !== this.startIndex || newEndIndex !== this.endIndex) {
+      this.startIndex = Math.max(0, newStartIndex)
+      this.endIndex = Math.min(this.totalItems, newEndIndex)
+      this.update()
+    }
+  }
+
+  update () {
+    // 清空已有内容
+    this.container.innerHTML = ''
+
+    // 计算并设置容器的总高度
+    const totalHeight = this.totalItemsthis.itemHeight
+    this.container.style.height = `${totalHeight}px`
+
+    // 渲染视口内的项
+    const fragment = document.createDocumentFragment()
+    for (let i = this.startIndex; i < this.endIndex; i++) {
+      const item = this.renderCallback(i)
+      item.style.top = `${ithis.itemHeight}px`
+      fragment.appendChild(item)
+    }
+    this.container.appendChild(fragment)
+  }
+}
+
+// 创建一个列表项的函数
+function createItem (index) {
+  const item = document.createElement('div')
+  item.className = 'list-item'
+  item.innerText = `Item ${index}`
+  item.style.position = 'absolute'
+  item.style.width = '100%'
+  return item
+}
+
+// 初始化虚拟滚动
+const container = document.querySelector('.scroll-container') // 容器元素需要预先在HTML中定义
+const virtualScroll = new VirtualScroll(container, 30, 10000, createItem)
+```
+
+这个例子中，我们创建了一个`VirtualScroll`类，通过传入容器、项高度、总项数和渲染回调函数来进行初始化。该类的`update`方法用于渲染出当前可视范围内部分的项目，并将它们放到文档碎片中，然后一次性添加到容器中。这样可以避免多次直接操作 DOM，减少性能消耗。当滚动时，`onScroll`方法将计算新的`startIndex`和`endIndex`，然后调用`update`方法进行更新。请注意，实际应用可能需要根据具体情况调整缓冲区大小等参数。
+
+ 进阶版本：使用 IntersectionObserver 来实现
+
+使用 `IntersectionObserver` 实现虚拟滚动就意味着我们会依赖于浏览器的 API 来观察哪些元素进入或离开视口（viewport），而非直接监听滚动事件。这样我们只需在需要时渲染或回收元素。
+
+以下是一个简化版使用 `IntersectionObserver` 来实现虚拟滚动的例子：
+
+```javascript
+class VirtualScroll {
+  constructor (container, itemHeight, totalItems, renderItem) {
+    this.container = container
+    this.itemHeight = itemHeight
+    this.totalItems = totalItems
+    this.renderItem = renderItem
+
+    this.observer = new IntersectionObserver(this.onIntersection.bind(this), {
+      root: this.container,
+      threshold: 1.0
+    })
+
+    this.items = new Map()
+
+    this.init()
+  }
+
+  init () {
+    // 填充初始屏幕的元素
+    for (let i = 0; i < this.totalItems; i++) {
+      const placeholder = this.createPlaceholder(i)
+      this.container.appendChild(placeholder)
+      this.observer.observe(placeholder)
+    }
+  }
+
+  createPlaceholder (index) {
+    const placeholder = document.createElement('div')
+    placeholder.style.height = `${this.itemHeight}px`
+    placeholder.style.width = '100%'
+    placeholder.dataset.index = index // store index
+    return placeholder
+  }
+
+  onIntersection (entries) {
+    entries.forEach((entry) => {
+      const index = entry.target.dataset.index
+      if (entry.isIntersecting) {
+        const rendered = this.renderItem(index)
+        this.container.replaceChild(rendered, entry.target)
+        this.items.set(index, rendered)
+      } else if (this.items.has(index)) {
+        const placeholder = this.createPlaceholder(index)
+        this.container.replaceChild(placeholder, this.items.get(index))
+        this.observer.observe(placeholder)
+        this.items.delete(index)
+      }
+    })
+  }
+}
+
+// Render item function
+function renderItem (index) {
+  const item = document.createElement('div')
+  item.classList.add('item')
+  item.textContent = `Item ${index}`
+  item.dataset.index = index
+  item.style.height = '30px' // Same as your itemHeight in VirtualScroll
+  return item
+}
+
+// Example usage:
+const container = document.getElementById('scroll-container') // This should be a predefined element in your HTML
+const itemHeight = 30 // Height of each item
+const itemCount = 1000 // Total number of items you have
+
+const virtualScroll = new VirtualScroll(container, itemHeight, itemCount, renderItem)
+```
+
+在这里我们创建了一个 `VirtualScroll` 类，构造函数接收容器元素、每个项的高度、总项目数和用于渲染每个项目的函数。我们在初始化方法中，为每个项目创建了一个占位符元素，并且向 `IntersectionObserver` 注册了这些占位元素。
+
+当一个占位元素进入到视口中时，我们就会渲染对应的项，并且将它替换这个占位符。当一个项离开视口，我们又会将它替换回原来的占位符并取消它的注册。
+
+这种方法的优势包括：
+
+* 不需要绑定滚动事件，防止滚动性能问题。
+* 浏览器会自动优化观察者的回调。
+* 不需要手动计算当前应该渲染的项目，当用户快速滚动时也不会遇到空白内容。
+
+## 一次性渲染十万条数据还能保证页面不卡顿 {#p1-virtuallist}
+
+原理其实就是 通过 `requestAnimationFrame` 实现分块儿加载。
+
+ requestAnimationFrame + fragment（时间分片）
+
+既然定时器的执行时间和浏览器的刷新率不一致，那么我就可以用`requestAnimationFrame`来解决
+
+`requestAnimationFrame`也是个定时器，不同于`setTimeout`，它的时间不需要我们人为指定，这个时间取决于当前电脑的刷新率，如果是 60Hz ，那么就是 16.7ms 执行一次，如果是 120Hz 那就是 8.3ms 执行一次
+
+> 因此`requestAnimationFrame`也是个宏任务，前阵子面试就被问到过这个
+
+这么一来，每次电脑屏幕 16.7ms 后刷新一下，定时器就会产生 20 个`li`，`dom`结构的出现和屏幕的刷新保持了一致
+
+```js
+const total = 100000
+const ul = document.getElementById('container')
+const once = 20
+const page = total / once
+
+function loop (curTotal) {
+  if (curTotal <= 0) return
+
+  const pageCount = Math.min(curTotal, once)
+
+  window.requestAnimationFrame(() => {
+    for (let i = 0; i < pageCount; i++) {
+      const li = document.createElement('li')
+      li.innerHTML = ~~(Math.random() * total)
+      ul.appendChild(li)
+    }
+    loop(curTotal - pageCount)
+  })
+}
+
+loop(total)
+```
+
+其实目前这个代码还可以优化一下，每一次`appendChild`都是新增一个新的`li`，也就意味着需要回流一次，总共十万条数据就需要回流十万次
+
+此前讲回流的时候提出过虚拟片段`fragment`来解决这个问题
+
+`fragment`是虚拟文档碎片，我们一次`for`循环产生 20 个`li`的过程中可以全部把真实`dom`挂载到`fragment`上，然后再把`fragment`挂载到真实`dom`上，这样原来需要回流十万次，现在只需要回流`100000 / 20`次
+
+```js
+const total = 100000
+const ul = document.getElementById('container')
+const once = 20
+const page = total / once
+
+function loop (curTotal) {
+  if (curTotal <= 0) return
+
+  const pageCount = Math.min(curTotal, once)
+
+  window.requestAnimationFrame(() => {
+    const fragment = document.createDocumentFragment() // 创建一个虚拟文档碎片
+    for (let i = 0; i < pageCount; i++) {
+      const li = document.createElement('li')
+      li.innerHTML = ~~(Math.random() * total)
+      fragment.appendChild(li) // 挂到fragment上
+    }
+    ul.appendChild(fragment) // 现在才回流
+    loop(curTotal - pageCount)
+  })
+}
+
+loop(total)
+```
+
+进阶： 如果做到极致的话， 可以考虑通过动态计算渲染的量， 一次性渲染多少。 会涉及到一些 长任务 等相关知识。
+这部分可以参考：[资料](https://juejin.cn/post/7328366295091380262)
+
+ 参考文档
+
+[资料](https://juejin.cn/post/7354940230301057033)
+
+## 下载进度
+
+要获取下载进度，可以使用 `XMLHttpRequest` 对象提供的 `onprogress` 事件。
+
+使用 onprogress 事件，可以获取文件的下载进度信息，可以通过 loaded 和 total 属性获取当前已经下载的字节数和文件的总字节数，从而计算出当前的下载进度。
+
+下面是一个使用 onprogress 事件获取文件下载进度的示例代码：
+
+```js
+const xhr = new XMLHttpRequest()
+xhr.open('GET', 'file.url', true)
+xhr.responseType = 'blob'
+xhr.onprogress = function (event) {
+  if (event.lengthComputable) {
+    const percentComplete = (event.loaded / event.total) * 100
+    console.log(`Downloaded ${percentComplete}%`)
+  }
+}
+xhr.onload = function (event) {
+  // 文件下载完成
+  const blob = xhr.response
+}
+xhr.send()
+```
+
+在上面的代码中，通过将 XMLHttpRequest 对象的 **responseType 设置为 blob**，来请求一个文件资源，然后监听 onprogress 事件，计算出当前的下载进度，并在控制台输出，最后在 onload 事件中获取到下载的文件内容。
+
+## 手写创建一个 ajax 请求 {#p0-ajax}
+
+一般来说，我们可以使用XMLHttpRequest对象来创建Ajax请求，其流程如下：
+
+1. 创建XMLHttpRequest对象，通过调用其构造函数来实现。
+2. 使用open()方法指定请求的方法、URL以及是否异步请求。
+3. 使用setRequestHeader()方法设置请求头，例如设置请求的Content-Type。
+4. 设置响应的回调函数，一般有onreadystatechange和onload两种方式。
+5. 使用send()方法发送请求。
+
+实现如下：
+
+```javascript
+const getJSON = function (url) {
+  const promise = new Promise(function (resolve, reject) {
+    function handler () {
+      if (this.readyState !== 4) {
+        return
+      }
+      if (this.status === 200) {
+        resolve(this.response)
+      } else {
+        reject(new Error(this.statusText))
+      }
+    }
+
+    const client = new XMLHttpRequest()
+    // 如果是IE的内核ActiveXObject('Microsoft.XMLHTTP');
+    client.open('GET', url)
+    client.onreadystatechange = handler
+    client.responseType = 'json'
+    client.setRequestHeader('Accept', 'application/json')
+    // 如果是post请求：client.setRequestHeader('Content-Type','application/X-WWW-form-urlencoded')
+    client.send()
+  })
+  return promise
+}
+
+getJSON('/posts.json').then(function (json) {
+  console.log('Contents: ' + json)
+}, function (error) {
+  console.error(' 出错了 ', error)
+})
+```
+
+* `xhr.open()` 第一个参数是请求的方法，可以是GET、POST、PUT等；第二个参数是请求的URL；第三个参数表示是否异步请求。
+
+* `setRequestHeader()`方法用于设置请求头，例如设置Content-Type，常见的值有application/json、application/x-www-form-urlencoded等
+
+* `onreadystatechange回调函数`会在XMLHttpRequest对象的状态发生变化时触发
+
+* 最后，调用send()方法发送请求。
+
+调函数一般有哪些？
+
+设置响应的回调函数，一般有 `onreadystatechange` 和 `onload` 两种方式；
+
+在 XMLHttpRequest 对象中，onreadystatechange 和 onload 是两种不同的事件回调函数。
+
+**onreadystatechange** :事件会在 readyState 的值改变时被触发，它会在请求过程中的每个状态改变时都被触发，从而可以通过 readyState
+的值来判断请求的过程。一般来说，onreadystatechange 回调函数需要根据 readyState 的不同值做出不同的处理，如：
+
+* readyState 为 1 （UNSENT）：代理被创建，但尚未调用 open() 方法；
+* readyState 为 1 （已经调用 open() 方法）时，可以做一些请求初始化的工作；
+* readyState 为 2 （已经调用 send() 方法）时，可以获取响应头信息；
+* readyState 为 3 （正在接收数据）时，可以获取响应的部分数据；
+* readyState 为 4 （已经接收到全部响应数据）时，可以对响应的数据进行处理。
+
+**onload**: 而 onload 事件则是在整个请求过程完成后被触发，表示整个请求已经完成。这个回调函数通常用来处理响应数据，如将响应数据渲染到页面中等。
+
+因此，onreadystatechange 和 onload 这两种回调函数的作用是不同的，需要根据不同的场景进行选择和使用。

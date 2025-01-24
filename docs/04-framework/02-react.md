@@ -40,10 +40,10 @@
 * 如果多次调用`setState`方法，React 会将这些状态更新请求合并在一起。这意味着 React 不会立即应用每个状态更新请求，而是会将它们合并成一个单一的状态更新。
 * 例如，如果在一个事件处理函数中多次调用`setState`方法：
 
- ```javascript
- handleClick() {
- this.setState({ count: this.state.count + 1 });
- this.setState({ count: this.state.count + 1 });
+ ```js
+function handleClick () {
+   this.setState({ count: this.state.count + 1 })
+   this.setState({ count: this.state.count + 1 })
  }
  ```
 
@@ -137,17 +137,17 @@ React 可能会将多个 `setState` 调用批量处理为一个更新，以优�
 
 ```javascript
 class MyComponent extends React.Component {
- constructor(props) {
- super(props);
- this.state = { count: 0 };
- }
+  constructor (props) {
+    super(props)
+    this.state = { count: 0 }
+  }
 
- handleClick = () => {
- // 方式一：对象形式
- this.setState({ count: this.state.count + 1 });
- // 方式二：函数形式
- this.setState((prevState) => ({ count: prevState.count + 1 }));
- };
+  handleClick () {
+    // 方式一：对象形式
+    this.setState({ count: this.state.count + 1 })
+    // 方式二：函数形式
+    this.setState((prevState) => ({ count: prevState.count + 1 }))
+  }
 }
 ```
 
@@ -363,6 +363,117 @@ Fiber 如何实现比较？双缓冲技术，在 diff 过程中创建新的 DOM 
 
 ## react router
 
+React Router 和浏览器原生 history API 在路由管理上主要有以下几个区别：
+
+1. **抽象级别**:
+
+* **React Router** 提供了更高层次的抽象，如 `<Router>`、`<Route>`、和 `<Link>` 等组件，这些都是专门为了在 React 中更方便地管理路由而设计的。它处理了底层 history API 的很多细节，把操作抽象成了 React 组件和 hooks。
+* **原生 history API** 更底层，直接作用于浏览器的历史记录栈。使用原生 history API 需要开发者自己编写更多的代码来管理 history 栈和渲染相应的组件。
+
+2. **便利性**:
+
+* **React Router** 提供了声明式导航和编程式导航的选项，并且有大量的社区支持和文档，易于使用和学习。
+* **原生 history API** 需要开发者自己处理 URL 与组件之间的关系映射，以及页面渲染的逻辑。
+
+3. **功能**:
+
+* **React Router** 除了包含对原生 history API 的基本封装外，还提供了如路由守卫、路由懒加载、嵌套路由、重定向等高级功能。
+* **原生 history API** 提供基本的历史记录管理功能，但是不包含上述 React Router 提供的高级应用路由需求。
+
+4. **集成**:
+
+* **React Router** 是专为 React 设计的，与 React 的生命周期、状态管理等密切集成。
+* **原生 history API** 与 React 没有直接关联，需要用户手动实现整合。
+
+5. **状态管理**:
+
+* **React Router** 可以将路由状态管理与应用的状态管理（如使用 Redux）结合起来，使路由状态可预测和可管理。
+* **原生 history API** 通常需要额外的状态管理逻辑来同步 UI 和 URL。
+
+6. **服务器渲染**:
+
+* **React Router** 可以与服务器渲染一起使用，支持同构应用程序，即客户端和服务器都可以进行路由渲染。
+* **原生 history API** 主要是针对客户端的，因此在服务器端渲染中需要额外的处理来模拟 routing 行为。
+
+在考虑是否使用 React Router 或者原生 history API 时，通常需要考虑项目的复杂性、团队的熟悉度以及项目对路由的特定需求。对于大多数 React 项目而言，React Router 的便利性和其附加的高级特性通常使得它成为首选的路由解决方案。
+
+**表格对比**
+
+| 特性 | React Router | 原生 History API |
+| ------------ | -------------------------------------------------------------- | ------------------------------------------ |
+| 抽象级别 | 高层次抽象，提供了组件和 hooks | 底层 API，直接操作历史记录栈 |
+| 便利性 | 声明式和编程式导航，社区支持和文档齐全 | 手动处理 URL 和组件映射，以及渲染逻辑 |
+| 功能 | 路由守卫、懒加载、嵌套路由、重定向等 | 基本的历史记录管理 |
+| 集成 | 与 React 生命周期和状态管理紧密集成 | 需要手动整合到 React 中 |
+| 状态管理 | 与应用的状态管理系统（如 Redux）可集成，路由状态可预测和可管理 | 需要额外实现状态管理逻辑 |
+| 服务器渲染 | 支持同构应用程序，客户端和服务器都能渲染 | 主要用于客户端，服务器端需要模拟 |
+| 开发者工作量 | 由库处理大部分的路由逻辑，简化开发者工作 | 需要开发者手动编写代码管理路由 |
+| 社区和资源 | 广泛的社区和资源，易于获取帮助和解决方案 | 相对较少的社区资源，通常需求独立解决 |
+| 用户体验 | 通常能提供更顺畅的用户体验 | 可能因为实现不当导致的复杂性和用户体验问题 |
+
+在 React 项目中，你完全可以不使用 `react-router` 而是使用浏览器原生的 `history` API 来手动管理路由。这通常会涉及以下几个步骤：
+
+1. 使用 `history.pushState()` 和 `history.replaceState()` 方法来添加和修改浏览器历史条目。
+2. 侦听 `popstate` 事件来响应浏览器历史的变化。
+3. 根据当前的 URL 状态，手动渲染对应的 React 组件。
+
+例如，下面是一个简单的例子，演示了如何在没有 `react-router` 的情况下使用原生 `history` API 来管理路由。
+
+```jsx
+class App extends React.Component {
+  componentDidMount () {
+    // 当用户点击后退/前进按钮时触发路由变化
+    window.onpopstate = this.handlePopState
+    // 初始页面加载时处理路由
+    this.route()
+  }
+
+  handlePopState () {
+    // 处理路由变化
+    this.route()
+  }
+
+  route () {
+    const path = window.location.pathname
+    // 根据 path 渲染不同的组件
+    switch (path) {
+      case '/page1':
+        // 渲染 Page1 组件
+        break
+      case '/page2':
+        // 渲染 Page2 组件
+        break
+        // 其他路由分支...
+      default:
+        // 渲染默认组件或404页面
+        break
+    }
+  }
+
+  navigate (path) {
+    // 更新历史记录并触发路由变化
+    window.history.pushState(null, '', path)
+    this.route()
+  }
+
+  render () {
+    return (
+      <div>
+      <button onClick={() => this.navigate('/page1')}>Go to Page 1</button>
+      <button onClick={() => this.navigate('/page2')}>Go to Page 2</button>
+      {/* 这里根据路由渲染对应的组件 */}
+      </div>
+    )
+  }
+}
+
+// 实际的页面组件
+const Page1 = () => <div>Page 1</div>
+const Page2 = () => <div>Page 2</div>
+```
+
+尽管手动管理路由是可能的，但使用 `react-router` 这类专门设计的库通常会大大简化路由管理的工作。它为路径匹配、路由嵌套、重定向等提供了便利的抽象，并且和 React 的声明式方式很好地集成在一起。如果不是为了特别的原因，通常推荐使用现成的路由库来管理 React 应用的路由，以避免重新发明轮子。
+
 ## redux
 
 ## redux 日志记录插件
@@ -465,33 +576,33 @@ function UncontrolledForm () {
 
 ```javascript
 // HOC 示例
-function withSubscription(WrappedComponent, selectData) {
+function withSubscription (WrappedComponent, selectData) {
   return class extends React.Component {
-    constructor(props) {
-      super(props);
+    constructor (props) {
+      super(props)
       this.state = {
         data: selectData(DataSource, props)
-      };
+      }
     }
-    
-    componentDidMount() {
-      DataSource.addListener(this.handleChange);
+
+    componentDidMount () {
+      DataSource.addListener(this.handleChange)
     }
-    
-    componentWillUnmount() {
-      DataSource.removeListener(this.handleChange);
+
+    componentWillUnmount () {
+      DataSource.removeListener(this.handleChange)
     }
-    
-    handleChange = () => {
+
+    handleChange () {
       this.setState({
         data: selectData(DataSource, this.props)
-      });
+      })
     }
-    
-    render() {
-      return <WrappedComponent data={this.state.data} {...this.props} />;
+
+    render () {
+      return <WrappedComponent data={this.state.data} {...this.props} />
     }
-  };
+  }
 }
 ```
 
@@ -1078,31 +1189,32 @@ export default Modal
 
 现在，我们可以在应用程序的任何其他组件中使用这个 `Modal` 组件了，不论它们在 DOM 树中的位置如何：
 
-```javascript
+```jsx
 // App.js
-import React from "react";
-import Modal from "./Modal";
+import React from 'react'
+import Modal from './Modal'
 
 class App extends React.Component {
- constructor(props) {
- super(props);
- this.state = { showModal: false };
- }
+  constructor (props) {
+    super(props)
+    this.state = { showModal: false }
+  }
 
- handleShow = () => {
- this.setState({ showModal: true });
- };
+  handleShow () {
+    this.setState({ showModal: true })
+  }
 
- handleClose = () => {
- this.setState({ showModal: false });
- };
+  handleClose () {
+    this.setState({ showModal: false })
+  }
 
- render() {
- return (
+  render () {
+    return (
  <div className="App">
  <button onClick={this.handleShow}>显示模态框</button>
 
- {this.state.showModal ? (
+ {this.state.showModal
+   ? (
  <Modal>
  <div className="modal">
  <div className="modal-content">
@@ -1111,13 +1223,14 @@ class App extends React.Component {
  </div>
  </div>
  </Modal>
- ) : null}
+     )
+   : null}
  </div>
- );
- }
+    )
+  }
 }
 
-export default App;
+export default App
 ```
 
 在以上代码中，无论 `Modal` 组件在 `App` 组件中的位置如何，模态框的渲染位置总是在 `#modal-root` 中，这是一个典型的使用 React Portals 的例子。上述代码中的模态框在视觉上会覆盖整个应用程序的位置，但在组件层次结构中它仍然是 `App` 组件的子组件。
@@ -1182,3 +1295,68 @@ function withSubscription(WrappedComponent, selectData) {
 * 对于 HOC，通常需要注意不要在 render 方法中创建 HOC，因为这会导致组件的不必要的重新挂载。
 
 总而言之，HOC 是 React 中一个非常有用的模式，允许开发者以声明方式抽象组件逻辑，提高组件复用。
+
+## 为什么 react 组件， 都必须要申明一个 `import React from 'react';` {#p4-import-react}
+
+首先要知道一个事情： **JSX 是无法直接运行在浏览器环境**。
+
+ 原因
+
+JSX 语法不能直接被浏览器解析和运行，因此需要插件 `@babel/plugin-transform-react-jsx` 来转换语法，使之能够在浏览器或任何 JavaScript 环境中执行。
+
+所以 React 组件需要引入`React`的一个主要原因是：在组件中使用 JSX 时，JSX 语法最终会被 Babel 编译成使用`React.createElement`方法的 JavaScript 代码。也就是说，任何使用 JSX 的 React 组件的背后都隐含了`React.createElement`的调用。
+
+例如，当你编写如下的 JSX 代码：
+
+```jsx
+const MyComponent = () => {
+ return <div>Hello, World!</div>;
+};
+```
+
+Babel 会将这段 JSX 编译为如下的 JavaScript 代码：
+
+```javascript
+const MyComponent = () => {
+  return React.createElement('div', null, 'Hello, World!')
+}
+```
+
+由于编译后的代码调用了`React.createElement`，因此你需要在文件顶部导入`React`对象才能使用它。即使你在组件中并没有直接使用`React`对象，编译后的代码依赖于`React`的运行时。
+
+ Babel 7.0+ / React 17+ ， 可以不再需要 import React
+
+在 Babel 7.0 版本之后，`@babel/plugin-transform-react-jsx` 插件还支持一个自动模式，它可以自动引入 JSX 转换所需的`React`包，无需手动在每个文件中添加 `import React from 'react'`。
+
+注意，随着 React 17 的新 JSX 变换，它们引入了一个新的 JSX 转换方式，这在新的 Babel 插件 `@babel/plugin-transform-react-jsx` 和 `@babel/preset-react` 中得到了支持。这意味着在写 JSX 时，你不再需要导入 React。这个插件现在接收一个 `{ runtime: 'automatic' }` 选项来启用这一特性。
+
+举个例子，在使用新的 JSX 转换之后，编译器将会自动引入 JSX 的运行时库，而不是 React，例如对于一个使用了新转换的`MyComponent`的组件:
+
+```jsx
+// React 17+ 及支持新JSX转换的环境，可以不需要显式写这行
+// import React from 'react';
+
+const MyComponent = () => {
+ return <div>Hello, World!</div>;
+};
+```
+
+在新的转换下，你会看到类似`import { jsx as _jsx } from 'react/jsx-runtime'`的东西或者类似的别名，被自动插入到转译后的文件中，而不再是直接的`React.createElement`调用。这就是为什么在新版本的 React 中，你可能不再需要手动导入 React 了。
+
+ 补充一个细节知识点： plugin-transform-react-jsx`和`@babel/preset-react` 是啥关系
+
+**它们是包含关系**： `@babel/preset-react` 包括了 `@babel/plugin-transform-react-jsx`
+
+`@babel/plugin-transform-react-jsx` 和 `@babel/preset-react` 都是 Babel 插件，它们在处理 React 项目中的 JSX 代码方面有关联，但它们的用途和包含的内容有所不同。
+
+1. **@babel/plugin-transform-react-jsx**:
+ 这是一个特定的 Babel 插件，它的功能就是将 JSX 语法转换为`React.createElement` 调用。随着 React 17 的更新，它还允许使用新的 JSX 转换，无需导入 React 就可以使用 JSX。这意味着，在文件中不再需要 `import React from 'react'` 语句了，就可以使用 JSX。
+
+ 这个插件通常用于开发者想要精细控制某个具体转换功能时。如果你只需要转换 JSX 语法，但不需要处理其他与 React 相关的转换或优化，你可能会单独使用这个插件。
+
+2. **@babel/preset-react**:
+ 这是一个 Babel 预设，它是一组 Babel 插件的集合，旨在为 React 项目提供所需的全部 Babel 插件。`@babel/preset-react` 包括了 `@babel/plugin-transform-react-jsx`，但它还包含了其他一些插件，如处理 React 的显示名称的 `@babel/plugin-transform-react-display-name`，以及为开发模式和生产模式添加/删除某些代码的插件。
+
+ 预设的好处是简化了配置过程。开发者可以在 Babel 的配置中一次性添加 `@babel/preset-react`，而不是单独添加每一个与 React 相关的 Babel 插件。此外，预设将维护这些插件的正确版本和顺序，这有助于避免潜在的配置错误。
+
+在实践中，大多数开发 React 应用的开发者会使用 `@babel/preset-react` 因为它提供了一个即插即用的 Babel 环境，无需担心各个插件的具体细节。但是也有些情况下，为了更细致的优化和控制，开发者可能会选择手动添加特定的插件，包括 `@babel/plugin-transform-react-jsx`。

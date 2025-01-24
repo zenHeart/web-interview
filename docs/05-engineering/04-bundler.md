@@ -110,25 +110,25 @@ Tree Shaking 是一个通过清除未引用代码（dead-code）的过程，可�
 Webpack 通过压缩输出文件来减小包大小，如删除未使用的代码、缩短变量名等。确保在生产环境中启用了 UglifyJS 插件或 TerserPlugin。
 
 ```javascript
-const TerserPlugin = require("terser-webpack-plugin");
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
- optimization: {
- minimize: true,
- minimizer: [
- new TerserPlugin({
- /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 附加选项 */
- }),
- ],
- },
-};
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+
+      })
+    ]
+  }
+}
 ```
 
  3. **代码分割(Code Splitting)**
 
 通过代码分割，你可以把代码分成多个 bundle，然后按需加载，从而减少初始加载时间。Webpack 提供了多种分割代码的方式，最常见的是动态导入（Dynamic Imports）。
 
-```javascript
+```js
 import(/* webpackChunkName: "my-chunk-name" */ 'path/to/myModule').then((module) => {
   // 使用module
 })
@@ -151,12 +151,14 @@ module.exports = {
 使用 `[contenthash]` 替换 `[hash]` 或 `[chunkhash]` 来为输出文件命名，这确保了只有当文件内容改变时，文件名称才会改变，可以更好地利用浏览器缓存。
 
 ```javascript
-output: {
- filename: '[name].[contenthash].js',
+const config = {
+  output: {
+    filename: '[name].[contenthash].js'
+  }
 }
 ```
 
- 6. **移除未使用的 CSS**
+6. **移除未使用的 CSS**
 
 使用 PurgeCSS 或`purify-css`等工具检查你的 CSS 文件，自动去除未使用的 CSS，可以极大地压缩 CSS 的体积。
 
@@ -164,26 +166,28 @@ output: {
 const PurgecssPlugin = require('purgecss-webpack-plugin')
 ```
 
- 7. **优化图片**
+7. **优化图片**
 
 使用`image-webpack-loader`等图片压缩插件，可以减小图片文件的体积。
 
-```javascript
-module: {
- rules: [
- {
- test: /\.(png|svg|jpg|jpeg|gif)$/i,
- use: [
- 'file-loader',
- {
- loader: 'image-webpack-loader',
- options: {
- // 配置选项
- },
- },
- ],
- },
- ],
+```js
+const config = {
+  module: {
+    rules: [
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        use: [
+          'file-loader',
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              // 配置选项
+            }
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
 
@@ -509,7 +513,7 @@ module.exports = {
 
 3. **配置 `output`**: 虽然不是必须的，你还可以在 output 中定义 `filename` 和 `chunkFilename`，来控制主入口和非主入口 chunks 的文件名。
 
-```javascript
+```
 output: {
  filename: '[name].[contenthash].js',
  chunkFilename: '[name].[contenthash].js'
@@ -840,6 +844,60 @@ module.exports = {
    2. 非浏览器环境，通过 require 加载
    3. 不同 module 类型，处理方式不同
 
+在使用 Webpack 打包的项目中，通常资源（如 JavaScript、CSS、图片等）会被 Webpack 处理，因为 Webpack 的设计初衷就是将所有资源视为模块，并进行有效的管理和打包。但有时候可能需要通过`<script>`标签直接引入资源，这通常有两种情况：
+
+1. **在 HTML 文件中直接引入：**
+ 可以在项目的 HTML 文件中直接使用`<script>`标签来引入外部资源：
+
+ ```html
+ <!-- 若要使用 CDN 上托管的库 -->
+ <script src="https://cdn.example.com/library.js"></script>
+ ```
+
+ 这种方法简单直接，但要记住，由于这些资源不会被 Webpack 处理，它们不会被包含在 Webpack 的依赖图中，并且也不会享受到 Webpack 的各种优化。
+
+2. **使用 Webpack 管理：**
+ 如果想要 Webpack 来处理这些通过`<script>`引入的资源，可以使用几种插件和加载器：
+
+* `html-webpack-plugin`可以帮助你生成一个 HTML 文件，并在文件中自动引入 Webpack 打包后的 bundles。
+* `externals`配置允许你将一些依赖排除在 Webpack 打包之外，但还是可以通过`require`或`import`引用它们。
+* `script-loader`可以将第三方全局变量注入的库当作模块来加载使用。
+
+ 例如，使用`html-webpack-plugin`和`externals`，你可以将一个库配置为 external，然后通过`html-webpack-plugin`将其引入：
+
+ ```javascript
+ // webpack.config.js 文件
+ const HtmlWebpackPlugin = require('html-webpack-plugin')
+ 
+ module.exports = {
+ // ...
+   externals: {
+     libraryName: 'LibraryGlobalVariable'
+   },
+   plugins: [
+     new HtmlWebpackPlugin({
+       template: 'src/index.html',
+       scriptLoading: 'blocking' // 或者 'defer'
+     })
+   ]
+ }
+ ```
+
+ 然后，在你的`index.html`模板文件中可以这样引入资源：
+
+ ```html
+ <script src="https://cdn.example.com/library.js"></script>
+ ```
+
+ 使用`externals`的方法能让你在 Webpack 打包的模块代码中用正常的`import`或`require`语句来引用那个全局变量：
+
+ ```javascript
+ // 你的 JavaScript 代码文件中
+ import Library from 'libraryName' // 虽然定义了external，Webpack依然会处理这个import
+ ```
+
+应根据项目需求和现有的架构来决定使用哪种方法。上述两种方法中，第二种可以更好地利用 Webpack 的功能，第一种则更加简单直接。
+
 ## rollup 为什么快 {#p1-rollup-webpack-difference}
 
 1. esm 静态分析，优于 commonjs 动态分析
@@ -912,6 +970,30 @@ Webpack 的 Tree Shaking 主要是用来消除未被使用的代码，以减小�
 
 总之，Webpack 的 Tree Shaking 通过静态分析模块依赖关系，识别并消除未使用的代码，从而优化打包文件的大小和性能。它依赖于 ES2015 模块语法和准确的模块依赖分析，同时需要注意一些实现条件和潜在的问题。
 
+## babel 核心库有哪些？ {#p4-babel-library}
+
+Babel 是一个 JavaScript 编译器，主要用于将 ES6 及以上版本的代码转换为向后兼容的 JavaScript 语法，以便在当前和旧版浏览器或环境中执行。核心的 Babel 库主要包括：
+
+1. **@babel/core**:
+ 这是 Babel 编译器的核心包，提供了 Babel 的主要转换引擎。它包含了解析、转换和生成代码的主要功能。几乎所有的 Babel 操作都需要这个模块作为基础。
+
+1. **@babel/cli**:
+ 这是 Babel 的命令行接口，通过它可以在终端或命令提示符中运行 Babel。它允许你执行转编译操作，如将 ES6 代码转换为 ES5。
+
+1. **@babel/preset-env**:
+ 这是一个智能预设，允许你使用最新的 JavaScript，而不必管理语法转换。`@babel/preset-env`会根据你的目标环境（比如特定版本的浏览器或 Node.js），自动决定使用哪些 Babel 插件和 polyfills。
+
+1. **@babel/polyfill** (现在已经被废弃，推荐使用 `core-js` 和 `regenerator-runtime`):
+ 早期 Babel 版本中用于模拟完整的 ES2015+环境的包。它的目的是在全局范围内添加填充以模拟较新的环境。从 Babel 7.4.0 开始，建议直接包括 `core-js` 和 `regenerator-runtime`，因为这提供了更好的模块化和按需加载功能。
+
+1. **babel-loader**:
+ 这是 Babel 的一个 webpack 插件，可以将 Babel 集成到 webpack 构建过程中，使得你可以使用 webpack 来处理和打包使用了新版 JavaScript 语法的文件。
+
+1. **@babel/plugin-transform-runtime**:
+ 这个插件用于复用 Babel 注入的辅助代码，以节省代码大小，并能够在不污染全局环境的情况下使用新语言特性的 polyfills。
+
+除了这些核心库外，还有许多可用的 Babel 插件，以支持各种 JavaScript 语法和特性（比如装饰器、类属性等）。这些插件可以按需引入，配置在 Babel 的配置文件（通常是`.babelrc`或`babel.config.js`）中。这些插件的命名通常遵循 `@babel/plugin-` 的格式。
+
 ## babel-runtime 作用是啥 {#p2-babel}
 
 `babel-runtime` 是一个包含 `babel` 模块化运行时助手的库。
@@ -933,3 +1015,32 @@ import promise from 'babel-runtime/core-js/promise'
 ```
 
 总的来说，`babel-runtime` 更像是一种按需加载的实现方式，适用于开发库、工具等场景，可避免对全局作用域的污染，同时减少重复代码。
+
+## 打包时 hash 码是如何生成的 {#p2-webpack-hash}
+
+Webpack 在打包过程中生成 hash 码主要用于缓存和版本管理。主要有三种类型的 hash 码：
+
+1. hash：是和整个项目的构建相关，只要项目文件有修改，整个项目构建的 hash 值就会更改。这意味着任何一个文件的改动都会影响到整体的 hash 值。
+
+2. chunkhash：与 webpack 打包的 chunk 有关，不同的 entry 会生成不同的 chunkhash 值。例如，如果你的配置生成了多个 chunk（例如使用了 code splitting），每个 chunk 的更新只会影响到它自身的 chunkhash。
+
+3. contenthash：根据文件内容来定义 hash，内容不变，则 contenthash 不变。这在使用诸如 CSS 提取到单独文件的插件时特别有用，因此只有当文件的内容实际改变时，浏览器才会重新下载文件。
+
+生成方式：
+
+* hash 和 chunkhash 主要是通过某种 hash 算法（默认 MD5）来对文件名或者 chunk 数据进行编码。
+* contenthash 是通过构建时的 webpack 插件（如 mini-css-extract-plugin）来处理的，它会对文件内容进行 hash。
+
+Hash 码的生成可以被 webpack 配置的 hashFunction，hashDigest，hashDigestLength 等选项影响。例如，你可以选择不同的算法如 SHA256 或者 MD5，以及可以决定 hash 值的长度。
+
+在 webpack 的配置文件中，可以通过如下方式设定 hash:
+
+```javascript
+const config = {
+  output: {
+    filename: '[name].[chunkhash].js'
+  }
+}
+```
+
+这会将输出的文件名设置为入口名称加上基于每个 chunk 内容的 hash。在使用 `webpack-dev-server` 或者 `webpack --watch` 时，不会生成实际的文件，所以这些 hash 值是在内存中计算并关联的。

@@ -2,7 +2,185 @@
 
 ## http 基本流程
 
+* 建立TCP连接：客户端通过三次握手建立TCP连接。
+
+* 发送请求：客户端向服务器发送一个HTTP请求报文。
+
+* 服务器响应：服务器收到请求后，返回一个HTTP响应报文。
+
+* 客户端接收响应：客户端收到响应后，根据响应中的状态码判断请求是否成功。
+
+* 关闭连接：如果响应中包含 Connection: close 头部，那么连接关闭，否则保持连接，可以继续发送请求。
+
+HTTP/2中
+
+建立连接过程使用了多路复用，可以在一个连接上同时处理多个请求和响应，具体过程如下：
+
+* 客户端和服务器建立TCP连接。
+
+* 客户端发送一个HTTP/2的SETTINGS帧，其中包含一些配置信息，如帧的大小和流的并发数量等。
+
+* 服务器返回一个HTTP/2的SETTINGS帧，确认了客户端发送的设置。
+
+* 客户端发送一个HTTP/2的HEADERS帧，其中包含了第一个请求的信息，同时还包含了一个唯一的标识符，称为流ID。
+
+* 服务器返回一个HTTP/2的HEADERS帧，其中包含了响应的信息，同时也包含了与请求相同的流ID。
+
+* 客户端可以在同一个连接上发送多个请求和响应，每个请求和响应都包含一个流ID，用于标识请求和响应之间的关系。
+
+* 当客户端或服务器想要关闭连接时，它可以发送一个HTTP/2的GOAWAY帧，表示不再接受新的请求或响应，并且将连接关闭。
+
+总之，HTTP/1.1是基于请求-响应模型的，每次请求都需要建立一个新的连接。而HTTP/2使用多路复用，可以在一个连接上处理多个请求和响应，提高了性能和效率。
+
 ## http 缓存控制
+
+HTTP 缓存策略有哪些？
+
+HTTP缓存策略是指浏览器和服务器之间在传输资源时，如何使用缓存的方式。HTTP缓存的主要目的是减少网络传输的数据量，提高页面的访问速度。
+
+存的主要策略有哪些？
+
+HTTP缓存策略主要包括以下几种：
+
+* `强缓存：`通过设置 HTTP 头部中的 Expires 或 Cache-Control 字段来指定资源在本地缓存的有效期。当资源未过期时，浏览器直接从缓存中读取，不会向服务器发送请求，从而提高页面的访问速度。
+
+* `协商缓存：`当资源的缓存时间已经过期，浏览器会向服务器发送请求，服务器会检查资源是否有更新，如果没有更新，则返回 304 状态码，告诉浏览器直接使用本地缓存。
+* `Last-Modified / If-Modified-Since`：服务器在返回资源时，会添加 Last-Modified 头部字段，表示资源最后的修改时间。当浏览器下次请求该资源时，会在请求头部添加 If-Modified-Since 字段，表示上次请求时资源的修改时间。服务器检查这两个时间是否一致，如果一致，则返回 304 状态码，否则返回新的资源。
+* `ETag / If-None-Match`：服务器在返回资源时，会添加 ETag 头部字段，表示资源的唯一标识。当浏览器下次请求该资源时，会在请求头部添加 If-None-Match 字段，表示上次请求时资源的唯一标识。服务器检查这两个标识是否一致，如果一致，则返回 304 状态码，否则返回新的资源。
+
+* `离线缓存：`通过使用 HTML5 提供的 Application Cache API，可以将页面的资源缓存在本地，使得用户在没有网络连接的情况下也能够访问页面。
+
+* `Service Worker 缓存：`Service Worker 是一种在浏览器后台运行的 JavaScript 线程，可以拦截和处理浏览器发送的网络请求。通过使用 Service Worker，可以将页面的资源缓存在本地，提高页面的访问速度和用户体验。
+
+缓存中 Expires 或 Cache-Control 有什么区别？
+
+在 HTTP 缓存策略中，强缓存是指在一定时间内，直接使用本地缓存而不发送请求到服务器。`Expires 和 Cache-Control` 是用于设置强缓存的两种方式。
+
+* Expires: 是 HTTP/1 的产物，它是一个 HTTP 头字段，`表示资源过期时间，是一个绝对时间`。服务器返回的 HTTP 头中，如果包含 Expires 字段，则表示该资源在该过期时间之前可以直接从缓存中获取，而不需要再次请求服务器。
+* Cache-Control: 是 `HTTP/1.1` 的产物，是一个 HTTP 头字段，用来控制文档缓存行为。它的值可以是很多不同的指令，例如 `max-age、no-cache、no-store、must-revalidate` 等等。其中，`max-age` 指令可以设置资源的最大有效时间，单位是秒。如果服务器返回的 HTTP 头中包含 Cache-Control 指令，则浏览器会根据该指令的值来决定是否直接使用本地缓存，而不需要再次请求服务器。
+
+Expires 是一个绝对时间，因此它的缺点是当服务器的时间与客户端的时间不一致时，缓存过期时间就可能会出现偏差。
+而 Cache-Control 是一个相对时间，因此它的缺点是需要服务器和客户端的时间保持一致，同时需要正确设置 max-age 的值。
+在实际应用中，建议使用 Cache-Control，因为它更加灵活和可控。
+
+线缓存 Application Cache API 是如何缓存 http 资源的？
+
+`Application Cache API（应用程序缓存）`是 HTML5 标准中提供的一个用于离线缓存 Web 应用程序的技术。它可以将 Web 应用程序中的文件（包括 HTML、CSS、JavaScript 和图像等）保存到客户端浏览器中的缓存中，在没有网络连接的情况下，仍然能够访问应用程序。
+
+在 Application Cache API 中，通过在 `cache manifest 文件中列出需要缓存的资源列表来实现离线缓存`。该文件必须以 `.appcache` 为后缀名，`并且必须在 Web 服务器上进行访问。`浏览器会下载该文件，并将文件中列出的资源文件下载到本地缓存中。当应用程序在离线状态下打开时，浏览器会自动从本地缓存中加载缓存的文件。
+
+下面是一个简单的 cache manifest 文件示例：
+
+```
+CACHE MANIFEST
+version 1.0.0
+
+CACHE:
+index.html
+styles.css
+script.js
+image.jpg
+
+NETWORK:
+*
+
+FALLBACK:
+```
+
+上面的示例文件将缓存 index.html、styles.css、script.js 和 image.jpg 等资源文件，同时指定 NETWORK 和 FALLBACK，这两个属性分别用于指定离线缓存不生效时的网络连接策略和替换资源文件。
+
+需要注意的是，Application Cache API 并不是一种完美的缓存技术，它也存在一些缺陷。例如，**当更新 Web 应用程序时，需要手动清除客户端浏览器中的缓存才能生效**，否则用户访问的仍然是旧版本的应用程序。同时，Application Cache API **只能缓存 GET 请求**，不支持 POST 等其他请求方法。因此，为了更好地实现离线缓存，可以使用其他技术，例如 Service Worker。
+
+ervice Worker 是如何缓存 http 请求资源的？
+
+Service Worker 是一种在浏览器后台运行的脚本，可以拦截和处理浏览器网络请求。因此，可以使用 Service Worker 来缓存 http 请求资源。
+
+Service Worker 可以通过以下步骤来缓存 http 请求资源：
+
+1. 注册 Service Worker：通过在页面中注册 Service Worker，可以告诉浏览器使用 Service Worker 来处理网络请求。
+
+2. 安装 Service Worker：一旦 Service Worker 被注册，浏览器就会下载并安装它。在安装过程中，Service Worker 可以缓存一些静态资源（如 HTML、CSS 和 JavaScript 文件）。
+
+3. 激活 Service Worker：一旦 Service Worker 安装成功，它就可以被激活。在激活过程中，Service Worker 可以删除旧版本的缓存，或者执行其他一些操作。
+
+4. 拦截网络请求：一旦 Service Worker 被激活，它就可以拦截浏览器发送的网络请求。
+
+5. 处理网络请求：当 Service Worker 拦截到网络请求时，它可以执行一些自定义的逻辑来处理这些请求。例如，它可以检查缓存中是否已经存在该请求的响应，如果存在，则直接返回缓存中的响应，否则，它可以将请求发送到服务器并缓存服务器的响应。
+
+6. 更新缓存：如果缓存中的资源发生了变化，Service Worker 可以自动更新缓存。例如，它可以在后台下载最新的资源，并更新缓存中的文件。
+
+需要注意的是，使用 Service Worker 来缓存 http 请求资源需要一些额外的工作。例如，**需要编写 Service Worker 脚本来处理请求，并且需要将该脚本注册到浏览器中**。此外，还需要考虑一些缓存策略，以确保缓存的数据与服务器上的数据保持同步。
+
+**下面是一个使用 Service Worker 实现缓存的示例代码：**
+
+```js
+// 注册 Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope)
+    }, function (err) {
+      console.log('ServiceWorker registration failed: ', err)
+    })
+  })
+}
+
+// 安装 Service Worker
+self.addEventListener('install', function (event) {
+  console.log('ServiceWorker install')
+  event.waitUntil(
+    caches.open('my-cache').then(function (cache) {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/script.js',
+        '/image.png'
+      ])
+    })
+  )
+})
+
+// 激活 Service Worker
+self.addEventListener('activate', function (event) {
+  console.log('ServiceWorker activate')
+})
+
+// 拦截网络请求
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.match(event.request).then(function (response) {
+      if (response) {
+        console.log('ServiceWorker fetch from cache:', event.request.url)
+        return response
+      } else {
+        console.log('ServiceWorker fetch from network:', event.request.url)
+        return fetch(event.request)
+      }
+    })
+  )
+})
+
+// 更新缓存
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(cacheName => {
+          return cacheName.startsWith('my-cache') &&
+ cacheName !== 'my-cache'
+        }).map(cacheName => {
+          return caches.delete(cacheName)
+        })
+      )
+    })
+  )
+})
+```
+
+当网络请求到来时，会首先在缓存中查找对应的资源，如果有则直接返回缓存中的资源，否则从网络中获取资源并返回。这样就可以实现基本的离线缓存功能。
+
+在这个示例中，当 Service Worker 被安装时，我们打开一个新的缓存并将应用程序的静态资源添加到缓存中。在 fetch 事件中，我们拦截每个网络请求并尝试匹配它们到我们的缓存中，如果匹配到了则返回缓存的响应，否则通过 fetch 方法从网络中获取资源。在 activate 事件中，我们可以更新缓存，删除旧的缓存项并将新的缓存项添加到缓存中。
 
 ## http 缓存 header 中的 Date 与 Last-Modified 有什么不同 {#p1-http-cache-header-date-last-modified}
 
@@ -141,6 +319,71 @@
 
 ## 什么是跨域资源共享 (CORS)？它用于解决什么问题？
 
+CORS（Cross-Origin Resource Sharing，跨域资源共享）是一种用于让浏览器绕过同源策略限制，实现跨域访问资源的机制。在浏览器端，JavaScript 的跨域请求必须要经过浏览器的同源策略限制，即只能向同一域名下的服务器发送请求，而不能向其它域名的服务器发送请求。CORS 提供了一种通过在服务端设置响应头的方式来实现浏览器端跨域请求的机制。
+
+**基本概念有哪些？**
+
+1. 预检请求（Preflight Request）：在实际请求之前，浏览器会发送一个预检请求OPTIONS，来确认服务端是否接受实际请求。
+
+2. 简单请求（Simple Request）：满足以下条件的请求为简单请求：请求方法为GET、HEAD或POST；HTTP头信息不超出Accept、Accept-Language、Content-Language、Content-Type、Last-Event-ID、DPR、Save-Data、Viewport-Width、Width；Content-Type的值仅限于text/plain、multipart/form-data、application/x-www-form-urlencoded。
+
+3. 非简单请求（Non-simple Request）：不满足简单请求条件的请求。
+
+4. CORS安全规则（CORS Safelisting Rules）：指的是CORS中服务端响应的Access-Control-Allow-Origin，指定是否允许跨域请求的源。
+
+5. withCredentials：指的是XMLHttpRequest中的一个属性，用于在请求中携带cookie信息。
+
+6. 暴露Header（Exposed Headers）：在CORS响应中，Access-Control-Expose-Headers头用于暴露哪些响应头给客户端使用。
+
+7. 存储 Cookies（Cookie Storage）：跨域请求中，浏览器默认不会发送cookie信息，需要在服务端设置Access-Control-Allow-Credentials和客户端设置withCredentials为true才能实现。
+
+8. 跨域请求中的安全问题（CORS Security Issues）：CORS的出现，引入了一些安全问题，例如CSRF、XSS等，需要在开发中做好防范措施。
+
+何实现跨域请求？
+
+在 HTTP 请求中，使用了 CORS 标准头部来告诉浏览器该请求是跨域请求，并且在服务端设置 Access-Control-Allow-Origin 头部来允许指定的域名访问资源。
+
+**客户端 CORS 标准头部有以下几个：**
+
+* Origin：表示请求来自哪个域名。
+* Access-Control-Request-Method：表示请求的方法类型（比如 GET、POST 等）。
+* Access-Control-Request-Headers：表示请求头中的额外信息（比如 Content-Type 等）。
+
+**服务端返回的响应头部有以下几个：**
+
+* Access-Control-Allow-Origin：表示允许的域名访问该资源，可以设置为表示任何域名都可以访问。
+* Access-Control-Allow-Credentials：表示是否允许浏览器携带 Cookie 和认证信息等，默认为 false。
+* Access-Control-Allow-Methods：表示允许的请求方法类型。
+* Access-Control-Allow-Headers：表示允许的请求头中的额外信息。
+
+通过在服务端设置这些头部，可以实现跨域请求的授权和安全验证。
+
+检请求 作用是啥？
+
+预检请求（Preflight Request）是CORS中的一种特殊请求，主要用于在实际请求之前，增加一次HTTP查询请求，以检查实际请求是否可以被服务器接受。
+
+在CORS中，有些HTTP请求是简单请求（Simple Request），比如GET和POST请求，可以直接发送。而对于一些复杂请求，比如请求方法为PUT、DELETE、PATCH等，或者Content-Type类型为application/json、application/xml等，会在发送真正请求之前，增加一次HTTP查询请求，以便服务器能够知道是否允许该请求。这个查询请求就是预检请求，用来查询服务器是否支持该请求，并给出支持的条件。
+
+预检请求中包含了一些额外的HTTP头信息，比如Origin、Access-Control-Request-Method、Access-Control-Request-Headers等，这些信息告诉服务器实际请求中会包含哪些信息，并请求服务器在实际请求中是否能够接受这些信息。
+
+服务器接收到预检请求后，会根据请求头中的信息来判断是否允许实际请求。如果允许，会在响应头中加入一些额外的信息，比如Access-Control-Allow-Origin、Access-Control-Allow-Methods、Access-Control-Allow-Headers等，告诉浏览器实际请求可以被接受。如果不允许，则不会发送实际请求，而是直接返回一个错误响应。
+
+何避免 cors 中的一些安全问题？
+
+在CORS中有一些安全问题，例如CSRF（跨站点请求伪造）攻击和CORS劫持。以下是避免这些问题的一些方法：
+
+1. CSRF攻击：使用CSRF令牌来验证请求，这样只有在正确的来源站点上发出的请求才会被视为有效请求。
+
+2. CORS劫持：在响应中添加Access-Control-Allow-Origin标头，并设置为信任的站点。另外，也可以使用Content-Security-Policy标头来限制JavaScript的执行。
+
+3. 永远不要在CORS请求中使用敏感凭据（例如Cookie和HTTP身份验证信息）。
+
+4. 限制跨域请求的范围，只允许特定的来源站点。
+
+5. 在服务器上使用防火墙和其他安全措施来保护应用程序，例如SSL / TLS加密，HTTP Strict Transport Security（HSTS）等。
+
+总之，应该采取适当的安全措施来防止CORS相关的安全问题。
+
 ## cookie
 
 如果 Cookie 没有设置 `max-age`，它通常被视为会话 Cookie，其失效时间的计算方式如下：
@@ -259,6 +502,84 @@
 详细的 ajax 学习参看 [ajax](https://developer.mozilla.org/en-US/docs/Web/Guide/AJAX)
 
 ## JSONP原理,回调过程？
+
+JSONP 的实现原理是通过添加一个 script 标签，指定 src 属性为跨域请求的 URL，而这个 URL 返回的不是 JSON 数据，而是一段可执行的 JavaScript 代码，这段代码会调用一个指定的函数，并且将 JSON 数据作为参数传入函数中。
+
+例如，假设我们从 [资料](http://example.com) 域名下请求数据，我们可以通过在 [资料](http://example.com) 中添加如下代码实现 JSONP 请求：
+
+```js
+function handleData (data) {
+  // 处理获取到的数据
+}
+
+const script = document.createElement('script')
+script.src = 'http://example.org/api/data?callback=handleData'
+document.head.appendChild(script)
+```
+
+其中，我们指定了一个名为 `handleData` 的回调函数，并将这个函数名作为参数传递给了跨域请求的 URL 中的 callback 参数。服务器端返回的数据将会被包装在这个回调函数中，例如：
+
+```js
+handleData({ name: 'John', age: 30 })
+```
+
+在这个例子中，我们可以在 handleData 函数中处理获取到的数据。需要注意的是，在使用 JSONP 时，**需要保证服务器端返回的数据是一个可执行的 JavaScript 代码，并且必须使用指定的回调函数名来包装数据，否则无法正确处理数据。**
+
+ 如何获取 jsonp 的相应参数
+
+获取 JSONP 响应结果的方法有两种，**一种是通过回调函数参数获取**，**另一种是通过 script 标签加载完成后解析全局变量获取**。
+
+假设服务器返回以下 JSONP 响应：
+
+```js
+callback({ name: 'Alice', age: 20 })
+```
+
+其中 callback 是客户端定义的回调函数名，用于指定返回数据的处理方式。
+
+我们可以使用以下两种方式获取响应结果：
+
+**1. 通过回调函数参数获取**
+在客户端定义一个全局函数作为回调函数，服务器返回的数据会作为回调函数的参数传入，这个参数可以在回调函数中处理。
+
+```js
+function handleResponse (data) {
+  console.log(data.name) // Alice
+  console.log(data.age) // 20
+}
+
+// 创建 script 标签
+const script = document.createElement('script')
+script.src = 'http://example.com/api?callback=handleResponse'
+
+// 插入到文档中开始加载数据
+document.body.appendChild(script)
+```
+
+**2. 通过全局变量获取**
+在客户端定义一个全局函数作为回调函数，服务器返回的数据会作为一个全局变量赋值给该函数所在的对象，我们可以在 script 标签加载完成后解析全局变量获取响应结果。
+
+```js
+function handleResponse () {
+  console.log(myData.name) // Alice
+  console.log(myData.age) // 20
+}
+
+// 创建 script 标签
+const script = document.createElement('script')
+script.src = 'http://example.com/api?callback=handleResponse'
+
+// 插入到文档中开始加载数据
+document.body.appendChild(script)
+
+// script 标签加载完成后解析全局变量
+window.myData = {}
+script.onload = () => {
+  delete window.myData // 删除全局变量
+}
+```
+
+注意，使用 JSONP 时要注意安全问题，应该对返回的数据进行验证，避免接收到恶意代码。此外，JSONP **只能发送 GET 请求**，无法发送 POST 请求，**也无法使用 HTTP 请求头和请求体传递数据**。
 
 ## http 状态码 {#p2-http-status-code-304-etag-modified}
 
