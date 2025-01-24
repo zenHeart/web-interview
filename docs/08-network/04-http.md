@@ -161,6 +161,16 @@
 
 2. 网站功能影响：对于依赖会话 Cookie 来保持用户状态或提供个性化体验的网站，用户关闭浏览器后可能会导致一些功能失效。例如，在线购物车中的商品可能会在浏览器关闭后丢失，或者用户需要重新设置一些个性化的偏好。在设计网站时，需要考虑到会话 Cookie 的特性，以便在用户关闭浏览器后提供适当的提示或恢复机制。
 
+默认情况下，Cookie 不能在不同的顶级域名之间共享数据。
+
+但是，如果两个域名属于同一主域名下的子域名，并且您设置了正确的 `Domain` 属性，那么在这些子域名之间是可以共享 Cookie 的。
+
+例如，对于 `sub1.example.com` 和 `sub2.example.com` 这样的子域名，如果设置 `Cookie` 的 `Domain` 属性为 `.example.com` ，那么在这两个子域名之间，这个 `Cookie` 是可以共享和访问的。
+
+然而，如果是完全不同的顶级域名，如 `example.com` 和 `anotherdomain.com` 之间，Cookie 是不能直接共享的。
+
+此外，还需要注意 `Cookie` 的 `Path` 属性、安全属性（`Secure`）、`HttpOnly` 属性等，这些属性也会影响 `Cookie` 的使用范围和方式。
+
 ## 站点是如何保持登录状态 {#p1-how-sites-keep-login-state}
 
 * created_at: 2024-10-07T08:01:33Z
@@ -410,6 +420,8 @@ HTTP/2 使用了 HPACK（Header Compression for HTTP/2）算法进行首部压�
 
 ## http3 有哪些核心的新特性 {#p3-http3-core-features}
 
+参考 [quic](https://zhuanlan.zhihu.com/p/32553477)
+
 **一、基于 QUIC 协议**
 
 1. **多路复用无队头阻塞**：
@@ -445,6 +457,10 @@ HTTP/2 使用了 HPACK（Header Compression for HTTP/2）算法进行首部压�
 
 * HTTP/3 继承了 QUIC 的前向安全特性。即使一个密钥被泄露，也不会影响之前的通信安全。这意味着攻击者无法通过破解当前的密钥来获取之前的通信内容。
 * 例如，如果一个服务器的密钥在某个时间点被泄露，之前通过 HTTP/3 传输的通信内容仍然是安全的，不会被攻击者窃取。
+
+## https {#p0-https}
+
+[https](https://zhuanlan.zhihu.com/p/43789231)
 
 ## https 层可以做哪些性能优化 {#p1-https-performance-optimization}
 

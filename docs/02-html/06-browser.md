@@ -1,5 +1,16 @@
 # 浏览器原理
 
+## 浏览器架构
+
+* 浏览器进程作为最重要的进程负责大多数页签外部的工作，包括地址栏显示、网络请求、页签状态管理等
+* 不同的渲染进程负责不同的站点渲染工作，渲染进程间彼此独立
+* 渲染进程在渲染页面的过程中会通过浏览器进程获取站点资源，只有安全的资源才会被渲染进程接收到
+* 渲染进程中主线程负责除了图像生成外绝大多数工作，如何减少主线程上代码的运行是交互性能优化的关键
+* 渲染进程中的合成线程和栅格线程负责图像生成，利用分层技术可以优化图像生成的效率
+* 当用户与页面发生交互时，事件的传播途径从浏览器进程到渲染进程的合成线程再根据事件监听的区域决定是否要传递给渲染进程的主线程处理
+
+* [inside browser](https://developer.chrome.com/blog/inside-browser-part1)
+
 ## html5有哪些新特性移除了那些元素？{#p0-html5-new-features}
 
 ## 如何处理HTML5新标签的浏览器兼容问题？
@@ -23,6 +34,7 @@
 10. 绘制（Paint）
 
 * [The Rendering Critical Path](https://www.chromium.org/developers/the-rendering-critical-path/)
+* [url 解析](https://juejin.cn/post/6935232082482298911)
 
 ## 如何构建 DOM Tree 的
 
@@ -50,31 +62,31 @@
 * 例如，使用`XMLHttpRequest`或`fetch`进行网络请求：
 
 ```javascript
- function makeAjaxRequest (url) {
-   return new Promise((resolve, reject) => {
-     const xhr = new XMLHttpRequest()
-     xhr.open('GET', url)
-     xhr.onload = function () {
-       if (xhr.status === 200) {
-         resolve(xhr.responseText)
-       } else {
-         reject(new Error(xhr.statusText))
-       }
-     }
-     xhr.onerror = function () {
-       reject(new Error('Network error'))
-     }
-     xhr.send()
-   })
- }
+function makeAjaxRequest (url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', url)
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        resolve(xhr.responseText)
+      } else {
+        reject(new Error(xhr.statusText))
+      }
+    }
+    xhr.onerror = function () {
+      reject(new Error('Network error'))
+    }
+    xhr.send()
+  })
+}
 
- makeAjaxRequest('https://example.com/data')
-   .then((data) => {
-     console.log('Received data:', data)
-   })
-   .catch((error) => {
-     console.error('Error:', error)
-   })
+makeAjaxRequest('https://example.com/data')
+  .then((data) => {
+    console.log('Received data:', data)
+  })
+  .catch((error) => {
+    console.error('Error:', error)
+  })
 ```
 
 * 在这个例子中，网络请求是异步的，不会阻塞主线程。当请求完成后，对应的`then`或`catch`回调函数会被执行。
@@ -85,11 +97,11 @@
 * 例如：
 
 ```javascript
- console.log('Start')
- setTimeout(() => {
-   console.log('Timeout after 1 second')
- }, 1000)
- console.log('End')
+console.log('Start')
+setTimeout(() => {
+  console.log('Timeout after 1 second')
+}, 1000)
+console.log('End')
 ```
 
 * 输出结果为“Start”、“End”，然后在 1 秒后输出“Timeout after 1 second”。这表明`setTimeout`的回调函数是在主线程执行完其他代码后，由事件循环处理执行的。
@@ -164,30 +176,30 @@
 * 例如：
 
 ```javascript
- function updateUI (data) {
-   const chunkSize = 10
-   let index = 0
- 
-   function renderChunk () {
-     for (let i = index; i < index + chunkSize && i < data.length; i++) {
-       // 渲染数据的一部分到界面上
-       const item = data[i]
-       const element = document.createElement('div')
-       element.textContent = item
-       document.body.appendChild(element)
-     }
-     index += chunkSize
- 
-     if (index < data.length) {
-       requestIdleCallback(renderChunk)
-     }
-   }
+function updateUI (data) {
+  const chunkSize = 10
+  let index = 0
 
-   requestIdleCallback(renderChunk)
- }
+  function renderChunk () {
+    for (let i = index; i < index + chunkSize && i < data.length; i++) {
+      // 渲染数据的一部分到界面上
+      const item = data[i]
+      const element = document.createElement('div')
+      element.textContent = item
+      document.body.appendChild(element)
+    }
+    index += chunkSize
 
- const largeData = Array.from({ length: 1000 }, (_, i) => `Item ${i}`)
- updateUI(largeData)
+    if (index < data.length) {
+      requestIdleCallback(renderChunk)
+    }
+  }
+
+  requestIdleCallback(renderChunk)
+}
+
+const largeData = Array.from({ length: 1000 }, (_, i) => `Item ${i}`)
+updateUI(largeData)
 ```
 
 * 在这个例子中，`updateUI`函数将大量数据分成小块进行渲染，每次在浏览器空闲时间（使用`requestIdleCallback`）进行一部分渲染，避免了长时间阻塞主线程，使得界面保持响应。

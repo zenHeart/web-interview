@@ -160,6 +160,119 @@ const params = qs.parse(queryString)
 
 ## 前端如何处理一个页面多主题色可供选择的场景 {#p2-multi-theme-color}
 
+页面主题色切换通常涉及到修改网页中的颜色方案，以提供不同的视觉体验，例如从明亮模式切换到暗黑模式。实现这一功能，可以通过配合使用 CSS、JavaScript 和本地存储来进行。以下是实施页面主题色切换的几种方法：
+
+ 使用 CSS 自定义属性
+
+1. 定义一套主题变量：
+
+```css
+:root {
+ --primary-color: #5b88bd; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 明亮主题色 */
+ --text-color: #000; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 明亮主题文本颜色 */
+}
+
+[data-theme="dark"] {
+ --primary-color: #1e2a34; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 暗黑主题色 */
+ --text-color: #ccc; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 暗黑主题文本颜色 */
+}
+```
+
+2. 应用自定义属性到 CSS 规则中：
+
+```css
+body {
+ background-color: var(--primary-color);
+ color: var(--text-color);
+}
+```
+
+3. 使用 JavaScript 动态切换主题：
+
+```javascript
+function toggleTheme () {
+  const root = document.documentElement
+  if (root.dataset.theme === 'dark') {
+    root.dataset.theme = 'light'
+  } else {
+    root.dataset.theme = 'dark'
+  }
+}
+```
+
+ 使用 CSS 类切换
+
+1. 为每个主题创建不同的 CSS 类：
+
+```css
+.light-theme {
+ --primary-color: #5b88bd;
+ --text-color: #000;
+}
+
+.dark-theme {
+ --primary-color: #1e2a34;
+ --text-color: #ccc;
+}
+```
+
+2. 手动切换 CSS 类：
+
+```javascript
+function toggleTheme () {
+  const bodyClass = document.body.classList
+  if (bodyClass.contains('dark-theme')) {
+    bodyClass.replace('dark-theme', 'light-theme')
+  } else {
+    bodyClass.replace('light-theme', 'dark-theme')
+  }
+}
+```
+
+ 使用 LocalStorage 记录用户主题偏好
+
+```javascript
+// 当用户切换主题时
+function saveThemePreference () {
+  localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light')
+}
+
+// 页面加载时应用用户偏好
+function applyThemePreference () {
+  const preferredTheme = localStorage.getItem('theme')
+
+  if (preferredTheme === 'dark') {
+    document.body.classList.add('dark-theme')
+  } else {
+    document.body.classList.remove('dark-theme')
+  }
+}
+
+applyThemePreference()
+```
+
+ 使用媒体查询自动应用暗黑模式
+
+某些现代浏览器支持 CSS 媒体查询`prefers-color-scheme`。你可以使用这个特性来自动根据用户的系统设置应用暗黑模式或明亮模式，而无须 JavaScript：
+
+```css
+@media (prefers-color-scheme: dark) {
+ :root {
+ --primary-color: #1e2a34; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 暗黑主题色 */
+ --text-color: #ccc; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 暗黑主题文本颜色 */
+ }
+}
+
+@media (prefers-color-scheme: light) {
+ :root {
+ --primary-color: #5b88bd; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 明亮主题色 */
+ --text-color: #000; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 明亮主题文本颜色 */
+ }
+}
+```
+
+通过以上方法，开发人员能够为前端页面提供灵活的主题色切换功能，从而增强用户体验。
+
 在前端处理一个页面有多个主题色可供选择的场景，可以通过以下几种方式实现：
 
 **一、使用 CSS 变量**
@@ -953,18 +1066,18 @@ window.addEventListener('unload', (event) => {
  4. 示例代码
 
 ```javascript
-function calculateChunks(fileSize, chunkSize) {
- // 文件总大小（byte），切片大小（byte）
- const chunksCount = Math.ceil(fileSize / chunkSize);
- return chunksCount;
+function calculateChunks (fileSize, chunkSize) {
+  // 文件总大小（byte），切片大小（byte）
+  const chunksCount = Math.ceil(fileSize / chunkSize)
+  return chunksCount
 }
 
 // 示例：文件大小 52MB，切片大小 5MB
-const fileSize = 52 issues_data.csv proCollectionInterviewQuesiont.sh 1024 issues_data.csv proCollectionInterviewQuesiont.sh 1024; // 52MB
-const chunkSize = 5 issues_data.csv proCollectionInterviewQuesiont.sh 1024 issues_data.csv proCollectionInterviewQuesiont.sh 1024; // 5MB
-const chunksCount = calculateChunks(fileSize, chunkSize);
+const fileSize = 5210241024 // 52MB
+const chunkSize = 510241024 // 5MB
+const chunksCount = calculateChunks(fileSize, chunkSize)
 
-console.log(`需要切片数量: ${chunksCount}`);
+console.log(`需要切片数量: ${chunksCount}`)
 ```
 
  注意事项
@@ -974,3 +1087,576 @@ console.log(`需要切片数量: ${chunksCount}`);
 * **并发上传**：在选择切片大小和数量时，考虑是否会并行上传多个切片，因为这也会影响上传速度和效率。
 
 通过以上步骤和考虑因素，你可以合理地决定大文件上传时的切片数量，以优化上传过程的效率和可靠性。
+
+## 移动端如何实现下拉滚动加载（顶部加载） {#p1-scroll-loading}
+
+ 原理
+
+![prinple.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/506932c16c034452b90ae01decabf62c~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=825&h=359&s=455756&e=png&b=ffffff)
+
+如图所示，蓝色框代表视口，绿色框代表容器，橙色框代表加载动画。最开始时，加载动画处于视口外；开始下拉之后，容器向下移动，加载动画从上方进入视口；结束下拉后，容器又开始向上移动，加载动画也从上方退出视口。
+
+ 核心逻辑
+
+看完布局代码，我们再看逻辑代码。逻辑代码中，我们要监听用户的手指滑动、实现下拉手势。我们需要用到三个事件：
+
+* [touchstart](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/touchstart_event) 代表触摸开始;
+* [touchmove](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/touchmove_event) 代表触摸移动;
+* [touchend](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/touchend_event) 代表触摸结束。
+
+从 `touchstart` 和 `touchmove` 事件中我们可以获取手指的坐标，比如 `event.touches[0].clientX` 是手指相对视口左边缘的 X 坐标，`event.touches[0].clientY` 是手指相对视口上边缘的 Y 坐标；从 `touchend` 事件中我们则无法获得 `clientX` 和 `clientY`。
+
+我们可以先记录用户手指 touchstart 的 clientY 作为开始坐标，记录用户最后一次触发 touchmove 的 clientY 作为结束坐标，二者相减就得到手指移动的距离 distanceY。
+
+设置手指移动多少距离，容器就移动多少距离，就得到了我们的逻辑代码：
+
+```js
+const box = document.getElementById('box')
+const loader = document.getElementById('loader')
+let startY = 0; let endY = 0; let distanceY = 0
+
+function start (e) {
+  startY = e.touches[0].clientY
+}
+
+function move (e) {
+  endY = e.touches[0].clientY
+  distanceY = endY - startY
+  box.style = `
+ transform: translateY(${distanceY}px);
+ transition: all 0.3s linear;
+ `
+}
+
+function end () {
+  setTimeout(() => {
+    box.style = `
+ transform: translateY(0);
+ transition: all 0.3s linear;
+ `
+    loader.className = 'loading'
+  }, 1000)
+}
+
+box.addEventListener('touchstart', start)
+box.addEventListener('touchmove', move)
+box.addEventListener('touchend', end)
+```
+
+逻辑代码实现一个简陋的下拉效果，当然现在还有很多缺陷。
+
+![pull-down-basic.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5fdc67efc50947e8bceb590b1e4d3df5~tplv-k3u1fbpfcp-jj-mark:3024:0:0:0:q75.awebp#?w=375&h=400&s=204176&e=gif&f=48&b=efefef)
+
+ 存在的 6 个个缺陷
+
+* 没有最小、最大距离限制
+* 加载动画没有停留在视口顶部
+* 重复触发
+* 没有限制方向
+* 没有阻止原生滚动
+* 没有阻止 iOS 橡皮筋效果
+
+## （电梯导航）该如何实现 {#p0-elevator-nav}
+
+思路很简单， 利用 scrollIntoView 进行导航滚动、利用 IntersectionObserver 进行可视区判断；
+
+具体实现：
+
+* 第一步：点击右边的导航菜单，利用 scrollIntoView 方法使内容区域对应的元素出现在可视区域中。
+
+```javascript
+const rightBox = document.querySelector('.rightBox')
+rightBox.addEventListener(
+  'click',
+  function (e) {
+    const target = e.target || e.srcElement
+    if (target && !target.classList.contains('rightBox')) {
+      document.querySelector('.' + target.className.replace('Li', '')).scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    }
+  },
+  false
+)
+```
+
+* 第二步：页面容器滚动时，当目标元素出现在检测区域内则联动改变对应导航的样式。
+
+```javascript
+const observer = new IntersectionObserver(
+  function (entries) {
+    entries.forEach((entry) => {
+      const target = document.querySelector('.' + entry.target.className + 'Li')
+
+      if (entry.isIntersecting && entry.intersectionRatio > 0.65) {
+        document.querySelectorAll('li').forEach((el) => {
+          if (el.classList.contains('active')) {
+            el.classList.remove('active')
+          }
+        })
+
+        if (!target.classList.contains('active')) {
+          target.classList.add('active')
+        }
+      }
+    })
+  },
+  {
+    threshold: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+  }
+)
+```
+
+完整效果请看下面链接： [资料](https://codepen.io/xingba-coder/pen/ZEdKRKJ)
+
+**参考文档**：[资料](https://juejin.cn/post/7399982698846404649)
+
+## 如何在划词选择的文本上添加右键菜单（划词：鼠标滑动选择一组字符， 对组字符进行操作）{#p2-huaci}
+
+> 主要考察 dom 方法， `getSelection`
+> 属于很冷门知识， 只会在做过富文本的同学面试过程中可能会问得到。
+
+要在划词选择的文本上添加右键菜单，可以按照以下步骤进行操作：
+
+1. 监听鼠标右键事件
+ 在文档或富文本区域上添加 `contextmenu` 事件的监听。
+
+```javascript
+document.addEventListener('contextmenu', function (event) {
+  // 阻止默认的浏览器右键菜单
+  event.preventDefault()
+
+  // 在此处显示自定义右键菜单
+  showCustomMenu(event)
+})
+```
+
+2. 显示自定义右键菜单
+ 创建一个自定义的菜单元素，并根据选择的文本设置菜单选项。
+
+```javascript
+function showCustomMenu (event) {
+  const customMenu = document.createElement('div')
+  customMenu.style.position = 'absolute'
+  customMenu.style.left = event.clientX + 'px'
+  customMenu.style.top = event.clientY + 'px'
+
+  // 添加菜单选项
+  const menuItem1 = document.createElement('div')
+  menuItem1.textContent = '复制'
+  menuItem1.addEventListener('click', function () {
+    // 处理复制操作
+    copySelectedText()
+  })
+  customMenu.appendChild(menuItem1)
+
+  // 可以添加更多的菜单选项
+
+  document.body.appendChild(customMenu)
+}
+```
+
+3. 处理菜单选项的操作
+ 例如，实现复制选中文本的功能。
+
+```javascript
+function copySelectedText () {
+  const selection = window.getSelection()
+  if (selection) {
+    const range = selection.getRangeAt(0)
+    const clipboardData = new ClipboardEvent('copy', {
+      clipboardData: { text: range.toString() },
+      bubbles: true
+    }).clipboardData
+    document.execCommand('copy', false, clipboardData)
+  }
+}
+```
+
+4. 隐藏右键菜单
+ 当用户点击菜单之外的区域时，隐藏自定义右键菜单。
+
+```javascript
+document.addEventListener('click', function (event) {
+  const customMenu = document.querySelector('.custom-menu')
+  if (customMenu && !customMenu.contains(event.target)) {
+    customMenu.remove()
+  }
+})
+```
+
+## 富文本里面， 是如何做到划词的（鼠标滑动选择一组字符， 对组字符进行操作） {#p3-richtext-huaci}
+
+> 主要考察 dom 方法， `getSelection`
+> 属于很冷门知识， 只会在做过富文本的同学面试过程中可能会问得到。
+
+在富文本环境中实现划词（鼠标滑动选择一组字符并对其进行操作）通常涉及以下几个关键步骤和技术：
+
+1. 事件监听
+
+* 监听鼠标按下、鼠标移动和鼠标松开这三个主要的鼠标事件。当鼠标按下时，标记选择的开始；在鼠标移动过程中，根据鼠标的位置更新选择范围；鼠标松开时，确定最终的选择。
+
+2. 选择范围计算
+
+* 使用浏览器提供的 `Selection` 对象来获取和管理选择的范围。在鼠标移动过程中，不断更新 `Selection` 对象的范围。
+
+3. 操作处理
+
+* 一旦选择完成，可以根据具体的需求对选中的字符进行操作。例如，修改样式（如加粗、变色）、获取选中的文本内容、执行复制粘贴等操作。
+
+以下是一个简单的 JavaScript 示例，展示了如何获取选中的文本：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="UTF-8" />
+ <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Document</title>
+ </head>
+
+ <body>
+ <p>这是一段示例文本，您可以尝试选中一部分。</p>
+
+ <script>
+ document.addEventListener("mouseup", function () {
+ const selection = window.getSelection();
+ if (selection) {
+ const selectedText = selection.toString();
+ console.log("选中的文本: ", selectedText);
+ }
+ });
+ </script>
+ </body>
+</html>
+```
+
+## 扫码登录？{#p0-scan}
+
+## 不同标签页或窗口间的 【主动推送消息机制】 的方式有哪些？
+
+**BroadcastChannel API**
+
+[资料](https://juejin.cn/post/7307057492059471899)
+
+`BroadcastChannel API` 是一种在相同源的不同浏览器上下文之间实现简单高效通信的方法。这意味着它可以在同一网站的多个标签页或窗口之间发送消息。这是由 HTML5 规范引入的，用于改进 Web Workers 中的通信方法。
+
+下面是如何使用 `BroadcastChannel API` 的基本指南及几个示例。
+
+**创建与发送消息**
+
+```javascript
+// 在任何一个 tab 或 iframe 中创建一个广播频道
+const channel = new BroadcastChannel('my-channel-name')
+
+// 发送一个消息到频道
+channel.postMessage('Hello from a tab!')
+```
+
+**监听消息**
+
+```javascript
+// 监听这个频道的消息
+channel.addEventListener('message', function (event) {
+  if (event.data === 'Hello from a tab!') {
+    console.log('Message received: ', event.data)
+  }
+})
+```
+
+**实现频道消息通信**
+
+假设你有两个标签页，并且你想更新每个标签页来显示另一个标签页中发生的事情，比如用户数量计数器：
+
+```javascript
+// 在第一个标签页中
+self.addEventListener('load', () => {
+  const channel = new BroadcastChannel('visitor-channel')
+  let visitorCount = 0
+
+  // 定时发送随机的用户活动消息
+  setInterval(function () {
+    visitorCount++
+    channel.postMessage(`Visitor count increased to: ${visitorCount}`)
+  }, 5000)
+})
+
+// 在另一个标签页中
+self.addEventListener('load', () => {
+  const channel = new BroadcastChannel('visitor-channel')
+
+  // 监听消息来更新用户数量
+  channel.addEventListener('message', function (event) {
+    if (event.data.startsWith('Visitor count')) {
+      // 用接收到的用户数量更新显示
+      updateVisitorCountDisplay(event.data)
+    }
+  })
+
+  // 这个方法将设置标签页上的用户计数显示
+  function updateVisitorCountDisplay (message) {
+    // 这里写用于更新显示的代码
+    console.log(message)
+  }
+})
+```
+
+在这个例子中，一个标签页通过定期发送新的消息来模拟用户活动的增加，这个消息在所有监听该频道的上下文中传递。另一个或多个标签页将监听这个频道来接收和响应这些更新。
+
+**注意事项：**
+
+* 频道内的通信 **仅在同源浏览器上下文**（具有相同的协议、域名和端口号）之间有效，也就是说，不同的网站之间的通信是不被允许的，以保护每个网站的安全性。
+* 频道中的通信是 **单向的**，你可以通过频道向所有连接
+
+ **Service Workers**
+
+利用 Service Workers，各个标签页可以通过 `clients.matchAll()` 方法找到所有其他客户端（如打开的标签页），然后使用 `postMessage` 发送消息。
+
+这个方法相比 `BroadcastChannel` 更加灵活，因为 Service Workers 可以通过 `Focus` 和 `Navigate` 事件来控制页面的焦点和导航等。
+
+`ServiceWorkers` 提供了在后台运行脚本的能力，这些脚本可以在网络受限或没有网络的情况下运行。当你用 `ServiceWorkers` 进行页面间的通信，你可以利用它们来推送消息到打开的 `Clients`（如浏览器标签页）。
+
+要使用 `ServiceWorkers` 实现从不同 Tab 中主动推送信息，可以通过以下几个步骤：
+
+**1. 编写 ServiceWorker 文件**
+
+首先，创建名为 `sw.js` 的 ServiceWorker 文件。这个文件在你的网站目录下，会在用户访问网站时注册并激活。
+
+```javascript
+// sw.js
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'New message from another tab') {
+    self.clients
+      .matchAll({
+        type: 'window',
+        includeUncontrolled: true
+      })
+      .then((windowClients) => {
+        windowClients.forEach((client) => {
+          client.postMessage('New message for ' + client.id)
+        })
+      })
+  }
+})
+```
+
+**2. 在主页面注册 ServiceWorker**
+
+在主页面（index.html）通过 JavaScript 注册这个 ServiceWorker 文件。
+
+```javascript
+// index.html
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then((registration) => {
+      console.log('Service Worker registered with scope:', registration.scope)
+    })
+    .catch((error) => {
+      console.log('Service Worker registration failed:', error)
+    })
+}
+```
+
+**3. 监听 `message` 事件**
+
+在主页面使用 `navigator.serviceWorker.controller` 来检查是否已经有 ServiceWorker 主动控制。
+
+```javascript
+if (navigator.serviceWorker.controller) {
+  // Post a message to the ServiceWorker
+  navigator.serviceWorker.controller.postMessage('This is from main page')
+}
+```
+
+**4. 从其他 Tab 推送消息**
+
+在其他 Tab 上，一旦 ServiceWorker 被该页面控制后，可以通过同样的 `postMessage` 方法发送消息。
+
+ **SharedWorker**
+
+SharedWorker 提供了一种更传统的跨文档通信机制，在不同文档间共享状态和数据。你需要创建一个 `SharedWorker` 对象，并在所有的文档里监听来自该 worker 的消息。
+
+简单场景的 SharedWorker 的使用步骤：
+
+1. **创建和连接**:
+
+```javascript
+// 创建一个 SharedWorker，并指定要加载的脚本
+const myWorker = new SharedWorker('worker.js')
+// 开启端口通信
+myWorker.port.start()
+```
+
+2. **端口通信**: 使用端口接收和发送消息
+
+```javascript
+// 发送数据给worker
+myWorker.port.postMessage({ command: 'start', data: [1, 2, 3] })
+
+// 监听来自worker的消息
+myWorker.port.onmessage = function (event) {
+  if (event.data) {
+    console.log('Result from worker:', event.data)
+  }
+}
+```
+
+3. **实现 worker 逻辑**:
+
+在 `worker.js` 内，通过 `onconnect` 事件监听端口连接，并在使用 `postMessage` 发送数据的页面之间转发消息。
+
+```javascript
+// worker.js
+
+// 自身的事件监听器
+self.onconnect = function (event) {
+  const port = event.ports[0]
+
+  // 监听端口的消息
+  port.onmessage = function (e) {
+    if (e.data.command === 'start') {
+      const result = someHeavyComputation(e.data.data)
+      port.postMessage({ result })
+    }
+  }
+}
+
+// 在这里执行一些开销较大的计算逻辑
+function someHeavyComputation (data) {
+  // 在这里进行计算...
+  return data.reduce(function (previousValue, currentValue) {
+    return previousValue + currentValue
+  }, 0)
+}
+```
+
+4. **通知其他页面更新**:
+
+当你希望基于上文提到的 SharedWorker 执行的计算结果通知其他所有的页面更新时，可以利用 `SharedWorkerGlobalScope` 中的 `clients` 对象。
+
+```javascript
+// 在 worker.js 中
+
+self.addEventListener('message', (e) => {
+  if (e.data === 'Update all clients') {
+    // 遍历所有客户端
+    self.clients.matchAll().then((clients) => {
+      clients.forEach((client) => {
+        // 发送消息更新它们
+        client.postMessage('Please update your state')
+      })
+    })
+  }
+})
+```
+
+ 使用 localStorage 的变更监听
+
+虽然 `localStorage` 没有直接提供跨标签页推送机制，但是可以使用 `window.addEventListener('storage', listener)` 监听 `storage` 事件，实现不同标签页间的通信。
+
+```javascript
+// 标签页1修改了 localStorage
+localStorage.setItem('someKey', 'someValue')
+
+// 其他标签页监听 storage 事件
+window.addEventListener('storage', function (event) {
+  if (event.storageArea === localStorage && event.key === 'someKey') {
+    console.log(event.newValue)
+  }
+})
+```
+
+ 使用 iframe 的 message 事件
+
+如果排他性不是问题（所有标签页都属于同一客户端），可以使用 iframe 来传递消息，父窗口和 iframe 可以使用 DOM 中的 `message` 事件系统相互通信。
+
+要使用 `iframe` 的 `message` 事件实现不同页签之间的通信，你需要两个关键项的配合：父页面和 `iframe` 页面之间的协调工作。这种通信非常灵活，因为你可以根据自己需要进行信息的发送和监听。
+
+**示例步骤：**
+
+**1. 创建一个父页面**
+
+在父页面中，我们创建一个 `iframe` 并监听 `message` 事件。
+
+```html
+<!-- parent.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Parent Page</title>
+ </head>
+ <body>
+ <iframe src="iframe.html" style="display:none;"></iframe>
+
+ <script>
+ // 监听 iframe 发送的 message 事件
+ window.addEventListener("message", function (event) {
+ if (event.origin !== "http://example.com") {
+ // 确保消息源是可信的
+ return;
+ }
+ if (event.data && event.data.greeting) {
+ console.log("Message received from iframe:", event.data);
+ // 如果iframe向父页面问好（向父页面发送了一条消息）
+ // 假设我们还想再向iframe发送一些信息
+ document.querySelector("iframe").contentWindow.postMessage(
+ {
+ response: "Hello iframe! This is the parent window speaking.",
+ },
+ "http://example.com"
+ );
+ }
+ });
+ </script>
+ </body>
+</html>
+```
+
+**2. 创建一个 iframe 页面**
+
+在 `iframe.html` 页面中，我们需要发送消息到父页面并监听父页面的消息。
+
+```html
+<!-- iframe.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="UTF-8" />
+ <title>Iframe Page</title>
+ </head>
+ <body>
+ <script>
+ // 假设我们有一些需要发送到父页面的信息
+ function sendMessageToParent() {
+ parent.postMessage({ greeting: "Hello, I am the iframe!" }, "http://example.com");
+ }
+
+ // 当页面加载完成后，发送消息
+ window.onload = function () {
+ sendMessageToParent();
+ };
+
+ // 监听来自父页面的消息
+ window.addEventListener("message", function (event) {
+ if (event.origin !== "http://example.com") {
+ // 反向验证消息源的可信度
+ return;
+ }
+ if (event.data && event.data.response) {
+ console.log("Message received from parent:", event.data);
+ // 可根据消息实现特定的逻辑
+ }
+ });
+ </script>
+ </body>
+</html>
+```

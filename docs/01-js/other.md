@@ -59,8 +59,8 @@ Iterator 对象在 JavaScript 中提供了一种灵活和统一的方式来遍�
 
 ```js
 // example1
-console.log(sum(1)(2)(3,4) ) // 10
+console.log(sum(1)(2)(3, 4)) // 10
 
 // example2
-console.log(sum(1,2,3,4) ) // 10
+console.log(sum(1, 2, 3, 4)) // 10
 ```

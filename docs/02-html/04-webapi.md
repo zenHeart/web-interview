@@ -158,10 +158,10 @@ resizeObserver.observe(targetElement)
 * 例如，对于圆形：
 
  ```javascript
- function isPointInCircle(x, y, circleX, circleY, radius) {
- const dx = x - circleX;
- const dy = y - circleY;
- return dx issues_data.csv proCollectionInterviewQuesiont.sh dx + dy issues_data.csv proCollectionInterviewQuesiont.sh dy <= radius issues_data.csv proCollectionInterviewQuesiont.sh radius;
+ function isPointInCircle (x, y, circleX, circleY, radius) {
+   const dx = x - circleX
+   const dy = y - circleY
+   return dx
  }
  ```
 
@@ -202,29 +202,29 @@ resizeObserver.observe(targetElement)
 * 例如，当鼠标悬停在圆形上时，改变圆形的颜色：
 
  ```javascript
- function handleMouseMove(event) {
- const rect = canvas.getBoundingClientRect();
- const mouseX = event.clientX - rect.left;
- const mouseY = event.clientY - rect.top;
+ function handleMouseMove (event) {
+   const rect = canvas.getBoundingClientRect()
+   const mouseX = event.clientX - rect.left
+   const mouseY = event.clientY - rect.top
+ 
+   for (const shape of shapes) {
+     if (shape.type === 'circle' && isPointInCircle(mouseX, mouseY, shape.x, shape.y, shape.radius)) {
+       ctx.fillStyle = 'red'
+     } else {
+       ctx.fillStyle = 'blue'
+     }
+     drawShape(shape)
+   }
+ }
 
- for (const shape of shapes) {
- if (shape.type === "circle" && isPointInCircle(mouseX, mouseY, shape.x, shape.y, shape.radius)) {
- ctx.fillStyle = "red";
- } else {
- ctx.fillStyle = "blue";
- }
- drawShape(shape);
- }
- }
-
- function drawShape(shape) {
- if (shape.type === "circle") {
- ctx.beginPath();
- ctx.arc(shape.x, shape.y, shape.radius, 0, 2 issues_data.csv proCollectionInterviewQuesiont.sh Math.PI);
- ctx.fill();
- } else if (shape.type === "rectangle") {
- ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
- }
+ function drawShape (shape) {
+   if (shape.type === 'circle') {
+     ctx.beginPath()
+ 
+     ctx.fill()
+   } else if (shape.type === 'rectangle') {
+     ctx.fillRect(shape.x, shape.y, shape.width, shape.height)
+   }
  }
  ```
 
@@ -436,3 +436,413 @@ console.log(localStorage.getItem('key'))
 在上面的代码中，设置和获取`localStorage`中的数据的操作会按顺序立即执行，不会像异步操作那样需要等待一段时间后再执行后续代码。
 
 然而，需要注意的是，虽然`localStorage`操作本身是同步的，但如果存储的数据量较大，可能会导致性能问题，因为这些操作会阻塞浏览器的主线程。在这种情况下，可能会感觉操作像是异步的，因为浏览器可能会出现卡顿或响应缓慢的情况。
+
+## 如何判断页签是否为活跃状态 {#p1-tab-active}
+
+判断页面页签（Tab）是否为活跃状态，可以通过监听 `visibilitychange` 事件来实现。这个事件是由 `document` 对象触发的，可以用来判断页面是否对用户可见。当用户切换到其他标签页、最小化浏览器窗口、或是锁屏时，页面就会变为不可见状态。如果页面对用户可见，那么页面就处于活跃状态。
+
+使用 `document.visibilityState` 属性可以检查页面的当前可视状态，这个属性有以下可能的值：
+
+* **"visible"**：页面至少部分可见。在桌面端，这通常意味着页面是当前激活的标签页。
+* **"hidden"**：页面对用户不可见。
+* **"prerender"** 和 **"unloaded"**：这两个值用于特殊情况，通常较少用到。
+
+ 示例代码
+
+下面的代码演示了如何使用 `visibilitychange` 事件和 `document.visibilityState` 来判断页面是否为活跃状态：
+
+```javascript
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'visible') {
+    console.log('页面现在是活跃状态。')
+  } else {
+    console.log('页面现在不是活跃状态。')
+  }
+})
+```
+
+每当用户切换到该页签或从该页签切换走时，会触发 `visibilitychange` 事件。通过检查 `document.visibilityState` 的值，你可以判断页面是变为活跃状态还是变为非活跃状态。
+
+这个功能可以用于多种场合，比如：
+
+* 停止或开始运行页面上的动画。
+* 控制媒体播放（比如自动暂停视频播放）。
+* 调整页面或应用的资源消耗（对于非活跃页签减少资源使用）。
+* 发送用户行为统计数据，以记录用户实际查看页面的时间。
+
+这种方法的优点是兼容性好，现代浏览器都支持 `visibilitychange` 事件，可以用于构建响应用户行为的 web 应用。
+
+## 如何判断用户设备 {#p2-user-device}
+
+在 Web 前端开发中，判断用户设备类型（如手机、平板、桌面电脑）主要依赖于用户代理字符串（User-Agent）和/或视口（Viewport）的尺寸。以下是一些常用方法：
+
+ 使用用户代理字符串（User-Agent）
+
+用户代理字符串包含了浏览器类型、版本、操作系统等信息，可以通过分析这些信息来大致判断用户的设备类型。`navigator.userAgent` 属性用于获取用户代理字符串。
+
+```javascript
+function detectDevice () {
+  const userAgent = navigator.userAgent
+
+  if (/mobile/i.test(userAgent)) {
+    return 'Mobile'
+  }
+  if (/tablet/i.test(userAgent)) {
+    return 'Tablet'
+  }
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return 'iOS Device'
+  }
+  // Android, Windows Phone, BlackBerry 识别可以类似添加
+
+  return 'Desktop'
+}
+
+console.log(detectDevice())
+```
+
+ 使用视口尺寸
+
+有时候用户代理字符串可能不够准确或被修改，此时可以根据视口尺寸作为补充手段。通过检测屏幕的宽度，你可以推断出设备的大致类别。
+
+```javascript
+function detectDeviceByViewport () {
+  const width = window.innerWidth
+
+  if (width < 768) {
+    return 'Mobile'
+  }
+  if (width >= 768 && width < 992) {
+    return 'Tablet'
+  }
+  return 'Desktop'
+}
+
+console.log(detectDeviceByViewport())
+```
+
+ 使用 CSS 媒体查询
+
+虽然 CSS 媒体查询主要用于响应式设计，但你也可以在 JavaScript 中使用 `window.matchMedia()` 方法来判断设备类型。这提供了一种基于 CSS 媒体查询语法来检测设备/视口特性的方式。
+
+```javascript
+function detectDeviceByMediaQuery () {
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    return 'Mobile'
+  } else if (window.matchMedia('(min-width: 768px) and (max-width: 991px)').matches) {
+    return 'Tablet'
+  } else {
+    return 'Desktop'
+  }
+}
+
+console.log(detectDeviceByMediaQuery())
+```
+
+ 注意
+
+* **用户代理字符串被视为不可靠**：由于用户代理字符串可以被修改，某些情况下可能不能准确反映用户的设备信息。
+* **响应式设计原则**：在进行设备检测时，最佳实践是根据内容和功能的需要来适应不同设备，而不是针对特定设备进行优化或限制。
+
+综上，设备检测方法多种多样，选择合适的方法取决于你的具体需求和场景。在可能的情况下，优先考虑使用响应式设计原则，来创建能够在不同设备上良好工作的网页。
+
+## navigator.sendBeacon {#p2-navigator-sendBeacon}
+
+`navigator.sendBeacon()` 方法使得网页可以异步地将数据发送到服务器，与页面的卸载过程同时进行，这一点非常重要，因为它允许在不影响用户体验的情况下，安全地结束会话或者发送统计数据。这方法主要用于追踪和诊断信息，特别是在需要确保数据被成功发送到服务器的场景中——比如记录用户在网页上的行为数据。
+
+ 基本语法
+
+```javascript
+navigator.sendBeacon(url, data)
+```
+
+* `url`：一个字符串，代表您想要发送数据到的服务器地址。
+* `data`：可选参数，要发送的数据。可以是 `ArrayBufferView`、`Blob`、`DOMString`、或者 `FormData` 对象。
+
+ 返回值
+
+* 该方法返回一个布尔值：如果浏览器成功地将请求入队进行发送，则返回 `true`；如果请求因任何原因未能入队，则返回 `false`。
+
+ 特点
+
+1. **异步**：`sendBeacon()` 发送的请求是异步的，不会阻塞页面卸载过程或者延迟用户浏览器的关闭操作。
+2. **小数据量**：适用于发送少量数据，如统计信息和会话结束信号。
+3. **不影响关闭**：它允许在页面卸载或关闭时发送数据，而不会阻止或延迟页面的卸载过程。
+4. **可靠**：它确保数据能够在页面退出时被送出，相较于 `beforeunload` 或 `unload` 事件中使用同步的 `XMLHttpRequest` 更为可靠。
+
+ 使用示例
+
+发送一些统计数据到服务器的简单示例：
+
+```javascript
+window.addEventListener('unload', function () {
+  const data = { action: 'leave', timestamp: Date.now() }
+  navigator.sendBeacon('https://example.com/analytics', JSON.stringify(data))
+})
+```
+
+在上面的例子中，当用户离开页面时，我们监听 `unload` 事件，并在该事件触发时使用 `navigator.sendBeacon()` 方法发送一些统计数据到服务器。使用 `JSON.stringify(data)` 将数据对象转换成字符串形式，因为 `sendBeacon` 需要发送的数据必须是文本或二进制形式。
+
+ 兼容性与限制
+
+* 虽然 `navigator.sendBeacon()` 被现代浏览器广泛支持，但在使用前最好检查浏览器兼容性。
+* 发送数据量有限制，一般适用于发送小量的数据。
+* 某些浏览器实现可能有细微差异，建议在实际使用前进行充分测试。
+
+通过使用 `navigator.sendBeacon()`，开发者可以确保在页面卸载过程中，重要的数据能够被可靠地发送到服务器，从而改善数据收集的准确性和用户体验。
+
+退出浏览器时发送积压的埋点数据请求是 web 开发中的一个常见需求，尤其是在需要确保用户活动数据尽可能准确地被记录的场景下。实现这一需求的关键在于捕获用户关闭浏览器或离开页面的时刻，并在这一时刻尽可能快速地发送所有积压的数据。由于浏览器对于即将关闭时发出的请求处理方式不同，这一过程可能会有些复杂。
+
+ 使用 `navigator.sendBeacon()`
+
+`navigator.sendBeacon()` 方法允许你在浏览器会话结束时异步地向服务器发送小量数据。这个方法的设计初衷就是为了解决上述问题。`sendBeacon()` 在大多数现代浏览器中得到支持，并且其异步特性意味着它不会阻塞页面卸载或影响用户体验。
+
+```javascript
+window.addEventListener('beforeunload', function (event) {
+  const data = {
+
+  }
+  const beaconUrl = 'https://yourserver.com/path' // 你的服务器接收端点
+
+  navigator.sendBeacon(beaconUrl, JSON.stringify(data))
+})
+```
+
+ 使用 `fetch()` API 与 `keepalive` 选项
+
+如果因某种原因 `navigator.sendBeacon()` 不能满足需求，`fetch()` API 的 `keepalive` 选项是另一个选择。这个选项允许你发送一个保持存活状态的请求，即使用户已经离开页面。但是，需要注意的是，使用 `keepalive` 选项发送的请求有大小限制（大约为 64KB）。
+
+```javascript
+window.addEventListener('beforeunload', function (event) {
+  const data = {
+
+  }
+  const beaconUrl = 'https://yourserver.com/path' // 你的服务器接收端点
+
+  fetch(beaconUrl, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    keepalive: true // 保持请求存活
+  })
+})
+```
+
+ 注意事项
+
+* **浏览器兼容性**：尽管 `navigator.sendBeacon()` 和 `fetch()` 的 `keepalive` 选项被许多现代浏览器支持，但在实施解决方案时仍然需要考虑目标用户可能使用的浏览器类型和版本。
+* **数据量限制**：`sendBeacon()` 和 `keepalive` 选项的请求都有数据量限制。确保不要发送超过限制大小的数据。
+* **可靠性**：虽然这些方法能够提高数据发送的成功率，在浏览器关闭时发送数据的操作本身依然不能保证 100% 的成功率，特别是在网络状况不佳的情况下。
+
+通过上述方法，你可以在浏览器即将关闭时尝试发送积压的埋点数据，从而尽可能减少数据丢失的情况。
+
+## dom.contains {#p2-dom-contains}
+
+在 DOM（文档对象模型）中，要判断元素 `a` 是否是元素 `b` 的子元素，您可以使用以下的 JavaScript 代码：
+
+```javascript
+function isChildElement (a, b) {
+  return b.contains(a)
+}
+```
+
+可以这样使用上述函数：
+
+```javascript
+const elementA = document.getElementById('elementA')
+const elementB = document.getElementById('elementB')
+
+if (isChildElement(elementA, elementB)) {
+  console.log('元素 A 是元素 B 的子元素')
+} else {
+  console.log('元素 A 不是元素 B 的子元素')
+}
+```
+
+## MutationObserver {#p0-MutationObserver}
+
+`MutationObserver` 是一种能够响应 DOM 树变动的 Web API，它可以监听几乎所有类型的 DOM 变动，比如元素被添加、删除或修改。你可以通过它执行 callback 来应对这些变化。
+
+下面是 `MutationObserver` 的基本用法：
+
+ 创建 `MutationObserver` 实例
+
+```javascript
+const observer = new MutationObserver(callback)
+```
+
+ 配置观察者
+
+你可以指定要观察的 DOM 变动的类型和具体的目标节点：
+
+```javascript
+const config = {
+  attributes: true, // 观察属性变动
+  childList: true, // 观察子列表变动
+  subtree: true // 观察后代节点
+}
+
+observer.observe(targetNode, config)
+```
+
+这里的 `callback` 是一个在观察到变动时执行的函数，它有两个参数：`mutationsList` 是一个变动列表，`observer` 是观察者实例。
+
+ 回调函数
+
+`MutationCallback` 函数会被调用，它有两个参数：
+
+1. `mutationsList`：一个 `MutationRecord` 对象的数组，每个对象都描述了一个变动。
+2. `observer`：触发通知的 `MutationObserver` 实例。
+
+```javascript
+function callback (mutationsList) {
+  for (const mutation of mutationsList) {
+    if (mutation.type === 'childList') {
+      console.log('A child node has been added or removed.')
+    } else if (mutation.type === 'attributes') {
+      console.log(`The ${mutation.attributeName} attribute was modified.`)
+    }
+  }
+}
+```
+
+ 停止观察
+
+你可以通过调用 `disconnect` 方法来停止观察：
+
+```javascript
+observer.disconnect()
+```
+
+这将停止观察并且清除之前的记录。
+
+ 注意
+
+* 使用 `MutationObserver` 应该谨慎，因为它可能对页面性能产生影响，尤其是在观察大型 DOM 树或频繁变动时。
+* 尽量不要过度使用 `MutationObserver` 或过度指定需要它观察的变动种类和节点。
+
+比如，如果你只想监听某个特定属性的变动，那么就不应该打开 `childList` 或者 `attributes`（如果不需要观察它们）。
+
+`MutationObserver` 非常适用于响应 DOM 的动态变动来执行特定的 JavaScript 代码，而且是现代前端开发中的一个重要工具。在使用它时，考虑使用最严格的选项来优化性能并减少不必要的性能损耗。
+
+使用场景
+
+1. 埋点
+
+## 拖曳
+
+* [drag api](https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API)
+
+## documentFragment api 是什么， 有哪些使用场景 {#p2-documentFragment}
+
+`DocumentFragment` 是 Web API 中的一部分，它是 `DOM` （文档对象模型）的一个非常轻量级的节点，代表一组 `DOM` 节点的集合。它不是一个真实存在于 `DOM` 中的实体，因此被认为是“没有名字”的节点，或者说它不在文档的主体中渲染，通常用来作为临时的 `DOM` 节点仓库。
+
+对于 `DocumentFragment` 的一部分内容，当它们在 `DocumentFragment` 之外操作时，并不会引起主 DOM 树的直接重排或重绘。然而，一旦你将整个 `DocumentFragment` 插入到 DOM 的一个永久节点上，那么在 `DocumentFragment` 内进行的更改将会触发 DOM 的重新渲染。
+
+DocumentFragment API 有几个关键的特点和用途：
+
+1. **轻量级**：`DocumentFragment` 不会引起布局重排，因为其不是真实渲染的一部分。
+
+2. **节点集合**：可以在 `DocumentFragment` 中节点集合进行分组，这个集合可以一次性插入到 `DOM` 的某一部分中。
+
+3. **性能优化**：通过在一个 `DocumentFragment` 中构建好一大块 `DOM` 树，然后将它整体插入到主 `DOM` 中，从而减少重排次数，提高效率。
+
+4. **事件不冒泡**：因为 `DocumentFragment` 不是真实渲染的一部分，所以它的事件不会冒泡到上层的 DOM 元素，除非它被插入到了 `DOM` 中。
+
+ 使用场景
+
+以下是一些使用 `DocumentFragment` 的常见场景：
+
+* **批量操作**：当你想要一次性添加多个节点到 `DOM` 树中时，使用 `DocumentFragment` 可以将这些节点预先堆放在一个轻量级对象中，然后一次性添加。
+
+* **离屏操作**：如果你需要创建复杂的 `DOM` 结构，可以通过 `DocumentFragment` 在不触发页面重排和重绘的情况下进行。
+
+* **内容填充**：在填充 `DOM` 元素内容之前，可以先创建一个 `DocumentFragment` 完成所有节点的添加和排序，然后把它添加到 `DOM` 树中。
+
+* **避免内存泄漏**：在某些情况下，它可以作为防止因移动节点而造成的内存泄漏的一个办法。
+
+ 示例代码
+
+```javascript
+// 创建 DocumentFragment
+const fragment = document.createDocumentFragment()
+
+// 创建多个节点或元素
+const div = document.createElement('div')
+const p = document.createElement('p')
+
+// 将节点添加到 DocumentFragment 上
+fragment.appendChild(div)
+fragment.appendChild(p)
+
+// 一次性将 DocumentFragment 添加到 DOM 的某个部分
+const body = document.querySelector('body')
+body.appendChild(fragment)
+
+// 这时 div 和 p 被添加至 body 元素，而不会触发额外的布局重排。
+```
+
+`DocumentFragment` 提供了一个高效的方式去操作 `DOM` 而不影响页面的渲染性能，在很多需要进行批量 DOM 操作的场合非常有用。
+
+## requestIdleCallback api {#p2-requestIdleCallback}
+
+`requestIdleCallback` 是一个 Web API，它允许开发者请求浏览器在主线程空闲时执行一些低优先级的后台任务，这对于执行如分析、整理状态和数据等不紧急的任务是理想的。这种方法可以提高用户的响应性和页面的整体性能。
+
+以下是 `requestIdleCallback` API 的一些关键特点：
+
+ 何时使用 requestIdleCallback
+
+`requestIdleCallback` 特别适合那些不直接关联用户交互及响应的任务，这些任务可以延后执行而不会明显影响用户体验。例如：
+
+* 清理工作：如标记的 DOM 节点删除、数据的本地存储同步等。
+* 非关键的解析：如解析大量数据。
+* 状态更新：如发送不紧急的状态变更。
+
+ 如何使用 requestIdleCallback
+
+使用 `requestIdleCallback`，你需要传递一个回调函数给它，此函数会在浏览器的空闲时间调用。你可以指定一个超时参数，它定义了浏览器在“空闲期”最多可以花费的时间来执行你的回调。
+
+```javascript
+requestIdleCallback(myNonCriticalFunction, { timeout: 5000 })
+```
+
+* **myNonCriticalFunction**: 这是你想要浏览器在空闲时间执行的函数。
+* **timeout**: 一个可选的参数，表示回调执行时间的上限（以毫秒为单位）。如果超时，浏览器可能在下次空闲机会进行执行。
+
+ 回调函数参数
+
+你的回调函数会接收到一个 `IdleDeadline` 对象作为参数，通常命名为 `deadline`。这个对象包含两个属性：
+
+* **didTimeout** - 一个布尔值，如果超时已经被触发为 `true`。
+* **timeRemaining** - 返回当前空闲阶段剩余时间的函数，单位是毫秒。
+
+```javascript
+function myNonCriticalFunction (deadline) {
+  while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && someCondition()) {
+    // 执行工作直到时间用完或下次更新不是必要的
+  }
+
+  // 如果还有未完成的工作，可以请求下一次空闲周期
+  if (someCondition()) {
+    requestIdleCallback(myNonCriticalFunction)
+  }
+}
+```
+
+ 注意事项
+
+* `requestIdleCallback` 不保证你的回调会在一个特定的时刻被调用，它只在浏览器需要的时候调用。
+* 执行低优先级任务时，不应该太过频繁或执行时间太长，以免影响页面性能。
+* 这个 API 为了最大化性能优化，会强制性地结束你的任务，在不迟于指定的超时时长执行结束。
+
+ Cross-Browser Compatibility (跨浏览器兼容性)
+
+你可能需要 polyfills（垫片库）来确保 `requestIdleCallback` 的兼容性，因为它并不是在所有浏览器中都有原生支持。
+
+使用 `requestIdleCallback`，开发者可以更好地利用浏览器的空闲序列来执行不紧急的任务，同时保持用户交互的流畅度。
+
+ 参考文档
+
+* [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Background_Tasks_API)

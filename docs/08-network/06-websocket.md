@@ -52,7 +52,7 @@ function connect() {
  ws.onclose = function () {
  console.log("WebSocket disconnected, attempting to reconnect...");
  setTimeout(connect, retryInterval);
- retryInterval = Math.min(retryInterval issues_data.csv proCollectionInterviewQuesiont.sh 2, maxInterval); // 指数退避
+ retryInterval = Math.min(retryInterval2, maxInterval); // 指数退避
  };
 
  ws.onerror = function (error) {

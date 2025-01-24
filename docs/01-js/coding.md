@@ -19,6 +19,25 @@
   * 如果使用 new 运算符构造绑定函数
   * thisArg 传递的任何原始值都将转换为 object
 
+## 实现 bind
+
+[corejs](https://github.com/zloirock/core-js/blob/master/packages/core-js/internals/function-bind.js)
+
+```js
+function customBind (context, ...bindParams) {
+  const self = this; const bound = function (...params) {
+    return self.apply(self instanceof bound ? self : context, bindParams.concat(params))
+  }
+  const noop = function () {}
+  if (this.prototype) {
+    // eslint-disable-next-line
+    noop.prototype = this.prototype; bound.prototype = new noop()
+
+  }
+  return bound
+}
+```
+
 ## 深拷贝和浅拷贝
 
 1. 浅拷贝只拷贝第一层引用
@@ -79,17 +98,17 @@ function processString (str) {
 3. 在请求的`.then()`或`.catch()`中记录结束时间戳并计算耗时：
 
 ```javascript
-.then(response => {
- const endTime = performance.now();
- const duration = endTime - startTime;
- console.log(`Request took ${duration} milliseconds.`);
- return response;
- })
-.catch(error => {
- const endTime = performance.now();
- const duration = endTime - startTime;
- console.log(`Request took ${duration} milliseconds with error: ${error}`);
- });
+Promise.resolve().then(response => {
+  const endTime = performance.now()
+  const duration = endTime - startTime
+  console.log(`Request took ${duration} milliseconds.`)
+  return response
+})
+  .catch(error => {
+    const endTime = performance.now()
+    const duration = endTime - startTime
+    console.log(`Request took ${duration} milliseconds with error: ${error}`)
+  })
 ```
 
 **二、使用`XMLHttpRequest`结合时间戳**
@@ -240,16 +259,18 @@ worker.onmessage = function (event) {
 
 2. 示例代码：
 
- ```javascript
- function Person () {}
- Person.prototype.name = 'prototype name'
- 
- const person = new Person()
- person.age = 30
- 
- console.log(person.hasOwnProperty('age')) // true，说明 age 属性是对象本身的属性
- console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在对象本身，而是在原型链上
- ```
+```javascript
+function Person () {}
+Person.prototype.name = 'prototype name'
+
+const person = new Person()
+person.age = 30
+
+// eslint-disable-next-line no-prototype-builtins
+console.log(person.hasOwnProperty('age')) // true，说明 age 属性是对象本身的属性
+// eslint-disable-next-line no-prototype-builtins
+console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在对象本身，而是在原型链上
+```
 
 **二、使用 `in` 操作符结合 `hasOwnProperty()`**
 
@@ -268,6 +289,7 @@ worker.onmessage = function (event) {
  person.age = 30
  
  const propertyName = 'name'
+ // eslint-disable-next-line
  if (person.hasOwnProperty(propertyName)) {
    console.log(`${propertyName} is an own property of the object.`)
  } else if (propertyName in person) {
@@ -402,24 +424,22 @@ console.log(array)
 2. **示例代码**：
 
 ```javascript
-function shuffleArray(array) {
- for (let i = array.length - 1; i > 0; i--) {
- const j = Math.floor(Math.random() issues_data.csv proCollectionInterviewQuesiont.sh (i + 1));
- [array[i], array[j]] = [array[j], array[i]];
- }
- return array;
+function shuffleArray (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random()(i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
 }
 
-const array = [1, 2, 3, 4, 5];
+const array = [1, 2, 3, 4, 5]
 
-const shuffledArray = shuffleArray(array);
+const shuffledArray = shuffleArray(array)
 
-console.log(shuffledArray);
+console.log(shuffledArray)
 ```
 
 在这个例子中，定义了一个`shuffleArray`函数，该函数使用 Fisher-Yates 洗牌算法随机打乱输入的数组，并返回打乱后的数组。
-
-
 
 ## 铺平嵌套数组 {#p2-flatten-array}
 
@@ -445,4 +465,174 @@ function flattenDeep (arr) {
 const nestedArray = [1, [2, [3, [4]]]]
 const flattenedArray = flattenDeep(nestedArray)
 console.log(flattenedArray) // [1, 2, 3, 4]
+```
+
+## 判断一个对象是否为空，包含了其原型链上是否有自定义数据或者方法。 该如何判定 {#check-empty}
+
+要判断一个对象是否为空，并且考虑到对象自身及其原型链上是否有自定义数据或方法，您可以使用以下的 JavaScript 函数来实现：
+
+```javascript
+function isObjectEmpty (obj) {
+  // 首先获取对象自身的属性
+  const ownProperties = Object.getOwnPropertyNames(obj)
+
+  // 遍历自身属性
+  for (const property of ownProperties) {
+    const descriptor = Object.getOwnPropertyDescriptor(obj, property)
+    // 如果属性是数据属性并且有值，或者是方法（可调用函数），则对象不为空
+    if (
+      (descriptor.value && descriptor.value !== null && descriptor.value !== undefined) ||
+ typeof descriptor.value === 'function'
+    ) {
+      return false
+    }
+  }
+
+  // 获取对象的原型
+  const prototype = Object.getPrototypeOf(obj)
+
+  // 如果有原型并且原型不是 `Object.prototype`（避免误判普通对象的默认方法）
+  while (prototype && prototype !== Object.prototype) {
+    const prototypeProperties = Object.getOwnPropertyNames(prototype)
+
+    // 遍历原型的属性
+    for (const property of prototypeProperties) {
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, property)
+      // 如果原型上的属性是数据属性并且有值，或者是方法（可调用函数），则对象不为空
+      if (
+        (descriptor.value && descriptor.value !== null && descriptor.value !== undefined) ||
+ typeof descriptor.value === 'function'
+      ) {
+        return false
+      }
+    }
+
+    // 继续沿着原型链向上查找
+    // eslint-disable-next-line
+    prototype = Object.getPrototypeOf(prototype)
+  }
+
+  // 如果以上检查都没有找到非空属性或方法，则对象为空
+  return true
+}
+```
+
+可以使用这个函数来判断对象是否为空，例如：
+
+```javascript
+function MyClass () {}
+
+MyClass.prototype.myMethod = function () {}
+
+const instance = new MyClass()
+
+console.log(isObjectEmpty(instance))
+```
+
+## cookies 解析函数， 输出结果为一个对象 {#cp2-ookie-parser}
+
+当然可以，以下是一个简单的 JavaScript 函数，用于解析当前页面的 cookie 并将它们存储到一个对象中：
+
+```javascript
+function parseCookies () {
+  // 创建一个空对象来存储解析后的 cookie
+  const cookiesObj = {}
+
+  // 获取 cookie 字符串，然后分割每个键值对
+  const cookies = document.cookie.split(';')
+
+  // 遍历每个键值对
+  cookies.forEach(function (cookie) {
+    // 去除键值对前后的空格
+    const cleanCookie = cookie.trim()
+    // 找到键和值之间的等号位置
+    const separatorIndex = cleanCookie.indexOf('=')
+
+    // 如果找不到等号，则不是有效的键值对，跳过当前循环
+    if (separatorIndex === -1) return
+
+    // 获取键名
+    let key = cleanCookie.substring(0, separatorIndex)
+    // 获取值
+    let value = cleanCookie.substring(separatorIndex + 1)
+
+    // 解码因为 cookie 键和值是编码过的
+    key = decodeURIComponent(key)
+    value = decodeURIComponent(value)
+
+    // 将解析后的值存储到对象中
+    cookiesObj[key] = value
+  })
+
+  // 返回解析后的 cookie 对象
+  return cookiesObj
+}
+
+// 使用示例
+const cookies = parseCookies()
+console.log(cookies)
+```
+
+这个函数首先会以分号 `;` 分割 `document.cookie` 字符串来得到各个 cookie 键值对，然后移除键值对前后的任何空格。接着寻找每个键值对中的等号 `=` 位置，以此来分割键和值。最后，它会使用 `decodeURIComponent` 函数来解码键名和键值，因为通过 `document.cookie` 读取的键名和键值通常是编码过的。
+
+调用 `parseCookies` 函数将返回一个对象，其中包含了当前页面的所有 cookie，键名和值都已被解码。然后你可以像访问普通对象一样访问这些值，例如 `cookies['username']` 来获取 'username' 键对应的值。
+
+## 实现并发异步调度器
+
+保证同时运行的任务限制。完善代码中 Scheduler 类，使得以下程序能正确输出：
+
+// 实现带并发限制的异步调度器
+```js
+class Scheduler {
+  // Your code
+}
+
+// 异步任务函数
+const fetchUser = (name, delay) => {
+  return () => new Promise((resolve) => {
+    setTimeout(() => {
+      () => console.log(name)
+      resolve()
+    }, delay)
+  })
+}
+const scheduler = new Scheduler(2) // 控制并发数 2
+scheduler.add(fetchUser('A', 2000))
+scheduler.add(fetchUser('B', 1000))
+scheduler.add(fetchUser('C', 800))
+scheduler.add(fetchUser('D', 500))
+```
+
+// 打印顺序: B C A D
+
+```js
+class Scheduler {
+  constructor (concurrency) {
+    this.concurrency = concurrency
+    this.tasks = []
+    this.running = 0
+  }
+
+  add (task) {
+    return new Promise((resolve) => {
+      this.tasks.push({
+        task,
+        resolve
+      })
+      this.schedule()
+    })
+  }
+
+  schedule () {
+    while (this.tasks.length > 0 && this.running < this.concurrency) {
+      const current = this.tasks.shift()
+      this.running++
+      current.task().then((result) => {
+        this.running--
+        current.resolve(result)
+        this.schedule()
+      })
+    }
+  }
+}
 ```

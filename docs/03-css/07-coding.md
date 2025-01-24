@@ -152,3 +152,239 @@ const number2text = (number, type = 'upper') => {
   return `${_integer}元` + (_decimal || '整')
 }
 ```
+
+## CSS 中隐藏元素的方法有哪些? {#hide-element}
+
+在 CSS 中，隐藏元素可以通过多种方式实现，每种方式有其特定的使用场景。这里列出了一些常用的方法：
+
+ 1. `display: none;`
+
+完全移除元素，使其不占据任何空间，也不会在文档流中占位。元素及其所有子元素都不会显示。
+
+```css
+.element {
+ display: none;
+}
+```
+
+ 2. `visibility: hidden;`
+
+使元素不可见，但它仍然占据原来的空间和位置。与 `display: none;` 不同，`visibility: hidden;` 不会影响文档流的布局。
+
+```css
+.element {
+ visibility: hidden;
+}
+```
+
+ 3. `opacity: 0;`
+
+设置元素透明度为 `0`，使其完全透明。元素仍然占据空间，并且可以与之互动（例如，点击），除非你另外禁用了元素的互动能力。
+
+```css
+.element {
+ opacity: 0;
+}
+```
+
+ 4. 使用绝对定位
+
+将元素移出视图区域，例如设置一个非常大的负边距。
+
+```css
+.element {
+ position: absolute;
+ left: -9999px;
+}
+```
+
+或者使用 `top` 或 `bottom`，将其定位到视窗外部。
+
+ 5. `clip` 或 `clip-path`
+
+通过剪裁，使元素的某些部分不可见。`clip-path` 可以更灵活地定义哪些部分可见。
+
+```css
+.element {
+ clip-path: circle(0);
+}
+```
+
+ 6. `overflow: hidden;` 与尺寸设置
+
+设置元素宽高为 0，并设置 `overflow` 为 `hidden`，这将隐藏元素内容。
+
+```css
+.element {
+ width: 0;
+ height: 0;
+ overflow: hidden;
+}
+```
+
+ 7. 将元素的 `height` 或 `width` 设置为 `0` 并结合 `overflow: hidden`
+
+如果你还想保留某些边框或轮廓的样式，可能希望使用 `width` 和 `height` 为 `0` 的方法，加上 `overflow: hidden` 防止内容外泄。
+
+```css
+.element {
+ width: 0;
+ height: 0;
+ overflow: hidden;
+}
+```
+
+ 应用场景和选择
+
+* **从 DOM 中完全移除元素**：`display: none;` 适合完全从文档流中移除元素的场景。
+* **仍需要保留位置**：`visibility: hidden;` 适合需要隐藏元素但保留其占位的场景。
+* **逐渐隐藏**：`opacity: 0;` 适合需要渐变动画效果的场景。
+* **临时移除视野或隐藏内容的特定部分**：使用定位或 `clip-path` 方法。
+
+## css 实现打字机效果 {#p3-typing}
+
+主要是对 css 动画的一个实际应用考察
+
+以下是一个使用 CSS 实现简单打字机效果的示例代码：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <style>
+ .typewriter {
+ width: 300px;
+ border-right: 4px solid black;
+ animation: typing 4s steps(30), blink 0.5s step-end infinite;
+ white-space: nowrap;
+ overflow: hidden;
+ }
+
+ @keyframes typing {
+ from {
+ width: 0;
+ }
+ to {
+ width: 300px;
+ }
+ }
+
+ @keyframes blink {
+ 50% {
+ border-color: transparent;
+ }
+ }
+ </style>
+ </head>
+
+ <body>
+ <p class="typewriter">这是一个打字机效果的文本</p>
+ </body>
+</html>
+```
+
+在上述代码中，`.typewriter` 类的元素用于实现打字机效果。
+
+`animation: typing 4s steps(30), blink 0.5s step-end infinite;` 定义了两个动画：
+
+* `typing` 动画用于模拟文字逐个出现的效果，从宽度为 `0` 逐渐增加到 `300px`，`steps(30)` 表示分 30 步完成动画，使文字出现有逐个显示的效果。
+
+* `blink` 动画用于模拟光标闪烁效果，每 `0.5s` 闪烁一次，在 `50%` 进度时，光标（通过右边框实现）变为透明来模拟闪烁。
+
+## css 实现翻牌效果 {#p3-reverse}
+
+主要是考察几个属性的使用
+
+* `transform: rotateY` 用于 Y 轴旋转
+* `transition` 用于过度动画
+
+还有一个要点：
+
+* 翻转卡牌的时候，正面在上， 要将背面隐藏； 背面在上， 要将正面隐藏；
+
+效果如下：
+![01.gif](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/404f57ed66964d9a8410bed9d3859c77~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiNDEyNTAyMzM1Nzg5OTM2NyJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720875123&x-orig-sign=VMh9nhfE8JreFH6TyeVg7aOUre4%3D)
+
+**实现比较简单， 直接贴代码**：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <style>
+ .card {
+ display: flex;
+ }
+
+ .flip-card {
+ float: left;
+ position: relative;
+ height: 36vmin;
+ width: calc(40vmin / 1.4);
+ background-color: white;
+ padding: 20px;
+ border-radius: calc(40vmin / 20);
+ box-shadow: 0 calc(40vmin / 40) calc(40vmin / 10) 0 rgba(0, 0, 0, 0.6);
+ overflow: hidden;
+ transition: transform 200ms linear, box-shadow 200ms linear, background-color 200ms linear;
+ transform: rotateY(0deg);
+ }
+
+ .label:hover .flip-card {
+ transform: rotateY(180deg);
+ background-color: black;
+ transition: transform 200ms linear, box-shadow 200ms linear, background-color 200ms linear;
+ }
+
+ .label:hover .flip-front {
+ opacity: 0;
+ display: none;
+ transition: transform 200ms linear, box-shadow 200ms linear, background-color 200ms linear;
+ }
+
+ .label:hover .flip-end {
+ opacity: 1;
+ display: block;
+ transform: rotateY(180deg);
+ color: white;
+ font-size: 20px;
+ transition: transform 200ms linear, box-shadow 200ms linear, background-color 200ms linear;
+ }
+
+ .flip-front {
+ width: 100%;
+ height: 100%;
+ opacity: 1;
+ cursor: pointer;
+ }
+
+ .flip-end {
+ width: 100%;
+ height: 100%;
+ opacity: 0;
+ display: none;
+ cursor: pointer;
+ }
+
+ .label {
+ background-color: white;
+ border-radius: calc(40vmin / 20);
+ }
+ </style>
+ </head>
+ <body>
+ <div class="card">
+ <div class="label">
+ <div class="flip-card">
+ <div class="flip-front">我是正面</div>
+ <div class="flip-end">
+ 在上述代码中，我们创建了一个带有 card 类的容器，内部有一个 card-inner 元素，它包含了 card-front（正面）和
+ card-back（背面）两个元素。 当鼠标悬停在 card 元素上时，通过 :hover 选择器将 card-inner 元素绕 Y 轴旋转 180
+ 度，实现翻牌效果。
+ </div>
+ </div>
+ </div>
+ </div>
+ </body>
+</html>
+```

@@ -1,10 +1,10 @@
-## 有趣的算法题
+# 编码题
 
-### [leetcode Fizz Buzz 问题](https://leetcode-cn.com/problems/fizz-buzz/)
+## [leetcode Fizz Buzz 问题](https://leetcode-cn.com/problems/fizz-buzz/)
 
 > ./fizz-buzz.js
 
-### 寻找首次匹配子序列
+## 寻找首次匹配子序列
 
 ```js
 // input [3,2,7,21,9,3,1,5,8,3],[3,1,5]
@@ -131,6 +131,7 @@ function longestPalindrome (s: string): string {
 ```
 
 动态规划
+
 ```typescript
 function longestPalindrome (s: string): string {
   const n = s.length
@@ -183,7 +184,9 @@ function longestPalindrome (s: string): string {
 class Node {
   key: number
   value: number
+  // eslint-disable-next-line no-use-before-define
   prev: Node | null
+  // eslint-disable-next-line no-use-before-define
   next: Node | null
 
   constructor (key: number, value: number) {
@@ -262,12 +265,10 @@ class LRUCache {
    - 应用场景：搜索提示、自动完成
 
 o(n)
+
 ```typescript
 class Trie {
   data: string[] = []
-
-  constructor () {
-  }
 
   insert (word: string): void {
     this.data.push(word)
@@ -284,8 +285,11 @@ class Trie {
 ```
 
 o(1)
+
 ```typescript
 class TrieNode {
+  // @ts-error
+  // eslint-disable-next-line no-use-before-define
   children: Map<string, TrieNode> = new Map()
   isEndOfWord = false
 }
@@ -665,3 +669,252 @@ class Twitter {
 ## [leetcode 链表中元素 k 为一组交换](https://leetcode-cn.com/problems/reverse-nodes-in-k-group/)
 
 ## 有序数组合并，双指针
+
+## 大数字符串相加 大数字符串相乘 {#p0-big-number}
+
+计算两个非负大整数(字符串形式的) num1 和 num2 的和
+你不能使用任何內建的用于处理大整数的库（比如 BigInteger）， 也不能直接将输入的字符串转换为整数形式。
+
+```js
+/**
+ * 字符串相加
+ * 思路：双指针倒序遍历，逐位相加，有余数加在高一位
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
+ */
+function addTwoString (num1, num2) {
+  const res = []
+  let carry = 0
+  let i = num1.length - 1
+  let j = num2.length - 1
+  while (i >= 0 || j >= 0 || carry) {
+    const sum = Number(num1[i] || 0) + Number(num2[j] || 0) + carry
+    const mod = sum % 10
+    res.unshift(mod)
+    carry = Math.floor(sum / 10)
+    i--
+    j--
+  }
+  return res.join('')
+}
+
+/**
+ * 字符串相乘
+ * @param {string} num1
+ * @param {string} num2
+ */
+function multiplyManyToMany (num1, num2) {
+  let res = ''
+  for (let i = num2.length - 1; i >= 0; i--) {
+    let tempRes = ''
+    // 末尾补进位0
+    for (let j = 0; j < num2.length - 1 - i; j++) {
+      tempRes += '0'
+    }
+    tempRes = multiplyManyToOne(num1, num2[i]) + tempRes
+    res = addTwoString(res, tempRes)
+  }
+  return res
+}
+
+/**
+ * 字符串 多乘一
+ * @param {string} num1
+ * @param {char} x
+ * @return {string}
+ */
+function multiplyManyToOne (num1, x) {
+  const res = []
+  let carry = 0
+  for (let i = num1.length - 1; i >= 0; i--) {
+    const product = Number(num1[i]) * Number(x) + carry
+    const mod = product % 10
+    res.unshift(mod)
+    carry = Math.floor(product / 10)
+  }
+  if (carry) {
+    res.unshift(carry)
+  }
+  return res.join('')
+}
+
+// Test
+console.log(multiplyManyToOne('123', '5')) // '615'
+console.log(multiplyManyToOne('123', '4')) // '492'
+console.log(addTwoString('615', '4920')) // '5535'
+console.log(multiplyManyToMany('123', '45')) // '5535'
+```
+
+## 扁平数据通过 parent 关联, 实现扁平结构转嵌套 tree 结构 {#array-to-tree}
+
+```js
+// 数据输入：
+const testdata = [
+  { name: '数据1', parent: null, id: 1 },
+  { name: '数据2', id: 2, parent: 1 },
+  { name: '数据3', parent: 2, id: 3 },
+  { name: '数据4', parent: 3, id: 4 },
+  { name: '数据5', parent: 4, id: 5 },
+  { name: '数据6', parent: 2, id: 6 }
+]
+
+// 数据输出：
+const res = [
+  {
+    name: '数据1',
+    parent: null,
+    id: 1,
+    children: [
+      {
+        name: '数据2',
+        id: 2,
+        parent: 1,
+        children: [
+          {
+            name: '数据3',
+            parent: 2,
+            id: 3,
+            children: [
+              {
+                name: '数据4',
+                parent: 3,
+                id: 4,
+                children: [
+                  {
+                    name: '数据5',
+                    parent: 4,
+                    id: 5,
+                    children: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            name: '数据6',
+            parent: 2,
+            id: 6,
+            children: []
+          }
+        ]
+      }
+    ]
+  }
+]
+```
+
+解法非常有意思， 自己好好体会
+
+```js
+function listToTree (list) {
+  const map = {}
+  const roots = []
+
+  // 首先将每个节点按照 id 存入 map
+  for (const item of list) {
+    map[item.id] = { ...item, children: [] }
+  }
+
+  for (const item of list) {
+    if (item.parent === null) {
+      // 顶级节点
+      roots.push(map[item.id])
+    } else if (map[item.parent]) {
+      // 非顶级节点，找到父节点并添加到其 children 数组中
+      map[item.parent].children.push(map[item.id])
+    }
+  }
+
+  return roots
+}
+
+const tree = listToTree(list)
+```
+
+## 树结构查找， 实现一个函数， 通过 id 来查找 tree 数据结构对应的节点 {#p2-tree-find}
+
+树结构查找， 实现一个函数， 通过 id 来查找 tree 数据结构对应的节点
+
+```js
+// 数据如下：
+const tree = [
+  {
+    name: '数据1',
+    id: 1,
+    children: [
+      {
+        name: '数据2',
+        id: 2,
+        children: [
+          {
+            name: '数据3',
+            id: 3,
+            children: {
+              name: '数据4',
+              id: 4,
+              children: []
+            }
+          }
+        ]
+      }
+    ]
+  }
+]
+
+function findNodeById (tree, id) {
+  // ....
+}
+
+const res = findNodeById(tree, 3)
+// res 的结果为
+// {
+// name: "数据3",
+// id: 3,
+// children: [
+// {
+// name: "数据4",
+// id: 4,
+// children: [],
+// },
+// ],
+// }
+```
+
+**实现**
+
+```js
+function findNodeById (tree, id) {
+  if (!tree.length) return null // 如果树是空的，则返回 null
+
+  const search = (node) => {
+    if (node.id === id) {
+      // 如果找到一个匹配的节点，返回它
+      return node
+    } else if (node.children) {
+      // 否则，如果它有子节点，递归地搜索子节点
+      for (const child of node.children) {
+        const result = search(child)
+        if (result) {
+          return result // 如果递归找到了一个匹配的节点，返回它
+        }
+      }
+    }
+    return null // 如果什么都没找到，返回 null
+  }
+
+  for (const root of tree) {
+    const result = search(root)
+    if (result) {
+      return result // 如果在根节点中找到了一个匹配的节点，返回它
+    }
+  }
+
+  // 如果循环遍历整个树完成后没有找到，返回 null
+  return null
+}
+
+// 使用
+const foundNode = findNodeById(tree, 3)
+console.log(foundNode) // 将打印出 id 为 3 的节点
+```

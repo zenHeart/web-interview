@@ -25,6 +25,8 @@
   - 宿主对象 取决于运行环境，如浏览器、Node.js
   - 自定义对象 用户创建的对象
 
+- [mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Data_structures)
+
 </Answer>
 
 ## null undefined 区别?
@@ -48,17 +50,13 @@
 1. 定义无冲突的属性名
 2. 自定义内部方法
 
-## Number
-
-### IEEE 754
+## 0.1 + 02 !== 0.3
 
 ```js
 // 说出下面语句的执行结果，并解释原因
 console.log(0.1 + 0.2)
 console.log(0.1 + 0.2 === 0.3)
 ```
-
-<Answer>
 
 重点是理解 js 数值采用采用 **IEEE 754 编码**表示数值,,产生原因是二级制表示浮点时某些浮点只能取近似值导致,存在编码误差
 
@@ -76,9 +74,42 @@ console.log(0.1 + 0.2 === 0.3)
   - **0x** 开头 16 进制
   - **0** 开头 8 进制
 
-整数的加法运算符?
+在计算机中，浮点数采用二进制存储，而有些十进制小数无法精确地用二进制表示。`0.1` 和 `0.2` 在二进制表示中是无限循环的，在进行运算时会产生舍入误差。
 
-</Answer>
+要解决这个问题，可以使用以下方法：
+
+1. 使用 `Number.EPSILON` 来比较两个浮点数是否接近：
+
+```javascript
+function numbersAreCloseEnough (num1, num2) {
+  return Math.abs(num1 - num2) < Number.EPSILON
+}
+
+const result = 0.1 + 0.2
+console.log(numbersAreCloseEnough(result, 0.3))
+```
+
+2. 将浮点数乘以一个适当的倍数转换为整数进行计算，计算完成后再除以这个倍数转换回浮点数：
+
+```javascript
+const num1 = 0.110
+const num2 = 0.210
+const sum = (num1 + num2) / 10
+console.log(sum === 0.3)
+```
+
+3. 使用第三方库，如 `decimal.js` ，它提供了更精确的十进制运算：
+
+```javascript
+const Decimal = require('decimal.js')
+
+const num1 = new Decimal('0.1')
+const num2 = new Decimal('0.2')
+const sum = num1.plus(num2)
+console.log(sum.eq(0.3))
+```
+
+这些方法可以帮助您在处理浮点数运算时更准确地得到预期的结果。
 
 ### 什么是 NaN ，它的类型，如何判断 NaN?
 

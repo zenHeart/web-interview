@@ -1805,3 +1805,107 @@ const id2 = useId() // 'my-app:1'
 通过将 app.config.throwUnhandledErrorInProduction 设置为 true，即使在生产模式下也会抛出未处理的错误。
 
 这些应用级配置选项提供了对 Vue 应用的高度控制，允许开发者根据实际需要调整 Vue 的默认行为。在使用时，建议根据项目实际情况和需求进行选择性地配置。
+
+## scope 是怎么做的样式隔离的 {#p2-scope}
+
+Vue 中的样式隔离是通过 Vue 单文件组件（Single File Components，简称 SFC）的 `<style>` 标签中的 `scoped` 属性实现的。当你在一个 Vue 组件的 `<style>` 标签上添加 `scoped` 属性时，Vue 会自动将该样式限定在当前组件的范围内，从而防止样式冲突和不必要的样式泄漏。
+
+ 实现原理
+
+Vue 在编译带有 `scoped` 属性的 `<style>` 标签时，会按照以下步骤处理样式隔离：
+
+1. **生成唯一的作用域 ID**：Vue 为每个带有 `scoped` 属性的组件生成一个唯一的作用域 ID（如 `data-v-f3f3eg9`）。这个 ID 是随机的，确保每个组件的作用域 ID 是独一无二的。
+
+2. **添加作用域 ID 到模板元素**：Vue 会在编译组件模板的过程中，将这个作用域 ID 作为自定义属性添加到组件模板的所有元素上。例如，如果作用域 ID 是 `data-v-f3f3eg9`，那么在该组件模板的所有元素上都会添加一个属性 `data-v-f3f3eg9`。
+
+3. **修改 CSS 选择器**：对于组件内部的每个 CSS 规则，Vue 会自动转换其选择器，使其仅匹配带有对应作用域 ID 的元素。这是通过在 CSS 选择器的末尾添加相应的作用域 ID 属性选择器来实现的。例如，如果 CSS 规则是 `.button { color: red; }`，并且作用域 ID 是 `data-v-f3f3eg9`，那么该规则会被转换成 `.button[data-v-f3f3eg9] { color: red; }`。
+
+ 示例
+
+假设有如下 Vue 单文件组件：
+
+```vue
+<template>
+ <button class="btn">Click Me</button>
+</template>
+
+<style scoped>
+.btn {
+ background-color: red;
+}
+</style>
+```
+
+编译后，CSS 规则会变成类似于这样（注意：实际的作用域 ID 是随机生成的）：
+
+```css
+.btn[data-v-f3f3eg9] {
+ background-color: red;
+}
+```
+
+并且模板里的 `<button>` 元素会被编译为类似这样：
+
+```html
+<button class="btn" data-v-f3f3eg9>Click Me</button>
+```
+
+这样，`.btn` 样式规则只会应用到当前组件中的 `<button>` 元素上，而不会影响到其他组件中的同类元素，实现了样式隔离。
+
+ 注意事项
+
+* 由于样式隔离是通过属性选择器和自定义属性实现的，因此这种方法的性能可能会略低于全局样式规则。
+* `scoped` 样式不能影响子组件，仅限于当前的组件。如果需要影响子组件，则需要使用深度选择器（`>>>` 或 `/deep/`）。
+* 其他 Web 组件技术如 Shadow DOM 也可以提供样式隔离的功能，但 Vue 选择了这种不需要 polyfill、兼容性更好的实现方式。
+
+在 Vue 中，`.vue` 单文件组件的 `<style>` 标签可以添加一个 `scoped` 属性来实现样式的隔离。通过这个 `scoped` 属性，Vue 会确保样式只应用到当前组件的模板中，而不会泄漏到外部的其他组件中。
+
+这个效果是通过 PostCSS 在构建过程中对 CSS 进行转换来实现的。基本原理如下：
+
+ Scoped Styles 的工作原理
+
+1. 当你为 `<style>` 标签添加 `scoped` 属性时，Vue 的加载器（比如 `vue-loader`）会处理你的组件文件。
+
+2. `vue-loader` 使用 PostCSS 来处理 `scoped` 的 CSS。它为组件模板内的每个元素添加一个独特的属性（如 `data-v-f3f3eg9`）。这个属性是随机生成的，确保唯一性（是在 Vue 项目构建过程中的 hash 值）。
+
+3. 同时，所有的 CSS 规则都会被更新，以仅匹配带有相应属性选择器的元素。例如：如果你有一个 `.button` 类的样式规则，它会被转换成类似 `.button[data-v-f3f3eg9]` 的形式。这确保了样式只会被应用到拥有对应属性的 DOM 元素上。
+
+ 示例
+
+假设你在组件 `MyComponent.vue` 内写了如下代码：
+
+```html
+<template>
+ <button class="btn">Click Me</button>
+</template>
+
+<style scoped>
+ .btn {
+ background-color: blue;
+ }
+</style>
+```
+
+`vue-loader` 将处理上述代码，模板中的 `<button>` 可能会渲染成类似下面的 HTML：
+
+```html
+<button class="btn" data-v-f3f3eg9>Click Me</button>
+```
+
+CSS 则会被转换成：
+
+```css
+.btn[data-v-f3f3eg9] {
+ background-color: blue;
+}
+```
+
+因此，`.btn` 类的样式仅会应用于拥有 `data-v-f3f3eg9` 属性的 `<button>` 元素上。
+
+ 注意
+
+* Scoped styles 提供了样式封装，但不是绝对的隔离。子组件的根节点仍然会受到父组件的 `scoped` CSS 的影响。在子组件中使用 `scoped` 可以避免这种情况。
+* Scoped CSS 不防止全局样式影响组件。如果其他地方定义了全局样式，它们仍然会应用到组件中。
+* 当使用外部库的类名时，`scoped` 可能会导致样式不被应用，因为它会期望所有匹配规则的元素都带有特定的属性。
+
+总的来说，Scoped Styles 是 Vue 单文件组件提供的一种方便且有效的样式封装方式，通过 PostCSS 转换和属性选择器来实现组件之间的样式隔离。

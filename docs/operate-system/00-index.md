@@ -20,3 +20,5 @@
 在 linux 操作系统下只有任务的概念,进程和线程的意义
 就是控制不同的 **COE(context of execution)**
 参看此文理解 [进程内存结构](http://blog.coderhuo.tech/2017/10/12/Virtual_Memory_C_strings_proc/)
+
+[操作系统进程线程](https://juejin.cn/post/6991849728493256741)

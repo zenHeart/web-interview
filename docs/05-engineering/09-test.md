@@ -1,5 +1,20 @@
 # 测试
 
+## TDD、BDD、DDD 分别指？{#p2-tdda}
+
+TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
+
+1. **TDD（Test-Driven Development） - 测试驱动开发：**
+ TDD 是一种软件开发过程，其中开发人员首先编写一个小测试用例，然后编写足够的代码来使这个测试通过，最后重构新代码以满足所需的设计标准。这个过程就是一个循环，被成为“红-绿-重构”循环，其中测试先失败（红色），编写代码使其通过（绿色），然后优化代码（重构）。TDD 的焦点在于编写干净的代码和降低未来的缺陷。
+
+1. **BDD（Behavior-Driven Development） - 行为驱动开发：**
+ BDD 将 TDD 的基本思想和原则扩展到软件的整个开发生命周期，但其着重点在于软件的行为——即软件应如何表现，而不仅仅是它应该完成什么功能。BDD 强调的是与利益相关者的交流与协作，通过使用通俗易懂的语言来写测试，让非技术人员也能理解测试内容。BDD 鼓励团队成员之间更好地沟通，确保所有人都对软件应有的行为有共同的理解。
+
+1. **DDD（Domain-Driven Design） - 领域驱动设计：**
+ DDD 与 TDD 和 BDD 并不是同一类型的概念。DDD 是一种软件设计哲学，强调了在软件项目的设计与开发中应以业务领域（Domain）为中心。它主张将业务领域的专业知识嵌入到软件的设计中，从而使软件能更好地解决业务问题。DDD 通常涉及到丰富的领域模型以及分层的架构设计，以确保业务逻辑清晰和维护性高。
+
+这三个概念在软件开发中都扮演着重要的角色。TDD 和 BDD 都与确保软件质量和满足用户需求有关，而 DDD 则是一种更宏观层面上对软件设计的方法论。
+
 ## 测试金字塔 {#p1-test-pyramid}
 
 **关键词**：测试手段
@@ -203,3 +218,100 @@
 
 * 维护成本较高，因为系统的任何变化都可能影响到端到端测试的结果。
 * 需要不断更新测试用例以适应系统的变化，并且可能需要处理复杂的环境配置和依赖关系问题。
+
+## 如何针对 react hooks 写单测 {#p3-hook-test}
+
+如果你想对一个独立的 React Hook 函数进行单元测试，不涉及对它在组件中使用的测试，那么你可以使用由`react-hooks-testing-library`提供的工具来完成。这个库允许你在一个隔离的环境中渲染和测试 hook 函数，而不必担心组件的其他部分。
+
+首先，你需要安装`@testing-library/react-hooks`：
+
+```sh
+npm install --save-dev @testing-library/react-hooks
+```
+
+或者使用 yarn：
+
+```sh
+yarn add --dev @testing-library/react-hooks
+```
+
+然后，让我们以一个简单的`useCounter` Hook 为例，来看怎么进行单元测试。以下是这个 Hook 的代码：
+
+```javascript
+import { useState, useCallback } from 'react'
+
+function useCounter (initialValue = 0) {
+  const [count, setCount] = useState(initialValue)
+  const increment = useCallback(() => setCount((c) => c + 1), [])
+  const decrement = useCallback(() => setCount((c) => c - 1), [])
+
+  return { count, increment, decrement }
+}
+
+export default useCounter
+```
+
+接下来是对应的单元测试：
+
+```javascript
+import { renderHook, act } from '@testing-library/react-hooks'
+import useCounter from './useCounter'
+
+describe('useCounter', function () {
+  it('should use counter', function () {
+    const { result } = renderHook(() => useCounter())
+
+    expect(result.current.count).toBe(0)
+  })
+
+  it('should increment counter', function () {
+    const { result } = renderHook(() => useCounter())
+
+    act(() => {
+      result.current.increment()
+    })
+
+    expect(result.current.count).toBe(1)
+  })
+
+  it('should decrement counter', function () {
+    const { result } = renderHook(() => useCounter(10))
+
+    act(() => {
+      result.current.decrement()
+    })
+
+    expect(result.current.count).toBe(9)
+  })
+})
+```
+
+这里我们使用了`renderHook`函数来渲染我们的 hook 并返回一个对象，这个对象中包含当前 hook 返回的所有值。我们还使用了`act`函数来包裹我们对 hook 中函数的调用。这是因为 React 需要确保在测试过程中状态更新能够正常同步。
+
+需要注意的是，如果你的 hook 依赖于其他 React 的 Context，你可以使用`renderHook`的第二个参数来传入一个 wrapper，该 wrapper 是一个 React 组件，它将包裹你的 hook。
+
+上面的这个测试覆盖了 hook 在默认值和指定初始值时的行为，以及它暴露的`increment`和`decrement`函数是否正常工作。这种方式可以用来测试任何自定义 hook，并且只关注 hook 本身的逻辑，不涉及到任何组件。
+
+## 代码覆盖率一般有什么手段？ {#p2-test-coverrage}
+
+前端代码的测试覆盖率通常是指衡量在测试过程中有多少代码被执行了的一个指标。测试覆盖率有助于了解测试的全面性，以下是测试前端代码覆盖率常用的手段：
+
+1. **单元测试**：
+
+* 使用测试框架（例如 Jest, Mocha, Jasmine 等）编写单元测试。
+* 利用测试框架或插件生成覆盖率报告（例如 Istanbul/nyc 工具可以与这些框架集成以生成覆盖率数据）。
+
+2. **集成测试**：
+
+* 使用测试工具（比如 Cypress, Selenium 等）编写集成测试来模拟用户操作。
+* 通常这些工具也支持收集代码覆盖率信息。
+*
+
+3. **手动测试与覆盖率工具结合**：
+
+* 在手动测试过程中，可以开启浏览器的覆盖率工具（如 Chrome DevTools 中的 Coverage Tab）记录覆盖率。
+* 可以通过浏览器扩展程序或者自动化脚本来启动这些工具。
+
+4. **测试覆盖率服务**：
+
+* 使用像 Codecov 或 Coveralls 这样的服务，在 CI/CD 流程中集成覆盖率测试和报告。
