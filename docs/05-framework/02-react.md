@@ -1859,7 +1859,7 @@ function App () {
 * [资料](https://juejin.cn/post/7177374176141901861)
 * [资料](https://juejin.cn/post/7253001747542720567)
 
-## 性能优化 {p0-render-profile}
+## 性能优化 {#p0-render-profile}
 
 **关键词**：react 渲染优化
 

@@ -1,6 +1,6 @@
 # 杂项
 
-## JavaScript 和 BOM、DOM 、ECMAScript、Nodejs 之间是什么关系 {p0-object-concept}
+## JavaScript 和 BOM、DOM 、ECMAScript、Nodejs 之间是什么关系 {#p0-object-concept}
 
 **ECMAScript**
 

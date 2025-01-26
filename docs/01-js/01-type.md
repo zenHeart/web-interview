@@ -25,7 +25,7 @@
 
 - [mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Data_structures)
 
-## 引用类型有哪些，有什么特点 {p0-reference-type}
+## 引用类型有哪些，有什么特点 {#p0-reference-type}
 
 在JavaScript中，引用类型是指非基本数据类型，它们是由对象、数组、函数等复杂数据结构组成的。
 
