@@ -1037,3 +1037,218 @@ console.log(deepEqual(obj1, obj3)) // false
 ```
 
 在上述示例中，`deepEqual`函数会递归比较两个对象的每个属性的值，包括嵌套的对象或数组。如果两个对象是相等的，则返回`true`，否则返回`false`。注意，该函数不会检查函数、正则表达式、日期等复杂类型的值。
+
+## 根据 path 来解析数组，生成多维度的数组对象
+
+请手写一个函数， 将下面的树形结构， 进行转换：
+
+输入数据结构
+
+```js
+const data = [
+  { id: 0, label: '测试 - 0', path: 'demo.info' },
+  { id: 1, label: '测试 - 1', path: 'demo.info' },
+  { id: 2, label: '测试 - 2', path: 'common.base' },
+  { id: 3, label: '测试 - 3', path: 'common.base' },
+  { id: 4, label: '测试 - 4', path: 'demo.info' },
+  { id: 5, label: '测试 - 5', path: 'demo.info' },
+  { id: 6, label: '测试 - 6', path: 'common' },
+  { id: 7, label: '测试 - 7', path: 'common' },
+  { id: 8, label: '测试 - 8', path: 'common.address' },
+  { id: 9, label: '测试 - 9', path: 'common.address' },
+  { id: 10, label: '测试 - 10', path: 'demo.info' },
+  { id: 11, label: '测试 - 11', path: 'demo.sence' },
+  { id: 12, label: '测试 - 12', path: 'demo.sence' },
+  { id: 13, label: '测试 - 13', path: 'demo.hash' },
+  { id: 14, label: '测试 - 14', path: 'demo.hash' },
+  { id: 15, label: '测试 - 15', path: 'demo.hash' },
+  { id: 16, label: '测试 - 16', path: 'demo' },
+  { id: 17, label: '测试 - 17', path: 'demo' },
+  { id: 18, label: '测试 - 18', path: 'demo.info' },
+  { id: 19, label: '测试 - 19', path: 'demo.info' }
+]
+```
+
+输出数据结构
+
+```json
+[
+ {
+ "value": "demo",
+ "label": "Demo",
+ "children": [
+ {
+ "value": "info",
+ "label": "Info",
+ "children": [
+ {
+ "value": 0,
+ "label": "测试 - 0"
+ },
+ {
+ "value": 1,
+ "label": "测试 - 1"
+ },
+ {
+ "value": 4,
+ "label": "测试 - 4"
+ },
+ {
+ "value": 5,
+ "label": "测试 - 5"
+ },
+ {
+ "value": 10,
+ "label": "测试 - 10"
+ },
+ {
+ "value": 18,
+ "label": "测试 - 18"
+ },
+ {
+ "value": 19,
+ "label": "测试 - 19"
+ }
+ ]
+ },
+ {
+ "value": "sence",
+ "label": "Sence",
+ "children": [
+ {
+ "value": 11,
+ "label": "测试 - 11"
+ },
+ {
+ "value": 12,
+ "label": "测试 - 12"
+ }
+ ]
+ },
+ {
+ "value": "hash",
+ "label": "Hash",
+ "children": [
+ {
+ "value": 13,
+ "label": "测试 - 13"
+ },
+ {
+ "value": 14,
+ "label": "测试 - 14"
+ },
+ {
+ "value": 15,
+ "label": "测试 - 15"
+ }
+ ]
+ },
+ {
+ "value": 16,
+ "label": "测试 - 16"
+ },
+ {
+ "value": 17,
+ "label": "测试 - 17"
+ }
+ ]
+ },
+ {
+ "value": "common",
+ "label": "Common",
+ "children": [
+ {
+ "value": "base",
+ "label": "Base",
+ "children": [
+ {
+ "value": 2,
+ "label": "测试 - 2"
+ },
+ {
+ "value": 3,
+ "label": "测试 - 3"
+ }
+ ]
+ },
+ {
+ "value": 6,
+ "label": "测试 - 6"
+ },
+ {
+ "value": 7,
+ "label": "测试 - 7"
+ },
+ {
+ "value": "address",
+ "label": "Address",
+ "children": [
+ {
+ "value": 8,
+ "label": "测试 - 8"
+ },
+ {
+ "value": 9,
+ "label": "测试 - 9"
+ }
+ ]
+ }
+ ]
+ }
+]
+```
+
+**实现如下**：
+
+```js
+function convertToThreeDimensionalArray (data) {
+  const result = []
+
+  // Create a map to store the path hierarchy
+  const pathMap = new Map()
+
+  // Iterate through the data
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i]
+    const pathArr = item.path.split('.') // Split the path into an array of sub-paths
+
+    let parent = result
+    for (let j = 0; j < pathArr.length; j++) {
+      const subPath = pathArr[j]
+
+      // Check if the subPath exists in the parent
+      let child = parent.find(obj => obj.value === subPath)
+
+      if (!child) {
+        // Create a new child object
+        child = {
+          value: subPath,
+          label: capitalizeFirstLetter(subPath),
+          children: []
+        }
+
+        // Add the child object to the parent
+        parent.push(child)
+      }
+
+      // Update the parent to be the child's children array
+      parent = child.children
+    }
+
+    // Add the item to the final child array
+    parent.push({
+      value: item.id,
+      label: item.label
+    })
+  }
+
+  return result
+}
+
+function capitalizeFirstLetter (string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+const threeDimensionalArray = convertToThreeDimensionalArray(data)
+console.log(threeDimensionalArray)
+````
