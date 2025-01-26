@@ -1,5 +1,82 @@
 # 性能
 
+## 性能优化策略 {p0-performance}
+
+ 页面加载优化
+
+「页面加载链路+流程优化+协作方」的多级分类思考
+
+* 页面启动
+* service worker 缓存重要的静态资源
+* 页面保活
+* 资源加载
+* 网络连接
+* NDS
+* 减少 NDS 解析
+* NDA 预解析
+* HTTP
+* 开启 HTTP2 多路复用
+* 优化核心请求链路
+* HTML 加载
+* 内容优化
+* 代码压缩
+* 代码精简(tailwindcss)
+* 服务端渲染 SSG
+* 流程优化
+* 服务端渲染 SSR
+* 流式渲染
+* 预渲染
+* 静态资源加载
+* 内容优化
+* JS、CSS 代码压缩
+* 均衡资源包体积：复用代码抽离为一份资源打包、同时开启
+* 精简代码
+* 雪碧图
+* 动态图片降质量
+* 动态 polyfill (根据浏览器的支持情况，动态加载需要的 polyfill（填充）脚本)
+* 不常变的资源单独打包
+* 根据浏览器版本打包， 高版本浏览器， 直接使用 es6 作为输出文件
+* 流程优化
+* 配置前端缓存: 资源、请求
+* 使用 CDN
+* CDN 优化
+* 协调资源加载优先级
+* 动态资源转静态 CDN 链接加载(例如大图片等)
+* 静态资源使用 service worker 离线存储
+* 非首屏资源懒加载
+* 资源和业务请求预加载
+* 微前端加载应用
+* 微组件加载核心模块资源
+* 代码执行
+* 减少执行
+* 减少重复渲染
+* 大体量计算场景， 尽量使用缓存函数
+* 使用防抖节流
+* 速度提升
+* 使用 worker 多线程加速
+* 充分利用异步请求的线下之间来进行核心代码的加载或者执行
+* wasm 处理大量计算场景
+* 渲染高耗时场景， 迁移到 canvas 、虚拟 dom 等
+* 动态渲染：动态渲染可视区内容， 例如图片懒加载等；
+* 流程优化
+* 非首屏模块， 延迟加载与渲染
+* longtask 任务拆分执行
+* 利用请求闲暇时间， 请求后续页面资源
+* 数据获取
+* 内容优化
+* 减少请求、合并请求、BFF
+* 首屏数据使用模板注入到前端应用
+* 流程优化
+* 数据预请求
+* 常量数据缓存
+* 非首屏请求，延迟到首屏加载完成之后请求
+* 请求并行
+* 渲染相关
+* 虚拟列表
+* 延迟渲染
+* 减少重绘重排
+* 图片预加载到内存
+
 ## 如何监控卡顿  {#p1-metrics}
 
 1. chrome 卡顿和设备刷新率是否有关？
@@ -896,3 +973,745 @@ console.log(`Total duration of all long tasks: ${totalLongTaskTime}ms`)
  HTTP/3 是未来的推进方向，它基于 QUIC 协议，一个在 UDP 之上的新传输层协议，旨在进一步减少延迟，解决 TCP/IP 协议的队头阻塞问题。
 
 总的来说，HTTP/2 的特性如多路复用、服务器推送和优先级设置都有助于减少队头阻塞。而 HTTP/3 的引入可能会在未来为网络通信带来根本性的变化。在使用 HTTP/2、HTTP/3 和浏览器级别的优化时，网页开发者也需注意资源加载优化的最佳实践，以更全面地应对队头阻塞问题。
+
+## 图片进行优化？{#p0-image-profile}
+
+图片作为网页和移动应用中不可或缺的元素之一，对于用户体验和网站性能都有着重要的影响。
+
+加载速度是用户体验的关键因素之一，而大尺寸的图片会增加网页加载时间，导致用户等待时间过长，从而影响用户的满意度和留存率。通过优化图片，我们可以显著减少页面加载时间，提供更快速流畅的使用体验。
+
+图片优化是提升用户体验、提高网站性能、减少流量消耗和增加搜索引擎曝光度的关键因素。为了提供更出色的用户体验，同时也提升网站的性能。总结了一下通用的图片优化首手段。
+
+ 1. 选择合适的图片格式
+
+以下是对常用的图片格式jpg、png和webp进行深度对比的表格：
+
+| 特性 | JPG | PNG | WebP |
+|---------|------------------|------------------|------------------|
+| 压缩算法 | 有损压缩 | 无损压缩 | 有损压缩 |
+| 透明度 | 不支持透明度 | 支持透明度 | 支持透明度 |
+| 图片质量 | 可调整质量 | 无法调整质量 | 可调整质量 |
+| 文件大小 | 相对较小 | 相对较大 | 相对较小 |
+| 浏览器支持 | 支持在所有主流浏览器上显示 | 支持在所有主流浏览器上显示 | 部分浏览器支持 |
+| 动画支持 | 不支持动画 | 不支持动画 | 支持动画 |
+| 兼容性 | 兼容性较好 | 兼容性较好 | 兼容性较差 |
+
+请注意，这个表格只是对这些格式的一般特征进行了总结，并不代表所有情况。实际情况可能因图像内容、压缩设置和浏览器支持等因素而有所不同。因此，在选择图像格式时，您应根据具体要求和应用场景进行评估和选择。
+
+ 2. 图片压缩
+
+主要介绍 webpack 对图片进行压缩，可以使用以下步骤：
+
+1. 安装依赖：首先，确保你已经在项目中安装了webpack和相关的loader。可以使用以下命令安装所需的loader：
+
+```
+npm install --save-dev file-loader image-webpack-loader
+```
+
+2. 配置Webpack：在Webpack的配置文件中进行相关配置。以下是一个简单的示例：
+
+```js
+const path = require('path')
+
+module.exports = {
+  entry: 'src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'images/'
+            }
+          },
+          {
+            loader: 'image-webpack-loader',
+            options: {
+              mozjpeg: {
+                progressive: true,
+                quality: 65
+              },
+              // optipng.enabled: false will disable optipng
+              optipng: {
+                enabled: false
+              },
+              pngquant: {
+                quality: [0.65, 0.90],
+                speed: 4
+              },
+              gifsicle: {
+                interlaced: false
+              },
+              // the webp option will enable WEBP
+              webp: {
+                quality: 75
+              }
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+上述配置中，我们使用`file-loader`将图片复制到输出目录，并使用`image-webpack-loader`对图片进行压缩和优化。
+
+3. 运行Webpack：现在，当你运行Webpack时，它将自动使用`image-webpack-loader`对匹配到的图片进行压缩和优化。压缩后的图片将被复制到输出目录中。
+
+3. 雪碧图
+
+Web图片优化的雪碧图（CSS Sprites）是一种将多个小图片合并为一个大图片的技术。通过将多个小图片合并成一张大图片，可以减少浏览器发送的请求次数，从而提高页面加载速度。
+
+雪碧图的原理是通过CSS的`background-image`和`background-position`属性，将所需的小图片显示在指定的位置上。这样，只需加载一张大图，就可以显示多个小图片，减少了网络请求的数量，提高了页面加载速度。
+
+听上去好像很麻烦， **实际上可以使用 webpack 插件 `webpack-spritesmith`** 完成自动化处理雪碧图合成，我们在使用过程中正常使用即可。
+
+以下是使用`webpack-spritesmith`插件来自动处理雪碧图的步骤：
+
+1. 安装插件：使用npm或yarn安装`webpack-spritesmith`插件。
+
+```bash
+npm install webpack-spritesmith --save-dev
+```
+
+2. 配置Webpack：在Webpack配置文件中，引入`webpack-spritesmith`插件，并配置相应的选项。
+
+```javascript
+const SpritesmithPlugin = require('webpack-spritesmith')
+
+module.exports = {
+  // ...其他配置
+
+  plugins: [
+    new SpritesmithPlugin({
+      src: {
+        cwd: path.resolve(__dirname, 'path/to/sprites'), // 需要合并的小图片所在的目录
+        glob: '*.png' // 小图片的文件名格式
+      },
+      target: {
+        image: path.resolve(__dirname, 'path/to/output/sprite.png'), // 生成的雪碧图的路径和文件名
+        css: path.resolve(__dirname, 'path/to/output/sprite.css') // 生成的CSS样式表的路径和文件名
+      },
+      apiOptions: {
+        cssImageRef: 'path/to/output/sprite.png' // CSS样式表中引用雪碧图的路径
+      }
+    })
+  ]
+}
+```
+
+3. 使用雪碧图：在HTML中，使用生成的CSS样式类来显示相应的小图片。Webpack会自动处理雪碧图的合并和CSS样式的生成。例如：
+
+然后，你可以按照以下方法在CSS中引用雪碧图：
+
+CSS方式：
+
+```css
+<div {
+ background: url(path/to/output/sprite.png) no-repeat;
+}
+
+.icon-facebook {
+ // 设置小图标在雪碧图中的位置和大小 */
+ width: 32px;
+ height: 32px;
+ background-position: 0 0; // 该小图标在雪碧图中的位置 */
+}
+
+.icon-twitter {
+ width: 32px;
+ height: 32px;
+ background-position: -32px 0; // 该小图标在雪碧图中的位置 */
+}
+
+.icon-instagram {
+ width: 32px;
+ height: 32px;
+ background-position: -64px 0; // 该小图标在雪碧图中的位置 */
+}
+```
+
+在HTML中，你可以像下面这样使用对应的CSS类来显示相应的小图标：
+
+```html
+<div class="icon icon-facebook"></div>
+<div class="icon icon-twitter"></div>
+<div class="icon icon-instagram"></div>
+```
+
+这样，Webpack会根据配置自动处理雪碧图，并生成对应的雪碧图和CSS样式表。CSS中的`background`属性会引用生成的雪碧图，并通过`background-position`来指定显示的小图标在雪碧图中的位置。
+
+确保在CSS中指定了每个小图标在雪碧图中的位置和大小，以便正确显示。
+
+使用Webpack自动处理雪碧图可以简化开发流程，并且可以根据需要自定义配置。`webpack-spritesmith`是一个常用的Webpack插件，可以帮助自动处理雪碧图。
+
+ 4. 图标类型资源推荐使用 iconfont
+
+如果你有很多图标类型的图片资源，并且想使用`iconfont`来处理这些资源，可以按照以下步骤进行处理：
+
+* 获取图标资源：首先，你需要获取你想要的图标资源。你可以从`iconfont`网站或其他图标库中选择和下载符合需求的图标。这个没有啥好说的， 直接推荐: [资料](https://www.iconfont.cn/)
+
+* 生成字体文件：接下来，你需要将这些图标转换成字体文件。你可以使用`iconfont`提供的在线转换工具，将图标文件上传并生成字体文件（包括`.ttf`、`.eot`、`.woff`和`.svg`格式）。
+
+* 引入字体文件：将生成的字体文件下载到本地，并在你的项目中引入。通常，你需要在CSS文件中通过`@font-face`规则引入字体文件，并为字体定义一个唯一的名称。
+
+* 使用图标：一旦字体文件引入成功，你可以在CSS中通过设置`content`属性来使用图标。每个图标都会有一个对应的Unicode代码，你可以在`iconfont`提供的网站或字体文件中找到对应图标的Unicode代码，并通过设置`content`属性的值为该Unicode代码来使用图标。
+
+以下是一个简单的示例，以帮助你更好地理解：
+
+```css
+@font-face {
+ font-family: 'iconfont';
+ src: url('path/to/iconfont.eot'); // 引入字体文件 */
+ // 其他格式的字体文件 */
+}
+
+.icon {
+ font-family: 'iconfont'; // 使用定义的字体名称 */
+ font-size: 16px; // 图标大小 */
+ line-height: 1; // 图标行高 */
+}
+
+.icon-facebook::before {
+ content: '\e001'; // 使用Unicode代码表示想要显示的图标 */
+}
+
+.icon-twitter::before {
+ content: '\e002'; // 使用Unicode代码表示想要显示的图标 */
+}
+
+.icon-instagram::before {
+ content: '\e003'; // 使用Unicode代码表示想要显示的图标 */
+}
+```
+
+在上述示例中，我们首先通过`@font-face`引入了字体文件，并为字体定义了一个名称`iconfont`。然后，我们使用该名称作为`font-family`属性的值，以便在`.icon`类中使用该字体。最后，我们通过在`::before`伪元素中设置`content`属性为图标的Unicode代码，来显示相应的图标。
+
+在HTML中，你可以像下面这样使用对应的CSS类来显示相应的图标：
+
+```html
+<span class="icon icon-facebook"></span>
+<span class="icon icon-twitter"></span>
+<span class="icon icon-instagram"></span>
+```
+
+通过上述步骤，你可以使用`iconfont`来处理你的图标资源，并在项目中方便地使用它们。确保在CSS中设置了图标的字体大小和行高，以便正确显示图标。
+
+ 5. 使用 base64 格式
+
+**实际开发过程中， 为何会考虑 base64 ？**
+
+使用Base64图片的优势有以下几点：
+
+* **减少HTTP请求数量**：通常情况下，每个网页都需要加载多张图片，因此会发送多个HTTP请求来获取这些图片文件。使用Base64图片可以将图片数据嵌入到CSS或HTML文件中，减少了对服务器的请求次数，从而提高网页加载速度。
+
+* **减少图片文件的大小**：Base64是一种编码方式，可以将二进制数据转换成文本字符串。通过使用Base64，可以将图片文件转换成文本字符串，并将其嵌入到CSS或HTML文件中。相比于直接引用图片文件，Base64编码的字符串通常会更小，因此可以减少图片文件的大小，从而减少了网页的总体积，加快了网页加载速度。
+
+* **简化部署和维护**：将图片数据嵌入到CSS或HTML文件中，可以减少文件的数量和复杂性，使得部署和维护变得更加简单和方便。此外，也不需要处理图片文件的路径和引用相关的问题。
+
+* **实现一些特殊效果**：通过Base64图片，可以实现一些特殊的效果，例如页面背景渐变、图标的使用等。这样可以避免使用额外的图片文件，简化了开发过程。
+
+上面虽然说饿了挺多有点， 但是劣势也是很明显：
+
+* **增加了文本文件的体积**：因为Base64编码将二进制数据转换成文本字符串，所以会增加CSS或HTML文件的体积。在图片较大或数量较多时，这可能会导致文件变得庞大，从而导致网页加载速度变慢。
+
+* **缓存问题**：由于Base64图片被嵌入到了CSS或HTML文件中，如果图片内容有更新，那么整个文件都需要重新加载，而无法使用缓存。相比于独立的图片文件，Base64图片对缓存的利用效率较低。
+
+使用Base64图片在一些特定的场景下可以提供一些优势，但也需要权衡其带来的一些缺点。在实际开发中，可以根据具体的需求和情况，选择是否使用Base64图片。 所以**建议复用性很强, 变更率较低， 且 小于 10KB 的图片文件， 可以考虑 base64**
+
+**如何使用**？ 有要介绍一下 webpack 插件了： `url-loader` 或 `file-loader`
+
+**要使用Webpack将图片自动转换为Base64编码，您需要执行以下步骤**：
+
+1. 安装依赖：首先，确保您已经安装了`url-loader`或`file-loader`，它们是Webpack的两个常用的加载器。
+
+```bash
+npm install url-loader --save-dev
+```
+
+2. 配置Webpack：在Webpack的配置文件中，添加对图片文件的处理规则。您可以在`module.rules`数组中添加一个新的规则，以匹配图片文件的后缀。
+
+```javascript
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      // ...
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192, // 设置图片大小的阈值，小于该值的图片会被转为Base64
+              outputPath: 'images', // 输出路径
+              publicPath: 'images' // 资源路径
+            }
+          }
+        ]
+      }
+    ]
+  }
+  // ...
+}
+```
+
+ 在上面的示例中，配置了一个处理`png`、`jpeg`、`jpg`和`gif`格式图片的规则。使用`url-loader`加载器，并设置了一些选项，例如`limit`限制了图片大小的阈值，小于该值的图片将会被转换为Base64编码。
+
+3. 在代码中引用图片：在您的代码中，可以像引用普通图片一样引用图片文件，Webpack会根据配置自动将其转换为Base64编码。
+
+```javascript
+import imgSrc from './path/to/image.png'
+
+const imgElement = document.createElement('img')
+imgElement.src = imgSrc
+document.body.appendChild(imgElement)
+```
+
+4. 构建项目：最后，使用Webpack构建项目，它会根据配置自动将符合规则的图片文件转换为Base64编码，并将其嵌入到生成的输出文件中。
+
+```bash
+npx webpack
+```
+
+这样，Webpack就会自动将图片转换为Base64编码，并将其嵌入到生成的输出文件中。请注意，在使用Base64图片时，需要权衡文件大小和性能，适度使用Base64编码，避免过大的文件导致网页加载变慢。
+
+ 6. 使用 CDN 加载图片
+
+CND 加载图片优势非常明显：
+
+* 加速网页加载速度：CDN通过将图片资源分布在全球的多个节点上，使用户能从离自己最近的节点获取资源，从而大大减少了网络延迟和加载时间。这可以提高网页的加载速度和用户体验。
+
+* 减轻服务器负载：CDN充当了一个缓冲层，当用户请求图片资源时，CDN会将图片资源从源服务器获取并缓存在节点中，下次再有用户请求同一资源时，CDN会直接从节点返回，减少了对源服务器的请求，分担了服务器的负载。
+
+* 提高并发性能：CDN节点分布在不同地区，用户请求图片资源时可以从离他们最近的节点获取，这可以减少网络拥塞和并发请求，提高了并发性能。
+
+* 节省带宽成本：CDN的节点之间会自动选择最优路径，有效利用了带宽资源，减少了数据传输的成本，尤其在大量图片资源请求时，能够带来显著的成本节省。
+
+* 提供高可用性：CDN通过分布式存储和负载均衡技术，提供了高可用性和容错能力。即使某个节点或源服务器发生故障，CDN会自动切换到其他可用节点，确保用户能够正常访问图片资源。
+
+总之，使用CDN加载图片可以提高网页加载速度、降低服务器负载、提高并发性能、节省带宽成本，并提供高可用性，从而改善用户体验和网站性能。
+
+ 7. 图片懒加载
+
+图片懒加载是一种在网站或应用中延迟加载图片的技术。它的主要目的是减少页面的初始加载时间，并提高用户的浏览体验。
+
+* 原理：图片懒加载的原理是只在用户需要时加载图片，而不是在页面初始加载时全部加载。这通常通过将图片的真实地址存储在自定义属性（例如`data-src`）中，而不是在`src`属性中。然后，在图片进入浏览器视图时，通过JavaScript动态将`data-src`的值赋给`src`属性，触发图片的加载。
+
+* 优势：图片懒加载可以显著减少初始页面的加载时间，特别是当页面中有大量图片时。它使页面加载变得更快，提高了用户的浏览体验。此外，懒加载还可以节省带宽和减轻服务器负载，因为只有当图片进入视图时才会加载。
+
+* 实现方法：图片懒加载可以通过纯JavaScript实现，也可以使用现成的JavaScript库，如`LazyLoad.js、Intersection Observer API等`。这些库提供了方便的API和配置选项，可以自定义懒加载的行为和效果。
+
+* 最佳实践：在使用图片懒加载时，可以考虑一些最佳实践。例如，设置一个占位符或加载中的动画，以提供更好的用户体验。另外，确保在不支持JavaScript的情况下仍然可用，并为可访问性提供替代文本（alt属性）。此外，对于移动设备，可以考虑使用响应式图片来适应不同的屏幕分辨率。
+
+**实现举例**：
+
+图片懒加载可以延迟图片的加载，只有当图片即将进入视口范围时才进行加载。这可以大大减轻页面的加载时间，并降低带宽消耗，提高了用户的体验。以下是一些常见的实现方法：
+
+1. Intersection Observer API
+
+`Intersection Observer API` 是一种用于异步检查文档中元素与视口叠加程度的API。可以将其用于检测图片是否已经进入视口，并根据需要进行相应的处理。
+
+```js
+const observer = new IntersectionObserver(function (entries) {
+  entries.forEach(function (entry) {
+    if (entry.isIntersecting) {
+      const lazyImage = entry.target
+      lazyImage.src = lazyImage.dataset.src
+      observer.unobserve(lazyImage)
+    }
+  })
+})
+
+const lazyImages = [...document.querySelectorAll('.lazy')]
+lazyImages.forEach(function (image) {
+  observer.observe(image)
+})
+```
+
+2. 自定义监听器
+
+或者，可以通过自定义监听器来实现懒加载。其中，应该避免在滚动事件处理程序中频繁进行图片加载，因为这可能会影响性能。相反，使用自定义监听器只会在滚动停止时进行图片加载。
+
+```js
+function lazyLoad () {
+  const images = document.querySelectorAll('.lazy')
+  const scrollTop = window.pageYOffset
+  images.forEach((img) => {
+    if (img.offsetTop < window.innerHeight + scrollTop) {
+      img.src = img.dataset.src
+      img.classList.remove('lazy')
+    }
+  })
+}
+
+let lazyLoadThrottleTimeout
+document.addEventListener('scroll', function () {
+  if (lazyLoadThrottleTimeout) {
+    clearTimeout(lazyLoadThrottleTimeout)
+  }
+  lazyLoadThrottleTimeout = setTimeout(lazyLoad, 20)
+})
+```
+
+在这个例子中，我们使用了 `setTimeout()` 函数来延迟图片的加载，以避免在滚动事件的频繁触发中对性能的影响。
+
+无论使用哪种方法，都需要为需要懒加载的图片设置占位符，并将未加载的图片路径保存在 `data` 属性中，以便在需要时进行加载。这些占位符可以是简单的 div 或样式类，用于预留图片的空间，避免页面布局的混乱。
+
+```html
+<!-- 占位符示例 -->
+<div class="lazy-placeholder" style="background-color: #ddd;height: 500px;"></div>
+
+<!-- 图片示例 -->
+<img class="lazy" data-src="path/to/image.jpg" alt="预览图" />
+```
+
+ 8. 图片预加载
+
+图片预加载是一种在网站或应用中提前加载图片资源的技术。它的主要目的是在用户实际需要加载图片之前，将其提前下载到浏览器缓存中。
+
+图片预加载通常是在页面加载过程中或在特定事件触发前异步加载图片资源。 通过使用 `JavaScript`，可以在网页DOM元素中创建一个新的`Image`对象，并将要预加载的图片的URL赋值给该对象的`src`属性。 浏览器在加载过程中会提前下载这些图片，并将其缓存起来，以备将来使用。
+
+图片预加载可以使用原生JavaScript实现，也可以使用现成的JavaScript库，如`Preload.js、LazyLoad.js`等。这些库提供了方便的API和配置选项，可以灵活地控制预加载的行为和效果。
+
+实现图片预加载可以使用原生JavaScript或使用专门的JavaScript库。**下面分别介绍两种方式的实现方法**：
+
+1. 使用原生JavaScript实现图片预加载：
+
+```javascript
+function preloadImage (url) {
+  return new Promise(function (resolve, reject) {
+    const img = new Image()
+    img.onload = resolve
+    img.onerror = reject
+    img.src = url
+  })
+}
+
+// 调用预加载函数
+preloadImage('image.jpg')
+  .then(function () {
+    console.log('图片加载成功')
+    // 在此处可以执行加载成功后的操作，例如显示图片等
+  })
+  .catch(function () {
+    console.error('图片加载失败')
+    // 在此处可以执行加载失败后的操作，例如显示错误信息等
+  })
+```
+
+在上述代码中，我们定义了一个`preloadImage`函数，它使用`Image`对象来加载图片资源。通过`onload`事件和`onerror`事件来监听图片加载完成和加载错误的情况，并使用Promise对象进行异步处理。
+
+2. 使用JavaScript库实现图片预加载：
+
+使用JavaScript库可以更简便地实现图片预加载，并提供更多的配置选项和功能。以下以Preload.js库为例进行说明：
+
+首先，在HTML文件中引入Preload.js库：
+
+```html
+<script src="preload.js"></script>
+```
+
+然后，在JavaScript代码中使用Preload.js库来进行图片预加载：
+
+```javascript
+const preload = new createjs.LoadQueue()
+preload.on('complete', handleComplete)
+preload.on('error', handleError)
+preload.loadFile('image.jpg')
+
+function handleComplete () {
+  console.log('图片加载成功')
+  // 在此处可以执行加载成功后的操作，例如显示图片等
+}
+
+function handleError () {
+  console.error('图片加载失败')
+  // 在此处可以执行加载失败后的操作，例如显示错误信息等
+}
+```
+
+在上述代码中，我们首先创建一个`LoadQueue`对象，并使用`on`方法来监听加载完成和加载错误的事件。然后使用`loadFile`方法来指定要预加载的图片资源的URL。
+
+当图片加载完成时，`handleComplete`函数会被调用，我们可以在此处执行加载成功后的操作。当图片加载错误时，`handleError`函数会被调用，我们可以在此处执行加载失败后的操作。
+
+以上是两种常用的实现图片预加载的方法，根据具体需求和项目情况选择合适的方式来实现图片预加载。
+
+ 9. 响应式加载图片
+
+要在不同分辨率的设备上显示不同尺寸的图片，你可以使用`<picture>`元素和`<source>`元素来实现响应式图片。以下是一个示例：
+
+```html
+<picture>
+ <source media="(min-width: 1200px)" srcset="large-image.jpg">
+ <source media="(min-width: 768px)" srcset="medium-image.jpg">
+ <source srcset="small-image.jpg">
+ <img src="fallback-image.jpg" alt="Fallback Image">
+</picture>
+```
+
+在上面的示例中，`<picture>`元素内部有多个`<source>`元素，每个`<source>`元素通过`srcset`属性指定了对应分辨率下的图片链接。`media`属性可以用来指定在哪个分辨率下应用对应的图片。如果没有任何`<source>`元素匹配当前设备的分辨率，那么就会使用`<img>`元素的`src`属性指定的图片链接。
+
+可以根据不同分辨率的设备，提供不同尺寸和质量的图片，以优化用户的视觉体验和页面加载性能。
+
+有可以使用 webpack `responsive-loader` 来实现自动根据设备分辨率加载不同的倍图：
+
+依赖安装:
+
+```
+npm install responsive-loader sharp --save-dev
+```
+
+webpack 配置示范
+
+```js
+module.exports = {
+  entry: {
+  // ...
+  },
+  output: {
+  // ...
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(jpe?g|png|webp)$/i,
+        use: [
+          {
+            loader: 'responsive-loader',
+            options: {
+              adapter: require('responsive-loader/sharp'),
+              sizes: [320, 640, 960, 1200, 1800, 2400],
+              placeholder: true,
+              placeholderSize: 20
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+在CSS中使用它(如果使用多个大小，则只使用第一个调整大小的图像)
+
+```css
+.myImage {
+ background: url('myImage.jpg?size=1140');
+}
+
+@media (max-width: 480px) {
+ .myImage {
+ background: url('myImage.jpg?size=480');
+ }
+}
+```
+
+导入图片到 JS 中：
+
+```js
+import responsiveImage from 'img/myImage.jpg?sizes[]=300,sizes[]=600,sizes[]=1024,sizes[]=2048'
+import responsiveImageWebp from 'img/myImage.jpg?sizes[]=300,sizes[]=600,sizes[]=1024,sizes[]=2048&format=webp'
+
+// Outputs
+// responsiveImage.srcSet => '2fefae46cb857bc750fa5e5eed4a0cde-300.jpg 300w,2fefae46cb857bc750fa5e5eed4a0cde-600.jpg 600w,2fefae46cb857bc750fa5e5eed4a0cde-600.jpg 600w ...'
+// responsiveImage.images => [{height: 150, path: '2fefae46cb857bc750fa5e5eed4a0cde-300.jpg', width: 300}, {height: 300, path: '2fefae46cb857bc750fa5e5eed4a0cde-600.jpg', width: 600} ...]
+// responsiveImage.src => '2fefae46cb857bc750fa5e5eed4a0cde-2048.jpg'
+// responsiveImage.toString() => '2fefae46cb857bc750fa5e5eed4a0cde-2048.jpg'
+// ...
+//  <picture>
+//   <source srcSet={responsiveImageWebp.srcSet} type='image/webp' sizes='(min-width: 1024px) 1024px, 100vw'/>
+//   <img
+//   src={responsiveImage.src}
+//   srcSet={responsiveImage.srcSet}
+//   width={responsiveImage.width}
+//   height={responsiveImage.height}
+//   sizes='(min-width: 1024px) 1024px, 100vw'
+//   loading="lazy"
+//   />
+//  </picture>
+// ...
+```
+
+ 10. 渐进式加载图片
+
+实现渐进式加载的主要思想是先加载一张较低分辨率的模糊图片，然后逐步加载更高分辨率的图片。
+
+下面是实现渐进式加载图片的一般步骤：
+
+1. 创建一张模糊的低分辨率图片。可以使用图片处理工具将原始图片进行模糊处理，或者使用低分辨率的缩略图作为初始图片。
+
+2. 使用`<img>`标签将低分辨率的图片设置为`src`属性。这将立即加载并显示这张低分辨率的图片。
+
+3. 在加载低分辨率图片时，同时加载高分辨率的原始图片。可以将高分辨率图片的URL设置为`data-src`等自定义属性，或者使用JavaScript动态加载高清图片。
+
+4. 使用JavaScript监听图片的加载事件，在高分辨率图片加载完成后，将其替换低分辨率图片的`src`属性，以实现渐进式加载的效果。
+
+下面是一个示例代码，演示了如何实现渐进式加载图片：
+
+```html
+<!-- HTML -->
+<img src="blur-image.jpg" data-src="high-res-image.jpg" alt="Image">
+
+<script>
+// JavaScript
+const image = document.querySelector('img');
+
+// 监听高分辨率图片加载完成事件
+image.addEventListener('load', () => {
+ // 替换低分辨率图片的src属性
+ image.src = image.dataset.src;
+});
+</script>
+```
+
+在上面的示例中，一开始会显示一张模糊的低分辨率图片，然后在高分辨率图片加载完成后，将其替换为高分辨率图片，实现了渐进式加载的效果。
+
+渐进式加载图片可以减少用户等待时间，提供更好的用户体验。然而，需要注意的是，为了实现渐进式加载，需要额外加载高分辨率的图片，这可能会增加页面加载时间和网络带宽消耗。因此，开发者需要在性能和用户体验之间进行权衡，并根据实际情况进行选择和优化。
+
+## css加载会造成阻塞吗 {#p1-css-block}
+
+css加载会造成阻塞吗？
+
+js执行会阻塞DOM树的解析和渲染，那么css加载会阻塞DOM树的解析和渲染吗？
+为了完成本次测试，先来科普一下，如何利用chrome来设置下载速度
+
+打开chrome控制台(按下F12),可以看到下图，重点在我画红圈的地方
+![01](https://pic1.zhimg.com/v2-00bec3ea167ad4320a7e60fa0e405978_r.jpg)
+
+1. 点击我画红圈的地方(No throttling),会看到下图,我们选择GPRS这个选项
+![02](https://pic2.zhimg.com/v2-3b76909c0db211e6def82107ddaaabc9_r.jpg)
+
+1. 这样，我们对资源的下载速度上限就会被限制成20kb/s，好，那接下来就进入我们的正题
+
+ css加载会阻塞DOM树的解析渲染吗？
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <title>css阻塞</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <style>
+ h1 {
+ color: red !important
+ }
+ </style>
+ <script>
+ function h () {
+ console.log(document.querySelectorAll('h1'))
+ }
+ setTimeout(h, 0)
+ </script>
+ <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet">
+ </head>
+ <body>
+ <h1>这是红色的</h1>
+ </body>
+</html>
+```
+
+假设： css加载会阻塞DOM树解析和渲染
+
+假设下的结果: 在bootstrap.css还没加载完之前，下面的内容不会被解析渲染。那么我们一开始看到的应该是白屏，h1不会显示出来。
+并且此时console.log的结果应该是一个空数组。
+实际结果:如下图
+![03](https://pic2.zhimg.com/v2-d27c590e677526132cc102b967cb06b9_b.gif)
+
+ css会阻塞DOM树解析？
+
+由上图我们可以看到，当bootstrap.css还没加载完成的时候，h1并没有显示，但是此时控制台输出如下
+![04](https://pic1.zhimg.com/80/v2-655b4eabed2a09aaa75662cd971cb7fc_hd.jpg)
+
+可以得知，此时DOM树至少已经解析完成到了h1那里，而此时css还没加载完成，也就说明，**css并不会阻塞DOM树的解析**。
+
+ css加载会阻塞DOM树渲染？
+
+由上图，我们也可以看到，当css还没加载出来的时候，页面显示白屏，直到css加载完成之后，红色字体才显示出来，也就是说，
+下面的内容虽然解析了，但是并没有被渲染出来。所以，**css加载会阻塞DOM树渲染**。
+
+ 个人对这种机制的评价
+
+其实我觉得，这可能也是浏览器的一种优化机制。因为你加载css的时候，
+可能会修改下面DOM节点的样式，如果css加载不阻塞DOM树渲染的话，那么当css加载完之后，
+DOM树可能又得重新重绘或者回流了，这就造成了一些没有必要的损耗。所以干脆就先把DOM树的结构先解析完，把可以做的工作做完，
+然后等你css加载完之后，在根据最终的样式来渲染DOM树，这种做法性能方面确实会比较好一点。
+
+ css加载会阻塞js运行吗？
+
+由上面的推论，我们可以得出，css加载不会阻塞DOM树解析，但是会阻塞DOM树渲染。那么，css加载会不会阻塞js执行呢?
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <title>css阻塞</title>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <script>
+ console.log('before css')
+ var startDate = new Date()
+ </script>
+ <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet">
+ </head>
+ <body>
+ <h1>这是红色的</h1>
+ <script>
+ var endDate = new Date()
+ console.log('after css')
+ console.log('经过了' + (endDate -startDate) + 'ms')
+ </script>
+ </body>
+</html>
+```
+
+假设: css加载会阻塞后面的js运行
+
+预期结果: 在link后面的js代码，应该要在css加载完成后才会运行
+
+实际结果:
+![05](https://pic1.zhimg.com/v2-08c57cc17672558749803febff606468_b.gif)
+
+由上图我们可以看出，位于css加载语句前的那个js代码先执行了，
+但是位于css加载语句后面的代码迟迟没有执行，直到css加载完成后，它才执行。
+这也就说明了，**css加载会阻塞后面的js语句的执行**。详细结果看下图(css加载用了5600+ms):
+![06](https://pic3.zhimg.com/80/v2-00254fb0bd3edd4f25fcc093681a2006_hd.jpg)
+
+ 结论
+
+由上所述，我们可以得出以下结论:
+
+* css加载不会阻塞DOM树的解析
+* css加载会阻塞DOM树的渲染
+* css加载会阻塞后面js语句的执行
+
+因此，为了避免让用户看到长时间的白屏时间，我们应该尽可能的提高css加载速度，比如可以使用以下几种方法:
+
+* 使用CDN(因为CDN会根据你的网络状况，替你挑选最近的一个具有缓存内容的节点为你提供资源，因此可以减少加载时间)
+* 对css进行压缩(可以用很多打包工具，比如webpack,gulp等，也可以通过开启gzip压缩)
+* 合理的使用缓存(设置cache-control,expires,以及E-tag都是不错的，不过要注意一个问题，就是文件更新后，你要避免缓存而带来的影响。其中一个解决防范是在文件名字后面加一个版本号)
+* 减少http请求数，将多个css文件合并，或者是干脆直接写成内联样式(内联样式的一个缺点就是不能缓存)
+
+ 其他补充
+
+浏览器渲染是合并dom和cssom的过程，和js完全不一样。
+浏览器实现是，尽量等待dom和cssom解析完成，再开始合并渲染。
+如果dom解析完成但是css文件超时，或者css太慢，浏览器也会先渲染dom，等css下载完成再另一次渲染。
+而为什么会阻塞js，大部分原因都是因为js一般是在页面load完成之后才执行。
+如果css都没加载完成js自然不会执行。以上属个人见解，实际情况自行测试。
+
+浏览器对CSS阻塞渲染有两种处理方式，要么等css解析完一起渲染，chrome就是这么做的，但是会造成白屏；
+要么先把无样式的dom渲染出来等css解析好了再渲染一次，Firefox就是这么做的，但是会造成无样式内容闪烁。
+
+参考文章
+
+* [css加载会造成阻塞吗？](https://zhuanlan.zhihu.com/p/43282197?utm_source=qq&utm_medium=social&utm_oi=746007294986174464)

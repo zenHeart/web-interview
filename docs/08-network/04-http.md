@@ -268,6 +268,34 @@ self.addEventListener('activate', event => {
 
 总之，`Content-Type`为`application/octet-stream`表示这是一个通用的二进制流数据，没有特定的格式定义，通常用于文件下载、上传未知类型的数据或与特定协议和应用程序交互的场景。
 
+**常见的请求Content-Type有以下几种**：
+
+1. application/x-www-form-urlencoded：用于URL编码的表单数据，数据以键值对的形式发送。
+
+2. multipart/form-data：用于发送带有文件上传的表单数据，可以包含文本字段和文件字段。
+
+3. application/json：用于发送JSON格式的数据。
+
+4. text/plain：用于发送纯文本数据。
+
+5. application/xml：用于发送XML格式的数据。
+
+6. text/xml：用于发送XML格式的数据，与application/xml类似，但将数据视为纯文本。
+
+7. application/octet-stream：用于发送任意的二进制数据。
+
+这些Content-Type用于指定请求中的主体数据的类型。根据你要发送的数据类型，选择合适的Content-Type。在Fetch API中，你可以通过设置请求头部中的`Content-Type`字段来指定Content-Type。
+
+**追问：`application/xml` 和 `text/xml` 有啥区别？**
+
+虽然`application/xml`和`text/xml`都用于发送XML格式的数据，但它们在处理数据时有一些细微的区别。
+
+`application/xml`是一种通用的媒体类型，用于表示XML数据。它指示接收方将数据视为XML，并根据XML的语法进行解析和处理。这意味着接收方应该期望接收到的是一个符合XML规范的文档，而不是纯文本。
+
+`text/xml`是将XML数据表示为纯文本的媒体类型。它指示接收方将数据视为普通文本，并将其视为XML文档进行解析和处理。这意味着接收方会将接收到的数据解析为XML，并进行相应的处理。
+
+因此，主要区别在于接收方对待数据的方式。`application/xml`更加严格，要求数据符合XML规范，而`text/xml`则更灵活，将数据视为普通文本进行处理。
+
 ## ETag  {#p1-etag}
 
 如果 HTTP 响应头中的 ETag 值改变了，通常意味着资源（文件或其他内容）很可能发生了变化，但并不绝对意味着文件内容一定已经更改。
@@ -700,6 +728,23 @@ HTTP 状态码中 4xx 类状态码表示客户端错误。常见的 4xx 状态�
 * 如果可能，使用缓存或异步处理来减少对服务器的请求次数。
 * 检查是否有不必要的重复请求，可以进行优化以减少请求数量。
 
+在 HTTP 协议中，301和302是两种重定向状态码。它们的区别如下：
+
+1. 301 Moved Permanently (永久重定向)：当服务器返回301状态码时，表示所请求的资源已经被永久移动到了一个新的位置。浏览器在接收到301响应后，会自动将请求的 URL 地址更新为新的位置，并且将响应缓存起来。以后的请求将会直接访问新的位置。这意味着搜索引擎会将原始 URL 的权重转移到新的位置，且用户访问的 URL 也会发生更改。
+
+2. 302 Found (临时重定向)：当服务器返回302状态码时，表示所请求的资源暂时被移动到了一个新的位置。与301不同的是，浏览器在接收到302响应后，不会自动更新请求的 URL 地址，而是会保持原始 URL 地址不变。对于搜索引擎而言，会将权重保留在原始 URL 上，而不会转移到新的位置。通常情况下，浏览器会跳转到新的位置，用户会看到新的 URL 地址。
+
+**以下是301和302状态码的比较表格**：
+
+| 特征 | 301 Moved Permanently | 302 Found |
+|---|---|---|
+| 持久性 | 是 | 否 |
+| 重定向类型 | 永久重定向 | 临时重定向 |
+| URL 更新 | 是，浏览器会自动更新 | 否，浏览器保持原始 URL 不变 |
+| 响应缓存 | 是，浏览器会缓存响应 | 否，每次请求都会访问原始 URL |
+| 搜索引擎权重转移 | 是，权重会转移到新位置 | 否，权重保留在原始 URL 上 |
+| 用户可见性 | 可能会看到新的 URL 地址 | 可能会看到新的 URL 地址 |
+
 ## 请描述以下 request 和 response headers?
 
 * Diff. between Expires, Date, Age and If-Modified-…
@@ -710,6 +755,69 @@ HTTP 状态码中 4xx 类状态码表示客户端错误。常见的 4xx 状态�
 * X-Frame-Options
 
 ## 什么是 HTTP method？请罗列出你所知道的所有 HTTP method，并给出解释?
+
+## http 中 CSP 是什么 {#p4-csp}
+
+在 HTTP 协议中，CSP 指的是 "Content Security Policy"（内容安全策略）。CSP 是一种用于增强网站安全性的安全策略机制，通过指定浏览器只能加载指定来源的资源，以减少恶意攻击的风险。
+
+CSP 的主要目标是防止和减缓特定类型的攻击，例如跨站脚本攻击 (XSS) 和数据注入攻击。通过配置 CSP，网站管理员可以告诉浏览器哪些资源是被信任的，从而减少恶意代码的执行。
+
+CSP 的一些常见配置项包括：
+
+1. **default-src：** 指定默认情况下可以从哪些来源加载资源。
+2. **script-src：** 指定允许加载脚本的来源。
+3. **style-src：** 指定允许加载样式表的来源。
+4. **img-src：** 指定允许加载图片的来源。
+5. **font-src：** 指定允许加载字体的来源。
+6. **connect-src：** 指定允许进行网络请求的来源（例如 Ajax 请求）。
+7. **frame-src：** 指定允许加载框架的来源。
+8. **media-src：** 指定允许加载媒体资源的来源。
+
+等等。
+
+以下是一个简单的 CSP 示例：
+
+```http
+Content-Security-Policy: default-src 'self'; script-src 'self' example.com; img-src 'self' data:;
+```
+
+上述 CSP 规则的含义是：
+
+* `default-src 'self'`: 允许从同一站点加载默认来源的资源。
+* `script-src 'self' example.com`: 允许从同一站点和 example.com 加载脚本。
+* `img-src 'self' data:`: 允许从同一站点和 data: 协议加载图片。
+
+CSP 可以通过 HTTP 头部来设置，也可以通过 `<meta>` 标签嵌入在 HTML 页面中。使用 CSP 可以帮助网站减少受到恶意攻击的风险，提高网站的安全性。
+
+**如何通过 meta 标签设置 CSP**
+
+通过 `<meta>` 标签设置 Content Security Policy (CSP) 的方式如下：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta http-equiv="Content-Security-Policy" content="directives">
+ <title>Your Page Title</title>
+</head>
+<body>
+ <!-- Your content goes here -->
+</body>
+</html>
+```
+
+在上面的代码中，`<meta>` 标签的 `http-equiv` 属性被设置为 "Content-Security-Policy"，而 `content` 属性中则包含了 CSP 指令（directives）。你需要将 "directives" 替换为你实际想要设置的 CSP 规则。
+
+以下是一个具体的例子：
+
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' example.com; img-src 'self' data:;">
+```
+
+在这个例子中，CSP 规则指定了默认来源是同一站点，允许加载同一站点和 example.com 的脚本，允许加载同一站点和 data: 协议的图片。
+
+注意：通过 `<meta>` 标签设置的 CSP 规则只对当前页面生效，而通过 HTTP 头部设置的 CSP 规则对整个站点生效。因此，如果你希望 CSP 规则对整个站点生效，最好在服务器端通过 HTTP 头部设置 CSP。
 
 ## http2 中的首部压缩是什么 {#p1-http2-header-compression}
 
@@ -1021,3 +1129,48 @@ HTTP 重定向是指当客户端访问一个页面时，服务器返回一个重
 然而，切片上传也有其缺点，例如增加了客户端和服务器端处理的复杂性，需要正确管理和重组文件的各个部分。此外，在某些情况下（尤其是文件较小时），切片上传相较于整体上传并不会带来明显的时间优势，且可能因为初始化多个连接而略微增加总体上传时间。
 
 所以，是否选择切片上传，取决于文件大小、网络稳定性、服务器能力以及应用场景。对于大文件上传、网络条件不佳或需要高可靠性的场景，切片上传通常是更优的选择。
+
+## http 中 HSTS 是什么 {#p4-hsts}
+
+HTTP `Strict-Transport-Security`（HSTS）是一种安全策略，它通过 HTTP 头部告诉浏览器只能通过安全的 HTTPS 连接访问网站，从而增加网站的安全性。HSTS 有助于防止恶意攻击者通过中间人攻击（如SSL剥离攻击）窃取敏感信息。
+
+HSTS 的主要作用包括：
+
+* **强制使用 HTTPS：** 通过 HSTS，网站可以强制浏览器在一定时间内只能通过 HTTPS 访问，提高数据的安全性。
+
+* **防止 SSL 剥离攻击：** HSTS 通过告知浏览器只能通过安全的连接访问网站，有效地防止了一些中间人攻击，例如 SSL 剥离攻击，其中攻击者试图将 HTTPS 连接降级为不安全的 HTTP 连接。
+
+* **增加网站的安全性：** HSTS 是一种增加网站安全性的简单而有效的手段，尤其是对于那些强调隐私和数据保护的网站。
+
+HSTS 的工作原理如下：
+
+1. **首次访问：** 当用户首次通过 HTTPS 访问网站时，服务器可以在响应头中包含 HSTS 头部，指定网站的 HSTS 策略。例如：
+
+```
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+```
+
+* `max-age=31536000`: 告诉浏览器在接下来的 1 年内，只能通过 HTTPS 访问该网站。
+* `includeSubDomains`: 表示该策略也适用于所有子域名。
+* `preload`: 表示网站希望被添加到浏览器的 HSTS 预加载列表中。
+
+2. **以后的访问：** 一旦浏览器接收到包含 HSTS 头部的响应后，它会记住这个信息。在接下来的一年内，浏览器将强制使用 HTTPS 访问该网站，即使用户尝试通过 HTTP 访问。
+
+一旦网站启用了 `HSTS`，并且用户第一次通过 HTTPS 访问该网站，浏览器将在 `HSTS` 头部指定的时间内（`max-age` 参数指定的时间）记住这个策略，即使用户以后尝试通过 HTTP 访问，浏览器仍然会强制使用 HTTPS。因此，使用 HSTS 需要谨慎，确保网站支持 HTTPS 并且配置正确。
+
+**如何取消 `HSTS`**
+
+> 如果之前的请求设置了 HTTP Strict-Transport-Security 这个 header 了， 时间是 max-age=31536000；
+> 之后因为一些原因， 取消了 Strict-Transport-Security 这个 header， 那么还是不能使用 http 吗?
+
+一旦浏览器接收到包含 HTTP `Strict-Transport-Security`（HSTS）头部的响应，并且在响应中设置了 `max-age` 参数，浏览器会在指定的时间内坚持使用 HTTPS 连接，即使后续的请求中不再包含 HSTS 头部。
+
+如果之前的请求设置了 `max-age=31536000`，那么浏览器将在接下来的一年内坚持使用 HTTPS 连接，即使后续的请求中不再包含 HSTS 头部。 即使之后取消了 HSTS 头部，浏览器仍然会在 `max-age` 规定的时间内执行强制使用 HTTPS 的策略。
+
+如果由于一些原因需要取消 HSTS，可以采取以下步骤之一：
+
+1. **在 HTTP 响应中不再包含 HSTS 头部：** 在服务器的 HTTPS 响应中，不再包含 `Strict-Transport-Security` 头部，或者将 `max-age` 设置为较短的时间，以便更快地使浏览器放弃 HSTS 策略。
+
+2. **使用 `includeSubDomains` 指令进行逐步取消：** 如果之前设置了 `includeSubDomains`，并且想逐步取消 HSTS，可以在不同的子域名上逐步取消。例如，可以在某个子域名上不再包含 HSTS 头部，而其他子域名仍然保持 HSTS。
+
+请注意，取消 HSTS 头部可能导致用户在一定时间内无法通过 HTTPS 访问网站，因为浏览器会在 `max-age` 规定的时间内继续强制使用 HTTPS。 确保在取消 HSTS 头部之前，确保网站的 HTTPS 配置是正确的，以避免访问问题。

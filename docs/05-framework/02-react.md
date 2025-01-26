@@ -1,5 +1,35 @@
 # react
 
+## 类组件的生命周期， 映射的 hooks 哪些 api ? {#p0-class-hooks}
+
+下面是 React 类组件的生命周期方法和对应的 Hooks API：
+
+1. `constructor`：`useState` 可以在函数组件中模拟类组件的 `constructor`。在函数组件内部使用 `useState` 声明状态变量，并设置初始值。
+
+2. `componentDidMount`：`useEffect` 用于模拟 `componentDidMount`。通过在 `useEffect` 的回调函数中返回一个清理函数，可以模拟 `componentWillUnmount`。
+
+3. `componentDidUpdate`：`useEffect` 可以在函数组件中模拟 `componentDidUpdate`。通过使用 `useEffect` 的第二个参数，可以指定依赖项的数组，当依赖项发生变化时，`useEffect` 的回调函数会被调用。
+
+4. `componentWillUnmount`：`useEffect` 的清理函数可以模拟 `componentWillUnmount`。在 `useEffect` 的回调函数中返回一个清理函数，它会在组件销毁时执行。
+
+5. `shouldComponentUpdate`：`React.memo` 可以用于函数组件的性能优化，类似于 `shouldComponentUpdate` 的功能。`React.memo` 可以包裹一个组件，并只在组件的 props 发生变化时重新渲染。
+
+6. `getDerivedStateFromProps`：`useState` 可以通过提供 setter 函数，将 props 的值作为 state 的初始值。在组件重新渲染时，`useState` 不会重置 state 的值。
+
+并不是每一个生命周期方法都有与之对应的 Hooks API。
+Hooks 是为了解决函数式组件的状态管理和副作用问题而引入的新特性，因此 Hooks 在某种程度上替换了类组件的生命周期方法。
+
+下面是一个使用表格方式对比 React 类组件的生命周期方法和对应的 Hooks API：
+
+| 生命周期方法 | Hooks API |
+|-------------------|-----------------------------------------------|
+| constructor | useState |
+| componentDidMount | useEffect（第二个参数为空数组） |
+| componentDidUpdate | useEffect（包含依赖项的数组） |
+| componentWillUnmount | useEffect 的清理函数 |
+| shouldComponentUpdate | React.memo |
+| getDerivedStateFromProps | useState（通过提供 setter 函数） |
+
 ## react element 和 component 的区别 {#p1-react-element-component}
 
 ## jsx 返回 null undefined false 区别 {#p2-jsx-return-null-undefined-false}
@@ -1360,3 +1390,58 @@ const MyComponent = () => {
  预设的好处是简化了配置过程。开发者可以在 Babel 的配置中一次性添加 `@babel/preset-react`，而不是单独添加每一个与 React 相关的 Babel 插件。此外，预设将维护这些插件的正确版本和顺序，这有助于避免潜在的配置错误。
 
 在实践中，大多数开发 React 应用的开发者会使用 `@babel/preset-react` 因为它提供了一个即插即用的 Babel 环境，无需担心各个插件的具体细节。但是也有些情况下，为了更细致的优化和控制，开发者可能会选择手动添加特定的插件，包括 `@babel/plugin-transform-react-jsx`。
+
+## 如何实现路由守卫 {p0-router-guide}
+
+在 React 中，虽然没有内置的路由守卫（Route Guards）功能，但可以使用第三方库来实现类似的功能。最常用的第三方路由库是 React Router。
+
+React Router 提供了一些组件和钩子函数，可以用于在路由导航过程中进行拦截和控制。
+
+1. `<Route>` 组件：可以在路由配置中定义特定路由的守卫逻辑。例如，可以设置 `render` 属性或者 `component` 属性来渲染组件，并在渲染前进行守卫逻辑的判断。
+
+2. `useHistory` 钩子：可以获取当前路由的历史记录，并通过 `history` 对象进行路由导航的控制。可以使用 `history` 对象的 `push`、`replace` 方法来切换路由，并在切换前进行守卫逻辑的判断。
+
+3. `useLocation` 钩子：可以获取当前的路由位置信息，包括路径、查询参数等。可以根据这些信息进行守卫逻辑的判断。
+
+下面是一个使用 React Router 实现路由守卫的示例：
+
+```javascript
+import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom'
+
+function App () {
+  const history = useHistory()
+
+  const isAuthenticated = () => {
+    // 判断用户是否已登录
+    return true
+  }
+
+  const requireAuth = (Component) => {
+    return () => {
+      if (isAuthenticated()) {
+        return <Component />
+      } else {
+        history.push('/login')
+        return null
+      }
+    }
+  }
+
+  return (
+ <Router>
+ <Route path="/home" render={requireAuth(Home)} />
+ <Route path="/login" component={Login} />
+ <Route path="/dashboard" render={requireAuth(Dashboard)} />
+ </Router>
+  )
+}
+```
+
+在上述示例中，`requireAuth` 是一个自定义的函数，用于判断是否需要进行权限校验。在 `render` 属性中，我们调用 `requireAuth` 函数包裹组件，根据用户是否已登录来判断是否渲染该组件。如果用户未登录，则使用 `history.push` 方法进行路由跳转到登录页面。
+
+通过使用 React Router 提供的组件和钩子函数，我们可以实现类似于路由守卫的功能，进行路由的拦截和控制。
+
+**参考文档**
+
+* [资料](https://juejin.cn/post/7177374176141901861)
+* [资料](https://juejin.cn/post/7253001747542720567)

@@ -1,6 +1,31 @@
 # 值
 
-## display block 和 display inline 区别
+## display
+
+CSS 中的`display`属性是一个非常重要的属性，它用于设置一个元素的显示类型。这个属性决定了元素是如何显示以及与其他元素如何交互。以下是一些常见的`display`属性值及其含义：
+
+1. `none`：元素不会被显示。
+
+2. `block`：元素显示为块级元素，此类元素会新起一行。
+
+3. `inline`：元素不会新起一行，其宽度只占据它的内容宽度。
+
+4. `inline-block`：元素横排显示，但是同时具备块级元素的特性，比如可以设置宽高。
+
+5. `flex`：元素会变成弹性容器（flex container），其子元素会成为弹性项（flex items）。这个值允许使用弹性盒子布局（flexbox）。
+
+6. `grid`：元素会变成网格容器，其子元素会成为网格项。它开启了网格布局。
+
+7. `table`、`table-row`、`table-cell` 等：这些值让元素表现得像表格元素一样。
+
+8. `list-item`：元素会表现为列表项（像`<li>`元素一样）。
+
+另外还有一些新的、较少使用或是实验性的`display`属性值，例如：
+
+* `inline-flex`: 使元素的内容为弹性容器，与`flex`相似，但是元素自身会像`inline`元素一样排列。
+* `inline-grid`: 类似于`grid`, 但是元素自身表现为`inline`级别。
+
+CSS3 引入了更多复杂的布局模式，包括上述的`flex`和`grid`以及其他的一些属性值。根据您使用的 CSS 版本，可能还有更多其他属性值存在。这些布局模式为网页布局提供了更为强大和灵活的控制手段。
 
 ## display float 理解
 
@@ -57,7 +82,7 @@
 
 * 可以在开发过程中使用 JavaScript 脚本来处理样式表中的 `px` 值，并将其转换为 `rem` 。但这种方式相对复杂，并且可能会影响开发效率。
 
-## CSS 属性计算函数 Calc 介绍一下 {#p2-calc}
+## calc  {#p2-calc}
 
 CSS 属性计算函数 `calc()` 是用来进行动态的尺寸计算以及数值混合运算的一种函数。它增强了纯 CSS 的灵活性，允许你在属性值的设置中直接执行基础的加（`+`）、减（`-`）、乘（`*`）、除（`/`）运算。
 
@@ -84,7 +109,7 @@ property: calc(expression);
 }
 ```
 
- 高级用法
+高级用法
 
 使用 `calc()` 的同时可以嵌套使用 `min()` 和 `max()` 函数，这种组合对响应式设计非常有用。
 
@@ -95,7 +120,7 @@ property: calc(expression);
 }
 ```
 
- 括号
+括号
 
 如果要进行优先级计算，你需要使用括号，比如在多重运算中：
 
@@ -122,15 +147,72 @@ property: calc(expression);
 
 ```css
 .container {
- width: calc(100% - 20px); /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 虚拟列不存在时，容器宽度为屏幕宽度减去20px */
+ width: calc(100% - 20px); /* 虚拟列不存在时，容器宽度为屏幕宽度减去20px */
 }
 .grid {
  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
- /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 这部分代码创建一个栅格布局，其中每一格至少宽250px，每列最大填充至填满屏幕，如果没有空间填满则按最小宽度计算 */
+ // 这部分代码创建一个栅格布局，其中每一格至少宽250px，每列最大填充至填满屏幕，如果没有空间填满则按最小宽度计算 */
 }
 ```
 
 通过 `calc()` 函数，开发人员可以设计出更加灵活和响应用户屏幕大小的界面布局。
+
+是的，CSS 支持计算值，这可以通过 `calc()` 函数实现。`calc()` 允许你进行数学运算，计算 CSS 属性值。这个功能非常有力，因为它可以混合使用不同的单位，并且可以用在几乎任何需要数值的地方。
+
+以下是 `calc()` 函数的一些应用示例：
+
+1. **基本运算**：可以执行加 (`+`)、减 (`-`)、乘 (`*`) 和除 (`/`) 四种基本运算。
+
+ ```css
+ .element {
+ width: calc(100% - 80px);
+ }
+ ```
+
+2. **混合单位**：`calc()` 函数可以混合使用像素、百分比、em、rem 等单位。
+
+ ```css
+ .element {
+ margin-top: calc(50vh - 50px);
+ }
+ ```
+
+3. **嵌套**：你可以在 `calc()` 里面嵌套另一个 `calc()`。
+
+ ```css
+ .element {
+ width: calc(100% - calc(50px + 2em));
+ }
+ ```
+
+4. **环境变量**：结合 CSS 变量 (Custom Properties) 使用。
+
+ ```css
+ :root {
+ --main-padding: 10px;
+ }
+
+ .element {
+ padding: calc(var(--main-padding)2);
+ }
+ ```
+
+5. **动态值调整**：用于某些动态大小的调整。
+
+ ```css
+ .element {
+ position: absolute;
+ bottom: calc(50% - 20px);
+ }
+ ```
+
+当使用 `calc()` 时有一些规则需要注意，例如:
+
+* 运算符之间需要有空格。`calc(50% -50px)` 是无效的，而 `calc(50% - 50px)` 是有效的。
+* 不能进行 0 除运算，也就是说分母不能为 0。
+* 在进行乘法和除法时，至少有一个值必须是数值（即不带单元的数字）。
+
+总的来说，`calc()` 是一个强大的 CSS 工具，可以在响应式设计和复杂布局管理中提供极大的帮助。
 
 ## line-gradient {#p0-line-gradient}
 

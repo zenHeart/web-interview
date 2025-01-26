@@ -173,7 +173,51 @@ Vue 3 引入了组合式 API，随之而来的是一系列新的生命周期钩�
 * 避免"就地复用"带来的副作用，特别是在列表渲染时
 * 触发组件的重新渲染
 
-## computed 和 watch 的区别
+## computed 和 watch 的区别 {#p0-computed-watch}
+
+在 Vue 中，`computed` 和 `watch` 是两种用于监听和响应数据变化的方式。
+
+`computed` 是计算属性，它是基于响应式数据进行计算得到的一个新的派生属性。计算属性可以接收其他响应式数据作为依赖，并且只有当依赖数据发生变化时，计算属性才会重新计算。计算属性的值会被缓存，只有在依赖数据变化时才会重新计算，这样可以提高性能。计算属性的定义方式是使用 `computed` 函数或者在 Vue 组件中使用 `get` 和 `set` 方法。
+
+下面是一个使用计算属性的示例：
+
+```javascript
+import { reactive, computed } from 'vue'
+
+const state = reactive({
+  firstName: 'John',
+  lastName: 'Doe'
+})
+
+const fullName = computed(() => {
+  return `${state.firstName} ${state.lastName}`
+})
+
+console.log(fullName.value) // 输出: "John Doe"
+
+state.firstName = 'Mike' // 修改firstName
+console.log(fullName.value) // 输出: "Mike Doe"
+```
+
+`watch` 是用于监听特定响应式数据的变化，并在数据变化时执行相应的操作。`watch` 可以监听单个数据的变化，也可以监听多个数据的变化。当被监听的数据发生变化时，`watch` 的回调函数会被执行。`watch` 还支持深度监听对象的变化以及异步操作。
+
+下面是一个使用 `watch` 的示例：
+
+```javascript
+import { reactive, watch } from 'vue'
+
+const state = reactive({
+  count: 0
+})
+
+watch(() => state.count, (newVal, oldVal) => {
+  console.log(`count 从 ${oldVal} 变为 ${newVal}`)
+})
+
+state.count++ // 输出: "count 从 0 变为 1"
+```
+
+以上是 `computed` 和 `watch` 的基本用法。通过使用这两种方式，我们可以根据需要监听和响应数据的变化，实现更加灵活的逻辑和交互。
 
 下面是一个表格，对比了 Vue 3 中的 `computed` 计算属性和普通函数方法的主要差异：
 
@@ -195,10 +239,12 @@ Vue 3 引入了组合式 API，随之而来的是一系列新的生命周期钩�
 
 ```javascript
 // computed 示例：计算总价
-computed: {
-total() {
-  return this.price * this.quantity
-}
+const config = {
+  computed: {
+    total () {
+      return this.price * this.quantity
+    }
+  }
 }
 ```
 
@@ -206,12 +252,14 @@ total() {
 
 ```javascript
 // watch 示例：数据变化执行多个操作
-watch: {
-username(newVal) {
-  this.validateUsername(newVal)
-  this.checkAvailability(newVal)
-  this.updateUserProfile(newVal)
-}
+const config = {
+  watch: {
+    username (newVal) {
+      this.validateUsername(newVal)
+      this.checkAvailability(newVal)
+      this.updateUserProfile(newVal)
+    }
+  }
 }
 ```
 
@@ -292,23 +340,23 @@ fn.apply(obj, [arg1, arg2])
 ```javascript
 // 数据私有化
 function counter () {
-let count = 0
-return {
-  add () { count++ },
-  get () { return count }
-}
+  let count = 0
+  return {
+    add () { count++ },
+    get () { return count }
+  }
 }
 
 // 函数柯里化
 function curry (fn) {
-return function curried (...args) {
-  if (args.length >= fn.length) {
-    return fn.apply(this, args)
+  return function curried (...args) {
+    if (args.length >= fn.length) {
+      return fn.apply(this, args)
+    }
+    return function (...moreArgs) {
+      return curried.apply(this, args.concat(moreArgs))
+    }
   }
-  return function (...moreArgs) {
-    return curried.apply(this, args.concat(moreArgs))
-  }
-}
 }
 ```
 
@@ -317,26 +365,26 @@ return function curried (...args) {
 ```javascript
 // 防抖: 延迟执行，重复触发重新计时
 function debounce (fn, delay) {
-let timer = null
-return function (...args) {
-  clearTimeout(timer)
-  timer = setTimeout(() => {
-    fn.apply(this, args)
-  }, delay)
-}
+  let timer = null
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+    }, delay)
+  }
 }
 
 // 节流: 规定时间内只执行一次
 function throttle (fn, delay) {
-let timer = null
-return function (...args) {
-  if (!timer) {
-    timer = setTimeout(() => {
-      fn.apply(this, args)
-      timer = null
-    }, delay)
+  let timer = null
+  return function (...args) {
+    if (!timer) {
+      timer = setTimeout(() => {
+        fn.apply(this, args)
+        timer = null
+      }, delay)
+    }
   }
-}
 }
 ```
 
@@ -354,12 +402,12 @@ return function (...args) {
 
 ```javascript
 async function example () {
-try {
-  const result = await someAsyncOperation()
-  return result
-} catch (error) {
-  console.error(error)
-}
+  try {
+    const result = await someAsyncOperation()
+    return result
+  } catch (error) {
+    console.error(error)
+  }
 }
 ```
 
@@ -367,9 +415,9 @@ try {
 
 ```javascript
 function * generator () {
-yield 1
-yield 2
-return 3
+  yield 1
+  yield 2
+  return 3
 }
 
 const gen = generator()
@@ -409,16 +457,16 @@ type Status = 'pending' | 'fulfilled' | 'rejected';
 
 ```javascript
 Object.defineProperty(obj, 'key', {
-get () {
+  get () {
   // 依赖收集
-  track()
-  return value
-},
-set (newValue) {
-  value = newValue
-  // 触发更新
-  trigger()
-}
+    track()
+    return value
+  },
+  set (newValue) {
+    value = newValue
+    // 触发更新
+    trigger()
+  }
 })
 ```
 
@@ -426,17 +474,17 @@ set (newValue) {
 
 ```javascript
 const proxy = new Proxy(target, {
-get (target, key) {
+  get (target, key) {
   // 依赖收集
-  track(target, key)
-  return target[key]
-},
-set (target, key, value) {
-  target[key] = value
-  // 触发更新
-  trigger(target, key)
-  return true
-}
+    track(target, key)
+    return target[key]
+  },
+  set (target, key, value) {
+    target[key] = value
+    // 触发更新
+    trigger(target, key)
+    return true
+  }
 })
 ```
 
@@ -460,20 +508,88 @@ set (target, key, value) {
 ```javascript
 // Vue2 的局限
 const vm = new Vue({
-data: {
-  items: ['a', 'b']
-}
+  data: {
+    items: ['a', 'b']
+  }
 })
 vm.items[0] = 'x' // 不会触发响应
 vm.items.length = 1 // 不会触发响应
 
 // Vue3 的优势
 const proxy = reactive({
-items: ['a', 'b']
+  items: ['a', 'b']
 })
 proxy.items[0] = 'x' // 可以触发响应
 proxy.items.length = 1 // 可以触发响应
 ```
+
+## ref、toRef 和 toRefs 有啥区别？{p0-ref-toref-torefs}
+
+在 Vue 3 中，`ref`、`toRef` 和 `toRefs` 是 Vue Composition API 提供的函数，用于处理响应式数据。
+
+1. `ref(value: T): Ref<T>`：创建一个响应式数据引用。接收一个初始值作为参数，并返回一个包含该值的响应式引用。`Ref` 是一个包装对象，它的 `.value` 属性用于访问和修改引用的值。
+
+使用 `ref` 创建响应式数据引用：
+
+```javascript
+import { ref } from 'vue'
+
+const count = ref(0) // 创建一个初始值为 0 的响应式引用
+
+console.log(count.value) // 输出: 0
+
+count.value++ // 修改引用的值
+console.log(count.value) // 输出: 1
+```
+
+2. `toRef(object: object, key: string | symbol): ToRef`：创建一个指向另一个响应式对象的响应式引用。接收一个响应式对象和其属性名作为参数，并返回一个指向该属性的响应式引用。`ToRef` 是一个只读的响应式引用。
+
+使用 `toRef` 创建指向另一个响应式对象的引用：
+
+```javascript
+import { ref, reactive, toRef } from 'vue'
+
+const state = reactive({
+  name: 'John',
+  age: 30
+})
+
+const nameRef = toRef(state, 'name') // 创建指向 state.name 的引用
+
+console.log(nameRef.value) // 输出: "John"
+
+state.name = 'Mike' // 修改原始对象的属性值
+console.log(nameRef.value) // 输出: "Mike"
+
+nameRef.value = 'Amy' // 修改引用的值
+console.log(state.name) // 输出: "Amy"
+```
+
+3. `toRefs(object: T): ToRefs<T>`：将一个响应式对象的所有属性转换为响应式引用。接收一个响应式对象作为参数，并返回一个包含所有属性的响应式引用对象。`ToRefs` 是一个对象，每个属性都是一个只读的响应式引用。
+
+使用 `toRefs` 将对象的所有属性转换为响应式引用：
+
+```javascript
+import { reactive, toRefs } from 'vue'
+
+const state = reactive({
+  name: 'John',
+  age: 30
+})
+
+const refs = toRefs(state) // 将 state 中的所有属性转换为响应式引用
+
+console.log(refs.name.value) // 输出: "John"
+console.log(refs.age.value) // 输出: 30
+
+state.name = 'Mike' // 修改原始对象的属性值
+console.log(refs.name.value) // 输出: "Mike"
+
+refs.age.value = 25 // 修改引用的值
+console.log(state.age) // 输出: 25
+```
+
+这些函数是 Vue 3 Composition API 中用于创建和处理响应式数据的重要工具。通过它们，我们可以更灵活地管理和使用响应式数据。
 
 ## vue2 和 vue3 数组变化是如何处理的
 
@@ -746,21 +862,21 @@ const useCartStore = defineStore('cart', {
 * Pinia 对 TypeScript 的支持非常好，可以轻松地为 store 定义类型，并且在开发过程中可以获得更好的类型提示和错误检查。
 * 例如，可以使用 TypeScript 来定义一个 store 的类型：
 
-```javascript
-import { defineStore } from 'pinia';
+```ts
+import { defineStore } from 'pinia'
 
 interface CartItem {
-id: number;
-name: string;
-price: number;
-}
+  id: number;
+  name: string;
+  price: number;
+  }
 
 export const useCartStore = defineStore('cart', {
-state: () => ({
-items: [] as CartItem[],
-}),
-//...
-});
+  state: () => ({
+    items: [] as CartItem[]
+  })
+// ...
+})
 ```
 
 * **Vuex**：
@@ -950,17 +1066,17 @@ const targetElementId = ref("body");
 
 ```javascript
 const i18nPlugin = {
-install (app, options) {
-  const translations = options.translations
-  app.config.globalProperties.$translate = (key) => {
-    const parts = key.split('.')
-    let value = translations[parts[0]]
-    for (let i = 1; i < parts.length && value; i++) {
-      value = value[parts[i]]
+  install (app, options) {
+    const translations = options.translations
+    app.config.globalProperties.$translate = (key) => {
+      const parts = key.split('.')
+      let value = translations[parts[0]]
+      for (let i = 1; i < parts.length && value; i++) {
+        value = value[parts[i]]
+      }
+      return value || key
     }
-    return value || key
   }
-}
 }
 
 export default i18nPlugin
@@ -970,29 +1086,29 @@ export default i18nPlugin
 
 假设你有以下的语言翻译对象：
 
-```javascript
+```ts
 // en.js
 const enTranslations = {
-greetings: {
-hello: 'Hello!',
-},
-};
+  greetings: {
+    hello: 'Hello!'
+  }
+}
 
-export default enTranslations;
+// export default enTranslations
 
 // zh.js
 const zhTranslations = {
-greetings: {
-hello: '你好！',
-},
-};
+  greetings: {
+    hello: '你好！'
+  }
+}
 
-export default zhTranslations;
+// export default zhTranslations
 ```
 
 在项目的入口文件（通常是`main.js`或`main.ts`）中：
 
-```javascript
+```js
 import { createApp } from 'vue'
 import App from './App.vue'
 import enTranslations from './locales/en'
@@ -1040,12 +1156,12 @@ Vue 插件是一个包含`install`方法的对象，或者是一个函数，这�
 
 ```javascript
 const myPlugin = {
-install (Vue) {
+  install (Vue) {
   // 在这里添加全局功能或扩展 Vue 实例
-  Vue.prototype.$myMethod = function () {
-    console.log('This is a custom method added by the plugin.')
+    Vue.prototype.$myMethod = function () {
+      console.log('This is a custom method added by the plugin.')
+    }
   }
-}
 }
 ```
 
@@ -1053,9 +1169,9 @@ install (Vue) {
 
 ```javascript
 function myPlugin (Vue) {
-Vue.prototype.$myMethod = function () {
-  console.log('This is a custom method added by the plugin.')
-}
+  Vue.prototype.$myMethod = function () {
+    console.log('This is a custom method added by the plugin.')
+  }
 }
 ```
 
@@ -1720,10 +1836,11 @@ Vue.component('async-component', (resolve, reject) => ({
 * **作用**：为未捕获的异常定义一个全局的处理函数。这在集中处理组件渲染或观察者(watchers)中的异常时非常有用。
 * **示例**：
 
-```javascript
-app.config.errorHandler = (err, instance, info) => {
-  // 处理错误
-}
+```js
+// app.config.errorHandler = (err, instance, info) => {
+//   // 处理错误
+//   console.log('nop')
+// }
 ```
 
  `app.config.warnHandler`
@@ -1909,3 +2026,93 @@ CSS 则会被转换成：
 * 当使用外部库的类名时，`scoped` 可能会导致样式不被应用，因为它会期望所有匹配规则的元素都带有特定的属性。
 
 总的来说，Scoped Styles 是 Vue 单文件组件提供的一种方便且有效的样式封装方式，通过 PostCSS 转换和属性选择器来实现组件之间的样式隔离。
+
+## 路由守卫 {#p0-router-guide}
+
+路由守卫是 Vue Router 提供的一种机制，用于在路由导航过程中对路由进行拦截和控制。通过使用路由守卫，我们可以在路由导航前、导航后、导航中断等不同的阶段执行相应的逻辑。
+
+Vue Router 提供了三种类型的路由守卫：
+
+1. 全局前置守卫（Global Before Guards）：在路由切换之前被调用，可以用于进行全局的权限校验或者路由跳转拦截等操作。
+
+2. 路由独享守卫（Per-Route Guards）：在特定的路由配置中定义的守卫。这些守卫只会在当前路由匹配成功时被调用。
+
+3. 组件内的守卫（In-Component Guards）：在组件实例内部定义的守卫。这些守卫可以在组件内部对路由的变化进行相应的处理。
+
+* 全局前置守卫
+
+```js
+router.beforeEach((to, from, next) => {
+  // to: 即将进入的目标
+  // from:当前导航正要离开的路由
+  return false // 返回false用于取消导航
+  // return { name: 'Login' } // 返回到对应name的页面
+  // next({ name: 'Login' }) // 进入到对应的页面
+  // next() // 放行
+})
+```
+
+* 全局解析守卫:类似beforeEach
+
+```js
+router.beforeResolve(to => {
+  if (to.meta.canCopy) {
+    return false // 也可取消导航
+  }
+})
+```
+
+* 全局后置钩子
+
+```js
+router.afterEach((to, from) => {
+  logInfo(to.fullPath)
+})
+```
+
+* 导航错误钩子，导航发生错误调用
+
+```js
+router.onError(error => {
+  logError(error)
+})
+```
+
+* 路由独享守卫,beforeEnter可以传入单个函数，也可传入多个函数。
+
+```js
+function dealParams (to) {
+  // ...
+}
+function dealPermission (to) {
+  // ...
+}
+
+const routes = [
+  {
+    path: '/home',
+    component: Home,
+    beforeEnter: (to, from) => {
+      return false // 取消导航
+    }
+    // beforeEnter: [dealParams, dealPermission]
+  }
+]
+```
+
+组件内的守卫
+
+```js
+const Home = {
+  template: '...',
+  beforeRouteEnter (to, from) {
+    // 此时组件实例还未被创建，不能获取this
+  },
+  beforeRouteUpdate (to, from) {
+    // 当前路由改变，但是组件被复用的时候调用，此时组件已挂载好
+  },
+  beforeRouteLeave (to, from) {
+    // 导航离开渲染组件的对应路由时调用
+  }
+}
+```

@@ -34,7 +34,7 @@
  .aspect-ratio-box {
  width: 100%;
  position: relative;
- padding-top: 56.25%; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 16:9 的长宽比，9/16 = 0.5625，即 56.25% */
+ padding-top: 56.25%; // 16:9 的长宽比，9/16 = 0.5625，即 56.25% */
  }
  .aspect-ratio-box >{
  position: absolute;
@@ -69,7 +69,7 @@
  .aspect-ratio-box-vw::before {
  content: "";
  display: block;
- padding-top: 56.25%; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 16:9 的长宽比 */
+ padding-top: 56.25%; // 16:9 的长宽比 */
  }
  .aspect-ratio-box-vw >{
  position: absolute;
@@ -100,7 +100,7 @@
  .aspect-ratio-grid {
  width: 100%;
  height: 0;
- padding-bottom: 56.25%; /Applications /Library /System /Users /Volumes /bin /cores /dev /etc /home /opt /private /sbin /tmp /usr /var 16:9 的长宽比 */
+ padding-bottom: 56.25%; // 16:9 的长宽比 */
  display: grid;
  }
  .aspect-ratio-grid >{
@@ -346,51 +346,51 @@
  js 代码实现
 
 ```javascript
-//获取用户屏幕宽度，决定一行几张图
-//操作下一张图，放到上一行最矮的列下
-imgLocation("container", "box");
+// 获取用户屏幕宽度，决定一行几张图
+// 操作下一张图，放到上一行最矮的列下
+imgLocation('container', 'box')
 
-function imgLocation(parent, content) {
- var cparent = document.getElementById(parent);
- var ccontent = getChildElement(cparent, content); //document.querySelectorAll('#container .box')
- // console.log(ccontent)
- var imgWidth = ccontent[0].offsetWidth;
- var num = Math.floor(document.documentElement.clientWidth / imgWidth);
- cparent.style.width = `${imgWidthnum}px`;
- //要操作的是哪张，每一列的高度
+function imgLocation (parent, content) {
+  const cparent = document.getElementById(parent)
+  const ccontent = getChildElement(cparent, content) // document.querySelectorAll('#container .box')
+  // console.log(ccontent)
+  const imgWidth = ccontent[0].offsetWidth
+  const num = Math.floor(document.documentElement.clientWidth / imgWidth)
+  cparent.style.width = `${imgWidthnum}px`
+  // 要操作的是哪张，每一列的高度
 
- var BoxHeightArr = [];
- for (var i = 0; i < ccontent.length; i++) {
- if (i < num) {
- //记录第一行
- BoxHeightArr[i] = ccontent[i].offsetHeight;
- } else {
- //开始操作，找到最矮的高度及列数
- minHeight = Math.min.apply(null, BoxHeightArr);
- var minIndex = BoxHeightArr.indexOf(minHeight);
+  const BoxHeightArr = []
+  for (let i = 0; i < ccontent.length; i++) {
+    if (i < num) {
+      // 记录第一行
+      BoxHeightArr[i] = ccontent[i].offsetHeight
+    } else {
+      // 开始操作，找到最矮的高度及列数
+      minHeight = Math.min.apply(null, BoxHeightArr)
+      const minIndex = BoxHeightArr.indexOf(minHeight)
 
- //摆放图片位置
- ccontent[i].style.position = "absolute";
- ccontent[i].style.top = minHeight + "px";
- ccontent[i].style.left = ccontent[minIndex].offsetLeft + "px";
- //更新这一列图片高度
- BoxHeightArr[minIndex] = BoxHeightArr[minIndex] + ccontent[i].offsetHeight;
- }
- }
- console.log(BoxHeightArr);
+      // 摆放图片位置
+      ccontent[i].style.position = 'absolute'
+      ccontent[i].style.top = minHeight + 'px'
+      ccontent[i].style.left = ccontent[minIndex].offsetLeft + 'px'
+      // 更新这一列图片高度
+      BoxHeightArr[minIndex] = BoxHeightArr[minIndex] + ccontent[i].offsetHeight
+    }
+  }
+  console.log(BoxHeightArr)
 }
 
-function getChildElement(parent, child) {
- //获取parent中所有child
- var childArr = [];
- var allChild = parent.getElementsByTagName("*");
- //找出所有box
- for (var i = 0; i < allChild.length; i++) {
- if (allChild[i].className == child) {
- childArr.push(allChild[i]);
- }
- }
- return childArr;
+function getChildElement (parent, child) {
+  // 获取parent中所有child
+  const childArr = []
+  const allChild = parent.getElementsByTagName('*')
+  // 找出所有box
+  for (let i = 0; i < allChild.length; i++) {
+    if (allChild[i].className == child) {
+      childArr.push(allChild[i])
+    }
+  }
+  return childArr
 }
 ```
 
