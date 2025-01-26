@@ -523,7 +523,7 @@ proxy.items[0] = 'x' // 可以触发响应
 proxy.items.length = 1 // 可以触发响应
 ```
 
-## ref、toRef 和 toRefs 有啥区别？{p0-ref-toref-torefs}
+## ref、toRef 和 toRefs 有啥区别？{#p0-ref-toref-torefs}
 
 在 Vue 3 中，`ref`、`toRef` 和 `toRefs` 是 Vue Composition API 提供的函数，用于处理响应式数据。
 

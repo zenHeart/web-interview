@@ -1,6 +1,6 @@
 # 性能
 
-## 性能优化策略 {p0-performance}
+## 性能优化策略 {#p0-performance}
 
  页面加载优化
 

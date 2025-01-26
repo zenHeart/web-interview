@@ -1207,7 +1207,7 @@ Service Worker 可以利用 Cache API 和 IndexedDB API 进行存储。具体来
 
 Service Worker 存储的内容并不是放在普通的浏览器缓存或本地数据库中，而是放在 Service Worker 的全局作用域中。Service Worker 运行在独立的线程中，与浏览器主线程分离，因此能够独立地处理网络请求和数据存储，提供了一种强大的离线访问和缓存能力。
 
-## IndexedDB 存储空间大小是如何约束的？{p0-indexdb}
+## IndexedDB 存储空间大小是如何约束的？{#p0-indexdb}
 
 **关键词**：IndexedDB 存储空间大小设置
 

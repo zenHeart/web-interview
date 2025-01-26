@@ -1391,7 +1391,7 @@ const MyComponent = () => {
 
 在实践中，大多数开发 React 应用的开发者会使用 `@babel/preset-react` 因为它提供了一个即插即用的 Babel 环境，无需担心各个插件的具体细节。但是也有些情况下，为了更细致的优化和控制，开发者可能会选择手动添加特定的插件，包括 `@babel/plugin-transform-react-jsx`。
 
-## 如何实现路由守卫 {p0-router-guide}
+## 如何实现路由守卫 {#p0-router-guide}
 
 在 React 中，虽然没有内置的路由守卫（Route Guards）功能，但可以使用第三方库来实现类似的功能。最常用的第三方路由库是 React Router。
 
