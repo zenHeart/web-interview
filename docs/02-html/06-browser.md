@@ -155,17 +155,20 @@ console.log('End')
 * 例如：
 
 ```javascript
- function animate() {
- // 更新动画状态
- // 例如，移动一个元素的位置
- element.style.left = parseInt(element.style.left) + 1 + 'px';
+function animate () {
+  // 更新动画状态
+  // 例如，移动一个元素的位置
+  element.style.left = parseInt(element.style.left) + 1 + 'px'
 
- if (/* 动画未完成条件 */) {
- requestAnimationFrame(animate);
- }
- }
+  //  if (
+  //   /* 动画未完成条件 */
 
- requestAnimationFrame(animate);
+//  ) {
+//  requestAnimationFrame(animate);
+//  }
+}
+
+requestAnimationFrame(animate)
 ```
 
 * 在这个例子中，`animate`函数会在每一帧更新元素的位置，直到动画完成。`requestAnimationFrame`确保了动画在浏览器的最佳时机进行更新，避免了不必要的重绘和性能浪费。

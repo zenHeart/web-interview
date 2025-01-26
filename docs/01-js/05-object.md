@@ -23,16 +23,24 @@
 
 ## 手写实现四种继承
 
+## Object {#p0-object}
+
+| 方法/属性 | 描述 |
+| ------------------------------ | ------------------------------------------------------------ |
+| `Object.keys(obj)` | 返回一个由给定对象的所有可枚举自身属性的名称组成的数组 |
+| `Object.values(obj)` | 返回一个给定对象所有可枚举属性值的数组 |
+| `Object.entries(obj)` | 返回一个给定对象自身可枚举属性的 [key, value] 数组 |
+| `Object.assign(target, ...sources)` | 将一个或多个源对象的可枚举属性复制到目标对象，并返回目标对象 |
+| `Object.create(proto, [propertiesObject])` | 使用指定的原型对象和属性创建一个新对象 |
+| `Object.defineProperty(obj, prop, descriptor)` | 定义对象中的新属性或修改现有属性的配置 |
+| `Object.getOwnPropertyDescriptor(obj, prop)` | 返回指定对象上一个自有属性对应的属性描述符 |
+| `Object.freeze(obj)` | 冻结一个对象，使其属性无法修改、添加或删除 |
+| `Object.is(value1, value2)` | 判断两个值是否相同 |
+| `Object.seal(obj)` | 封闭一个对象，防止向对象添加新属性，但允许修改或删除现有属性 |
+| `Object.getPrototypeOf(obj)` | 返回指定对象的原型（`__proto__`） |
+| `Object.setPrototypeOf(obj, proto)` | 设置指定对象的原型（`__proto__`） |
+
 ## Object.create 实现原型继承
-
-### 原型链？ ⭐️⭐️⭐️⭐️⭐️
-
-根据 [ECMAScript 规范对象原型链的描述](https://tc39.es/ecma262/#sec-objects)概念如下: 每一个通过构造器创建的对象都会有一个隐式索引,值指向构造器的 **prototype(原型)** 属性值。此外该原型可能包含一个值为非空的隐式索引指向它自己的原型,依次类推称为原型链。当查找某个对象属性时会顺着原型链检查,返回匹配的第一个相同属性值。
-
-基于上述概念原型链具有如下特性
-
-1. 在访问对象属性和方法时,js 引擎会遍历对象的自有属性和递归遍历内部  `__proto__` 索引指向的对象返回第一个查找到的值
-2. 采用构造函数初始化对象时,实例的 `__proto__` 属性指向构造函数的 `prototype`
 
 ## array
 
@@ -45,8 +53,6 @@
 > Array-operation.test.js
 
 > **实际上大部分操作均可利用,splice 方法实现**
-
-## 数组集合
 
 常见的两数组进行集合运算包括
 
@@ -64,21 +70,41 @@
 
 > 注意若数组中的元素为对象,需要在对象上添加 uid,利用此 uid 实现对不同元素的判断.
 
-### 核心函数
-
 * [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
 
-## 实现数组复制
+`splice()` 和 `slice()` 是 JavaScript 中用于操作数组的两个方法，它们的功能和用法有一些区别。
 
-参考如下效果
+1. `splice()` 方法：
 
-```js
-[1, 2, 3, 4, 5].duplicator() // [1,2,3,4,5,1,2,3,4,5]
-```
+* 功能：从数组中添加、删除或替换元素。
+* 用法：`array.splice(start, deleteCount, item1, item2, ...)`。
+* 参数：
+* `start`：表示修改的起始位置的下标。
+* `deleteCount`：可选参数，表示要删除的元素数量。
+* `item1, item2, ...`：可选参数，表示要添加到数组的元素。
+* 返回值：返回一个被删除元素组成的数组。
+
+2. `slice()` 方法：
+
+* 功能：从数组中提取指定范围内的元素，返回一个新的数组。
+* 用法：`array.slice(start, end)`。
+* 参数：
+* `start`：可选参数，表示提取的起始位置的下标。
+* `end`：可选参数，表示提取的结束位置的下标（不包含该位置的元素）。
+* 返回值：返回一个新的数组，包含提取出的元素。
+
+主要区别：
+
+* `splice()` 方法会对原数组进行修改，而 `slice()` 方法不会修改原数组，而是返回一个新的数组。
+* `splice()` 方法可以在指定位置添加、删除或替换元素，而 `slice()` 方法只能提取指定范围内的元素。
+* `splice()` 方法返回被删除的元素组成的数组，而 `slice()` 方法返回一个新的数组。
+
+总结：
+
+* 如果需要修改原数组，并且需要添加、删除或替换元素，可以使用 `splice()` 方法。
+* 如果只是需要提取指定范围内的元素，并且不想修改原数组，可以使用 `slice()` 方法。
 
 ## 有使用过 Promise 么， 讲解下 Promise 的使用?
-
-<Answer>
 
 回答思路，三要素 what,why,how
 
@@ -102,13 +128,185 @@
       3. ES6 差别
       4. 实现
 
-</Answer>
+## iterator ? {#p0-iterator}
 
-## 实现 map 函数
+在 JavaScript 中，Iterator（迭代器）对象具有以下特征：
 
-> map.js
+**一、定义与目的**
 
-> ['1', '2', '3'].map(parseInt) 的使用
+1. **实现特定迭代行为**：
+
+* Iterator 对象是为了实现对可迭代对象（如数组、字符串、集合等）的遍历操作而设计的。它提供了一种标准化的方式来依次访问可迭代对象中的元素。
+
+**二、主要特征**
+
+1. **具有`next()`方法**：
+
+* Iterator 对象必须有一个`next()`方法。每次调用这个方法，它会返回一个对象，该对象包含两个属性：
+* `value`：表示当前迭代位置的元素值。如果迭代已经完成，这个值为`undefined`。
+* `done`：一个布尔值，表示迭代是否已经完成。如果迭代完成，`done`为`true`；否则为`false`。
+* 例如：
+
+ ```javascript
+ const iterable = [1, 2, 3]
+ const iterator = iterable[Symbol.iterator]()
+ console.log(iterator.next()) // { value: 1, done: false }
+ console.log(iterator.next()) // { value: 2, done: false }
+ console.log(iterator.next()) // { value: 3, done: false }
+ console.log(iterator.next()) // { value: undefined, done: true }
+ ```
+
+2. **与可迭代对象关联**：
+
+* Iterator 对象通常是由可迭代对象通过调用其`Symbol.iterator`方法生成的。不同的可迭代对象可以生成不同的 Iterator 对象，但它们都遵循相同的`next()`方法约定。
+* 例如，数组的`Symbol.iterator`方法会返回一个 Iterator 对象，用于遍历数组的元素。
+
+3. **单向遍历**：
+
+* Iterator 对象通常只能进行单向遍历，即从可迭代对象的起始位置依次访问到结束位置，不能反向遍历。一旦迭代完成，再次调用`next()`方法将始终返回`{ value: undefined, done: true }`。
+
+4. **可用于各种迭代场景**：
+
+* Iterator 对象可以与`for...of`循环、扩展运算符（`...`）、解构赋值等语言特性一起使用，使得对可迭代对象的遍历更加简洁和方便。
+* 例如：
+
+ ```javascript
+ const iterable = [1, 2, 3]
+ for (const value of iterable) {
+   console.log(value)
+ }
+ ```
+
+* 这里的`for...of`循环内部会自动调用可迭代对象的`Symbol.iterator`方法获取 Iterator 对象，并依次调用其`next()`方法来遍历元素。
+
+Iterator 对象在 JavaScript 中提供了一种灵活和统一的方式来遍历可迭代对象，通过`next()`方法和特定的返回值格式，实现了对可迭代对象的有序访问和迭代控制。
+
+ 1、Iterator 的概念
+
+JavaScript 原有的表示 “ 集合 ” 的数据结构，主要是数组（ Array ）和对象（ Object ）， ES6 又添加了 Map 和 Set 。
+这样就有了四种数据集合，用户还可以组合使用它们，定义自己的数据结构，比如数组的成员是 Map ， Map 的成员是对象。
+这样就需要一种统一的接口机制，来处理所有不同的数据结构。
+遍历器（ Iterator ）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。
+任何数据结构只要部署 Iterator 接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）。
+Iterator 的作用有三个：一是为各种数据结构，提供一个统一的、简便的访问接口；二是使得数据结构的成员能够按某种次序排列；三是 ES6 创造了一种新的遍历命令for...of循环， Iterator 接口主要供for...of消费。
+
+Iterator 的遍历过程是这样的。
+
+* （ 1 ）创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历器对象本质上，就是一个指针对象。
+* （ 2 ）第一次调用指针对象的next方法，可以将指针指向数据结构的第一个成员。
+* （ 3 ）第二次调用指针对象的next方法，指针就指向数据结构的第二个成员。
+* （ 4 ）不断调用指针对象的next方法，直到它指向数据结构的结束位置。
+
+每一次调用next方法，都会返回数据结构的当前成员的信息。
+具体来说，就是返回一个包含value和done两个属性的对象。其中，value属性是当前成员的值，done属性是一个布尔值，表示遍历是否结束。
+
+ 2、数据结构的默认 Iterator 接口
+
+Iterator 接口的目的，就是为所有数据结构，提供了一种统一的访问机制，即for...of循环（详见下文）。当使用for...of循环遍历某种数据结构时，该循环会自动去寻找 Iterator 接口。
+在 ES6 中，有三类数据结构原生具备 Iterator 接口：数组、某些类似数组的对象、 Set 和 Map 结构。
+
+实例：
+
+```javascript
+const arr = ['a', 'b', 'c']
+const iter = arr[Symbol.iterator]()
+iter.next() // { value: 'a', done: false }
+iter.next() // { value: 'b', done: false }
+iter.next() // { value: 'c', done: false }
+iter.next() // { value: undefined, done: true }
+```
+
+上面提到，原生就部署 Iterator 接口的数据结构有三类，对于这三类数据结构，不用自己写遍历器生成函数，for...of循环会自动遍历它们。除此之外，其他数据结构（主要是对象）的 Iterator 接口，都需要自己在Symbol.iterator属性上面部署，这样才会被for...of循环遍历。
+
+ 3、调用 Iterator 接口的场合
+
+有一些场合会默认调用 Iterator 接口（即Symbol.iterator方法），除了下文会介绍的for...of循环，还有几个别的场合。
+
+ 3.1、解构赋值
+
+对数组和 Set 结构进行解构赋值时，会默认调用Symbol.iterator方法。
+实例1：
+
+```javascript
+const set = new Set().add('a').add('b').add('c')
+const [x, y] = set
+// x='a'; y='b'
+const [first, ...rest] = set
+// first='a'; rest=['b','c'];
+```
+
+ 3.2、扩展运算符
+
+扩展运算符（ ... ）也会调用默认的 iterator 接口。
+实例2：
+
+```javascript
+// 例一
+const str = 'hello';
+[...str] // ['h','e','l','l','o']
+// 例二
+const arr = ['b', 'c'];
+['a', ...arr, 'd']
+// ['a', 'b', 'c', 'd']
+```
+
+ 3.3、yield*
+
+yield* 后面跟的是一个可遍历的结构，它会调用该结构的遍历器接口。
+实例3：
+
+```javascript
+const generator = function * () {
+  yield 1
+  yield * [2, 3, 4]
+  yield 5
+}
+const iterator = generator()
+iterator.next() // { value: 1, done: false }
+iterator.next() // { value: 2, done: false }
+iterator.next() // { value: 3, done: false }
+iterator.next() // { value: 4, done: false }
+iterator.next() // { value: 5, done: false }
+iterator.next() // { value: undefined, done: true }
+```
+
+ 3.4、其他场合
+
+由于数组的遍历会调用遍历器接口，所以任何接受数组作为参数的场合，其实都调用了遍历器接口。下面是一些例子。
+
+* for...of
+* Array.from()
+* Map(), Set(), WeakMap(), WeakSet() （比如new Map([['a',1],['b',2]])）
+* Promise.all()
+* Promise.race()
+
+ 4、Iterator 接口与 Generator 函数
+
+Symbol.iterator方法的最简单实现，还是使用下一章要介绍的 Generator 函数。
+实例：
+
+```js
+const myIterable = {}
+myIterable[Symbol.iterator] = function * () {
+  yield 1
+  yield 2
+  yield 3
+};
+[...myIterable] // [1, 2, 3]
+
+// 或者采用下面的简洁写法
+const obj = {
+  [Symbol.iterator] () {
+  // yield 'hello';
+  // yield 'world';
+  }
+}
+for (const x of obj) {
+  console.log(x)
+}
+// hello
+// world
+```
 
 ## js 编写数组排序
 
@@ -423,7 +621,55 @@ let 和 const 与 var 的区别
 1. map 和 object 的区别
 2. map 的 key 是稳定排序，可以用来实现 LRU
 
+WeakSet 是一种特殊的集合数据结构，它只能存储对象引用，并且这些对象是弱引用。WeakSet 中的对象是被弱引用的，意味着如果没有其他引用指向这个对象，垃圾回收机制就会自动将其回收，即使该对象存在于 WeakSet 中。与 Set 不同，WeakSet 不支持迭代和遍历。
+
+**API**
+
+WeakSet 提供了以下几个常用的 API：
+
+1. `add(value)`：向 WeakSet 中添加一个值。
+
+2. `delete(value)`：从 WeakSet 中删除指定的值。
+
+3. `has(value)`：判断 WeakSet 中是否存在指定的值，返回一个布尔值。
+
+需要注意的是，WeakSet 不支持迭代和遍历操作，所以没有类似于 Set 的 `keys()`、`values()`、`entries()` 或 `forEach()` 等方法。同时，WeakSet 也没有类似于 Set 的 `size` 属性来获取 WeakSet 中的元素个数。
+
+另外，WeakSet 是一个构造函数，可以使用 `new WeakSet()` 来创建一个空的 WeakSet。
+
+**使用场景**
+
+WeakSet 的主要应用场景是在需要存储对象集合，并且不希望这些对象的存在阻止它们被垃圾回收时使用。一些常见的使用场景包括：
+
+1. 对象存储：WeakSet 可以用来存储一组对象，并且不会阻止这些对象被垃圾回收。这在需要跟踪一组对象，但又不希望这些对象阻止被释放时很有用。
+
+2. 数据缓存：由于 WeakSet 中的对象是弱引用的，当对象从其他地方被删除时，它们会自动从 WeakSet 中移除。这在需要缓存一些对象，但又希望能够自动清理不再需要的对象时很有用。
+
+需要注意的是，由于 WeakSet 中的对象是弱引用的，所以不能通过遍历或迭代来访问 WeakSet 中的对象。同时，WeakSet 也不提供像 Set 那样的方法，无法判断对象是否存在于 WeakSet 中。
+
 ## WeakMap
+
+WeakMap 是一种键值对存储的数据结构，类似于 Map。它的特点是键必须是对象，值可以是任意类型的数据。
+
+WeakMap 内部使用了引用计数的方式来判断键是否存活，当键不再被引用时，垃圾回收机制会自动清除对应的键值对。这意味着如果没有其他地方引用该键，WeakMap 中的键值对会被自动清理，并释放内存。
+
+与 Map 不同的是，WeakMap 的键是弱引用，不会阻止垃圾回收。这意味着在 WeakMap 中，键不能被枚举、迭代或获取键的数量。同时，WeakMap 也没有提供像 Map 中的 size 属性和 clear 方法。
+
+因为键是弱引用，所以 WeakMap 也不能使用普通对象作为键，只能使用具有引用类型的对象作为键。这是为了避免内存泄漏问题，因为如果键是普通对象，即使它没有被其他地方引用，也无法被垃圾回收。
+
+因为 WeakMap 的键是弱引用并且没有提供常用的方法，所以它的使用场景相对有限，主要用于存储对象的私有数据或附加元数据。
+
+**有哪些 api**
+
+WeakMap 提供了以下的 API：
+
+* `set(key, value)`: 向 WeakMap 中设置键值对，键必须是对象。
+* `get(key)`: 获取指定键对应的值。
+* `has(key)`: 判断指定键是否存在于 WeakMap 中。
+* `delete(key)`: 删除指定键对应的键值对。
+* 注意：WeakMap 没有提供 `size` 属性和 `clear` 方法，也不能直接迭代或枚举键。
+
+需要注意的是，由于 WeakMap 的键是弱引用，只能使用对象作为键，同时也意味着无法通过值来查找对应的键。所以 WeakMap 适用于需要存储对象的私有数据或附加元数据的场景，而不适合用于需要根据值来查找键的情况。
 
 ## Proxy
 

@@ -45,9 +45,9 @@ body {
 
 ## 三角形 border {#p0-border-triangle}
 
-### CSS3实现卡片翻转?
+## CSS3实现卡片翻转?
 
-### 常见布局实现
+## 常见布局实现
 
 1. 三栏布局
 2. 圣杯布局
@@ -388,3 +388,69 @@ const number2text = (number, type = 'upper') => {
  </body>
 </html>
 ```
+
+## 全局样式命名冲突和样式覆盖问题怎么解决？{#p0-css-confict}
+
+在前端开发过程中，有几种常见的方法可以解决全局样式命名冲突和样式覆盖问题：
+
+1. 使用命名空间（Namespacing）：给样式类名添加前缀或命名空间，以确保每个组件的样式类名不会冲突。例如，在一个项目中，可以为每个组件的样式类名都添加一个唯一的前缀，例如`.componentA-button`和`.componentB-button`，这样可以避免命名冲突。
+
+2. 使用BEM命名规范：BEM（块、元素、修饰符）是一种常用的命名规范，可以将样式类名分成块（block）、元素（element）和修饰符（modifier）三个部分，以确保样式的唯一性和可读性。例如，`.button`表示一个块，`.button__icon`表示一个元素，`.button--disabled`表示一个修饰符。
+
+3. 使用CSS预处理器：CSS预处理器（如Sass、Less）可以提供变量、嵌套规则和模块化等功能，可以更方便地管理样式并避免命名冲突。例如，可以使用变量来定义颜色和尺寸，使用嵌套规则来组织样式，并将样式拆分成多个模块。
+
+4. 使用CSS模块：CSS模块提供了在组件级别上限定样式作用域的能力，从而避免了全局样式的冲突和覆盖。每个组件的样式定义在组件内部，使用唯一的类名，确保样式的隔离性和唯一性。
+
+5. 使用CSS-in-JS解决方案：CSS-in-JS是一种将CSS样式直接写入JavaScript代码中的方法，通过将样式与组件绑定，可以避免全局样式的冲突问题。一些常见的CSS-in-JS解决方案包括Styled Components、Emotion和CSS Modules with React等。
+
+## CSS 如何实现文本溢出？{#p1-text-overflow}
+
+**单行文本溢出**
+
+在CSS中，可以使用`text-overflow`属性来实现单行文本的溢出省略样式。同时，还需要设置`white-space`属性为`nowrap`，使文本不换行，以及`overflow`属性为`hidden`，隐藏溢出的文本。
+
+以下是一个示例：
+
+```css
+.ellipsis {
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+```
+
+然后，在HTML中，可以将这个类应用到指定的元素上：
+
+```html
+<p class="ellipsis">这是一段很长的文本，如果超过指定的宽度，就会显示省略号。</p>
+```
+
+这样，如果文本超过了指定的宽度，就会自动显示省略号。
+
+----------------
+
+**多行文本溢出**
+
+CSS中没有直接的属性可以实现省略样式。但是，可以使用一些技巧来实现多行文本的省略样式。其中一种常用的方法是使用`-webkit-line-clamp`属性和`-webkit-box-orient`属性来限制显示的行数，并且设置`display`属性为`-webkit-box`以创建一个块级容器。
+
+以下是一个示例：
+
+```css
+.ellipsis-multiline {
+ display: -webkit-box;
+ -webkit-box-orient: vertical;
+ -webkit-line-clamp: 3; // 设置显示的行数 */
+ overflow: hidden;
+ text-overflow: ellipsis;
+}
+```
+
+然后，在HTML中，将这个类应用到指定的元素上：
+
+```html
+<div class="ellipsis-multiline">
+ 这是一个多行文本的示例，如果文本内容超过了指定的行数，就会显示省略号。这是一个多行文本的示例，如果文本内容超过了指定的行数，就会显示省略号。这是一个多行文本的示例，如果文本内容超过了指定的行数，就会显示省略号。
+</div>
+```
+
+请注意，`-webkit-line-clamp`属性只在某些WebKit浏览器中（如Chrome和Safari）支持。在其他浏览器中，可能需要使用其他解决方案来实现多行文本的省略样式。

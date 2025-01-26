@@ -2146,3 +2146,245 @@ var renderDOMList = timeChunk(arr, function(data) {
 },10,200);
 renderDOMList();
 ```
+
+## 不使用 setTimeout 来实现 setInterval {#p1-settimeout-setinterval}
+
+**关键词**：实现setInterval、requestAnimationFrame实现setInterval、setTimeout实现setInterval
+
+如果不使用 `setTimeout` 来实现 `setInterval`，可以使用 `requestAnimationFrame` 函数和时间戳来实现定时循环。下面是实现的代码示例：
+
+**实现方式1**
+
+```javascript
+function mySetInterval (callback, interval) {
+  let startTime = Date.now()
+  let elapsedTime = 0
+
+  function loop () {
+    const currentTime = Date.now()
+    const deltaTime = currentTime - startTime
+
+    if (deltaTime >= interval) {
+      callback()
+      startTime = currentTime
+    }
+
+    requestAnimationFrame(loop)
+  }
+
+  requestAnimationFrame(loop)
+
+  return {
+    clear: function () {
+      startTime = 0
+      elapsedTime = 0
+    }
+  }
+}
+```
+
+这个实现中，我们通过 `requestAnimationFrame` 函数来循环执行 `loop` 函数。在 `loop` 函数中，我们获取当前时间戳 `currentTime`，并计算与上一次执行的时间间隔 `deltaTime`
+。如果 `deltaTime` 大于等于指定的间隔时间 `interval`，则执行回调函数 `callback`，并更新 `startTime` 为当前时间，以便下一次判断。
+
+最后，返回一个具有 `clear` 方法的对象，用于清除定时器。调用 `clear` 方法时，将 `startTime` 和 `elapsedTime` 重置为初始值。
+
+**实现方式2**
+
+```js
+const obj = {
+  timer: null,
+  setInterval: function (callback, interval) {
+    const now = Date.now
+    let startTime = now()
+    let endTime = startTime
+    const self = this
+    const loop = function () {
+      self.timer = requestAnimationFrame(loop)
+      endTime = now()
+      if (endTime - startTime >= interval) {
+        startTime = endTime = now()
+        callback && callback()
+      }
+    }
+    this.timer = requestAnimationFrame(loop)
+    return this.timer
+  },
+  clearInterval: function () {
+    cancelAnimationFrame(this.timer)
+  }
+}
+
+let count = 0
+const timer = obj.setInterval(() => {
+  console.log('interval...')
+  count++
+  if (count >= 3) {
+    obj.clearInterval()
+  }
+}, 500)
+```
+
+**实现方式3**
+
+使用 `setTimeout` 来实现
+
+```ts
+/**
+setTimeout 版本
+ */
+function _setIntervalUseTimeout (
+  fn: () => void,
+  millisec: number,
+  count?: number
+) {
+  let timer: number
+  function interval () {
+    if (typeof count === 'undefined' || count-- > 0) {
+      timer = setTimeout(interval, millisec)
+      try {
+        fn()
+      } catch (e: any) {
+        count = 0
+        throw e.toString()
+      }
+    }
+  }
+  timer = setTimeout(interval, millisec)
+  return {
+    clear: () => clearTimeout(timer)
+  }
+}
+```
+
+## 如何拦截 web 应用的请求 {#p0-interceptor}
+
+**关键词**：web前端监听请求、前端拦截请求
+
+在前端拦截和处理 Web 应用的所有请求，可以使用以下方法：
+
+1. **使用 Fetch 或 XMLHttpRequest**：在前端代码中使用 Fetch API 或 XMLHttpRequest 对象发送请求。通过拦截 Fetch 或 XMLHttpRequest 对象的 open 和 send 方法，可以在请求发出前进行拦截和修改。这样可以捕获请求的相关信息，并进行相应的处理。
+
+示例代码（使用 Fetch API）：
+
+```javascript
+const originalFetch = window.fetch
+window.fetch = function (url, options) {
+  // 在请求发出前进行拦截和处理
+  console.log('拦截到请求:', url)
+
+  // 可以修改请求的相关信息
+  // options.headers['Authorization'] = 'Bearer token';
+
+  return originalFetch.apply(this, arguments)
+}
+```
+
+2. **使用 Service Worker：Service Worker** 是一种在浏览器背后运行的脚本，可以拦截和处理网络请求。通过注册一个 Service Worker，可以在其中监听和处理请求事件。从而实现拦截和处理 Web 应用的所有请求。
+
+示例代码：
+
+```javascript
+self.addEventListener('fetch', function (event) {
+  // 在请求发出前进行拦截和处理
+  console.log('拦截到请求:', event.request.url)
+
+  // 可以修改请求的相关信息
+  // event.request.headers.set('Authorization', 'Bearer token');
+
+  event.respondWith(fetch(event.request))
+})
+```
+
+需要注意的是，前端拦截和处理请求只能在客户端进行，对于服务器端的请求无法拦截。此外，拦截和处理请求可能会对性能产生一定的影响，因此要根据实际情况进行权衡和调优。同时，对于一些敏感信息（如密码、个人信息等），应该谨慎处理，确保安全性。
+
+3. **如果是使用是三方请求库， 比如 aixos** ， 可以直接使用三方库提供的能力
+
+是的，使用 axios 也可以拦截请求。axios 提供了拦截器（interceptors）的功能，可以在请求发出前进行拦截和处理。
+
+示例代码：
+
+```javascript
+import axios from 'axios'
+
+// 请求拦截器
+axios.interceptors.request.use(function (config) {
+  // 在请求发出前进行拦截和处理
+  console.log('拦截到请求:', config.url)
+
+  // 可以修改请求的相关信息
+  // config.headers['Authorization'] = 'Bearer token';
+
+  return config
+}, function (error) {
+  return Promise.reject(error)
+})
+
+// 发送请求
+axios.get('/api/data')
+  .then(function (response) {
+    console.log(response.data)
+  })
+  .catch(function (error) {
+    console.error(error)
+  })
+```
+
+在上述代码中，通过使用 `interceptors.request` 方法，可以对请求进行拦截和处理。在拦截器函数中，可以修改请求的相关信息，并返回修改后的配置对象。
+
+使用 axios 拦截请求只能在客户端进行，对服务器端的请求无法拦截。同样需要谨慎处理敏感信息，并确保安全性。
+
+## web 网页如何禁止别人移除水印 {#p0-remove-water-pring}
+
+关于加水印的问题， 可以看这篇文档： [资料](https://github.com/pro-collection/interview-question/issues/351)
+
+关于如何防止移除水印：
+
+可以通过监听 DOM 的变化来检测是否有人删除水印，可以使用 `MutationObserver API`。
+`MutationObserver` 可以观察 DOM 树的变化，并在变化发生时触发回调函数。你可以在回调函数中检查是否有水印被删除，然后采取相应的措施。
+
+以下是一个简单的示例代码，演示了如何使用 MutationObserver 监听 DOM 变化：
+
+```javascript
+// 目标节点
+const targetNode = document.body
+
+// 创建 MutationObserver 实例
+const observer = new MutationObserver((mutationsList) => {
+  for (const mutation of mutationsList) {
+    // 检查是否有子节点被删除
+    if (mutation.removedNodes.length > 0) {
+      // 在此处判断是否有水印被删除
+      // 如果水印被删除，则重新插入水印的 DOM 元素到目标节点
+      // 例如： targetNode.appendChild(watermarkElement);
+    }
+  }
+})
+
+// 配置 MutationObserver
+const config = { childList: true, subtree: true }
+
+// 开始观察目标节点
+observer.observe(targetNode, config)
+```
+
+在上述代码中，我们创建了一个 MutationObserver 实例，并通过 `observe` 方法将其绑定到目标节点上。在回调函数中，我们使用 `mutation.removedNodes` 来检查是否有子节点被删除，如果发现水印被删除，则可以采取相应的措施来重新插入水印的 DOM 元素。
+
+需要注意的是，MutationObserver API 是现代浏览器提供的功能，在老旧的浏览器中可能不支持。因此，在实际使用时，你需要对浏览器的兼容性进行测试和处理。
+
+另外，如果水印被删除后立即加回去，你可以在检测到水印被删除时，立即执行插入水印的代码，以确保水印能够迅速地重新出现在页面上。
+
+## 如何实现大文件断点续传 {#p0-break-point-upload}
+
+前端实现断点续传一般涉及到以下几个步骤：
+
+1. 分片上传：将大文件分割成多个小的文件块。可以使用 JavaScript 的 `File` 对象的 `slice` 方法来实现分片。
+
+2. 上传文件块：使用 XMLHttpRequest 或 Fetch API 发送每个文件块到服务器。可以将每个文件块的索引、总文件大小等信息一同发送到服务器。
+
+3. 保存上传进度：在每个文件块上传成功后，可以将已上传的块数、已上传的字节数等信息保存到本地，以便在继续上传时恢复进度。
+
+4. 续传：在继续上传时，先从本地恢复已上传的进度信息。然后根据已上传的字节数，计算出下一个文件块的起始位置，然后继续上传剩余的文件块。
+
+5. 合并文件块：在所有文件块都上传完成后，服务器可以将这些文件块合并为完整的文件。可以通过将所有文件块的内容拼接在一起或使用服务器端的工具进行合并。
+
+需要注意的是，断点续传的实现还需要服务器端的支持。服务器端需要接收和处理分片上传的请求，并保存和管理已上传的文件块，以便在续传时恢复文件的完整性。因此，前端实现断点续传需要和后端进行协作。

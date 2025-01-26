@@ -1,5 +1,34 @@
 # js 引擎原理
 
+## 原型链？{#p0-prototype-chain}
+
+根据 [ECMAScript 规范对象原型链的描述](https://tc39.es/ecma262/#sec-objects)概念如下: 每一个通过构造器创建的对象都会有一个隐式索引,值指向构造器的 **prototype(原型)** 属性值。此外该原型可能包含一个值为非空的隐式索引指向它自己的原型,依次类推称为原型链。当查找某个对象属性时会顺着原型链检查,返回匹配的第一个相同属性值。
+
+基于上述概念原型链具有如下特性
+
+1. 在访问对象属性和方法时,js 引擎会遍历对象的自有属性和递归遍历内部  `__proto__` 索引指向的对象返回第一个查找到的值
+2. 采用构造函数初始化对象时,实例的 `__proto__` 属性指向构造函数的 `prototype`
+
+## JavaScript 如何做内存管理？ {#p0-memory}
+
+JavaScript中的内存管理是由垃圾收集器负责的。垃圾收集器会自动追踪不再使用的对象，并在适当的时候释放它们占用的内存。
+
+JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and sweep）的算法来确定哪些对象是不再需要的。该算法通过标记所有被引用的对象，然后清除未被标记的对象。
+
+以下是JavaScript中的一些内存管理的原则和技巧：
+
+1. 自动内存管理：JavaScript的垃圾收集器会自动管理内存，不需要手动释放内存。你只需确保不再使用的对象没有被引用，垃圾收集器会在适当的时候自动回收内存。
+
+2. 避免全局变量：全局变量会一直存在于内存中，直到页面关闭。尽量减少使用全局变量，而是使用函数作用域或模块化的方式来限制变量的作用范围。
+
+3. 及时释放引用：当你不再需要一个对象时，最好将对它的引用设置为null，这样可以使垃圾收集器更早地释放对象所占用的内存。
+
+4. 避免循环引用：如果对象之间存在循环引用，即使它们已经不再被使用，垃圾收集器也不会自动释放它们。确保及时断开循环引用，使垃圾收集器能够正确地回收内存。
+
+5. 避免大量对象的创建和销毁：频繁地创建和销毁大量对象会导致垃圾收集器频繁地执行，影响性能。如果可能的话，尽量重用对象，而不是频繁地创建和销毁它们。
+
+虽然JavaScript的垃圾收集器自动管理内存，但仍然需要开发人员编写高效的代码来避免内存泄漏和浪费，以确保JavaScript应用程序的性能和可靠性。
+
 ## 必包是什么? {#p0-js-closure}
 
 闭包在 JavaScript 中有很多实用的使用场景，以下是一些主要的场景：
@@ -207,6 +236,64 @@ js 采用词法作用域,更详细的资料参见 [你不知道的 JavaScript（
 
 当在回调中绑定 this 时,this 值的机制,由于是用户代理触发回调执行,**this** 的值等于申明时绑定的 dom 环境。
 
+```ts
+const obj = {
+  name: 'yanle',
+  age: 20,
+  getName: () => {
+    const _getName = () => {
+      console.log('this.getName', this.name)
+    }
+    _getName()
+  },
+  getAge: function () {
+    const _getAge = () => {
+      console.log('this.getAge', this.age)
+    }
+    _getAge()
+  },
+  extend: {
+    name: 'le',
+    age: 20,
+    getName: function () {
+      console.log('name: ', this.name)
+    },
+    getAge: () => {
+      console.log('age: ', this.age)
+    }
+  }
+}
+
+obj.getName()
+obj.getAge()
+
+obj.extend.getName()
+obj.extend.getAge()
+
+obj.extend.getName.bind(obj)()
+obj.extend.getAge.bind(obj)()
+```
+
+**执行结果**
+
+```shell
+this.getName undefined
+this.getAge 20
+name: le
+age: undefined
+name: yanle
+age: undefined
+```
+
+解释如下：
+
+* `obj.getName()`：在箭头函数getName中，this指向的是全局对象（在浏览器中是window对象，Node.js 中是Global对象）。因此this.getName输出undefined。
+* `obj.getAge()`：在普通函数getAge中，this指向的是obj对象。因此this.getAge输出20。
+* `obj.extend.getName()`：在普通函数getName中，this指向的是obj.extend对象。因此this.name输出le。
+* `obj.extend.getAge()`：在箭头函数getAge中，this指向的是全局对象（在浏览器中是window对象，Node.js 中是Global对象）。因此this.age输出undefined。
+* `obj.extend.getName.bind(obj)()`：通过bind方法将getName函数绑定到obj对象上，并立即调用绑定后的函数。在绑定后调用时，this指向的是obj对象。因此this.name输出yanle。
+* `obj.extend.getAge.bind(obj)()`：在箭头函数 getAge 中，this 是在函数定义时绑定的，而不是在函数调用时绑定的。在这种情况下，箭头函数的 this 指向的是外层作用域的 this，即全局对象（在浏览器中是 window 对象，Node.js 中是 Global 对象）。因此，在 obj.extend.getAge.bind(obj)() 中，this.age 输出的是全局对象的 age，而全局对象中并没有定义 age 属性，所以结果是 undefined。
+
 ## 箭头函数同非箭头函数 this 的区别？
 
 ## 变量提升
@@ -250,3 +337,48 @@ node 采用标记清除算法。
 JIT 编译器的一个关键优点是它能够在不牺牲启动速度的情况下，提供接近于或同等于编译语言的运行速度。这使得像 JavaScript 这样原本被认为执行效率较低的语言能够用于复杂的计算任务和高性能的应用场景。
 
 随着 V8 和其他现代 JavaScript 引擎的不断进步，JIT 编译技术也在持续优化，以提供更快的执行速度和更高的性能。
+
+## 隐藏类是什么概念？ {#p0-hidden-class}
+
+**关键词**：JavaScript隐藏类
+
+隐藏类是JavaScript引擎中的一种优化技术，用于提高对象访问的性能。隐藏类是一种数据结构，用于跟踪对象的属性和方法的布局和类型，以便在代码运行时能够快速访问它们。
+
+当JavaScript引擎在执行代码时，会动态地创建对象的隐藏类。隐藏类会跟踪对象的属性和方法，并为它们分配固定的内存偏移量。每当对象的属性和方法发生变化时，隐藏类会根据变化的情况进行更新。
+
+使用隐藏类可以提高代码的执行速度，因为JavaScript引擎可以根据隐藏类的信息来直接定位和访问对象的属性和方法，而不需要进行动态查找或解析。这种优化技术可以减少对象访问的开销，提高代码的性能。
+
+需要注意的是，隐藏类是在运行时动态创建的，因此代码中创建对象的顺序和属性的添加顺序都会影响隐藏类的生成。如果对象的属性添加顺序不一致，可能会导致隐藏类的生成不一致，从而降低代码的性能。
+
+隐藏类是现代JavaScript引擎（如V8、SpiderMonkey等）中的一项重要优化技术，可以显著提高JavaScript代码的执行速度。
+
+下面是一个使用隐藏类的简单示例：
+
+```javascript
+function MyClass (a, b) {
+  this.prop1 = a
+  this.prop2 = b
+}
+
+MyClass.prototype.method1 = function () {
+  console.log('Method 1')
+}
+
+MyClass.prototype.method2 = function () {
+  console.log('Method 2')
+}
+
+const obj1 = new MyClass(10, 20)
+const obj2 = new MyClass(30, 40)
+
+obj1.method1() // 输出 "Method 1"
+obj2.method2() // 输出 "Method 2"
+```
+
+在上面的示例中，我们创建了一个名为`MyClass`的类，它有两个属性`prop1`和`prop2`，以及两个方法`method1`和`method2`。我们用`new`关键字创建了两个实例`obj1`和`obj2`。
+
+当我们使用隐藏类优化的JavaScript引擎运行这段代码时，它会动态地创建隐藏类来跟踪`MyClass`的属性和方法。每个实例都会有一个关联的隐藏类，它包含了实例的属性和方法的布局和类型信息。
+
+在调用`obj1.method1()`和`obj2.method2()`时，JavaScript引擎会使用隐藏类的信息来直接定位并执行相应的方法，而不需要进行动态查找和解析，从而提高了代码的执行速度。
+
+需要注意的是，这只是一个简单的示例，实际上隐藏类的优化是更复杂和细致的。不同的引擎可能会有不同的隐藏类实现方式，并且隐藏类的生成和优化过程会受到许多因素的影响，如代码的结构、对象的属性访问模式等。

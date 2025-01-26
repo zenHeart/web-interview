@@ -381,6 +381,100 @@ npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --
 
 ## TypeScript 中 any、never、unknown、null & undefined 和 void 有什么区别 {#p3-typescript-any-never-unknown-null-undefined-and-void}
 
+**`never` 是其他任意类型的子类型的类型被称为底部类型(bottom type)。**
+
+在 TypeScript 中，`never` 类型便为空类型和底部类型。`never` 类型的变量无法被赋值，与其他类型求交集为自身，求并集不参与运算。
+
+ 应用一: 联合类型中的过滤
+
+**never在联合类型中会被过滤掉：**
+
+```typescript
+type Exclude<T, U> = T extends U ? never : T;
+
+// 相当于: type A = 'a'
+type A = Exclude<'x' | 'a', 'x' | 'y' | 'z'>
+
+T | never // 结果为T
+T & never // 结果为never
+```
+
+取一个映射类型中所有value为指定类型的key。例如，已知某个React组件的props类型，我需要“知道”（编程意义上）哪些参数是function类型。
+
+```typescript
+interface SomeProps {
+ a: string
+ b: number
+ c: (e: MouseEvent) => void
+ d: (e: TouchEvent) => void
+}
+// 如何得到 'c' | 'd' ？
+
+type GetKeyByValueType<T, Condition> = {
+ [K in keyof T]: T[K] extends Condition ? K : never
+} [keyof T];
+
+type FunctionPropNames = GetKeyByValueType<SomeProps, Function>; // 'c' | 'd'
+```
+
+运算过程如下：
+
+```typescript
+// 开始
+{
+ a: string
+ b: number
+ c: (e: MouseEvent) => void
+ d: (e: TouchEvent) => void
+}
+// 第一步，条件映射
+{
+ a: never
+ b: never
+ c: 'c'
+ d: 'd'
+}
+// 第二步，索引取值
+never | never | 'c' | 'd'
+// never的性质
+'c' | 'd'
+```
+
+ 应用二：防御性编程
+
+举个具体点的例子，当你有一个 union type:
+
+```typescript
+interface Foo { type: 'foo' }
+interface Bar { type: 'bar' }
+type All = Foo | Bar
+```
+
+在 switch 当中判断 type，TS 是可以收窄类型的 (discriminated union)：
+
+```typescript
+function handleValue (val: All) {
+  switch (val.type) {
+    case 'foo':
+      // 这里 val 被收窄为 Foo
+      break
+    case 'bar':
+      // val 在这里是 Bar
+      break
+    default:
+      // val 在这里是 never
+      const exhaustiveCheck: never = val
+      break
+  }
+}
+```
+
+注意在 default 里面我们把被收窄为 never 的 val 赋值给一个显式声明为 never 的变量。如果一切逻辑正确，那么这里应该能够编译通过。但是假如后来有一天你的同事改了 All 的类型：
+
+`type All = Foo | Bar | Baz`
+
+然而他忘记了在 handleValue 里面加上针对 Baz 的处理逻辑，这个时候在 default branch 里面 val 会被收窄为 Baz，导致无法赋值给 never，产生一个编译错误。所以通过这个办法，你可以确保 handleValue 总是穷尽 (exhaust) 了所有 All 的可能类型。
+
 在 TypeScript 中，`any`、`never`、`unknown`、`null` & `undefined` 以及 `void` 都是类型系统的一部分，各自具有不同的用途和含义，下面是它们的主要区别：
 
  `any`
@@ -1138,3 +1232,158 @@ const length = (someValue as string).length
 ```
 
 这些关键字和操作符能够在 TypeScript 中进行类型判断、类型检查和类型转换，有助于确保代码的类型安全性和正确性。
+
+## is {#p0-is}
+
+在 TypeScript 中，`is` 是一种类型谓词（type predicate）语法。它用于在运行时对一个值的类型进行检查，并返回一个布尔值。
+
+`is` 通常与条件类型和类型保护（type guards）一起使用。条件类型可以基于类型谓词 `is` 的结果来进行类型细化，从而在编译时获取更准确的类型推断。
+
+以下是一个示例，展示了如何使用 `is` 进行类型谓词检查：
+
+```typescript
+function isString (value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function processValue (value: unknown): void {
+  if (isString(value)) {
+    console.log(value.toUpperCase())
+  } else {
+    console.log('Value is not a string.')
+  }
+}
+
+processValue('hello') // 输出: HELLO
+processValue(42) // 输出: Value is not a string.
+```
+
+在上述示例中，我们定义了一个 `isString` 函数，它接受一个 `unknown` 类型的值，并使用 `typeof` 运算符检查该值是否为字符串类型。函数返回一个布尔值，指示值是否为字符串类型。
+
+然后，我们定义了一个 `processValue` 函数，它接受一个 `unknown` 类型的值，并通过调用 `isString` 函数进行类型谓词检查。如果值是字符串类型，就将其转换为大写并打印出来；否则，打印出值不是字符串类型的消息。
+
+最后，我们调用 `processValue` 函数两次，一次传入字符串 `'hello'`，一次传入数值 `42`。第一次调用输出 `HELLO`，表示字符串类型的值通过了类型谓词检查；第二次调用输出 `Value is not a string.`，表示数值类型的值未通过类型谓词检查。
+
+因此，`is` 是 TypeScript 中用于类型谓词检查的关键字，用于在运行时对一个值的类型进行判断，并返回一个布尔值。
+
+## infer {#p0-infer}
+
+在 TypeScript 中，`infer` 是一个用于条件类型中的关键字。它的作用是从待推断的类型中提取特定的类型，并将其赋值给一个类型变量。这个类型变量可以在条件类型的 `true` 分支中使用。
+
+通过使用 `infer` 关键字，我们可以实现一些高级的类型操作，比如从函数类型中提取参数类型、从数组类型中提取元素类型等。
+
+以下是一个示例，展示了如何使用 `infer` 关键字提取函数参数的类型：
+
+```typescript
+type ParamType<T> = T extends (param: infer P) => any ? P : never;
+
+function foo (arg: number): void {
+  // ...
+}
+
+type FooParam = ParamType<typeof foo>; // FooParam 的类型是 number
+```
+
+在上述示例中，我们定义了一个条件类型 `ParamType<T>`，它接受一个泛型参数 `T`。在 `extends` 条件语句中，我们检查泛型参数 `T` 是否可以赋值给一个函数类型，并使用 `infer`
+关键字提取函数参数的类型并赋值给类型变量 `P`。如果不是函数类型，则返回 `never` 类型。
+
+然后，我们定义了一个函数 `foo`，它接受一个 `number` 类型的参数。通过使用 `typeof foo`，我们获取函数 `foo` 的类型，并使用 `ParamType<typeof foo>`
+提取函数参数的类型，赋值给类型变量 `FooParam`。在本例中，`FooParam` 的类型为 `number`。
+
+因此，`infer` 是 TypeScript 中用于条件类型中的关键字，用于类型推断和提取特定类型的操作。
+
+## extends 条件类型定义 {#p0-extends}
+
+在 TypeScript 中，`extends` 关键字不仅仅用于类之间的继承关系，还可以用于条件类型的定义。
+
+条件类型是一种在类型系统中根据条件进行推断的方式。通过使用 `extends` 关键字，可以根据给定的条件选择不同的类型。
+
+以下是一个使用 `extends` 条件语句定义条件类型的示例：
+
+```typescript
+type TypeName<T> =
+ T extends string ? 'string' :
+ T extends number ? 'number' :
+ T extends boolean ? 'boolean' :
+ 'unknown';
+
+let type1: TypeName<string> // 类型为 "string"
+let type2: TypeName<number> // 类型为 "number"
+let type3: TypeName<boolean> // 类型为 "boolean"
+let type4: TypeName<object> // 类型为 "unknown"
+```
+
+在上面的例子中，我们定义了一个条件类型 `TypeName`，它根据给定的泛型类型 `T` 来选择不同的类型。如果 `T` 是 `string` 类型，那么返回值类型为 `"string"`；如果 `T` 是 `number`
+类型，那么返回值类型为 `"number"`；如果 `T` 是 `boolean` 类型，那么返回值类型为 `"boolean"`；否则返回值类型为 `"unknown"`。
+
+通过上述定义，我们可以根据不同的类型获取它们的类型名称。例如，`type1` 的类型为 `"string"`，`type2` 的类型为 `"number"`，依此类推。
+
+注意，条件类型的定义中可以使用嵌套的 `extends` 关键字，以支持更复杂的条件判断。
+
+## union {#p0-union}
+
+在 TypeScript 中，联合类型是指将多个类型组合到一起形成的新类型。联合类型使用 `|` 符号来表示，表示允许变量具有其中任意一个类型的值。
+
+例如，可以声明一个变量为 `string | number` 类型，表示该变量可以是字符串类型或者数值类型。这样可以增加变量的灵活性，可以在不确定变量具体类型的情况下使用它。
+
+以下是一个使用联合类型的示例：
+
+```typescript
+function displayData (data: string | number) {
+  console.log(data)
+}
+
+displayData('Hello') // 输出: Hello
+displayData(123) // 输出: 123
+```
+
+在上面的例子中，`displayData` 函数可以接受一个参数，该参数可以是字符串类型或者数值类型。函数内部使用 `console.log` 打印参数的值。
+
+需要注意的是，在使用联合类型的情况下，只能访问所有类型共有的属性和方法，无法访问特定类型独有的属性和方法。如果需要针对不同类型执行不同的操作，可以使用类型断言或类型保护等技术来处理。
+
+## unknown  {#p0-unknown}
+
+`unknown`指的是**不可预先定义的类型**，在很多场景下，它可以替代any的功能同时保留静态检查的能力。
+
+```typescript
+const num = 10;
+(num as unknown as string).split('') // 注意，这里和any一样完全可以通过静态检查
+```
+
+这个时候unknown的作用就跟any高度类似了，你可以把它转化成任何类型，不同的地方是，在静态编译的时候，unknown不能调用任何方法，而any可以。
+
+```typescript
+const foo: unknown = 'string'
+foo.substr(1) // Error: 静态检查不通过报错
+const bar: any = 10
+bar.substr(1)
+```
+
+unknown的一个使用场景是，避免使用any作为函数的参数类型而导致的静态类型检查bug：
+
+```typescript
+function test (input: unknown): number {
+  if (Array.isArray(input)) {
+    return input.length // Pass: 这个代码块中，类型守卫已经将input识别为array类型
+  }
+  return input.length // Error: 这里的input还是unknown类型，静态检查报错。如果入参是any，则会放弃检查直接成功，带来报错风险
+}
+```
+
+我们在一些无法确定函数参数（返回值）类型中 unknown 使用的场景非常多
+
+```typescript
+// 在不确定函数参数的类型时
+// 将函数的参数声明为unknown类型而非any
+// TS同样会对于unknown进行类型检测，而any就不会
+function resultValueBySome (val:unknown) {
+  if (typeof val === 'string') {
+    // 此时 val 是string类型
+    // do someThing
+  } else if (typeof val === 'number') {
+    // 此时 val 是number类型
+    // do someThing
+  }
+  // ...
+}
+```

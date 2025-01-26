@@ -1,184 +1,26 @@
 # 杂项
 
-## iterator ? {#p0-iterator}
+## JavaScript 和 BOM、DOM 、ECMAScript、Nodejs 之间是什么关系 {p0-object-concept}
 
-在 JavaScript 中，Iterator（迭代器）对象具有以下特征：
+**ECMAScript**
 
-**一、定义与目的**
+`ECMAScript`是`JavaScript`的标准化规范，它定义了`JavaScript`的语法、数据类型、函数、控制流等。`ECMAScript`最早在1997年发布，由欧洲计算机制造商协会（ECMA）负责制定和维护。
 
-1. **实现特定迭代行为**：
+`ECMAScript`的目的是为了确保不同厂商的`JavaScript`实现在语法和行为方面保持一致性，以便开发者能够轻松地编写跨平台、跨浏览器的`JavaScript`代码。标准化的`ECMAScript`规范使得开发者可以在不同的`JavaScript`环境中编写相同的代码，而不必担心语法差异和行为不一致性。
 
-* Iterator 对象是为了实现对可迭代对象（如数组、字符串、集合等）的遍历操作而设计的。它提供了一种标准化的方式来依次访问可迭代对象中的元素。
+`ECMAScript`规范每年进行一次更新，新版本通常包含了新的语法特性、API和改进。在每个`ECMAScript`版本发布之前，由各个浏览器厂商先行实现并测试新特性，然后将其添加到浏览器中。这就是为什么不同浏览器可能对同一版本的`ECMAScript`支持程度不同的原因。
 
-**二、主要特征**
+常见的`ECMAScript`版本包括ES5（2009年发布）、ES6（2015年发布，也被称为ES2015）、ES7（2016年发布，也被称为ES2016）等。每个版本都引入了新的语法和功能，使得`JavaScript`变得更加强大和灵活。开发者可以根据目标浏览器的支持情况选择使用不同版本的`ECMAScript`特性。
 
-1. **具有`next()`方法**：
+**JavaScript**是一种高级编程语言，用于为网页添加交互和动态功能。它实现了ECMAScript标准，该标准定义了`JavaScript`的语法、数据类型、函数、控制流等。`JavaScript`是一种解释性脚本语言，代码在运行时由浏览器解析和执行。
 
-* Iterator 对象必须有一个`next()`方法。每次调用这个方法，它会返回一个对象，该对象包含两个属性：
-* `value`：表示当前迭代位置的元素值。如果迭代已经完成，这个值为`undefined`。
-* `done`：一个布尔值，表示迭代是否已经完成。如果迭代完成，`done`为`true`；否则为`false`。
-* 例如：
+**BOM**（Browser Object Model） 是浏览器对象模型，它提供了与浏览器交互的API。`BOM`并不是ECMAScript的一部分，而是浏览器厂商自行实现的一组对象和方法。通过`BOM`，开发者可以操作浏览器窗口、解析URL、发送HTTP请求、控制浏览器历史记录等。其中最常见的`BOM`对象是window对象，它代表了浏览器的窗口或框架。
 
- ```javascript
- const iterable = [1, 2, 3]
- const iterator = iterable[Symbol.iterator]()
- console.log(iterator.next()) // { value: 1, done: false }
- console.log(iterator.next()) // { value: 2, done: false }
- console.log(iterator.next()) // { value: 3, done: false }
- console.log(iterator.next()) // { value: undefined, done: true }
- ```
+**DOM**（Document Object Model） 是文档对象模型，它定义了用于访问和操作HTML、XML等文档的API。`DOM`提供了一组对象和方法，用于表示文档的结构和内容。通过`DOM`，开发者可以通过`JavaScript`动态地创建、修改和删除HTML元素，修改样式和属性，处理事件等。`DOM`也不是ECMAScript的一部分，而是由浏览器厂商实现的标准。
 
-2. **与可迭代对象关联**：
+**Node.js**是一个基于V8引擎的`JavaScript`运行时环境，使`JavaScript`可以在服务器端运行。与浏览器中的`JavaScript`不同，`Node.js`提供了一组基于事件驱动的API，用于构建高性能和可伸缩的网络应用程序。`Node.js`可以执行文件操作、网络通信、数据库访问等服务器端任务，并且可以通过包管理器npm安装和管理第三方模块。
 
-* Iterator 对象通常是由可迭代对象通过调用其`Symbol.iterator`方法生成的。不同的可迭代对象可以生成不同的 Iterator 对象，但它们都遵循相同的`next()`方法约定。
-* 例如，数组的`Symbol.iterator`方法会返回一个 Iterator 对象，用于遍历数组的元素。
-
-3. **单向遍历**：
-
-* Iterator 对象通常只能进行单向遍历，即从可迭代对象的起始位置依次访问到结束位置，不能反向遍历。一旦迭代完成，再次调用`next()`方法将始终返回`{ value: undefined, done: true }`。
-
-4. **可用于各种迭代场景**：
-
-* Iterator 对象可以与`for...of`循环、扩展运算符（`...`）、解构赋值等语言特性一起使用，使得对可迭代对象的遍历更加简洁和方便。
-* 例如：
-
- ```javascript
- const iterable = [1, 2, 3]
- for (const value of iterable) {
-   console.log(value)
- }
- ```
-
-* 这里的`for...of`循环内部会自动调用可迭代对象的`Symbol.iterator`方法获取 Iterator 对象，并依次调用其`next()`方法来遍历元素。
-
-Iterator 对象在 JavaScript 中提供了一种灵活和统一的方式来遍历可迭代对象，通过`next()`方法和特定的返回值格式，实现了对可迭代对象的有序访问和迭代控制。
-
- 1、Iterator 的概念
-
-JavaScript 原有的表示 “ 集合 ” 的数据结构，主要是数组（ Array ）和对象（ Object ）， ES6 又添加了 Map 和 Set 。
-这样就有了四种数据集合，用户还可以组合使用它们，定义自己的数据结构，比如数组的成员是 Map ， Map 的成员是对象。
-这样就需要一种统一的接口机制，来处理所有不同的数据结构。
-遍历器（ Iterator ）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。
-任何数据结构只要部署 Iterator 接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）。
-Iterator 的作用有三个：一是为各种数据结构，提供一个统一的、简便的访问接口；二是使得数据结构的成员能够按某种次序排列；三是 ES6 创造了一种新的遍历命令for...of循环， Iterator 接口主要供for...of消费。
-
-Iterator 的遍历过程是这样的。
-
-* （ 1 ）创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历器对象本质上，就是一个指针对象。
-* （ 2 ）第一次调用指针对象的next方法，可以将指针指向数据结构的第一个成员。
-* （ 3 ）第二次调用指针对象的next方法，指针就指向数据结构的第二个成员。
-* （ 4 ）不断调用指针对象的next方法，直到它指向数据结构的结束位置。
-
-每一次调用next方法，都会返回数据结构的当前成员的信息。
-具体来说，就是返回一个包含value和done两个属性的对象。其中，value属性是当前成员的值，done属性是一个布尔值，表示遍历是否结束。
-
- 2、数据结构的默认 Iterator 接口
-
-Iterator 接口的目的，就是为所有数据结构，提供了一种统一的访问机制，即for...of循环（详见下文）。当使用for...of循环遍历某种数据结构时，该循环会自动去寻找 Iterator 接口。
-在 ES6 中，有三类数据结构原生具备 Iterator 接口：数组、某些类似数组的对象、 Set 和 Map 结构。
-
-实例：
-
-```javascript
-const arr = ['a', 'b', 'c']
-const iter = arr[Symbol.iterator]()
-iter.next() // { value: 'a', done: false }
-iter.next() // { value: 'b', done: false }
-iter.next() // { value: 'c', done: false }
-iter.next() // { value: undefined, done: true }
-```
-
-上面提到，原生就部署 Iterator 接口的数据结构有三类，对于这三类数据结构，不用自己写遍历器生成函数，for...of循环会自动遍历它们。除此之外，其他数据结构（主要是对象）的 Iterator 接口，都需要自己在Symbol.iterator属性上面部署，这样才会被for...of循环遍历。
-
- 3、调用 Iterator 接口的场合
-
-有一些场合会默认调用 Iterator 接口（即Symbol.iterator方法），除了下文会介绍的for...of循环，还有几个别的场合。
-
- 3.1、解构赋值
-
-对数组和 Set 结构进行解构赋值时，会默认调用Symbol.iterator方法。
-实例1：
-
-```javascript
-const set = new Set().add('a').add('b').add('c')
-const [x, y] = set
-// x='a'; y='b'
-const [first, ...rest] = set
-// first='a'; rest=['b','c'];
-```
-
- 3.2、扩展运算符
-
-扩展运算符（ ... ）也会调用默认的 iterator 接口。
-实例2：
-
-```javascript
-// 例一
-const str = 'hello';
-[...str] // ['h','e','l','l','o']
-// 例二
-const arr = ['b', 'c'];
-['a', ...arr, 'd']
-// ['a', 'b', 'c', 'd']
-```
-
- 3.3、yield*
-
-yield* 后面跟的是一个可遍历的结构，它会调用该结构的遍历器接口。
-实例3：
-
-```javascript
-const generator = function * () {
-  yield 1
-  yield * [2, 3, 4]
-  yield 5
-}
-const iterator = generator()
-iterator.next() // { value: 1, done: false }
-iterator.next() // { value: 2, done: false }
-iterator.next() // { value: 3, done: false }
-iterator.next() // { value: 4, done: false }
-iterator.next() // { value: 5, done: false }
-iterator.next() // { value: undefined, done: true }
-```
-
- 3.4、其他场合
-
-由于数组的遍历会调用遍历器接口，所以任何接受数组作为参数的场合，其实都调用了遍历器接口。下面是一些例子。
-
-* for...of
-* Array.from()
-* Map(), Set(), WeakMap(), WeakSet() （比如new Map([['a',1],['b',2]])）
-* Promise.all()
-* Promise.race()
-
- 4、Iterator 接口与 Generator 函数
-
-Symbol.iterator方法的最简单实现，还是使用下一章要介绍的 Generator 函数。
-实例：
-
-```js
-const myIterable = {}
-myIterable[Symbol.iterator] = function * () {
-  yield 1
-  yield 2
-  yield 3
-};
-[...myIterable] // [1, 2, 3]
-
-// 或者采用下面的简洁写法
-const obj = {
-  [Symbol.iterator] () {
-  // yield 'hello';
-  // yield 'world';
-  }
-}
-for (const x of obj) {
-  console.log(x)
-}
-// hello
-// world
-```
+总结来说，`JavaScript`是一种编程语言，实现了ECMAScript标准。`BOM`和`DOM`是浏览器提供的API，用于与浏览器交互并操作文档。`Node.js`是一个独立的运行时环境，使`JavaScript`可以在服务器端运行，并提供了一组用于构建网络应用程序的API。
 
 ## amd、commonjs、esm 理解
 
@@ -330,3 +172,19 @@ console.log(factorialTail(5)) // 输出 120
 而尾递归是指在函数的最后一步操作中进行的递归调用。这意味着函数在调用自身之后没有其他操作或表达式需要执行，直接返回递归调用的结果。这种情况下，函数可以被优化为尾递归形式，避免函数调用栈的溢出和性能问题。
 
 在尾递归优化的代码示例中，递归调用factorialTail(n - 1, nresult)是函数factorialTail的最后一步操作，它的返回值直接作为函数的返回值，没有其他操作需要执行。因此，这个递归调用是尾递归，可以进行尾递归优化。
+
+## 副作用是什么概念 {#p0-effecitve}
+
+在 JavaScript 中，`副作用（side effect）`是指函数或表达式在执行过程中对外部环境产生的影响，而不仅仅是返回一个值。副作用可能包括但不限于对全局变量、参数、数据结构、文件系统、网络请求等进行修改。
+
+副作用可以是有意为之，也可以是无意之间发生的。在函数式编程中，减少副作用是一种被推崇的编程风格，因为副作用使得代码的行为更难以跟踪和理解，容易引发不可预见的 bug。尽可能减少副作用有助于代码更加可靠、可测试和易于维护。
+
+以下是一些常见的 JavaScript 中可能产生副作用的操作：
+
+1. **修改全局变量**：直接对全局变量进行赋值或修改会导致副作用。
+2. **修改函数参数**：修改传入函数的参数值也会引起副作用。
+3. **`I/O` 操作**：与文件系统、网络请求等进行交互时，可能会对外部环境产生副作用。
+4. **修改数据结构**：对数组、对象等数据结构进行添加、删除或修改操作会改变它们的状态，也属于副作用。
+
+在函数式编程中，函数应该尽量避免产生副作用，而是通过纯函数的方式，根据输入返回一个确定的输出，不修改外部环境的状态。
+这样可以提高代码的可测试性、可复用性和可维护性。

@@ -1,6 +1,32 @@
 
 # 打包工具
 
+## 为什么现代前端应用需要打包工具进行打包编译？ {#p0-bunlder-concept}
+
+现代前端应用需要打包工具进行打包编译的主要原因有以下几点：
+
+1. 模块化管理：现代前端应用通常采用模块化的开发方式，将代码划分为多个模块，每个模块具有独立的功能和依赖关系。打包工具可以将这些模块进行分析，将它们打包成一个或多个静态文件，方便管理和维护。
+
+2. 解决浏览器兼容性问题：不同的浏览器对于 JavaScript 和 CSS 的支持程度不同，而且随着新特性的不断出现，旧版浏览器可能无法完全支持。打包工具可以通过转译、压缩和兼容性处理等手段，将当前前端代码转化为浏览器可识别和运行的代码，解决兼容性问题。
+
+3. 静态资源处理和优化：现代前端应用涉及大量的静态资源，如图片、字体等。打包工具可以对这些资源进行处理和优化，如图片压缩、字体文件打包等，以减小资源文件的体积，提高页面的加载速度和性能。
+
+4. 代码分割和按需加载：打包工具可以将应用程序拆分成多个小块，实现代码分割和按需加载。这样可以实现懒加载，只在需要时加载特定的代码块，提高页面的加载速度。
+
+5. 开发环境支持：打包工具通常提供开发服务器和热模块替换（HMR）等功能，方便开发人员进行开发和调试。开发服务器可以实时预览代码变化，HMR 可以在修改代码后只替换修改的部分，而不是整个页面刷新，提高开发效率。
+
+6. 提升性能：打包工具可以通过代码优化、压缩和混淆等技术手段，减小文件体积，提升应用程序的加载速度和执行效率。
+
+7. 支持多种前端技术：现代前端应用通常使用多种前端技术和语言，如JavaScript、CSS、TypeScript、Sass等。打包工具可以集成这些技术，并提供相应的编译、转译和处理功能，使开发人员能够更轻松地使用这些技术。
+
+8. 自动化工作流程：打包工具可以配合其他构建工具和自动化任务运行器，如Webpack配合Grunt或Gulp，实现自动化的构建和部署流程。这可以减少手动操作，提高开发效率和代码质量。
+
+9. 第三方库管理：现代前端应用通常使用大量的第三方库和框架，这些库可能包含多个文件和依赖关系。打包工具可以自动管理这些库的依赖关系，并将它们打包为单个文件，减少网络请求和提高代码的可维护性。
+
+10. 高度可定制化：打包工具通常提供丰富的插件和配置选项，允许开发人员根据项目需求进行定制。可以灵活配置打包过程中的各种处理和优化方式，以满足项目的具体需求。
+
+总结 - 现代前端应用需要打包工具进行打包编译的原因是为了： **实现模块化管理、解决兼容性问题、静态资源处理和优化、代码分割和按需加载、开发环境支持、性能提升、多技术支持、自动化工作流程、第三方库管理和可定制化等方面的需求**。
+
 ## webpack 原理 {#p0-webpack-principle}
 
 **关键词**：webpack 作用、webpack 概念
@@ -1391,6 +1417,62 @@ module.exports = {
 }
 ```
 
+| 插件名称 | 作用 |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `HtmlWebpackPlugin` | 自动生成 HTML 文件，并将打包后的资源自动注入到 HTML 中。 |
+| `MiniCssExtractPlugin` | 将 CSS 代码提取到单独的文件中，而不是内联到 JavaScript 中。 |
+| `CopyWebpackPlugin` | 将指定的文件或目录复制到输出目录。 |
+| `CleanWebpackPlugin` | 在每次构建之前清理输出目录，避免旧的文件残留。 |
+| `DefinePlugin` | 在编译过程中创建全局常量，可以在代码中直接使用。 |
+| `HotModuleReplacementPlugin` | 启用热模块更换（Hot Module Replacement），在开发过程中实现代码修改后实时更新页面，无需刷新。 |
+| `ProvidePlugin` | 自动加载模块，使模块在使用时可以直接使用对应的全局变量，无需引入。 |
+| `MiniCssExtractPlugin` | 将 CSS 代码提取到单独的文件中，而不是内联到 JavaScript 中。 |
+| `OptimizeCSSAssetsPlugin` | 压缩提取出的 CSS 文件。 |
+| `uglifyjs-webpack-plugin` | 压缩 JavaScript 代码。 |
+| `webpack-bundle-analyzer` | 分析打包后的文件大小，并可视化展示，方便优化打包结果。 |
+| `CompressionWebpackPlugin` | 使用 gzip 或其他压缩算法对文件进行压缩，减小文件大小，加快网络传输速度。 |
+| `CopyWebpackPlugin` | 将指定的文件或目录复制到输出目录。 |
+| `FriendlyErrorsWebpackPlugin` | 提供友好的构建错误提示和优化构建速度的功能。 |
+| `ImageminWebpackPlugin` | 压缩图片资源，减小文件大小，提升加载速度。 |
+| `HotModuleReplacementPlugin` | 启用热模块更换（Hot Module Replacement），在开发过程中实现代码修改后实时更新页面，无需刷新。 |
+| `HtmlWebpackPlugin` | 自动生成 HTML 文件，并将打包后的资源自动注入到 HTML 中。 |
+| `IgnorePlugin` | 忽略特定的模块，避免将其打包到最终的输出文件中。 |
+| `BannerPlugin` | 在打包的文件块顶部添加自定义的注释和信息。 |
+| `webpack.DefinePlugin` | 在编译过程中创建全局常量，可以在代码中直接使用。 |
+| `webpack.ProgressPlugin` | 在控制台输出构建进度信息。 |
+| `webpack-bundle-analyzer` | 分析打包后的文件大小，并可视化展示，方便优化打包结果。 |
+| `webpackbar` | 在命令行中显示构建进度条，提供更直观的构建进度信息。 |
+
+这些插件可以根据需要配置在 Webpack 的插件列表（`plugins`）中，以实现对构建过程的各种增强和优化操作。
+
+| Loader 名称 | 作用 |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `babel-loader` | 将 ES6+ 代码转换为 ES5 代码，以便在旧版浏览器中运行。 |
+| `css-loader` | 解析 CSS 文件，处理 CSS 中的依赖关系，并将 CSS 转换为 JS 模块。 |
+| `style-loader` | 将 CSS 代码以内联的方式注入到 HTML 页面中。 |
+| `file-loader` | 处理文件资源（如图片、字体等），将文件复制到输出目录，并返回文件路径。 |
+| `url-loader` | 与 `file-loader` 类似，但可以根据文件大小将文件转换为 Data URL（base64 格式）或文件路径。 |
+| `sass-loader` | 解析 Sass/SCSS 文件，并将其转换为 CSS 代码。 |
+| `less-loader` | 解析 Less 文件，并将其转换为 CSS 代码。 |
+| `postcss-loader` | 使用 PostCSS 处理 CSS，可以进行自动添加前缀、压缩、CSS Modules 等操作。 |
+| `ts-loader` | 将 TypeScript 代码转换为 JavaScript 代码。 |
+| `eslint-loader` | 在构建过程中使用 ESLint 进行代码检查。 |
+| `stylelint-webpack-plugin` | 在构建过程中使用 Stylelint 进行 CSS/SCSS 代码检查。 |
+| `vue-loader` | 解析 Vue 单文件组件（.vue 文件），并将其转换为 JavaScript 代码。 |
+| `image-webpack-loader` | 优化图片资源，包括压缩、转换格式等操作。 |
+| `html-loader` | 解析 HTML 文件，处理其中的引用资源（如图片、字体等），并返回处理后的 HTML 代码。 |
+| `markdown-loader` | 将 Markdown 文件转换为 HTML 代码。 |
+| `json-loader` | 解析 JSON 文件，并返回解析后的 JavaScript 对象。 |
+| `eslint-loader` | 在构建过程中使用 ESLint 进行代码检查。 |
+| `tslint-loader` | 在构建过程中使用 TSLint 进行 TypeScript 代码检查。 |
+| `prettier-loader` | 在构建过程中使用 Prettier 进行代码格式化。 |
+| `stylelint-webpack-plugin` | 在构建过程中使用 Stylelint 进行 CSS/SCSS 代码检查。 |
+| `mini-css-extract-plugin` | 提取 CSS 代码到单独的文件，而不是内联到 JavaScript 代码中。 |
+| `optimize-css-assets-webpack-plugin` | 压缩 CSS 代码。 |
+| `terser-webpack-plugin` | 压缩 JavaScript 代码。 |
+
+这些 Loader 可以根据需要配置在 Webpack 的模块规则（`module.rules`）中，以实现对不同类型文件的处理和转换操作。
+
 ## 手写 webpack loader 有哪些重要 api 与注意事项？ {#p1-webpack-loader}
 
 在开发一个 webpack loader 时，除了理解 loader 的基本概念和功能之外，还有一些重要的 API 和注意事项是必需了解的。这些能够帮助你更高效地编写和调试 loader。
@@ -1636,6 +1718,34 @@ module.exports = {
 * webpack.ProgressPlugin：打包进度分析
 * webpack-bundle-analyzer：打包结果分析
 * friendly-errors-webpack-plugin： 代码源码编译报错友好提示
+
+| 插件名称 | 作用 |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| `HtmlWebpackPlugin` | 自动生成 HTML 文件，并将打包后的资源自动注入到 HTML 中。 |
+| `MiniCssExtractPlugin` | 将 CSS 代码提取到单独的文件中，而不是内联到 JavaScript 中。 |
+| `CopyWebpackPlugin` | 将指定的文件或目录复制到输出目录。 |
+| `CleanWebpackPlugin` | 在每次构建之前清理输出目录，避免旧的文件残留。 |
+| `DefinePlugin` | 在编译过程中创建全局常量，可以在代码中直接使用。 |
+| `HotModuleReplacementPlugin` | 启用热模块更换（Hot Module Replacement），在开发过程中实现代码修改后实时更新页面，无需刷新。 |
+| `ProvidePlugin` | 自动加载模块，使模块在使用时可以直接使用对应的全局变量，无需引入。 |
+| `MiniCssExtractPlugin` | 将 CSS 代码提取到单独的文件中，而不是内联到 JavaScript 中。 |
+| `OptimizeCSSAssetsPlugin` | 压缩提取出的 CSS 文件。 |
+| `uglifyjs-webpack-plugin` | 压缩 JavaScript 代码。 |
+| `webpack-bundle-analyzer` | 分析打包后的文件大小，并可视化展示，方便优化打包结果。 |
+| `CompressionWebpackPlugin` | 使用 gzip 或其他压缩算法对文件进行压缩，减小文件大小，加快网络传输速度。 |
+| `CopyWebpackPlugin` | 将指定的文件或目录复制到输出目录。 |
+| `FriendlyErrorsWebpackPlugin` | 提供友好的构建错误提示和优化构建速度的功能。 |
+| `ImageminWebpackPlugin` | 压缩图片资源，减小文件大小，提升加载速度。 |
+| `HotModuleReplacementPlugin` | 启用热模块更换（Hot Module Replacement），在开发过程中实现代码修改后实时更新页面，无需刷新。 |
+| `HtmlWebpackPlugin` | 自动生成 HTML 文件，并将打包后的资源自动注入到 HTML 中。 |
+| `IgnorePlugin` | 忽略特定的模块，避免将其打包到最终的输出文件中。 |
+| `BannerPlugin` | 在打包的文件块顶部添加自定义的注释和信息。 |
+| `webpack.DefinePlugin` | 在编译过程中创建全局常量，可以在代码中直接使用。 |
+| `webpack.ProgressPlugin` | 在控制台输出构建进度信息。 |
+| `webpack-bundle-analyzer` | 分析打包后的文件大小，并可视化展示，方便优化打包结果。 |
+| `webpackbar` | 在命令行中显示构建进度条，提供更直观的构建进度信息。 |
+
+这些插件可以根据需要配置在 Webpack 的插件列表（`plugins`）中，以实现对构建过程的各种增强和优化操作。
 
 ## webpack externals 是如何加载外部依赖的 {#p2-webpack-externals}
 
@@ -1889,7 +1999,23 @@ esbuild 和 Rollup 都是 Vite 的基础依赖，但它们在 Vite 中担负着�
 
 </Answer>
 
-## tree-shaking 原理 {#p0-tree-shaking-principle}
+## tree-shaking {#p0-tree-shaking-principle}
+
+在以下情况下，`webpack` 的 `tree-shaking` 可能会失效：
+
+1. 使用了 `sideEffects` 属性：在 webpack 的配置文件中，如果设置了 `sideEffects: true`，则 webpack 会假设所有模块都有副作用，因此不会进行 tree-shaking。这通常用于避免某些模块被误标记为无用代码而被删除。
+
+2. 动态导入：如果你使用了动态导入（例如使用了 `import()` 或 `require.ensure()`），webpack 无法静态分析模块的导入和导出，因此无法进行 tree-shaking。
+
+3. 使用了 `commonjs` 模块语法：如果你的代码中使用了 `commonjs` 模块语法（例如使用了 `require()` 或 `module.exports`），webpack 无法进行静态分析，因此无法进行 tree-shaking。
+
+4. 未使用 ES6 模块语法：tree-shaking 只能对 ES6 模块语法进行优化，如果你的代码中没有使用 ES6 模块语法，webpack 将无法进行 tree-shaking。
+
+5. 模块被动态引用或条件引用：如果模块的引用方式是动态的（例如在循环或条件语句中引用），或者通过字符串拼接来引用模块，webpack 无法确定哪些模块会被引用，因此无法进行 tree-shaking。
+
+6. 使用了副作用的代码：如果你的代码中包含有副作用的代码（例如在模块的顶级作用域中执行了一些操作），webpack 无法确定哪些代码是无用的，因此无法进行 tree-shaking。
+
+需要注意的是，即使 tree-shaking 可能会失效，webpack 仍然会进行其他优化，例如代码压缩和代码分割等。同时，你可以通过设置 `mode` 为 `production`，来启用 webpack 的优化功能，包括 tree-shaking。
 
 Webpack 的 Tree Shaking 主要是用来消除未被使用的代码，以减小最终打包文件的体积。其原理如下：
 
@@ -2240,3 +2366,21 @@ module.exports = {
 * `@babel/preset-typescript`：它是 Babel 的一个预设，用于将 TypeScript 代码转译为 JavaScript 代码，以便在不支持 TypeScript 的环境中运行。它包含了一些插件，例如转换 TypeScript 的类型注解、类成员修饰符、泛型类型等。
 
 * `@babel/preset-react`：它是 Babel 的一个预设，用于将 React 的 JSX 语法转译为普通的 JavaScript 代码，以便在不支持 JSX 的环境中运行。它也包含了一些插件，例如转换 JSX 语法、处理 React 的内置组件等。
+
+## vue-cli 都做了哪些事儿，有哪些功能？{#p1-vue-cli}
+
+Vue CLI 是一个基于 Vue.js 的命令行工具，用于快速搭建、开发和构建 Vue.js 项目。它提供了一系列的功能来简化 Vue.js 项目的开发和部署流程，包括：
+
+1. 项目脚手架：Vue CLI 可以通过简单的命令行交互方式快速生成一个新的 Vue.js 项目的基础结构，包括目录结构、配置文件、示例代码等。
+
+2. 开发服务器：Vue CLI 提供了一个开发服务器，用于在本地运行项目，在开发过程中实时预览和调试应用程序。它支持热模块替换（HMR），可以实时更新页面内容，提高开发效率。
+
+3. 集成构建工具：Vue CLI 集成了 Webpack，可以自动配置和管理项目的构建过程。它通过配置文件可以进行定制，例如设置打包输出路径、优化代码、压缩资源等。
+
+4. 插件系统：Vue CLI 提供了丰富的插件系统，可以通过安装插件来扩展项目的功能。这些插件可以帮助处理样式、路由、状态管理、国际化等方面的需求，提供更多的开发工具和功能支持。
+
+5. 测试集成：Vue CLI 集成了测试工具，可以快速配置和运行单元测试和端到端测试。它支持多种测试框架，如 Jest、Mocha、Cypress 等，可以帮助开发人员编写和运行各种类型的测试。
+
+6. 项目部署：Vue CLI 提供了命令行接口，可以方便地将项目部署到不同的环境，如开发环境、测试环境和生产环境。它支持生成优化过的静态文件、自动压缩和缓存等功能。
+
+提供了一整套开发和构建 Vue.js 项目的功能和工具链，可以大大简化和加速 Vue.js 项目的开发过程。

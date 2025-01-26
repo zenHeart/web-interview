@@ -1,8 +1,354 @@
 # vue
 
-## 双向数据绑定原理
+## 双向数据绑定原理 {#p0-reactivity-theory}
 
-## 说一下Vue的双向绑定数据的原理
+**关键词**：vue Object.defineProperty、vue proxy 使用
+
+Vue 在早期版本中使用了 `Object.defineProperty` 来实现响应式系统。但是，在 `Object.defineProperty` 中存在一些限制和局限性，导致在某些场景下无法完全满足需求。因此，Vue 在最新的版本中引入了 `Proxy` 来替代 `Object.defineProperty`。
+
+以下是一些 `Proxy` 相对于 `Object.defineProperty` 的优势：
+
+1. 功能更强大：`Proxy` 可以代理整个对象，而 `Object.defineProperty` 只能对已存在的属性进行拦截。使用 `Proxy` 可以在对象级别上进行拦截、代理、验证等操作。
+
+2. 更易于使用和理解：`Proxy` 提供了一组更直观和易于理解的 API，使开发者可以更容易地创建和管理代理。
+
+3. 性能优化：`Proxy` 针对属性的访问和修改都提供了更佳的性能优化。而 `Object.defineProperty` 在拦截属性访问和修改时会有一定的性能损耗。
+
+4. 更好的嵌套支持：`Proxy` 可以代理嵌套对象的属性，而 `Object.defineProperty` 只能对顶层对象的属性进行拦截。
+
+总的来说，`Proxy` 相对于 `Object.defineProperty` 在功能上更强大、使用更便捷、性能更优，并且在更复杂的场景下也能提供更好的支持。因此，Vue 在新版本中选择了使用 `Proxy` 来实现响应式系统。
+
+## data  {#p1-data}
+
+`vue` 实例的时候定义`data`属性既可以是一个对象，也可以是一个函数
+
+```js
+const app = new Vue({
+  el: '#app',
+  // 对象格式
+  data: {
+    foo: 'foo'
+  }
+  // 函数格式
+  // data () {
+  //   return {
+  //     foo: 'foo'
+  //   }
+  // }
+})
+```
+
+组件中定义data属性，只能是一个函数
+
+如果为组件data直接定义为一个对象
+
+```js
+Vue.component('component1', {
+  template: '<div>组件</div>',
+  data: {
+    foo: 'foo'
+  }
+})
+```
+
+则会得到警告信息
+
+警告说明：返回的data应该是一个函数在每一个组件实例中
+
+**组件data定义函数与对象的区别**
+
+上面讲到组件data必须是一个函数，不知道大家有没有思考过这是为什么呢？
+
+在我们定义好一个组件的时候，vue最终都会通过Vue.extend()构成组件实例
+
+这里我们模仿组件构造函数，定义data属性，采用对象的形式
+
+```js
+function Component () {
+
+}
+
+Component.prototype.data = {
+  count: 0
+}
+```
+
+创建两个组件实例
+
+```js
+const componentA = new Component()
+const componentB = new Component()
+```
+
+产生这样的原因这是两者共用了同一个内存地址，componentA修改的内容，同样对componentB产生了影响
+
+如果我们采用函数的形式，则不会出现这种情况（函数返回的对象内存地址并不相同）
+
+```js
+function Component () {
+  this.data = this.data()
+}
+
+Component.prototype.data = function () {
+  return {
+    count: 0
+  }
+}
+```
+
+修改componentA组件data属性的值，componentB中的值不受影响
+
+```js
+console.log(componentB.data.count) // 0
+componentA.data.count = 1
+console.log(componentB.data.count) // 0
+```
+
+vue组件可能会有很多个实例，采用函数返回一个全新data形式，使每个实例对象的数据不会受到其他实例对象数据的污染
+
+**原理分析**
+
+首先可以看看vue初始化data的代码，data的定义可以是函数也可以是对象
+
+源码位置：`/vue-dev/src/core/instance/state.js`
+
+```ts
+function initData (vm: Component) {
+  let data = vm.$options.data
+  data = vm._data = typeof data === 'function'
+    ? getData(data, vm)
+    : data || {}
+  // ...
+}
+```
+
+`data`既能是`object`也能是`function`，那为什么还会出现上文警告呢？
+
+别急，继续看下文
+
+组件在创建的时候，会进行选项的合并
+
+源码位置：`/vue-dev/src/core/util/options.js`
+
+自定义组件会进入`mergeOptions`进行选项合并
+
+```ts
+Vue.prototype._init = function (options?: object) {
+  // ...
+  // merge options
+  if (options && options._isComponent) {
+    // optimize internal component instantiation
+    // since dynamic options merging is pretty slow, and none of the
+    // internal component options needs special treatment.
+    initInternalComponent(vm, options)
+  } else {
+    vm.$options = mergeOptions(
+      resolveConstructorOptions(vm.constructor),
+      options || {},
+      vm
+    )
+  }
+  // ...
+}
+```
+
+定义data会进行数据校验
+
+源码位置：`/vue-dev/src/core/instance/init.js`
+
+这时候`vm`实例为`undefined`，进入if判断，若`data`类型不是`function`，则出现警告提示
+
+```tsx
+strats.data = function (
+  parentVal: any,
+  childVal: any,
+  vm?: Component
+): () => any {
+  if (!vm) {
+    if (childVal && typeof childVal !== 'function') {
+      process.env.NODE_ENV !== 'production' &&
+ warn(
+   'The "data" option should be a function ' +
+ 'that returns a per-instance value in component ' +
+ 'definitions.',
+   vm
+ )
+
+      return parentVal
+    }
+    return mergeDataOrFn(parentVal, childVal)
+  }
+  return mergeDataOrFn(parentVal, childVal, vm)
+}
+```
+
+**结论**
+
+* 根实例对象`data`可以是对象也可以是函数（根实例是单例），不会产生数据污染情况
+* 组件实例对象`data`必须为函数，目的是为了防止多个组件实例对象之间共用一个`data`，产生数据污染。采用函数的形式，`initData`时会将其作为工厂函数都会返回全新`data`对象
+
+**关键词**：vue更改data属性
+
+**直接添加属性的问题**
+
+我们从一个例子开始
+
+定义一个`p`标签，通过`v-for`指令进行遍历
+
+然后给`botton`标签绑定点击事件，我们预期点击按钮时，数据新增一个属性，界面也 新增一行
+
+```vue
+
+<template>
+ <p v-for="(value,key) in item" :key="key">
+ {{ value }}
+ </p>
+ <button @click="addProperty">动态添加新属性</button>
+</template>
+```
+
+实例化一个`vue`实例，定义`data`属性和`methods`方法
+
+```js
+const app = new Vue({
+  el: '#app',
+  data: () => ({
+    // '旧属性'
+  }
+  ),
+  methods: {
+    addProperty () {
+      this.items.newProperty = '新属性' // 为items添加新属性
+      console.log(this.items) // 输出带有newProperty的items
+    }
+  }
+})
+```
+
+点击按钮，发现结果不及预期，数据虽然更新了（console打印出了新属性），但页面并没有更新
+
+**原理分析**
+
+为什么产生上面的情况呢？
+
+下面来分析一下
+
+`vue2`是用过`Object.defineProperty`实现数据响应式
+
+```js
+const obj = {}
+Object.defineProperty(obj, 'foo', {
+  get () {
+    console.log(`get foo:${val}`)
+    return val
+  },
+  set (newVal) {
+    if (newVal !== val) {
+      console.log(`set foo:${newVal}`)
+      val = newVal
+    }
+  }
+})
+```
+
+当我们访问`foo`属性或者设置`foo`值的时候都能够触发`setter与getter`
+
+```js
+obj.foo
+obj.foo = 'new'
+```
+
+但是我们为`obj`添加新属性的时候，却无法触发事件属性的拦截
+
+```js
+obj.bar = '新属性'
+```
+
+原因是一开始`obj`的`foo`属性被设成了响应式数据，而`bar`是后面新增的属性，并没有通过`Object.defineProperty`设置成响应式数据
+
+**解决方案**
+
+`Vue` 不允许在已经创建的实例上动态添加新的响应式属性
+
+若想实现数据与视图同步更新，可采取下面三种解决方案：
+
+* `Vue.set()`
+* `Object.assign()`
+* `$forcecUpdated()`
+
+**`Vue.set()`**
+
+`Vue.set( target, propertyName/index, value )`
+
+参数
+
+* `{Object | Array} target`
+* `{string | number} propertyName/index`
+* `{any} value`
+
+返回值：设置的值
+
+通过`Vue.set`向响应式对象中添加一个`property`，并确保这个新 `property` 同样是响应式的，且触发视图更新
+
+关于`Vue.set`源码（省略了很多与本节不相关的代码）
+
+源码位置：`src\core\observer\index.js`
+
+```ts
+function set (target: Array<any> | object, key: any, val: any): any {
+  // ...
+  defineReactive(ob.value, key, val)
+  ob.dep.notify()
+  return val
+}
+```
+
+这里无非再次调用 `defineReactive` 方法，实现新增属性的响应式
+
+关于 `defineReactive` 方法，内部还是通过 `Object.defineProperty` 实现属性拦截
+
+```js
+function defineReactive (obj, key, val) {
+  Object.defineProperty(obj, key, {
+    get () {
+      console.log(`get ${key}:${val}`)
+      return val
+    },
+    set (newVal) {
+      if (newVal !== val) {
+        console.log(`set ${key}:${newVal}`)
+        val = newVal
+      }
+    }
+  })
+}
+```
+
+**`Object.assign()`**
+
+直接使用Object.assign()添加到对象的新属性不会触发更新
+
+应创建一个新的对象，合并原对象和混入对象的属性
+
+```js
+this.someObject = Object.assign({}, this.someObject, { newProperty1: 1, newProperty2: 2 })
+```
+
+**`$forceUpdate`**
+
+如果你发现你自己需要在 Vue 中做一次强制更新，99.9% 的情况，是你在某个地方做错了事
+
+`$forceUpdate` 迫使 Vue 实例重新渲染
+
+PS：仅仅影响实例本身和插入插槽内容的子组件，而不是所有子组件。
+
+**小结**
+
+如果为对象添加少量的新属性，可以直接采用`Vue.set()`
+
+如果需要为新对象添加大量的新属性，则通过`Object.assign()`创建新对象
+
+如果你实在不知道怎么操作时，可采取`$forceUpdate()`进行强制刷新 (不建议)
 
 ## ref 和 reactive 有何区别吗 {#p1-ref-reactive}
 
@@ -155,7 +501,469 @@ Vue 3 引入了组合式 API，随之而来的是一系列新的生命周期钩�
 
 ## VUE 生命周期
 
-## 组件通信策略和方法
+## 组件通信策略和方法 {#p0-component-communicate}
+
+ 在Vue中 组件之间的通信总结
+
+在Vue中，组件之间的通信可以通过以下几种方式实现：
+
+1. Props/Attributes：父组件通过向子组件传递属性（props），子组件通过props接收父组件传递的数据。这是一种单向数据流的方式。
+
+2. Events/Custom Events：子组件可以通过触发自定义事件（$emit），向父组件发送消息。父组件可以监听子组件的自定义事件，在事件回调中处理接收到的消息。
+
+3. $refs：父组件可以通过在子组件上使用ref属性，获取子组件的实例，并直接调用子组件的方法或访问子组件的属性。
+
+4. Event Bus：通过创建一个全局事件总线实例，可以在任何组件中触发和监听事件。组件之间可以通过事件总线进行通信。
+
+5. Vuex：Vuex是Vue官方提供的状态管理库，用于在组件之间共享状态。组件可以通过Vuex的store来进行状态的读取和修改。
+
+6. Provide/Inject：父组件通过provide选项提供数据，子组件通过inject选项注入数据。这样可以在跨层级的组件中进行数据传递。
+
+ Props/Attributes
+
+在Vue中，可以通过props和attributes来实现组件之间的通信。
+
+1. 使用props：
+ 父组件可以通过props向子组件传递数据。子组件通过在props选项中声明属性来接收父组件传递的数据。
+
+例如，父组件传递一个名为message的属性给子组件：
+
+```html
+<template>
+ <div>
+ <child-component :message="parentMessage"></child-component>
+ </div>
+</template>
+
+<script>
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+ components: {
+ ChildComponent
+ },
+ data() {
+ return {
+ parentMessage: 'Hello from parent'
+ };
+ }
+};
+</script>
+```
+
+子组件接收并使用父组件传递的属性：
+
+```html
+<template>
+ <div>
+ {{ message }}
+ </div>
+</template>
+
+<script>
+export default {
+ props: {
+ message: {
+ type: String,
+ required: true
+ }
+ }
+};
+</script>
+```
+
+2. 使用attributes：
+ 父组件可以通过attributes向子组件传递数据。子组件通过$attrs属性来访问父组件传递的所有属性。
+
+例如，父组件传递一个名为message的属性给子组件：
+
+```html
+<template>
+ <div>
+ <child-component message="Hello from parent"></child-component>
+ </div>
+</template>
+
+<script>
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+ components: {
+ ChildComponent
+ }
+};
+</script>
+```
+
+子组件访问父组件传递的属性：
+
+```html
+<template>
+ <div>
+ {{ $attrs.message }}
+ </div>
+</template>
+
+<script>
+export default {
+ inheritAttrs: false
+};
+</script>
+```
+
+这些是使用props和attributes在Vue中实现组件之间通信的示例。通过props可以实现父子组件之间的单向数据流，而通过attributes可以实现更灵活的通信方式。
+
+ Events/Custom Events
+
+在Vue中，可以使用Events/Custom Events（事件/自定义事件）来实现组件之间的通信。以下是一个示例：
+
+1. 在父组件中触发事件：
+
+```html
+<template>
+ <div>
+ <button @click="sendMessage">发送消息给子组件</button>
+ <child-component @message-received="handleMessage"></child-component>
+ </div>
+</template>
+
+<script>
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+ components: {
+ ChildComponent
+ },
+ methods: {
+ sendMessage() {
+ this.$emit('message-received', 'Hello from parent');
+ },
+ handleMessage(message) {
+ console.log(message);
+ }
+ }
+};
+</script>
+```
+
+2. 在子组件中监听事件：
+
+```html
+<template>
+ <div>
+ <p>{{ message }}</p>
+ </div>
+</template>
+
+<script>
+export default {
+ data() {
+ return {
+ message: ''
+ };
+ },
+ mounted() {
+ this.$on('message-received', this.handleMessage);
+ },
+ methods: {
+ handleMessage(message) {
+ this.message = message;
+ }
+ }
+};
+</script>
+```
+
+在这个示例中，父组件中有一个按钮，当点击按钮时会触发`sendMessage`方法，该方法通过`$emit`触发名为`message-received`的自定义事件，并传递了一个消息作为参数。
+
+子组件中通过`$on`方法监听`message-received`事件，并在事件触发时调用`handleMessage`方法，该方法用于接收并处理接收到的消息。
+
+通过这种方式，父组件可以通过自定义事件向子组件传递数据，子组件则可以通过监听相应的自定义事件来接收并处理父组件传递的数据。
+
+这是使用Events/Custom Events在Vue中实现组件之间通信的示例。通过自定义事件，可以实现父子组件之间的双向通信。
+
+ $refs
+
+在Vue中，可以使用`$refs`来访问子组件的实例，从而进行组件之间的通信。以下是一个示例：
+
+1. 在父组件中访问子组件的实例：
+
+```html
+<template>
+ <div>
+ <child-component ref="child"></child-component>
+ <button @click="sendMessage">发送消息给子组件</button>
+ </div>
+</template>
+
+<script>
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+ components: {
+ ChildComponent
+ },
+ methods: {
+ sendMessage() {
+ this.$refs.child.handleMessage('Hello from parent');
+ }
+ }
+};
+</script>
+```
+
+2. 子组件中的方法处理接收到的消息：
+
+```html
+<template>
+ <div>
+ <p>{{ message }}</p>
+ </div>
+</template>
+
+<script>
+export default {
+ data() {
+ return {
+ message: ''
+ };
+ },
+ methods: {
+ handleMessage(message) {
+ this.message = message;
+ }
+ }
+};
+</script>
+```
+
+在这个示例中，父组件通过在子组件上使用`ref`属性来获取子组件的实例。在父组件的`sendMessage`方法中，通过`this.$refs.child`访问子组件的实例，并调用子组件的`handleMessage`方法，将消息作为参数传递给子组件。
+
+子组件的`handleMessage`方法接收到父组件传递的消息，并更新`message`的值。这样，父组件就可以通过`$refs`来访问子组件的实例，并调用子组件中的方法，从而实现组件之间的通信。
+
+需要注意的是，`$refs`只能用于访问子组件的实例，在父组件中直接修改子组件的数据是不推荐的。更好的做法是在子组件中提供相应的方法，父组件通过`$refs`调用这些方法来进行通信。
+
+ Event Bus
+
+在Vue中，可以使用Event Bus（事件总线）来实现组件之间的通信。Event Bus是一个空的Vue实例，可以用于作为中央事件总线，用于组件之间的通信。以下是一个示例：
+
+1. 创建一个Event Bus实例：
+
+```javascript
+// EventBus.js
+import Vue from 'vue'
+export const EventBus = new Vue()
+```
+
+2. 在需要通信的组件中，使用Event Bus来发送和接收事件：
+
+```html
+<template>
+ <div>
+ <button @click="sendMessage">发送消息给另一个组件</button>
+ </div>
+</template>
+
+<script>
+import { EventBus } from './EventBus.js';
+
+export default {
+ methods: {
+ sendMessage() {
+ EventBus.$emit('messageReceived', 'Hello from Component A');
+ }
+ }
+};
+</script>
+```
+
+```html
+<template>
+ <div>
+ <p>{{ message }}</p>
+ </div>
+</template>
+
+<script>
+import { EventBus } from './EventBus.js';
+
+export default {
+ data() {
+ return {
+ message: ''
+ };
+ },
+ mounted() {
+ EventBus.$on('messageReceived', (message) => {
+ this.message = message;
+ });
+ }
+};
+</script>
+```
+
+在这个示例中，我们首先创建了一个Event Bus实例`EventBus`，并将其导出。然后在发送消息的组件中，通过`EventBus.$emit`方法发送一个名为`messageReceived`的事件，并传递消息作为参数。
+
+在接收消息的组件中，通过在`mounted`钩子中使用`EventBus.$on`方法来监听`messageReceived`事件，并定义一个回调函数来处理接收到的消息。
+
+当发送消息的组件点击按钮时，会触发`sendMessage`方法，该方法通过`EventBus.$emit`发送一个事件，并将消息作为参数传递给该事件。
+
+在接收消息的组件中，`mounted`钩子函数会在组件挂载后执行，此时会调用`EventBus.$on`方法来监听事件。当`messageReceived`事件被触发时，回调函数中的逻辑会执行，将接收到的消息更新到`message`的值上。
+
+这样，通过Event Bus实例，可以实现不同组件之间的通信，组件A通过发送事件，组件B通过监听事件来接收消息。
+
+需要注意的是，使用Event Bus时需要确保事件名称唯一，并在适当的生命周期钩子中进行事件监听和解绑操作，以避免内存泄漏和不必要的事件监听。
+
+ Vuex
+
+在Vue中，可以使用Vuex来进行组件之间的通信。Vuex是一个专为Vue.js应用程序开发的状态管理模式。以下是一个使用Vuex进行组件之间通信的示例：
+
+1. 安装并配置Vuex：
+ 安装Vuex：`npm install vuex --save`
+ 创建store.js文件：
+
+```javascript
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
+  state: {
+    message: ''
+  },
+  mutations: {
+    setMessage (state, payload) {
+      state.message = payload
+    }
+  }
+})
+```
+
+在main.js中引入store.js并注册：
+
+```javascript
+import Vue from 'vue'
+import App from './App.vue'
+import store from './store.js'
+
+new Vue({
+  store,
+  render: h => h(App)
+}).$mount('#app')
+```
+
+2. 在需要通信的组件中，使用Vuex来发送和接收数据：
+
+```html
+<template>
+ <div>
+ <button @click="sendMessage">发送消息给另一个组件</button>
+ </div>
+</template>
+
+<script>
+export default {
+ methods: {
+ sendMessage() {
+ this.$store.commit('setMessage', 'Hello from Component A');
+ }
+ }
+};
+</script>
+```
+
+```html
+<template>
+ <div>
+ <p>{{ message }}</p>
+ </div>
+</template>
+
+<script>
+export default {
+ computed: {
+ message() {
+ return this.$store.state.message;
+ }
+ }
+};
+</script>
+```
+
+在这个示例中，我们首先安装并配置了Vuex。
+
+然后，在store.js文件中，我们创建了一个store实例，并定义了一个名为message的状态和一个名为setMessage的mutation，用于更新message的值。
+
+在发送消息的组件中，我们通过`this.$store.commit('mutationName', payload)`的形式来调用mutation，从而更新Vuex的状态。
+
+在接收消息的组件中，我们通过计算属性来获取Vuex中的message状态，并在模板中使用该计算属性来展示消息。
+
+这样，通过Vuex的状态管理，可以实现组件之间的通信。组件A通过调用mutation来更新状态，组件B通过计算属性来获取状态并进行展示。
+
+需要注意的是，在实际应用中，可以根据需求来定义更多的状态和mutations，以满足组件之间的通信需求。
+
+ Provide/Inject
+
+在Vue中，可以使用provide/inject来实现组件之间的通信。provide和inject是Vue的高级特性，可以在祖先组件中提供数据，并在后代组件中注入数据。以下是一个使用provide/inject实现组件之间通信的示例：
+
+父组件：
+
+```html
+<template>
+ <div>
+ <child-component></child-component>
+ </div>
+</template>
+
+<script>
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+ components: {
+ ChildComponent
+ },
+ provide() {
+ return {
+ message: 'Hello from Parent Component'
+ };
+ }
+};
+</script>
+```
+
+子组件：
+
+```html
+<template>
+ <div>
+ <p>{{ injectedMessage }}</p>
+ </div>
+</template>
+
+<script>
+export default {
+ inject: ['message'],
+ computed: {
+ injectedMessage() {
+ return this.message;
+ }
+ }
+};
+</script>
+```
+
+在这个示例中，父组件通过provide属性提供了一个名为message的数据，值为'Hello from Parent Component'。
+
+子组件通过inject属性注入了父组件提供的message数据，并将其存储在一个名为injectedMessage的计算属性中。
+
+最后，子组件通过模板中的`{{ injectedMessage }}`来展示通过provide/inject传递的数据。
+
+这样，通过provide/inject，父组件可以将数据提供给后代组件，并且后代组件可以通过注入的方式来获取这些数据，实现了组件之间的通信。
+
+需要注意的是，provide/inject是一种上下文注入的方式，因此数据的变化会影响到所有注入了该数据的组件。在实际应用中，要谨慎使用provide/inject，确保数据的使用和变化符合预期。
+
+通过provide/inject，可以在组件之间实现数据的传递和共享，从而实现组件之间的通信。
 
 ## v-if 和 v-show 差别
 
@@ -166,6 +974,22 @@ Vue 3 引入了组合式 API，随之而来的是一系列新的生命周期钩�
 * 性能提升: Vue3 通过静态标记、TreeShaking 等优化提升了性能
 * TypeScript 支持: Vue3 使用 TypeScript 重写，提供更好的类型支持
 * Fragment: Vue3 支持多根节点组件
+
+## vue3 的 diff 算法是什么 {#p0-diff}
+
+Vue3的diff算法是一种用于比较虚拟DOM树之间差异的算法。它用于确定需要更新的部分，以便最小化对实际DOM的操作，从而提高性能。
+
+Vue3的diff算法采用了一种称为"逐层比较"的策略，即从根节点开始逐层比较虚拟DOM树的节点。具体的比较过程如下：
+
+1. 对比两棵虚拟DOM树的根节点，判断它们是否相同。如果不相同，则直接替换整个根节点及其子节点，无需进一步比较。
+2. 如果根节点相同，则对比它们的子节点。这里采用了一种称为"双端比较"的策略，即同时从两棵树的头部和尾部开始比较子节点。
+3. 从头部开始，依次对比两棵树的相同位置的子节点。如果两个子节点相同，则继续比较它们的子节点。
+4. 如果两个子节点不同，根据一些启发式规则（如节点类型、key值等），判断是否需要替换、删除或插入子节点。
+5. 继续比较下一个位置的子节点，直到两棵树的所有子节点都被比较完。
+
+通过逐层比较和双端比较的策略，Vue3的diff算法能够高效地找到虚拟DOM树之间的差异，并只对需要更新的部分进行操作，从而减少了对实际DOM的操作次数，提高了性能。
+
+值得注意的是，Vue3还引入了一种称为"静态标记"的优化策略，用于在编译阶段将一些静态节点标记出来，从而在diff算法中更快地跳过这些静态节点的比较，进一步提升性能。这一优化策略在处理大型列表、静态内容等场景下特别有效。
 
 ## key 的作用
 
@@ -2116,3 +2940,177 @@ const Home = {
   }
 }
 ```
+
+## 中为何不要把 v-if 和 v-for 同时用在同一个元素上， 原理是什么？ {#p0-v-if-v-for}
+
+确实，将`v-if`和`v-for`同时用在同一个元素上可能会导致性能问题。**原因在于`v-for`具有比`v-if`更高的优先级，它会在每次渲染的时候都会运行**。这意味着，即使在某些情况下`v-if`的条件为`false`，`v-for`仍然会对数据进行遍历和渲染。
+
+这样会导致一些不必要的性能消耗，特别是当数据量较大时。Vue在渲染时会尽量复用已经存在的元素，而不是重新创建和销毁它们。但是当`v-for`遍历的数据项发生变化时，Vue会使用具有相同`key`的元素，此时`v-if`的条件可能会影响到之前的元素，导致一些不符合预期的行为。
+
+让我们来看一个具体的例子来说明这个问题。
+
+假设我们有以下的Vue模板代码：
+
+```html
+<ul>
+ <li v-for="item in items" v-if="item.isActive">{{ item.name }}</li>
+</ul>
+```
+
+这里我们使用`v-for`来循环渲染`items`数组，并且使用`v-if`来判断每个数组项是否是活动状态。现在，让我们看一下Vue的源码，特别是与渲染相关的部分。
+
+在Vue的渲染过程中，它会将模板解析为AST（抽象语法树），然后将AST转换为渲染函数。对于上面的模板，渲染函数大致如下：
+
+```javascript
+function render () {
+  return _c(
+    'ul',
+    null,
+    _l(items, function (item) {
+      return item.isActive ? _c('li', null, _v(_s(item.name))) : _e()
+    })
+  )
+}
+```
+
+上面的代码中，`_l`是由`v-for`指令生成的渲染函数。它接收一个数组和一个回调函数，并在每个数组项上调用回调函数。回调函数根据`v-if`条件来决定是否渲染`li`元素。
+
+问题出在这里：由于`v-for`的优先级比`v-if`高，所以每次渲染时都会执行`v-for`循环，无论`v-if`的条件是否为`false`。这意味着即使`item.isActive`为`false`，Vue仍然会对它进行遍历和渲染。
+
+此外，Vue在渲染时会尽量复用已经存在的元素，而不是重新创建和销毁它们。但是当`v-for`遍历的数据项发生变化时，Vue会使用具有相同`key`的元素。在上面的例子中，如果`item.isActive`从`true`变为`false`，Vue会尝试复用之前的`li`元素，并在其上应用`v-if`条件。这可能会导致一些不符合预期的行为。
+
+为了避免这种性能问题，Vue官方推荐在同一个元素上不要同时使用`v-if`和`v-for`。如果需要根据条件来决定是否渲染循环的元素，可以考虑使用计算属性或者`v-for`的过滤器来处理数据。或者，将条件判断放在外层元素上，内层元素使用`v-for`进行循环渲染，以确保每次渲染时都能正确地应用`v-if`条件。
+
+## 异常处理机制有哪些 {#p0-exception-process}
+
+Vue的错误处理机制主要包括以下几个方面：
+
+1. `Error Capturing（错误捕获）`：Vue提供了全局错误处理的钩子函数`errorCaptured`，可以在组件层级中捕获子组件产生的错误。通过在父组件中使用`errorCaptured`钩子函数，可以捕获子组件中的错误，并对其进行处理或展示错误信息。
+
+2. `Error Boundary（错误边界）`：Vue 2.x中没有内置的错误边界机制，但你可以通过自定义组件来实现。错误边界是一种特殊的组件，它可以捕获并处理其子组件中的错误。错误边界组件使用`errorCaptured`钩子函数来捕获子组件中的错误，并使用`v-if`或`v-show`等指令来显示错误信息或替代内容。
+
+3.`异常处理`：在Vue组件的生命周期钩子函数中，可以使用`try-catch`语句捕获并处理可能出现的异常。例如，在`mounted`钩子函数中进行接口请求，可以使用`try-catch`来捕获请求过程中的异常，并进行相应的处理。
+
+4. `错误提示和日志记录`：在开发环境中，Vue会在浏览器的控制台中输出错误信息，以方便开发者进行调试。在生产环境中，可以使用日志记录工具（如Sentry）来记录错误信息，以便及时发现和解决问题。
+
+**代码举例**
+
+以下是使用代码举例说明以上四种Vue错误处理方式的示例：
+
+1. Error Capturing（错误捕获）：
+
+```vue
+// ParentComponent.vue
+<template>
+ <div>
+ <ChildComponent />
+ <div v-if="error">{{ error }}</div>
+ </div>
+</template>
+
+<script>
+export default {
+ data() {
+ return {
+ error: null
+ };
+ },
+ errorCaptured(err, vm, info) {
+ this.error = err.toString(); // 将错误信息存储在父组件的data中
+ return false; // 阻止错误继续向上传播
+ }
+};
+</script>
+```
+
+2. Error Boundary（错误边界）：
+
+```vue
+// ErrorBoundary.vue
+<template>
+ <div v-if="hasError">
+ Oops, something went wrong.
+ <button @click="resetError">Retry</button>
+ </div>
+ <div v-else>
+ <slot></slot>
+ </div>
+</template>
+
+<script>
+export default {
+ data() {
+ return {
+ hasError: false
+ };
+ },
+ errorCaptured() {
+ this.hasError = true;
+ return false;
+ },
+ methods: {
+ resetError() {
+ this.hasError = false;
+ }
+ }
+};
+</script>
+
+// ParentComponent.vue
+<template>
+ <div>
+ <ErrorBoundary>
+ <ChildComponent />
+ </ErrorBoundary>
+ </div>
+</template>
+```
+
+3. 异常处理：
+
+```vue
+// ChildComponent.vue
+<template>
+ <div>{{ data }}</div>
+</template>
+
+<script>
+export default {
+ data() {
+ return {
+ data: null
+ };
+ },
+ mounted() {
+ try {
+ // 模拟接口请求
+ const response = await fetch('/api/data');
+ this.data = await response.json();
+ } catch (error) {
+ console.error(error); // 处理异常，输出错误信息
+ }
+ }
+};
+</script>
+```
+
+4. 错误提示和日志记录：
+
+```javascript
+// main.js
+import Vue from 'vue'
+import Sentry from '@sentry/browser'
+
+Vue.config.errorHandler = (err) => {
+  console.error(err) // 错误提示
+  Sentry.captureException(err) // 错误日志记录
+}
+
+new Vue({
+  // ...
+}).$mount('#app')
+```
+
+上述代码中，`Error Capturing`通过在父组件中的`errorCaptured`钩子函数中捕获子组件的错误，并展示在父组件中。`Error Boundary`通过自定义错误边界组件，在子组件发生错误时展示错误信息或替代内容。`异常处理`通过在子组件的生命周期钩子函数中使用`try-catch`语句来捕获异常并进行处理。`错误提示和日志记录`通过在`Vue.config.errorHandler`中定义全局的错误处理函数，将错误信息输出到控制台，并使用Sentry等工具记录错误日志。
+
+这些示例展示了不同的错误处理方式，可以根据实际需求选择合适的方式来处理Vue应用中的错误。

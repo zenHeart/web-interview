@@ -58,16 +58,17 @@ sdk 的设计主要围绕以下几个话题来进行：
 
 **最基本使用**
 
-```js
-import StatisticSDK from 'StatisticSDK';
+```tsx
+import StatisticSDK from 'StatisticSDK'
 // 全局初始化一次
-window.insSDK = new StatisticSDK('uuid-12345');
+window.insSDK = new StatisticSDK('uuid-12345')
 
-
-<button onClick={() => {
- window.insSDK.event('click', 'confirm');
-...// 其他业务代码
-}}>确认</button>
+// <button onClick={() => {
+//   window.insSDK.event('click', 'confirm')
+//  // ...// 其他业务代码
+// }}>
+// 确认
+// </button>
 ```
 
  数据发送
@@ -237,22 +238,25 @@ class StatisticSDK {
 ```js
 // 定义错误边界
 class ErrorBoundary extends React.Component {
- state = { error: null }
- static getDerivedStateFromError(error) {
- return { error }
- }
- componentDidCatch(error, errorInfo) {
- // 调用我们实现的SDK实例
- insSDK.error(error, errorInfo)
- }
- render() {
- if (this.state.error) {
- return <h2>Something went wrong.</h2>
- }
- return this.props.children
- }
+
+  //   state = { error: null }
+  static getDerivedStateFromError (error) {
+    return { error }
+  }
+
+  componentDidCatch (error, errorInfo) {
+    // 调用我们实现的SDK实例
+    insSDK.error(error, errorInfo)
+  }
+
+  render () {
+    if (this.state.error) {
+      return <h2>Something went wrong.</h2>
+    }
+    return this.props.children
+  }
 }
-...
+
 <ErrorBoundary>
  <BuggyCounter />
 </ErrorBoundary>
@@ -264,24 +268,20 @@ vue也有一个类似的生命周期来做这件事：`errorCaptured`
 
 ```js
 Vue.component('ErrorBoundary', {
- data: () => ({ error: null }),
- errorCaptured (err, vm, info) {
- this.error = `${err.stack}\n\nfound in ${info} of component`
- // 调用我们的SDK，上报错误信息
- insSDK.error(err,info)
- return false
- },
- render (h) {
- if (this.error) {
- return h('pre', { style: { color: 'red' }}, this.error)
- }
- return this.$slots.default[0]
- }
+  data: () => ({ error: null }),
+  errorCaptured (err, vm, info) {
+    this.error = `${err.stack}\n\nfound in ${info} of component`
+    // 调用我们的SDK，上报错误信息
+    insSDK.error(err, info)
+    return false
+  },
+  render (h) {
+    if (this.error) {
+      return h('pre', { style: { color: 'red' } }, this.error)
+    }
+    return this.$slots.default[0]
+  }
 })
-...
-<error-boundary>
- <buggy-counter />
-</error-boundary>
 ```
 
  参考文档
@@ -399,6 +399,27 @@ Vue.component('ErrorBoundary', {
 * 微前端（Micro App）
 
 ## 单点登录是如何实现的？ {#p1-single-login}
+
+## 533 单点登录是什么， 具体流程是什么【热度: 1,168】
+
+SSO 一般都需要一个独立的认证中心（passport），子系统的登录均得通过 passport，子系统本身将不参与登录操作，当一个系统成功登录以后，passport 将会颁发一个令牌给各个子系统，子系统可以拿着令牌会获取各自的受保护资源，为了减少频繁认证，各个子系统在被 passport 授权以后，会建立一个局部会话，在一定时间内可以无需再次向 passport 发起认证。
+
+具体流程是：
+
+1. 用户访问系统 1 的受保护资源，系统 1 发现用户未登录，跳转至 sso 认证中心，并将自己的地址作为参数
+2. sso 认证中心发现用户未登录，将用户引导至登录页面
+3. 用户输入用户名密码提交登录申请
+4. sso 认证中心校验用户信息，创建用户与 sso 认证中心之间的会话，称为全局会话，同时创建授权令牌
+5. sso 认证中心带着令牌跳转会最初的请求地址（系统 1）
+6. 系统 1 拿到令牌，去 sso 认证中心校验令牌是否有效
+7. sso 认证中心校验令牌，返回有效，注册系统 1
+8. 系统 1 使用该令牌创建与用户的会话，称为局部会话，返回受保护资源
+9. 用户访问系统 2 的受保护资源
+10. 系统 2 发现用户未登录，跳转至 sso 认证中心，并将自己的地址作为参数
+11. sso 认证中心发现用户已登录，跳转回系统 2 的地址，并附上令牌
+12. 系统 2 拿到令牌，去 sso 认证中心校验令牌是否有效
+13. sso 认证中心校验令牌，返回有效，注册系统 2
+14. 系统 2 使用该令牌创建与用户的局部会话，返回受保护资源
 
 单点登录：Single Sign On，简称SSO。用户只要登录一次，就可以访问所有相关信任应用的资源。企业里面用的会比较多，有很多内网平台，但是只要在一个系统登录就可以。
 
@@ -684,3 +705,119 @@ Simulator 是将设计器传入的 DocumentModel 和组件/库描述转成相应
 ![01](https://img.alicdn.com/imgextra/i4/O1CN016l8gDo1z7zlRlW1P0_!!6000000006668-2-tps-1920-1080.png)
 
 [资料](https://lowcode-engine.cn/site/docs/guide/design/summary)
+
+## 将静态资源缓存在本地的方式有哪些？{#p0-cached-static}
+
+**浏览器可以使用以下几种方式将前端静态资源缓存在本地**：
+
+1. HTTP缓存：浏览器通过设置HTTP响应头中的Cache-Control或Expires字段来指定资源的缓存策略。常见的缓存策略有：no-cache（每次都请求服务器进行验证）、no-store（不缓存资源）、max-age（设置资源缓存的最大时间）等。浏览器根据这些缓存策略来决定是否将资源缓存在本地。
+
+2. ETag/If-None-Match：服务器可以通过在响应头中添加ETag字段，用于标识资源的版本号。当浏览器再次请求资源时，会将上次请求返回的ETag值通过If-None-Match字段发送给服务器，由服务器判断资源是否发生了变化。如果资源未发生变化，服务器会返回304 Not Modified状态码，浏览器则直接使用本地缓存的资源。
+
+3. Last-Modified/If-Modified-Since：服务器可以通过在响应头中添加Last-Modified字段，用于标识资源的最后修改时间。浏览器再次请求资源时，会将上次请求返回的Last-Modified值通过If-Modified-Since字段发送给服务器。服务器根据资源的最后修改时间判断资源是否发生了变化，如果未发生变化，则返回304 Not Modified状态码，浏览器使用本地缓存的资源。
+
+4. Service Worker缓存：使用Service Worker可以将前端资源缓存在浏览器的Service Worker缓存中。Service Worker是运行在浏览器后台的脚本，它可以拦截和处理网络请求，因此可以将前端资源缓存起来，并在离线状态下提供缓存的资源。
+
+5. LocalStorage或IndexedDB：对于一些小的静态资源，可以将其存储在浏览器的LocalStorage或IndexedDB中。这些存储方式是浏览器提供的本地存储机制，可以将数据以键值对的形式存储在浏览器中，从而实现缓存的效果。
+
+**如何将静态资源缓存在 LocalStorage或IndexedDB**
+
+以下是一个使用LocalStorage将静态资源缓存的示例代码：
+
+```javascript
+// 定义一个数组，包含需要缓存的静态资源的URL
+const resources = [
+  'https://example.com/css/style.css',
+  'https://example.com/js/main.js',
+  'https://example.com/images/logo.png'
+]
+
+// 遍历资源数组，将资源请求并存储在LocalStorage中
+resources.forEach(function (url) {
+  // 发起资源请求
+  fetch(url)
+    .then(function (response) {
+      // 检查请求是否成功
+      if (!response.ok) {
+        throw new Error('Request failed: ' + response.status)
+      }
+      // 将响应数据存储在LocalStorage中
+      return response.text()
+    })
+    .then(function (data) {
+      // 将资源数据存储在LocalStorage中，以URL作为键名
+      localStorage.setItem(url, data)
+      console.log('Resource cached: ' + url)
+    })
+    .catch(function (error) {
+      console.error(error)
+    })
+})
+```
+
+以下是一个使用IndexedDB将静态资源缓存的示例代码：
+
+```javascript
+// 打开或创建一个IndexedDB数据库
+const request = indexedDB.open('myDatabase', 1)
+
+// 创建或更新数据库的对象存储空间
+request.onupgradeneeded = function (event) {
+  const db = event.target.result
+  const objectStore = db.createObjectStore('resources', { keyPath: 'url' })
+  objectStore.createIndex('url', 'url', { unique: true })
+}
+
+// 成功打开数据库后，将资源请求并存储在IndexedDB中
+request.onsuccess = function (event) {
+  const db = event.target.result
+  const transaction = db.transaction('resources', 'readwrite')
+  const objectStore = transaction.objectStore('resources')
+
+  resources.forEach(function (url) {
+    // 发起资源请求
+    fetch(url)
+      .then(function (response) {
+        // 检查请求是否成功
+        if (!response.ok) {
+          throw new Error('Request failed: ' + response.status)
+        }
+        // 将响应数据存储在IndexedDB中
+        return response.blob()
+      })
+      .then(function (data) {
+        // 创建一个资源对象，以URL作为键名
+        const resource = { url, data }
+        // 将资源对象存储在IndexedDB中
+        objectStore.put(resource)
+        console.log('Resource cached: ' + url)
+      })
+      .catch(function (error) {
+        console.error(error)
+      })
+  })
+
+  // 完成事务
+  transaction.oncomplete = function () {
+    console.log('All resources cached in IndexedDB.')
+  }
+
+  transaction.onerror = function (event) {
+    console.error('Transaction error:', event.target.error)
+  }
+}
+```
+
+以上代码仅为示例，实际应用中需要根据具体的需求进行相应的优化和错误处理。
+
+## 什么是 JWT {#p0-jwt}
+
+JWT是JSON Web Token的缩写，是一种用于在不同系统之间安全传输信息的开放标准。JWT通常用于身份验证和授权，它由三部分组成：头部（header）、载荷（payload）和签名（signature）。
+
+头部包含了关于令牌的元数据和算法信息，通常包括令牌的类型（例如JWT）、使用的加密算法（例如HMAC SHA256或RSA）等。
+
+载荷包含了要传输的数据，可以是用户的身份信息、权限、角色等。载荷可以自定义，但常见的标准字段有iss（令牌的签发者）、exp（令牌的过期时间）、sub（令牌的主题）等。
+
+签名是使用头部和载荷中的数据以及秘密密钥生成的，用于验证令牌的真实性和完整性。接收方可以使用相同的密钥对收到的令牌进行验证。
+
+JWT的优点包括可扩展性、易于使用和跨平台支持，它可以在各种语言和框架中使用。由于JWT是基于标准的JSON格式，因此它易于解析和处理。

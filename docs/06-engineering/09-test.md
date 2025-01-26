@@ -41,6 +41,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
    return a + b
  }
 
+ // eslint-disable-next-line
  test('add function should add two numbers correctly', function () {
    expect(add(2, 3)).toBe(5)
    expect(add(-1, 1)).toBe(0)
@@ -113,6 +114,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
  import { render, fireEvent } from '@testing-library/react'
  import YourComponent from './YourComponent'
  
+ // eslint-disable-next-line
  test('YourComponent should render correctly and handle button click', function () {
    const { getByText, getByRole } = render(<YourComponent />)
    expect(getByText('Component Title')).toBeInTheDocument()

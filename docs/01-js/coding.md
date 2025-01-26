@@ -800,3 +800,240 @@ console.log(sum(1)(2)(3, 4)) // 10
 // example2
 console.log(sum(1, 2, 3, 4)) // 10
 ```
+
+## 实现日期格式化 format 函数{#p0-time-format}
+
+**关键词**：日期format函数、日期format实现
+
+**问题**
+
+```ts
+// js 实现日期的 format 函数
+//
+// YYYY 对应年
+// MM 对应月
+// DD 对应日
+//
+// HH 对应 24 小时制度
+// hh 对应 12 小时制度
+// mm 对应分钟
+// ss 对应秒
+
+const date = new Date()
+const formattedDate = date.format('YYYY-MM-DD HH:mm:ss')
+console.log(formattedDate) // 输出结果为当前日期和时间的格式化字符串
+```
+
+**解答**
+以下是使用JavaScript实现日期格式化的`format`函数：
+
+```js
+const format = function (format) {
+  const date = this
+
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+
+  format = format.replace('YYYY', year)
+  format = format.replace('MM', month.toString().padStart(2, '0'))
+  format = format.replace('DD', day.toString().padStart(2, '0'))
+  format = format.replace('HH', hours.toString().padStart(2, '0'))
+  format = format.replace('hh', (hours % 12).toString().padStart(2, '0'))
+  format = format.replace('mm', minutes.toString().padStart(2, '0'))
+  format = format.replace('ss', seconds.toString().padStart(2, '0'))
+
+  return format
+}
+
+// 示例用法
+const date = new Date()
+const formattedDate = date.format('YYYY-MM-DD HH:mm:ss')
+console.log(formattedDate) // 输出结果为当前日期和时间的格式化字符串
+```
+
+上述代码中，我们通过在`Date`对象的原型上定义`format`函数，使得所有的`Date`对象都可以调用`format`函数进行日期格式化。在函数内部，我们使用`getFullYear`、`getMonth`、`getDate`等方法获取日期的年、月、日、时、分、秒的值，并将其替换到传入的`format`字符串中对应的占位符。最后返回格式化后的字符串。
+
+## 实现一个函数， 计算两个日期之间的天数差 {#p0-time-diff}
+
+以下是使用JavaScript实现计算两个日期之间的天数差的函数：
+
+```javascript
+function calculateDateDifference (date1, date2) {
+  // 将日期字符串转换为 Date 对象
+  const d1 = new Date(date1)
+  const d2 = new Date(date2)
+
+  // 计算两个日期的时间差（毫秒数）
+  const timeDiff = Math.abs(d2.getTime() - d1.getTime())
+
+  // 将时间差转换为天数
+  const daysDiff = Math.ceil(timeDiff / (1000360024))
+
+  return daysDiff
+}
+
+// 示例用法
+const date1 = '2022-01-01'
+const date2 = '2022-01-10'
+
+const difference = calculateDateDifference(date1, date2)
+console.log(difference) // 输出结果为 9
+```
+
+上述函数首先将两个日期字符串转换为Date对象，然后计算两个日期对象之间的时间差（以毫秒表示），最后将时间差转换为天数。通过调用`calculateDateDifference`函数，可以获取两个日期之间的天数差。
+
+## 实现 map 函数
+
+> map.js
+
+> ['1', '2', '3'].map(parseInt) 的使用
+
+## JS 中数组深对比实现 {#p0-array-nest-diff}
+
+在JavaScript中，可以使用递归的方式实现数组的深度对比。以下是一个示例函数，用于比较两个数组是否相等：
+
+```javascript
+// 判断对象是否相同
+function deepEqual (obj1, obj2) {
+  // 检查类型是否相同
+  if (typeof obj1 !== typeof obj2) {
+    return false
+  }
+
+  // 检查是否是对象或数组
+  if (typeof obj1 === 'object' && obj1 !== null && obj2 !== null) {
+    // 检查对象或数组长度是否相同
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false
+    }
+
+    for (const key in obj1) {
+      // 递归比较每个属性的值
+      if (!deepEqual(obj1[key], obj2[key])) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // 比较基本类型的值
+  return obj1 === obj2
+}
+
+function deepArrayEqual (arr1, arr2) {
+  // 检查数组长度是否相同
+  if (arr1.length !== arr2.length) {
+    return false
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    const value1 = arr1[i]
+    const value2 = arr2[i]
+
+    // 递归比较每个元素的值
+    if (Array.isArray(value1) && Array.isArray(value2)) {
+      if (!deepArrayEqual(value1, value2)) {
+        return false
+      }
+    } else if (typeof value1 === 'object' && typeof value2 === 'object') {
+      if (!deepEqual(value1, value2)) {
+        return false
+      }
+    } else {
+      // 比较基本类型的值
+      if (value1 !== value2) {
+        return false
+      }
+    }
+  }
+
+  return true
+}
+```
+
+使用示例：
+
+```javascript
+const arr1 = [1, [2, 3], { name: 'John' }]
+const arr2 = [1, [2, 3], { name: 'John' }]
+const arr3 = [1, [2, 3], { name: 'Jane' }]
+
+console.log(deepArrayEqual(arr1, arr2)) // true
+console.log(deepArrayEqual(arr1, arr3)) // false
+```
+
+在上述示例中，`deepArrayEqual`函数会递归比较两个数组的每个元素的值，包括嵌套的数组和对象。如果两个数组是相等的，则返回`true`，否则返回`false`。注意，该函数不会检查函数、正则表达式、日期等复杂类型的值。
+
+## JS 中如何实现大对象深度对比 {#p0-object-nest-diff}
+
+在JavaScript中，可以使用递归的方式实现大对象的深度对比。以下是一个示例函数，用于比较两个大对象的每个属性是否相等：
+
+```javascript
+function deepEqual (obj1, obj2) {
+  // 检查类型是否相同
+  if (typeof obj1 !== typeof obj2) {
+    return false
+  }
+
+  // 检查是否是对象或数组
+  if (typeof obj1 === 'object' && obj1 !== null && obj2 !== null) {
+    // 检查对象或数组长度是否相同
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false
+    }
+
+    for (const key in obj1) {
+      // 递归比较每个属性的值
+      if (!deepEqual(obj1[key], obj2[key])) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // 比较基本类型的值
+  return obj1 === obj2
+}
+```
+
+使用示例：
+
+```javascript
+const obj1 = {
+  name: 'John',
+  age: 30,
+  address: {
+    street: '123 Main St',
+    city: 'New York'
+  }
+}
+
+const obj2 = {
+  name: 'John',
+  age: 30,
+  address: {
+    street: '123 Main St',
+    city: 'New York'
+  }
+}
+
+const obj3 = {
+  name: 'Jane',
+  age: 25,
+  address: {
+    street: '456 Park Ave',
+    city: 'Los Angeles'
+  }
+}
+
+console.log(deepEqual(obj1, obj2)) // true
+console.log(deepEqual(obj1, obj3)) // false
+```
+
+在上述示例中，`deepEqual`函数会递归比较两个对象的每个属性的值，包括嵌套的对象或数组。如果两个对象是相等的，则返回`true`，否则返回`false`。注意，该函数不会检查函数、正则表达式、日期等复杂类型的值。

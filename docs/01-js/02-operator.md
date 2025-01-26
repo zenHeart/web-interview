@@ -36,6 +36,47 @@
 
 ## typeof
 
+在JavaScript中，typeof和instanceof是两个用于检查变量类型的操作符，但它们具有不同的用途和区别。
+
+typeof是一个一元操作符，用于确定给定变量的数据类型。它返回一个字符串，表示变量的数据类型。typeof可以用于任何变量，包括基本数据类型（如字符串、数字、布尔值）和引用数据类型（如对象、数组、函数等）。
+
+例如：
+
+```ts
+typeof 42 // "number"
+typeof 'Hello' // "string"
+typeof true // "boolean"
+typeof undefined // "undefined"
+typeof null // "object"
+typeof [1, 2, 3] // "object"
+typeof { name: 'John', age: 30 } // "object"
+typeof function () {
+  // nop
+} // "function"
+```
+
+注意，typeof null返回的是"object"，这是一个历史遗留问题。
+
+instanceof是一个二元操作符，用于检查对象是否属于指定的构造函数的实例。它返回一个布尔值，表示对象是否是特定构造函数的实例或其子类的实例。
+
+例如：
+
+```ts
+const arr = [1, 2, 3]
+arr instanceof Array // true
+
+const obj = { name: 'John', age: 30 }
+obj instanceof Object // true
+
+function Person (name) {
+  this.name = name
+}
+const john = new Person('John')
+john instanceof Person // true
+```
+
+typeof用于确定变量的数据类型，而instanceof用于确定对象是否为某个构造函数的实例。虽然typeof可以检查基本数据类型和引用数据类型，但无法检查对象的具体类型。而instanceof可以在对象的继承链上进行检查，可以明确对象是否为某个类的实例或其子类的实例。
+
 ## 操作符优先级 {#p2-operator-priority}
 
 ```js
@@ -77,7 +118,8 @@ console.log('b defined? ' + (typeof b !== 'undefined'))
 - `Object.is()`认为`NaN`只等于`NaN`。
 - 例如：
 
-```javascript
+```js
+// eslint-disable-next-line
 console.log(NaN === NaN) // false
 console.log(Object.is(NaN, NaN)) // true
 ```
@@ -89,6 +131,7 @@ console.log(Object.is(NaN, NaN)) // true
 - 例如：
 
 ```javascript
+// eslint-disable-next-line
 console.log(+0 === -0) // true
 console.log(Object.is(-0, +0)) // false
 ```
@@ -101,13 +144,73 @@ console.log(Object.is(-0, +0)) // false
 - 例如：
 
 ```javascript
+// eslint-disable-next-line
 console.log(5 === 5) // true
 console.log(Object.is(5, 5)) // true
 
 const obj1 = { a: 1 }
 const obj2 = { a: 1 }
+// eslint-disable-next-line
 console.log(obj1 === obj1) // true
 console.log(obj1 === obj2) // false
 console.log(Object.is(obj1, obj1)) // true
 console.log(Object.is(obj1, obj2)) // false
 ```
+
+## in  {#p0-in}
+
+在 TypeScript 中，`in` 是一个运算符，用于检查对象是否具有指定的属性或者类实例是否实现了指定的接口。
+
+对于对象类型，`in` 运算符可以用来检查对象是否具有某个属性。语法为 `property in object`，其中 `property` 是一个字符串，`object` 是一个对象。
+
+示例：
+
+```typescript
+interface Person {
+ name: string;
+ age: number;
+}
+
+function printPersonInfo (person: Person) {
+  if ('name' in person) {
+    console.log('Name:', person.name)
+  }
+  if ('age' in person) {
+    console.log('Age:', person.age)
+  }
+}
+
+const person = { name: 'Alice', age: 25 }
+printPersonInfo(person) // 输出: Name: Alice, Age: 25
+```
+
+在上述示例中，我们定义了一个接口 `Person`，具有 `name` 和 `age` 两个属性。然后定义了一个函数 `printPersonInfo`，它接收一个参数 `person`，类型为 `Person`。在函数内部，我们使用 `in` 运算符检查 `person` 对象是否具有 `name` 和 `age` 属性，如果有则打印对应的值。
+
+对于类类型，`in` 运算符可以用来检查类的实例是否实现了指定的接口。语法为 `interfaceName in object`，其中 `interfaceName` 是一个接口名字，`object` 是一个对象或类的实例。
+
+示例：
+
+```typescript
+interface Printable {
+ print(): void;
+}
+
+class MyClass implements Printable {
+  print () {
+    console.log('Printing...')
+  }
+}
+
+function printObjectInfo (obj: any) {
+  if ('print' in obj) {
+    obj.print()
+  }
+}
+
+const myObj = new MyClass()
+printObjectInfo(myObj) // 输出: Printing...
+```
+
+在上述示例中，我们定义了一个接口 `Printable`，具有一个方法 `print`。然后定义了一个类 `MyClass`，它实现了 `Printable` 接口，并且实现了 `print` 方法。接着定义了一个函数 `printObjectInfo`，它接收一个参数 `obj`，类型为 `any`。在函数内部，我们使用 `in` 运算符检查 `obj` 对象是否实现了 `Printable` 接口，如果是则调用 `print` 方法。
+
+总的来说，`in` 关键字在 TypeScript 中用于检查对象是否具有指定的属性或类实例是否实现了指定的接口。它可以帮助我们在运行时根据对象的属性或接口的实现情况来进行相应的处理。

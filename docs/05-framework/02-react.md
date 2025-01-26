@@ -1,5 +1,180 @@
 # react
 
+## 是如何进行渲染的？ {#p0-render}
+
+在 React 中，JSX 最终被转换为真实的 DOM 经历了以下步骤：
+
+ 1. 解析 JSX：在编译阶段，React 会使用 Babel 等工具将 JSX 转换为 JavaScript 对象
+
+在编译阶段，React 使用 Babel 等工具将 JSX 转换为 JavaScript 对象的过程可以使用以下代码示例来说明：
+
+原始的 JSX 代码：
+
+```jsx
+const element = <h1>Hello, world!</h1>;
+```
+
+经过编译后，会被转换为类似的 JavaScript 对象：
+
+```javascript
+const element = React.createElement('h1', null, 'Hello, world!')
+```
+
+上述代码中，`React.createElement` 是一个由 React 提供的方法，它接收三个参数：元素的类型、元素的属性（可以是一个对象或 null）、元素的子元素。这样，通过调用 `React.createElement`，JSX 元素就被转换成了一个 JavaScript 对象。
+
+在 React 项目中，Babel 是一个常用的工具，用于将 JSX 代码转换为 JavaScript 代码。Babel 实际上是一个 JavaScript 编译器，可以根据配置和插件，将代码从一种语法转换为另一种语法。
+
+当 Babel 遇到 JSX 代码时，它会使用一个名为 `@babel/preset-react` 的 preset（预设）来进行转换。这个 preset 包含了一系列的插件，用于处理 JSX 语法。
+
+**具体的工作流程如下**：
+
+1. Babel 解析代码：Babel 会将代码解析成抽象语法树（AST），以便于之后的处理。
+
+2. JSX 转换：Babel 使用 `@babel/preset-react` 预设来处理 JSX 代码。这个预设包含了一个插件 `@babel/plugin-transform-react-jsx`，用于将 JSX 转换为函数调用。
+
+ 例如，将 `<h1>Hello, world!</h1>` 转换成 `React.createElement("h1", null, "Hello, world!")`。
+
+3. 生成 JavaScript 代码：Babel 使用转换后的 AST，将其重新生成为 JavaScript 代码。
+
+ 例如，将 `React.createElement("h1", null, "Hello, world!")` 转换成实际的 JavaScript 代码。
+
+总结起来，Babel 的作用就是将 JSX 代码转换为 JavaScript 代码，使其能够在浏览器中执行。这样，React 就可以理解和处理 JSX 语法，并通过转换后的 JavaScript 代码来创建虚拟 DOM 和进行后续的更新操作。
+
+ 2. 创建虚拟 DOM：React 使用解析后的 JSX 对象来创建虚拟 DOM（Virtual DOM）。虚拟 DOM 是一个轻量级的、以 JavaScript 对象表示的 DOM 树的副本
+
+**createElement 创建虚拟dom**
+
+在 React 中，`React.createElement` 函数用于创建虚拟 DOM 元素。它接受三个参数：元素类型、属性对象以及子元素。
+
+```javascript
+const element = React.createElement(type, props, children)
+```
+
+`React.createElement` 函数会返回一个描述虚拟 DOM 元素的 JavaScript 对象。这个对象包含了元素的类型、属性和子元素等信息。例如，对于 `<div className="container">Hello, React!</div>` 这个 JSX 语法，它被转换为以下形式：
+
+```javascript
+React.createElement('div', { className: 'container' }, 'Hello, React!')
+```
+
+这样就创建了一个描述 `<div>` 元素的虚拟 DOM 对象。虚拟 DOM 对象可以通过 `ReactDOM.render` 方法渲染到实际的 DOM 中。当虚拟 DOM 发生变化时，React 会通过比较新旧虚拟 DOM，找出差异并进行局部更新，从而最小化对实际 DOM 的操作。
+
+**createElement 原理**
+
+以下是 React 源码中 `React.createElement` 函数的简化版本：
+
+```javascript
+function createElement (type, props, ...children) {
+  const element = {
+    type,
+    props: {
+      ...props,
+      children: children.map(child =>
+        typeof child === 'object' ? child : createTextElement(child)
+      )
+    }
+  }
+
+  return element
+}
+
+function createTextElement (text) {
+  return {
+    type: 'TEXT_ELEMENT',
+    props: {
+      nodeValue: text,
+      children: []
+    }
+  }
+}
+```
+
+在上面的源码中，`createElement` 函数接收一个 `type` 参数（元素类型）、一个 `props` 参数（元素的属性对象）以及可选的 `children` 参数（子元素）。
+
+首先，通过创建一个名为 `element` 的对象，我们存储了虚拟 DOM 元素的信息。`element` 对象中的 `type` 属性保存了元素的类型，而 `props` 属性则是一个对象，用来存储元素的属性和子元素。我们使用了 ES6 中的扩展运算符将 `props` 参数中的属性分配给 `element.props`，同时也将 `children` 参数中的子元素映射为虚拟 DOM 对象。
+
+对于 `children` 参数的处理，通过 `children.map` 方法遍历 `children` 数组，并对每个子元素执行以下操作：
+
+* 如果子元素是对象类型，即已经是一个虚拟 DOM 对象，直接将其添加到 `element.props.children` 中。
+* 如果子元素是字符串或数字类型，即文本节点，那么我们调用 `createTextElement` 函数来创建一个描述该文本节点的虚拟 DOM 对象，并将其添加到 `element.props.children` 中。
+
+`createTextElement` 函数用于创建文本节点的虚拟 DOM 对象。它返回一个包含 `type` 为 `'TEXT_ELEMENT'` 的对象，且 `props` 对象中的 `nodeValue` 属性保存了文本节点的内容，`children` 属性为空数组。
+
+最后，我们将 `element` 对象作为结果返回，这样就创建了一个描述虚拟 DOM 元素的 JavaScript 对象。
+
+总结起来，`createElement` 函数通过创建一个对象来描述虚拟 DOM 元素，其中包含了元素的类型、属性和子元素等信息。对于子元素，会根据其类型进行判断，如果是对象类型，则直接添加到 `props.children` 中；如果是文本类型，则通过 `createTextElement` 函数创建对应的虚拟 DOM 对象。这样就生成了一个虚拟 DOM 元素，可以用于进行后续的渲染和更新操作。
+
+ 3. Diff 算法比较变化：在每次组件更新时，React 使用 Diff 算法对比前后两个虚拟 DOM 树的差异。Diff 算法能够高效地找出需要进行更新的部分
+
+React中通过diff算法来比较两个虚拟DOM树的差异，以确定需要更新的最小操作集合。
+
+首先，React会比较两个根节点的类型，如果不同，它们代表不同的组件，React会将原来的组件树完全替换为新的组件树。
+
+如果类型相同，React会比较两个根节点的属性，检查它们是否有任何更改。如果有更改，React会更新已有的DOM元素的属性。
+
+接下来，React会递归地比较和更新子节点。React会通过遍历子节点的方式找到相同位置上的子节点，并进行递归比较。
+
+对于子节点，React使用一种称为"key"的特殊属性来判断它们是否是相同的元素。如果两个子节点的key相同，React会认为它们是相同的元素，并只更新它们的属性和子节点。如果key不同，React会将旧的子节点完全替换为新的子节点。
+
+最后，React会将所有需要更新的操作记录下来，并将其发送到浏览器的渲染引擎中执行。这些操作可能包括添加、移动或删除DOM节点。
+
+通过使用diff算法，React可以最小化对真实DOM的操作，提高性能和效率。同时，React还会使用一些启发式策略和优化算法，如批处理和异步更新，来进一步提升性能。
+
+ 4. 生成 DOM 更新操作：根据 Diff 算法的比较结果，React 会生成一系列的 DOM 更新操作，包括添加、移除和修改节点等。这些操作被存储在更新队列中
+
+在React中，生成DOM更新操作的过程可以概括为以下几个步骤：
+
+* 通过diff算法比较新旧虚拟DOM树的差异，得到需要更新的最小操作集合。
+
+* 对于每个需要更新的操作，React会将其转化为一个待执行的DOM更新任务。
+
+* React将这些待执行的DOM更新任务放入一个队列中，等待执行。
+
+* 当React准备执行DOM更新时，会将队列中的任务按照特定的顺序进行执行。这个顺序通常是根据DOM节点的层级和位置来确定的，以保证DOM更新的正确性。
+
+* 执行DOM更新时，React会根据操作的类型，比如添加、移动或删除DOM节点，调用浏览器提供的DOM API来执行相应的操作。
+
+* 在执行DOM更新的过程中，React会尽量优化操作，避免一些不必要的DOM操作。例如，将多个连续的DOM插入操作合并为一次操作，或者将多个DOM删除操作合并为一次操作。
+
+* 执行完所有的DOM更新任务后，React会通知浏览器进行重新渲染，将更新后的DOM树呈现给用户。
+
+总的来说，React通过将虚拟DOM树转化为真实DOM树，并通过diff算法生成DOM更新操作，然后按照特定顺序执行这些操作，最终完成DOM的更新和渲染。这样的设计可以提高性能，减少不必要的DOM操作，并保证DOM的一致性。
+
+ 5. 批量进行 DOM 更新：React 会将更新队列中的 DOM 更新操作批量进行，以减少浏览器的重绘和回流操作。React 会通过批量更新来优化性能
+
+React通过批量更新的方式来优化DOM操作，以减少不必要的性能开销。
+
+在React中，当需要更新组件状态或属性时，不会立即执行DOM更新操作，而是将更新请求加入到一个待处理的队列中。React会在适当的时机，比如在事件处理函数执行完毕或在生命周期方法结束时，对队列中的更新请求进行批量处理。
+
+具体的批量更新过程如下：
+
+* 在React中，每个组件都有一个内部的pending state队列，用于存储待处理的更新请求。
+
+* 当需要更新组件的状态或属性时，React会将更新请求添加到该组件的pending state队列中。
+
+* 在React的更新过程中，会遍历组件的pending state队列，将其中的所有更新请求合并为一个批量更新。
+
+* React会根据合并后的批量更新，生成最小化的DOM操作集合。
+
+* 最后，React会通过执行这个批量更新的DOM操作集合，将更新应用到真实的DOM树中。
+
+通过批量更新的方式，React可以减少不必要的DOM操作次数，提高性能。同时，React也提供了一些API，让开发者可以手动控制更新的时机，比如使用`setState`的回调函数、使用`ReactDom.unstable_batchedUpdates`方法等。
+
+需要注意的是，React并不保证所有的更新都会批量处理。在一些特殊情况下，比如在事件处理函数中手动调用`setState`，或者使用`ReactDOM.unstable_batchedUpdates`方法，可以强制进行批量更新。但在某些情况下，React可能会选择立即更新，以保证更新的时机和结果的一致性。
+
+ 6. 应用 DOM 更新：最后，React 将批量的 DOM 更新操作应用到实际的浏览器 DOM 中，从而更新用户界面。这个过程中，React 会尽量最小化对真实 DOM 的操作，以提高性能
+
+原理同上， 只是进行了重复操作；
+
+ 总结
+
+一图带千言
+
+![image](https://github.com/pro-collection/interview-question/assets/22188674/f24dad99-66fe-4206-9d05-6f7194dcc5b5)
+
+## react element 和 component 的区别 {#p1-react-element-component}
+
+## jsx 返回 null undefined false 区别 {#p2-jsx-return-null-undefined-false}
+
 ## 类组件的生命周期， 映射的 hooks 哪些 api ? {#p0-class-hooks}
 
 下面是 React 类组件的生命周期方法和对应的 Hooks API：
@@ -30,9 +205,72 @@ Hooks 是为了解决函数式组件的状态管理和副作用问题而引入�
 | shouldComponentUpdate | React.memo |
 | getDerivedStateFromProps | useState（通过提供 setter 函数） |
 
-## react element 和 component 的区别 {#p1-react-element-component}
+## Class Components 和 Function Components 有区别？ {#p1-react-class-function}
 
-## jsx 返回 null undefined false 区别 {#p2-jsx-return-null-undefined-false}
+Class组件是使用ES6的类语法定义的组件，它是继承自React.Component的一个子类。Class组件有自己的状态和生命周期方法，可以通过`this.state`来管理状态，并通过`this.setState()`来更新状态。
+
+```jsx
+class Counter extends React.Component {
+ constructor(props) {
+ super(props);
+ this.state = {
+ count: 0
+ };
+ }
+
+ increment = () => {
+ this.setState({ count: this.state.count + 1 });
+ };
+
+ render() {
+ return (
+ <div>
+ <p>Count: {this.state.count}</p>
+ <button onClick={this.increment}>Increment</button>
+ </div>
+ );
+ }
+}
+```
+
+函数组件是使用函数来定义的组件，在React 16.8版本引入的Hooks之后，函数组件可以拥有自己的状态和副作用，可以使用`useState`和其他Hooks来管理状态。
+
+```jsx
+import React, { useState } from 'react';
+
+function Counter() {
+ const [count, setCount] = useState(0);
+
+ const increment = () => {
+ setCount(count + 1);
+ };
+
+ return (
+ <div>
+ <p>Count: {count}</p>
+ <button onClick={increment}>Increment</button>
+ </div>
+ );
+}
+```
+
+函数组件通常比Class组件更简洁和易于理解，尤其是在处理简单的逻辑和状态时。然而，Class组件仍然在一些特定情况下有它们的优势，例如需要使用生命周期方法、引入Ref或者需要更多的精确控制和性能优化时。
+
+**细节对比**
+
+| 方面 | Class组件 | 函数组件 |
+| --- | --- | --- |
+| 语法 | 使用ES6类语法定义组件 | 使用函数语法定义组件 |
+| 继承 | 继承自React.Component类 | 无需继承任何类 |
+| 状态管理 | 可通过this.state和this.setState来管理状态 | 可使用useState Hook来管理状态 |
+| 生命周期方法 | 可使用生命周期方法，如componentDidMount、componentDidUpdate等 | 可使用Effect Hook来处理副作用 |
+| Props | 可通过this.props来访问父组件传递的props | 可通过函数参数来访问父组件传递的props |
+| 状态更新 | 使用this.setState来更新状态 | 使用对应的Hook来更新状态 |
+| 内部引用 | 可以通过Ref引用组件实例或DOM元素 | 可以使用Ref Hook引用组件实例或DOM元素 |
+| 性能优化 | 可以使用shouldComponentUpdate来控制组件是否重新渲染 | 可以使用React.memo或useMemo Hook来控制组件是否重新渲染 |
+| 访问上下文 | 可以使用this.context来访问上下文 | 可以使用useContext Hook来访问上下文 |
+
+需要注意的是，这只是一些常见的区别，并不是所有的区别。在实际开发中，具体的区别可能还会根据需求和使用的React版本而有所变化。
 
 ## React.Children.map 和 props.children 的区别 {#p3-react-children-map-props-children}
 
@@ -504,6 +742,34 @@ const Page2 = () => <div>Page 2</div>
 
 尽管手动管理路由是可能的，但使用 `react-router` 这类专门设计的库通常会大大简化路由管理的工作。它为路径匹配、路由嵌套、重定向等提供了便利的抽象，并且和 React 的声明式方式很好地集成在一起。如果不是为了特别的原因，通常推荐使用现成的路由库来管理 React 应用的路由，以避免重新发明轮子。
 
+React Router是React官方提供的用于构建单页应用的路由库，主要包括以下几个主要包和API：
+
+主要包：
+
+1. react-router-dom：用于Web应用的路由库。
+2. react-router-native：用于原生应用（如React Native）的路由库。
+3. react-router-config：用于配置静态路由的工具包。
+
+主要API：
+
+1. BrowserRouter：一个使用HTML5 history API实现的路由器组件，用于在Web应用中处理路由。
+2. HashRouter：一个使用URL hash值实现的路由器组件，用于在不支持HTML5 history API的Web应用中处理路由。
+3. Route：定义了路由匹配规则及对应的组件，可以在路由器中使用。
+4. Switch：用于渲染与当前URL匹配的第一个Route或Redirect，只能包含Route或Redirect组件。
+5. Link：用于创建导航链接，点击后会更新URL，触发路由的切换。
+6. NavLink：与Link类似，但在匹配当前URL时会添加指定的样式。
+
+其他常用API：
+
+1. Redirect：用于重定向到指定的路由。
+2. withRouter：高阶组件，用于将路由器的相关信息（如history、location）传递给被包裹的组件。
+3. useHistory：自定义hook，用于在函数式组件中获取history对象。
+4. useLocation：自定义hook，用于在函数式组件中获取location对象。
+5. useParams：自定义hook，用于在函数式组件中获取路由参数。
+6. useRouteMatch：自定义hook，用于在函数式组件中获取与当前URL匹配的路由信息。
+
+以上是React Router的主要包和API。根据具体的需求，你可以使用这些API来构建和处理路由相关的逻辑。
+
 ## redux
 
 ## redux 日志记录插件
@@ -539,8 +805,6 @@ const store = createStore(rootReducer, applyMiddleware(loggerMiddleware))
 ## mobx
 
 ## mobx 与 redux 的区别
-
-## 952 mobx 和 redux 有什么区别【热度: 277】
 
 MobX 和 Redux 都是流行的 JavaScript 状态管理库，广泛用于帮助开发者以可预测的方式管理应用的状态。尽管它们都旨在解决相同的问题，但它们的设计哲学、实现方式以及提倡的最佳实践有很大差异。
 
@@ -794,6 +1058,25 @@ export default function useWhyDidYouUpdate (componentName: string, props: IProps
 * **延迟副作用**：尽管 `useEffect` 会在渲染之后执行，但它是异步执行的，不会阻塞浏览器更新屏幕。这意味着 React 会等待浏览器完成绘制之后，再执行你的副作用函数，以此来确保副作用处理不会导致用户可见的延迟。
 
 通过这种机制，`useEffect` 允许开发者以一种优化的方式来处理组件中可能存在的副作用，而不需要关心渲染的具体时机。退出清理功能确保了即使组件被多次快速创建和销毁，应用程序也能保持稳定和性能。
+
+## useLayoutEffect 和 useEffect 有什么区别? {#p0-useLayoutEffect}
+
+**关键词**：useLayoutEffect 和 useEffect 区别
+
+useLayoutEffect 和 useEffect 的主要区别在于它们执行的时机。
+
+* **useLayoutEffect**:
+ useLayoutEffect 是在 DOM 更新完成但在浏览器绘制之前同步执行的钩子函数。它会在 DOM 更新之后立即执行，阻塞浏览器的绘制过程。这使得它更适合于需要立即获取最新 DOM 布局信息的操作，如测量元素尺寸或位置等。使用 useLayoutEffect 可以在更新后同步触发副作用，从而保证 DOM 的一致性。
+
+* **useEffect**:
+ useEffect 是在组件渲染完毕后异步执行的钩子函数。它会在浏览器完成绘制后延迟执行，不会阻塞浏览器的绘制过程。这使得它更适合于处理副作用操作，如发送网络请求、订阅事件等。使用 useEffect 可以将副作用操作放到组件渲染完成后执行，以避免阻塞浏览器绘制。
+
+总结：
+
+* useLayoutEffect 是同步执行的钩子函数，在 DOM 更新后立即执行，可能会阻塞浏览器的绘制过程；
+* useEffect 是异步执行的钩子函数，在浏览器完成绘制后延迟执行，不会阻塞浏览器的绘制过程。
+
+通常情况下，应优先使用 useEffect，因为它不会阻塞浏览器的渲染，并且能够满足大多数的副作用操作需求。只有在需要获取最新的 DOM 布局信息并立即触发副作用时，才需要使用 useLayoutEffect。
 
 ## 为什么要自定义合成事件 {#p1-custom-event}
 
@@ -1265,7 +1548,7 @@ export default App
 
 在以上代码中，无论 `Modal` 组件在 `App` 组件中的位置如何，模态框的渲染位置总是在 `#modal-root` 中，这是一个典型的使用 React Portals 的例子。上述代码中的模态框在视觉上会覆盖整个应用程序的位置，但在组件层次结构中它仍然是 `App` 组件的子组件。
 
-## 介绍一下 HOC {#p0-hoc}
+## HOC {#p0-hoc}
 
 React 中的 HOC（高阶组件，Higher-Order Components）是一种基于 React 的组合特性而形成的设计模式，用于重用组件逻辑。一个高阶组件是一个函数，它接受一个组件并返回一个新组件。
 
@@ -1325,6 +1608,136 @@ function withSubscription(WrappedComponent, selectData) {
 * 对于 HOC，通常需要注意不要在 render 方法中创建 HOC，因为这会导致组件的不必要的重新挂载。
 
 总而言之，HOC 是 React 中一个非常有用的模式，允许开发者以声明方式抽象组件逻辑，提高组件复用。
+
+React高阶组件（Higher-Order Component，HOC）是一种用于复用组件逻辑的设计模式。它本质上是一个函数，接受一个组件作为参数，并返回一个新的增强过的组件。
+
+通过使用高阶组件，我们可以将一些通用的功能逻辑抽象出来，并将其应用到多个组件中，从而避免代码重复和逻辑分散的问题。
+
+**React高阶组件需要满足以下条件**：
+
+1. 接受一个组件作为参数：高阶组件函数应该接受一个组件作为参数，并返回一个新的增强过的组件。
+
+2. 返回一个新的组件：高阶组件函数应该在内部创建一个新的组件，并将其返回作为结果。这个新组件可以是一个类组件或函数组件。
+
+3. 传递props：高阶组件应该将传递给它的props传递给原始组件，可以通过使用展开运算符或手动传递props进行传递。
+
+4. 可以修改props：高阶组件可以对传递给原始组件的props进行处理、转换或增加额外的props。
+
+5. 可以访问组件生命周期方法和状态：高阶组件可以在新组件中访问组件的生命周期方法和状态，并根据需要执行逻辑。
+
+**使用场景**
+
+React高阶组件有以下几个常见的使用场景：
+
+1. 代码复用：当多个组件之间有相同的逻辑和功能时，可以将这些逻辑和功能抽象成一个高阶组件，并在多个组件中使用该高阶组件进行代码复用。
+
+```jsx
+const withLogging = (WrappedComponent) => {
+ return (props) => {
+ useEffect(() => {
+ console.log('Component is mounted');
+ }, []);
+
+ return <WrappedComponent {...props} />;
+ }
+}
+
+const MyComponent = withLogging(MyOriginalComponent);
+```
+
+2. 条件渲染：高阶组件可以根据一些条件来决定是否渲染原始组件或其他组件。这对于实现权限控制、用户认证等场景非常有用。
+
+```jsx
+const withAuthorization = (WrappedComponent) => {
+ return (props) => {
+ if (props.isAuthenticated) {
+ return <WrappedComponent {...props} />;
+ } else {
+ return <div>Unauthorized</div>;
+ }
+ }
+}
+
+const MyComponent = withAuthorization(MyOriginalComponent);
+```
+
+3. Props 改变：高阶组件可以监听原始组件的props的变化，并在变化时执行一些逻辑。这对于实现数据的深拷贝、数据的格式化等场景非常有用。
+
+```jsx
+const withDeepCopy = (WrappedComponent) => {
+ return (props) => {
+ const prevPropsRef = useRef(props);
+
+ useEffect(() => {
+ if (prevPropsRef.current.data !== props.data) {
+ const copiedData = JSON.parse(JSON.stringify(props.data));
+ // Do something with copiedData...
+ }
+
+ prevPropsRef.current = props;
+ }, [props.data]);
+
+ return <WrappedComponent {...props} />;
+ }
+}
+
+const MyComponent = withDeepCopy(MyOriginalComponent);
+```
+
+4. 功能增强：高阶组件可以对原始组件的功能进行增强，例如增加表单校验、日志记录、性能优化等。
+
+```jsx
+const withFormValidation = (WrappedComponent) => {
+ return (props) => {
+ const [isValid, setValid] = useState(false);
+
+ const validateForm = () => {
+ // Perform form validation logic...
+ setValid(true);
+ }
+
+ return (
+ <div>
+ <WrappedComponent {...props} />
+ {isValid ? <div>Form is valid</div> : <div>Form is invalid</div>}
+ </div>
+ );
+ }
+}
+
+const MyComponent = withFormValidation(MyOriginalComponent);
+```
+
+5. 渲染劫持：高阶组件可以在原始组件渲染之前或之后执行一些逻辑，例如在渲染之前进行数据加载，或在渲染之后进行动画效果的添加等。
+
+```jsx
+const withDataFetching = (WrappedComponent) => {
+ return (props) => {
+ const [data, setData] = useState(null);
+
+ useEffect(() => {
+ // Fetch data...
+ axios.get('/api/data')
+ .then(response => {
+ setData(response.data);
+ })
+ .catch(error => {
+ console.error('Error fetching data:', error);
+ });
+ }, []);
+
+ if (data === null) {
+ return <div>Loading...</div>;
+ } else {
+ return <WrappedComponent data={data} {...props} />;
+ }
+ }
+}
+
+const MyComponent = withDataFetching(MyOriginalComponent);
+```
+
+总的来说，React高阶组件提供了一种灵活的方式来对组件进行组合和功能增强，可以在不修改原始组件的情况下对其进行扩展和定制。
 
 ## 为什么 react 组件， 都必须要申明一个 `import React from 'react';` {#p4-import-react}
 
@@ -1445,3 +1858,221 @@ function App () {
 
 * [资料](https://juejin.cn/post/7177374176141901861)
 * [资料](https://juejin.cn/post/7253001747542720567)
+
+## 性能优化 {p0-render-profile}
+
+**关键词**：react 渲染优化
+
+在 React 中，有几种方法可以避免不必要的渲染，以提高性能和优化应用程序的渲染过程：
+
+1. 使用 PureComponent 或 shouldComponentUpdate 方法：继承 PureComponent 类或在自定义组件中实现 shouldComponentUpdate 方法，以检查组件的 props 和 state 是否发生变化。如果没有变化，则阻止组件的重新渲染。这种方式适用于简单的组件，并且可以自动执行浅比较。
+
+2. 使用 React.memo 高阶组件：使用 React.memo 包装函数组件，以缓存组件的渲染结果，并仅在其 props 发生变化时重新渲染。这种方式适用于函数组件，并且可以自动执行浅比较。
+
+3. 避免在 render 方法中创建新对象：由于对象的引用发生变化，React 将会认为组件的 props 或 state 发生了变化，从而触发重新渲染。因此，应尽量避免在 render 方法中创建新的对象，尤其是在大型数据结构中。
+
+4. 使用 key 属性唯一标识列表项：在渲染列表时，为每个列表项指定唯一的 key 属性。这样，当列表项重新排序、添加或删除时，React 可以更准确地确定哪些列表项需要重新渲染，而不是重新渲染整个列表。
+
+5. 使用 useCallback 和 useMemo 避免不必要的函数和计算：使用 useCallback 缓存函数引用，以确保只有在其依赖项发生变化时才重新创建函数。使用 useMemo 缓存计算结果，以确保只有在其依赖项发生变化时才重新计算结果。这些钩子函数可以帮助避免不必要的函数创建和计算过程，从而提高性能。
+
+6. 使用 React.lazy 和 Suspense 实现按需加载组件：使用 React.lazy 函数和 Suspense 组件可以实现按需加载组件，只在需要时才加载组件代码。这可以减少初始渲染时的资源负载。
+
+从 React 层面上，可以进行以下性能优化：
+
+1. 使用 memoization（记忆化）：通过使用 React.memo() 或 useMemo() 来避免不必要的重新渲染。这对于纯函数组件和大型组件特别有用。
+
+2. 使用 shouldComponentUpdate 或 PureComponent：在类组件中，可以通过重写 shouldComponentUpdate 方法或使用 PureComponent 来避免不必要的重新渲染。
+
+3. 使用 React.lazy 和 Suspense：通过使用 React.lazy 和 Suspense 来按需加载组件，从而减少初始加载时间。
+
+4. 使用虚拟化：对于大型列表或表格等组件，可以使用虚拟化技术（如 react-window 或 react-virtualized）来仅渲染可见区域内的元素，从而提高性能。
+
+5. 避免不必要的渲染：在函数组件中，可以使用 useCallback 和 useMemo 来避免不必要的函数创建和计算, 使用 useRef 保持函数应用的唯一性。
+
+6. 使用 key 属性：在使用列表或动态元素时，确保为每个元素提供唯一的 key 属性，这有助于 React 有效地识别和更新元素。
+
+7. 使用 React DevTools Profiler：使用 React DevTools Profiler 来分析组件的渲染性能，并找出性能瓶颈。
+
+8. 使用 React.StrictMode：在开发环境中，可以使用 React.StrictMode 组件来检测潜在的问题和不安全的使用。
+
+9. 避免深层嵌套：尽量避免过多的组件嵌套，这可能会导致性能下降。
+
+10. 使用组件分割：将大型组件拆分成多个小组件，可以提高组件的可维护性和性能。
+
+这些是一些常见的 React 层面上的性能优化技巧，根据具体的应用场景和需求，可能还有其他优化方式。
+
+参考文档：
+[资料](https://juejin.cn/post/7273427487588925501)
+
+## 如何实现转场动画？
+
+这个问题非常复杂， 我这边用白话文解释一下原理， 若有不对的地方， 请大家更正：
+
+如果没有专场动画， 那么在路由切换的一瞬间， 加载下一个路由页面的组件， 注销上一个路由页面的组件；
+
+但是如果加上专场动画， 比如专场动画时间为 500ms， 那么， 在咋合格 500ms 过程中， 首先要加载下一个路由页面的组件， 然后加载上一个渐进的动画。
+同时不能注销掉当前路由， 需要给当前路由加载一个渐出的动画。
+需要当两个页面完成动画时间， 完成页面覆盖切换之后， 然后注销上一个路由页面的组件；
+
+所以涉及到的知识点：
+
+1. 如何做页面跳转拦截；
+2. 如何在页面路由组件不跳转的同时， 加载下一个页面的组件；
+3. 配置页面层级；
+4. 如何执行、加载、完成专场动画；
+5. 动画结束的时候手动注销组件；
+
+具体实现， 可以参考以下两个文档：
+
+* [资料](https://github.com/SmallStoneSK/Blog/issues/8)
+* [资料](https://juejin.cn/post/6887471865720209415)
+
+## 构建组件的方式有哪些 {#p1-component-type}
+
+1. Class Components（类组件）：使用ES6的类语法来定义组件。类组件继承自`React.Component`，并通过`render`方法返回需要渲染的React元素。
+
+```jsx
+class MyComponent extends React.Component {
+ render() {
+ return <div>Hello</div>;
+ }
+}
+```
+
+2. Function Components（函数组件）：使用函数来定义组件，函数接收`props`作为参数，并返回需要渲染的React元素。
+
+```jsx
+function MyComponent(props) {
+ return <div>Hello</div>;
+}
+```
+
+3. Higher-Order Components（高阶组件）：高阶组件是一个函数，接收一个组件作为参数，并返回一个新的增强组件。它用于在不修改原始组件的情况下，添加额外的功能或逻辑。
+
+```jsx
+function withLogger(WrappedComponent) {
+ return class extends React.Component {
+ componentDidMount() {
+ console.log('Component did mount!');
+ }
+
+ render() {
+ return <WrappedComponent {...this.props} />;
+ }
+ };
+}
+
+const EnhancedComponent = withLogger(MyComponent);
+```
+
+4. Function as Children（函数作为子组件）：将函数作为子组件传递给父组件，并通过父组件的props传递数据给子组件。
+
+```jsx
+function MyComponent(props) {
+ return <div>{props.children('Hello')}</div>;
+}
+
+<MyComponent>
+ {(message) => <p>{message}</p>}
+</MyComponent>
+```
+
+这些是React中常见的构建组件的方式。每种方式都适用于不同的场景，你可以根据自己的需求选择合适的方式来构建组件。
+
+5. `React.cloneElement`：`React.cloneElement`是一个函数，用于克隆并返回一个新的React元素。它可以用于修改现有元素的props，或者在将父组件的props传递给子组件时进行一些额外的操作。
+
+```jsx
+const parentElement = <div>Hello</div>;
+const clonedElement = React.cloneElement(parentElement, { className: 'greeting' });
+
+// Result: <div className="greeting">Hello</div>
+```
+
+6. `React.createElement`：`React.createElement`是一个函数，用于创建并返回一个新的React元素。它接收一个类型（组件、HTML标签等）、props和子元素，并返回一个React元素。
+
+```jsx
+const element = React.createElement('div', { className: 'greeting' }, 'Hello');
+
+// Result: <div className="greeting">Hello</div>
+```
+
+`React.createElement`和`React.cloneElement`通常在一些特殊的场景下使用，例如在高阶组件中对组件进行包装或修改。它们不是常规的组件构建方式，但是在某些情况下是非常有用的。非常抱歉之前的遗漏，希望这次能够更全面地回答您的问题。
+
+## 如何实现vue 中 keep-alive 的功能？{#p0-keep-alive}
+
+**keep-alive 原理**
+可以参考这个文章： [资料](https://github.com/pro-collection/interview-question/issues/119)
+
+**实现**
+当使用函数式组件时，可以使用React的Hooks来实现类似Vue的`<keep-alive>`功能。下面是一个使用React函数式组件和Hooks实现类似Vue的`<keep-alive>`功能的示例：
+
+```jsx
+import React, { useEffect, useRef } from 'react';
+
+const withKeepAlive = (WrappedComponent) => {
+ const cache = new Map(); // 使用Map来存储缓存的组件实例
+
+ return (props) => {
+ const { id } = props;
+ const componentRef = useRef(null);
+
+ useEffect(() => {
+ if (!cache.has(id)) {
+ cache.set(id, componentRef.current); // 缓存组件实例
+ }
+
+ return () => {
+ cache.delete(id); // 组件销毁时从缓存中移除
+ };
+ }, [id]);
+
+ const cachedInstance = cache.get(id); // 获取缓存的组件实例
+
+ if (cachedInstance) {
+ return React.cloneElement(cachedInstance.props.children, props); // 渲染缓存的组件实例的子组件
+ }
+
+ return <WrappedComponent ref={componentRef} {...props} />; // 初次渲染时渲染原始组件
+ };
+};
+```
+
+使用这个高阶函数组件来包裹需要缓存的函数式组件：
+
+```jsx
+const SomeComponent = (props) => {
+ return (
+ <div>
+ <h1>Some Component</h1>
+ <p>{props.message}</p>
+ </div>
+ );
+};
+
+const KeepAliveSomeComponent = withKeepAlive(SomeComponent);
+```
+
+在父组件中使用`KeepAliveSomeComponent`来实现缓存功能：
+
+```jsx
+const ParentComponent = () => {
+ const [showComponent, setShowComponent] = useState(false);
+
+ const toggleComponent = () => {
+ setShowComponent(!showComponent);
+ };
+
+ return (
+ <div>
+ <button onClick={toggleComponent}>Toggle Component</button>
+ {showComponent && (
+ <KeepAliveSomeComponent id="some-component" message="Hello, World!" />
+ )}
+ </div>
+ );
+};
+```
+
+在上述示例中，`ParentComponent`包含一个按钮，点击按钮时切换`KeepAliveSomeComponent`的显示与隐藏。每次切换时，`KeepAliveSomeComponent`的状态将保留，因为它被缓存并在需要时重新渲染。
+
+同样地，这个示例只实现了最基本的缓存功能，并没有处理更复杂的场景。如果需要更复杂的缓存功能，可以考虑使用状态管理库来管理组件的状态和缓存。

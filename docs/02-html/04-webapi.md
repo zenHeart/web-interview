@@ -2,9 +2,54 @@
 
 web 下常用 api
 
-## ajax
+## XHR 和 Fetch 是否支持取消请求 {#p0-api}
 
-## fetch
+**XHR 支持取消请求**
+
+XHR（XMLHttpRequest）对象支持取消请求。你可以使用 `xhr.abort()` 方法来取消正在进行的请求。
+
+下面是一个使用 XHR 取消请求的示例代码：
+
+```javascript
+const xhr = new XMLHttpRequest()
+xhr.open('GET', 'https://api.example.com/data', true)
+xhr.send()
+
+// 取消请求
+xhr.abort()
+```
+
+使用 `xhr.abort()` 方法会导致 XHR 请求被中止，并触发 `abort` 事件。
+
+需要注意的是，取消请求后，XHR 对象将不再可用，不能再使用已经取消的 XHR 对象发送新的请求。
+
+**Fetch API 原生不提供直接的方法来取消请求。然而，你可以使用 AbortController 来实现取消 fetch 请求的功能。**
+
+AbortController 是一个用于控制和取消异步操作的 API，它可以与 fetch 一起使用来取消网络请求。下面是一个使用 AbortController 来取消 fetch 请求的示例代码：
+
+```javascript
+const controller = new AbortController()
+const signal = controller.signal
+
+fetch('https://api.example.com/data', { signal })
+  .then(response => {
+    // 处理响应
+  })
+  .catch(error => {
+    if (error.name === 'AbortError') {
+      console.log('请求被取消')
+    } else {
+      console.log('发生错误', error)
+    }
+  })
+
+// 取消请求
+controller.abort()
+```
+
+在上面的代码中，我们创建了一个 AbortController 对象，并从中获取一个 signal 信号。然后，将 signal 信号传递给 fetch 请求的 options 参数中。当调用 `controller.abort()` 方法时，fetch 请求会被取消，并且会触发一个 `AbortError` 错误。
+
+需要注意的是，AbortController 是一个较新的 API，不是所有浏览器都完全支持。为了确保在不支持 AbortController 的情况下仍能取消 fetch 请求，你可以使用 polyfill 或使用第三方库（如 Axios）来实现取消功能。
 
 ## 请求对象
 
@@ -1291,3 +1336,21 @@ IndexedDB 的存储空间大小通常由浏览器的策略决定，并且在大�
 3. 坐标转换：`Fabric.js` 提供了一系列的方法来处理坐标转换，使得事件处理更加方便。可以通过 `getPointer` 方法获取相对于 Canvas 的坐标，通过 `localToGlobal` 和 `globalToLocal` 方法在不同坐标系之间进行转换。
 
 4. 交互操作：`Fabric.js` 提供了一些方便的方法来处理用户交互，如拖拽、缩放、旋转等。通过 `dragging`、`scaling`、`rotating` 等属性和方法，可以轻松地实现这些交互操作，并在事件处理程序中进行相应的处理。
+
+## 跨页面通信方式？{p0-page-communication}
+
+1. **使用URL参数**：可以通过URL参数在不同页面之间传递数据。例如，可以在URL中添加查询字符串参数来传递数据，并通过解析URL参数来获取传递的数据。
+
+2. **使用localStorage或sessionStorage**：可以使用浏览器的本地存储（localStorage或sessionStorage）在不同页面之间共享数据。一个页面可以将数据存储在本地存储中，另一个页面可以读取该数据。
+
+3. **使用Cookies**：可以使用Cookies在不同页面之间共享数据。一个页面可以将数据存储在Cookie中，另一个页面可以读取该Cookie。
+
+4. **使用postMessage API**：postMessage API允许不同窗口或iframe之间进行跨页面通信。可以使用postMessage发送消息，接收方可以通过监听message事件来接收消息。
+
+5. **使用Broadcast Channel API**：Broadcast Channel API允许不同页面或不同浏览器标签之间进行广播式的消息传递。可以使用Broadcast Channel发送消息，其他订阅同一频道的页面都可以接收到消息。
+
+6. **使用Shared Worker**：Shared Worker是一种特殊的Web Worker，可以在多个页面之间共享。可以通过Shared Worker进行通信和共享数据。
+
+7. **使用WebSocket**：WebSocket是一种双向通信协议，可以在不同页面之间建立持久的连接，实现实时的跨页面通信。
+
+以上是一些常见的跨页面通信方式，选择适合自己需求的方式来实现跨页面通信。
