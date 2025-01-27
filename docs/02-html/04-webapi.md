@@ -1656,3 +1656,94 @@ console.log(encodeURIComponent('Hello World!'))
 2. `encodeURI` 函数用于对 URL 中的某些字符进行编码，包括保留字符和一些特殊字符。它会将这些字符转换为 `%xx` 形式的十六进制转义序列，其中 `xx` 是字符的 ASCII 值的十六进制表示。与 `escape` 不同，`encodeURI` 不会编码空格。该函数可以对编码后的字符串进行反转义，以还原原始字符串。
 
 3. `encodeURIComponent` 函数用于对 URL 中所有字符进行编码，包括保留字符和特殊字符。它会将这些字符转换为 `%xx` 形式的十六进制转义序列，其中 `xx` 是字符的 ASCII 值的十六进制表示。与 `encodeURI` 不同，`encodeURIComponent` 会将空格编码为 `%20`。该函数可以对编码后的字符串进行反转义，以还原原始字符串。
+
+## Service Worker 是如何缓存 http 请求资源的？ {#p0-sw-cache}
+
+Service Worker 是一种在浏览器后台运行的脚本，可以拦截和处理浏览器网络请求。因此，可以使用 Service Worker 来缓存 http 请求资源。
+
+Service Worker 可以通过以下步骤来缓存 http 请求资源：
+
+1. 注册 Service Worker：通过在页面中注册 Service Worker，可以告诉浏览器使用 Service Worker 来处理网络请求。
+
+2. 安装 Service Worker：一旦 Service Worker 被注册，浏览器就会下载并安装它。在安装过程中，Service Worker 可以缓存一些静态资源（如 HTML、CSS 和 JavaScript 文件）。
+
+3. 激活 Service Worker：一旦 Service Worker 安装成功，它就可以被激活。在激活过程中，Service Worker 可以删除旧版本的缓存，或者执行其他一些操作。
+
+4. 拦截网络请求：一旦 Service Worker 被激活，它就可以拦截浏览器发送的网络请求。
+
+5. 处理网络请求：当 Service Worker 拦截到网络请求时，它可以执行一些自定义的逻辑来处理这些请求。例如，它可以检查缓存中是否已经存在该请求的响应，如果存在，则直接返回缓存中的响应，否则，它可以将请求发送到服务器并缓存服务器的响应。
+
+6. 更新缓存：如果缓存中的资源发生了变化，Service Worker 可以自动更新缓存。例如，它可以在后台下载最新的资源，并更新缓存中的文件。
+
+需要注意的是，使用 Service Worker 来缓存 http 请求资源需要一些额外的工作。例如，**需要编写 Service Worker 脚本来处理请求，并且需要将该脚本注册到浏览器中**。此外，还需要考虑一些缓存策略，以确保缓存的数据与服务器上的数据保持同步。
+
+**下面是一个使用 Service Worker 实现缓存的示例代码：**
+
+```js
+// 注册 Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope)
+    }, function (err) {
+      console.log('ServiceWorker registration failed: ', err)
+    })
+  })
+}
+
+// 安装 Service Worker
+self.addEventListener('install', function (event) {
+  console.log('ServiceWorker install')
+  event.waitUntil(
+    caches.open('my-cache').then(function (cache) {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/script.js',
+        '/image.png'
+      ])
+    })
+  )
+})
+
+// 激活 Service Worker
+self.addEventListener('activate', function (event) {
+  console.log('ServiceWorker activate')
+})
+
+// 拦截网络请求
+self.addEventListener('fetch', function (event) {
+  event.respondWith(
+    caches.match(event.request).then(function (response) {
+      if (response) {
+        console.log('ServiceWorker fetch from cache:', event.request.url)
+        return response
+      } else {
+        console.log('ServiceWorker fetch from network:', event.request.url)
+        return fetch(event.request)
+      }
+    })
+  )
+})
+
+// 更新缓存
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(cacheName => {
+          return cacheName.startsWith('my-cache') &&
+ cacheName !== 'my-cache'
+        }).map(cacheName => {
+          return caches.delete(cacheName)
+        })
+      )
+    })
+  )
+})
+```
+
+当网络请求到来时，会首先在缓存中查找对应的资源，如果有则直接返回缓存中的资源，否则从网络中获取资源并返回。这样就可以实现基本的离线缓存功能。
+
+在这个示例中，当 Service Worker 被安装时，我们打开一个新的缓存并将应用程序的静态资源添加到缓存中。在 fetch 事件中，我们拦截每个网络请求并尝试匹配它们到我们的缓存中，如果匹配到了则返回缓存的响应，否则通过 fetch 方法从网络中获取资源。在 activate 事件中，我们可以更新缓存，删除旧的缓存项并将新的缓存项添加到缓存中。

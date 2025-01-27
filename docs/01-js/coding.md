@@ -1373,6 +1373,25 @@ console.log(result) // 输出 36
 
 ## 模拟new操作 {#p0-simulate-new}
 
+在js中new关键字主要做了：首先创建一个空对象，这个对象会作为执行new构造函数之后返回的对象实例，将创建的空对象原型`（__proto__）`指向构造函数的prototype属性，同时将这个空对象赋值给构造函数内部的this，并执行构造函数逻辑，根据构造函数的执行逻辑，返回初始创建的对象或构造函数的显式返回值。
+
+```js
+function newFn (...args) {
+  const constructor = args.shift()
+  const obj = Object.create(constructor.prototype)
+  const result = constructor.apply(obj, args)
+  return typeof result === 'object' && result !== null ? result : obj
+}
+
+function Person (name) {
+  this.name = name
+}
+
+const p = newFn(Person, 'Jerome')
+
+console.log('p.name :>> ', p.name) // p.name :>> Jerome
+```
+
 可以使用以下代码来模拟`new`操作：
 
 ```javascript
@@ -1838,3 +1857,322 @@ if (typeof lastPromise.then !== 'function') {
 ```
 
 这样，我们就实现了一个可以检测 Promise 完成状态的 promise 缓存函数。
+
+## 数字千分化的实现方式有哪些？用代码实现一下 {#p0-thousnad}
+
+数字千分化是指将数字按照千位分隔符进行分割，使其更容易被人类阅读。在 JavaScript 中，可以通过多种方式实现数字千分化，以下是其中的几种方式：
+
+1. 使用正则表达式
+
+```javascript
+function formatNumber (num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+console.log(formatNumber(123456789)) // 输出 123,456,789
+```
+
+2. 使用 Intl.NumberFormat
+
+```javascript
+function formatNumber (num) {
+  return new Intl.NumberFormat().format(num)
+}
+
+console.log(formatNumber(123456789)) // 输出 123,456,789（在大多数环境中）
+```
+
+3. 使用自带千分位分隔符的 toLocaleString
+
+```javascript
+function formatNumber (num) {
+  return num.toLocaleString()
+}
+
+console.log(formatNumber(123456789)) // 输出 123,456,789（在大多数环境中）
+```
+
+这些方法都可以实现数字千分化，具体选择哪种方法，可以根据实际需求和代码环境进行选择。
+
+## 集合运算 {#p0-set-operation}
+
+可以使用 ES6 的 Set 数据结构来实现数组交集。
+
+首先，将一个数组转化为 Set，然后遍历另一个数组，将数组中存在于 Set 中的元素存入结果数组中。
+
+以下是一个示例代码：
+
+```javascript
+function intersection (nums1, nums2) {
+  const set1 = new Set(nums1)
+  const res = []
+
+  for (const num of nums2) {
+    if (set1.has(num)) {
+      res.push(num)
+    }
+  }
+
+  return res
+}
+```
+
+使用示例：
+
+```javascript
+const nums1 = [1, 2, 2, 1]
+const nums2 = [2, 2]
+
+console.log(intersection(nums1, nums2)) // [2]
+```
+
+该算法的时间复杂度为 O(m+n)，其中 m 和 n 分别为两个数组的长度。
+
+## chain-call {#p0-call-chain}
+
+可以通过在 Number 原型上定义 add 和 minus 方法来实现该功能，代码如下：
+
+```javascript
+// eslint-disable-next-line
+Number.prototype.add = function (num) {
+  return this + num
+}
+// eslint-disable-next-line
+Number.prototype.minus = function (num) {
+  return this - num
+}
+
+console.log((5).add(3).minus(2)) // 输出6
+```
+
+上述代码中，通过在 Number.prototype 上定义 add 和 minus 方法，实现了将数字类型的值转换为 Number 对象，并且可以链式调用这两个方法。最终返回的结果是一个数值类型的值。
+
+## this指向与对象继承数组方法：输出以下代码执行的结果并解释为什么？ {#p0-this-call}
+
+```js
+const obj = {
+  2: 3,
+  3: 4,
+  length: 2,
+  splice: Array.prototype.splice,
+  push: Array.prototype.push
+}
+obj.push(1)
+obj.push(2)
+console.log(obj)
+```
+
+执行结果如何， 为什么？
+
+ 执行结果
+
+代码的执行结果是：
+
+```perl
+perlCopy code{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Function: push] }
+```
+
+在代码中，我们创建了一个名为 `obj` 的对象，它包含了一些属性和方法：
+
+* `2` 和 `3` 是对象的属性名，对应的属性值分别为 `3` 和 `4`。
+* `length` 属性的值为 `2`。
+* `splice` 和 `push` 是对象的两个方法，它们均继承自 `Array.prototype`。
+
+接下来，我们先调用了 `obj.push(1)` 方法，将值 `1` 加入到了 `obj` 对象中，此时 `obj` 对象的状态如下所示：
+
+```perl
+perlCopy code{ '2': 1, '3': 4, length: 3, splice: [Function: splice], push: [Function: push] }
+```
+
+接着，我们又调用了 `obj.push(2)` 方法，将值 `2` 加入到了 `obj` 对象中，此时 `obj` 对象的状态如下所示：
+
+```perl
+perlCopy code{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Function: push] }
+```
+
+可以看出，`obj` 对象的属性值发生了变化。这是因为在调用 `obj.push(1)` 方法时，由于 `obj` 对象继承了 `Array.prototype.push` 方法，因此 `push` 方法中的 `this` 指向的是 `obj` 对象本身，因此将值 `1` 加入到了 `obj` 对象的第二个属性位置上（即 `obj[2] = 1`）。而在调用 `obj.push(2)` 方法时，`push` 方法同样将值 `2` 加入到了 `obj` 对象的第三个属性位置上（即 `obj[3] = 2`）。因此最终得到的 `obj` 对象的状态为 `{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Function: push] }`。
+
+ 追问：上面的代码中 obj.push(1)， 为什么会加入到第二个属性位置上？
+
+在 JavaScript 中，数组是一种特殊的对象，其属性名是非负整数，称之为索引(index)，因此可以通过数组语法来访问这些属性。另外，对于非数组对象，其属性名可以是任意字符串。
+
+在给数组对象添加属性时，如果属性名是非负整数，那么会被当作数组元素，会自动维护 `length` 属性；如果属性名是其他字符串，那么则被当作普通的对象属性。
+
+根据这个规则，上述代码中的 `obj` 对象添加了两个属性 `2: 3` 和 `3: 4`，它们的属性名都是非负整数，因此被当作数组元素，被计入了 `length` 属性。而在执行 `obj.push(1)` 时，会向数组中添加一个新的元素，该元素的下标是数组的 `length` 属性值，也就是 `2`，因此添加到了第二个属性位置上。接着执行 `obj.push(2)` 时，同样会向数组中添加一个新的元素，该元素的下标是 `3`，也就是数组的第三个属性位置上。
+
+最终，输出结果为：
+
+```perl
+perlCopy code{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Function: push] }
+```
+
+其中，属性 `2` 和 `3` 被分别赋值为 `1` 和 `2`，而原来的值被覆盖了。因此，最终的结果是 `{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Function: push] }`。
+
+## =下面代码中 a 在什么情况下会打印 1 ? {#p0-a}
+
+```js
+// eslint-disable-next-line
+var a = '?';
+// eslint-disable-next-line
+if (a == 1 && a == 2 && a == 3) {
+  console.log(1)
+}
+```
+
+ 回答
+
+这是一个经典的面试题，可以通过重写 `valueOf` 或者 `toString` 方法来实现，在这些方法中动态返回变量 a 的值，以满足条件。例如：
+
+```js
+const a = {
+  i: 1,
+  toString: function () {
+    return this.i++
+  }
+}
+if (a == 1 && a == 2 && a == 3) {
+  console.log(1)
+}
+```
+
+在这个例子中，`a` 被定义为一个对象，有一个属性 `i` 初始化为 1，同时重写了 `toString` 方法，在每次调用时返回 `i` 的值，并且每次返回后将 `i` 自增。这样在比较 `a` 是否等于 1、2、3 的时候，会依次调用 `a.toString()` 方法，得到的结果就是满足条件的 1，依次打印出来。
+
+## 手写订阅-发布模式 {#p0-subsribe-publish}
+
+观察者模式（又称发布-订阅模式）是一种行为型设计模式，它定义了对象之间的一对多依赖关系，使得当一个对象的状态发生改变时，其相关的依赖对象都能够得到通知并被自动更新。
+
+在 JavaScript 中实现观察者模式，可以分为以下几个步骤：
+
+1. 创建一个主题对象（Subject），用来存储观察者对象，并提供添加、删除、通知观察者的接口。
+
+2. 创建观察者对象（Observer），它有一个 update 方法，用来接收主题对象的通知，并进行相应的处理。
+
+下面是一个简单的示例：
+
+```javascript
+class Subject {
+  constructor () {
+    this.observers = []
+  }
+
+  // 添加观察者
+  addObserver (observer) {
+    this.observers.push(observer)
+  }
+
+  // 删除观察者
+  removeObserver (observer) {
+    const index = this.observers.indexOf(observer)
+    if (index !== -1) {
+      this.observers.splice(index, 1)
+    }
+  }
+
+  // 通知观察者
+  notifyObservers () {
+    this.observers.forEach(observer => observer.update())
+  }
+}
+
+class Observer {
+  constructor (name) {
+    this.name = name
+  }
+
+  update () {
+    console.log(`${this.name} received the notification.`)
+  }
+}
+
+const subject = new Subject()
+const observer1 = new Observer('Observer 1')
+const observer2 = new Observer('Observer 2')
+
+subject.addObserver(observer1)
+subject.addObserver(observer2)
+
+subject.notifyObservers()
+// Output:
+// Observer 1 received the notification.
+// Observer 2 received the notification.
+```
+
+在这个示例中，Subject 是主题对象，Observer 是观察者对象。Subject 提供了添加、删除、通知观察者的接口，Observer 有一个 update 方法，用来接收主题对象的通知，并进行相应的处理。在使用时，我们可以通过调用 Subject 的 addObserver 方法，将 Observer 对象添加到主题对象中。当主题对象的状态发生改变时，我们可以调用 notifyObservers 方法，通知所有的观察者对象进行更新。
+
+以上仅是一个简单的示例，实际应用中还需要考虑更多的细节问题。
+
+订阅-发布模式是一种常用的设计模式，它可以实现对象间的解耦，让它们不需要相互知道对方的存在，只需要关注自己需要订阅的事件即可。当一个对象的状态发生变化时，它可以发布一个事件通知其他对象，其他对象可以订阅该事件，当事件发生时得到通知并执行相应的处理。
+
+在 JavaScript 中，订阅-发布模式也被称为事件模型。事件模型由两个主要组件组成：事件触发器和事件监听器。事件触发器负责触发事件，而事件监听器则负责监听事件并执行相应的回调函数。
+
+下面是一个简单的实现订阅-发布模式的例子：
+
+```javascript
+class EventEmitter {
+  constructor () {
+    this._events = {}
+  }
+
+  on (event, listener) {
+    if (!this._events[event]) {
+      this._events[event] = []
+    }
+    this._events[event].push(listener)
+  }
+
+  emit (event, ...args) {
+    if (this._events[event]) {
+      this._events[event].forEach((listener) => listener(...args))
+    }
+  }
+
+  off (event, listener) {
+    if (this._events[event]) {
+      this._events[event] = this._events[event].filter((l) => l !== listener)
+    }
+  }
+}
+```
+
+这个实现包括三个方法：
+
+* `on(event, listener)`：订阅事件，当事件被触发时执行监听器 `listener`；
+* `emit(event, ...args)`：触发事件，并将参数 `...args` 传递给监听器；
+* `off(event, listener)`：取消订阅事件，不再执行监听器 `listener`。
+
+使用方法如下：
+
+```javascript
+const emitter = new EventEmitter()
+
+// 订阅事件
+emitter.on('event', (arg1, arg2) => {
+  console.log(`event: ${arg1}, ${arg2}`)
+})
+
+// 触发事件
+emitter.emit('event', 'hello', 'world')
+
+// 取消订阅事件
+emitter.off('event')
+```
+
+以上代码将输出：
+
+```csharp
+csharpCopy codeevent: hello, world
+```
+
+订阅-发布模式在事件驱动的系统中非常常见，例如浏览器中的 DOM 事件、Node.js 中的异步 IO 事件等。
+
+观察者模式和订阅-发布模式都属于事件模型，它们都是为了解耦合而存在，但是它们之间还是有一些不同之处的：
+
+1. 观察者模式中，主题（被观察者）和观察者之间是直接联系的，观察者订阅主题，主题状态发生变化时会直接通知观察者；而订阅-发布模式中，发布者和订阅者之间没有直接的联系，发布者发布消息到消息中心，订阅者从消息中心订阅消息。
+
+2. 在观察者模式中，主题和观察者是一对多的关系，一个主题可以有多个观察者，而在订阅-发布模式中，发布者和订阅者是多对多的关系，一个发布者可以有多个订阅者，一个订阅者也可以订阅多个发布者。
+
+3. 在观察者模式中，主题状态发生变化时，观察者会被直接通知，通知的方式可以是同步或异步的，观察者可以决定如何处理通知；而在订阅-发布模式中，消息是通过消息中心进行传递的，订阅者从消息中心订阅消息，发布者发布消息到消息中心，消息中心再将消息发送给订阅者，这个过程是异步的，订阅者不能决定何时接收消息。
+
+4. 在观察者模式中，主题和观察者之间存在强耦合关系，如果一个观察者被移除，主题需要知道这个观察者的身份；而在订阅-发布模式中，发布者和订阅者之间没有强耦合关系，发布者不需要知道订阅者的身份，订阅者也不需要知道发布者的身份。
+
+综上所述，观察者模式和订阅-发布模式都是事件模型，但它们之间的区别在于关注点的不同，观察者模式更关注主题和观察者之间的交互，而订阅-发布模式更关注发布者和订阅者之间的交互。

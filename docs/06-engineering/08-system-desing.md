@@ -627,6 +627,43 @@ Cookie和Token可以结合使用来实现身份验证和授权机制。服务器
 
 综上所述，前端应用的权限设计应该考虑角色与权限分离、功能级与路由级的权限控制、动态权限管理、UI级的权限控制、异常处理与安全验证以及安全性考虑等方面。通过合理的权限设计，可以确保系统的安全性和用户权限的灵活管理。
 
+Token 是一种常用的身份验证机制，通常被用于 Web 应用程序的用户身份验证。Token 的生成和使用可以使用加密技术来增强安全性，下面介绍一下如何实现 Token 加密。
+
+Token 加密一般有两个步骤：
+
+1. 生成 Token
+2. 加密 Token
+
+1. 生成 Token
+
+在生成 Token 时，需要将用户的一些信息进行组合，生成一个字符串，该字符串通常包括以下信息：
+
+1. 用户的唯一标识（如用户 ID）
+2. 时间戳
+3. 有效期
+
+这些信息可以用分隔符分隔开，如用“.”分隔。
+
+ 2. 加密 Token
+
+加密 Token 有多种方式，下面介绍两种常用的方式：
+
+ 1. 对称加密
+
+对称加密是指加密和解密使用同一密钥的加密算法。对称加密的优点是加解密速度快，缺点是密钥传输容易被截获，从而影响安全性。
+
+常用的对称加密算法有 DES、3DES、AES 等。
+
+ 2. 非对称加密
+
+非对称加密是指加密和解密使用不同密钥的加密算法。非对称加密的优点是密钥传输安全，缺点是加解密速度较慢。
+
+常用的非对称加密算法有 RSA、DSA 等。
+
+一般情况下，为了兼顾安全性和效率，通常采用混合加密，即先使用非对称加密算法对 Token 进行加密，再使用对称加密算法对加密后的 Token 进行加密。
+
+综上所述，实现 Token 加密的关键在于对 Token 的生成和加密，需要根据具体业务需求来选择合适的加密算法和加密方式。
+
 ## 低代码平台 {#p0-low-code}
 
 渲染核心本质就是： [schema] + [组件] = [页面]
@@ -969,3 +1006,157 @@ JWT的优点包括可扩展性、易于使用和跨平台支持，它可以在�
 </body>
 </html>
 ```
+
+## 设计一套全站请求耗时统计工具 {#p0-request}
+
+ 首先我们要知道有哪些方式可以统计前端请求耗时
+
+从代码层面上统计全站所有请求的耗时方式主要有以下几种：
+
+1. Performance API：Performance API 是浏览器提供的一组 API，可以用于测量网页性能。通过 Performance API，可以获取页面各个阶段的时间、资源加载时间等。其中，Performance Timing API 可以获取到每个资源的加载时间，从而计算出所有请求的耗时。
+
+2. XMLHttpRequest 的 load 事件：在发送 XMLHttpRequest 请求时，可以为其添加 load 事件，在请求完成时执行回调函数，从而记录请求的耗时。
+
+3. fetch 的 Performance API：类似 XMLHttpRequest，fetch 也提供了 Performance API，可以通过 Performance API 获取请求耗时。
+
+4. 自定义封装的请求函数：可以自己封装一个请求函数，在请求开始和结束时记录时间，从而计算请求耗时。
+
+ 设计一套前端全站请求耗时统计工具
+
+可以遵循以下步骤：
+
+1. 实现一个性能监控模块，用于记录每个请求的开始时间和结束时间，并计算耗时。
+
+2. 在应用入口处引入该模块，将每个请求的开始时间记录下来。
+
+3. 在每个请求的响应拦截器中，记录响应结束时间，并计算请求耗时。
+
+4. 将每个请求的耗时信息发送到服务端，以便进行进一步的统计和分析。
+
+5. 在服务端实现数据存储和展示，可以使用图表等方式展示请求耗时情况。
+
+6. 对于请求耗时较长的接口，可以进行优化和分析，如使用缓存、使用异步加载、优化查询语句等。
+
+7. 在前端应用中可以提供开关，允许用户自主开启和关闭全站请求耗时统计功能。
+
+以下是一个简单的实现示例：
+
+```js
+// performance.js
+
+const performance = {
+  timings: {},
+  config: {
+    reportUrl: '/report'
+  },
+  init () {
+    // 监听所有请求的开始时间
+    window.addEventListener('fetchStart', (event) => {
+      this.timings[event.detail.id] = {
+        startTime: Date.now()
+      }
+    })
+
+    // 监听所有请求的结束时间，并计算请求耗时
+    window.addEventListener('fetchEnd', (event) => {
+      const id = event.detail.id
+      if (this.timings[id]) {
+        const timing = this.timings[id]
+        timing.endTime = Date.now()
+        timing.duration = timing.endTime - timing.startTime
+
+        // 将耗时信息发送到服务端
+        const reportData = {
+          url: event.detail.url,
+          method: event.detail.method,
+          duration: timing.duration
+        }
+        this.report(reportData)
+      }
+    })
+  },
+  report (data) {
+    // 将耗时信息发送到服务端
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', this.config.reportUrl)
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.send(JSON.stringify(data))
+  }
+}
+
+export default performance
+```
+
+在应用入口处引入该模块：
+
+```js
+// main.js
+
+import performance from './performance'
+
+performance.init()
+```
+
+在每个请求的响应拦截器中触发 `fetchEnd` 事件：
+
+```js
+// fetch.js
+
+import EventBus from './EventBus'
+
+const fetch = (url, options) => {
+  const id = Math.random().toString(36).slice(2)
+  const fetchStartEvent = new CustomEvent('fetchStart', {
+    detail: {
+      id,
+      url,
+      method: options.method || 'GET'
+    }
+  })
+  EventBus.dispatchEvent(fetchStartEvent)
+
+  return window.fetch(url, options)
+    .then((response) => {
+      const fetchEndEvent = new CustomEvent('fetchEnd', {
+        detail: {
+          id,
+          url,
+          method: options.method || 'GET'
+        }
+      })
+      EventBus.dispatchEvent(fetchEndEvent)
+
+      return response
+    })
+}
+
+export default fetch
+```
+
+在服务端实现数据存储和展示，可以使用图表等方式展示请求耗
+
+## 如何解决页面请求接口大规模并发问题 {#p0-batch-request}
+
+如何解决页面请求接口大规模并发问题， 不仅仅是包含了接口并发， 还有前端资源下载的请求并发。
+
+应该说这是一个话题讨论了；
+
+**个人认为可以从以下几个方面来考虑如何解决这个并发问题:**
+
+1. 后端优化：可以对接口进行优化，采用缓存技术，对数据进行预处理，减少数据库操作等。使用集群技术，将请求分散到不同的服务器上，提高并发量。另外可以使用反向代理、负载均衡等技术，分担服务器压力。
+
+2. 做 BFF 聚合：把所有首屏需要依赖的接口， 利用服务中间层给聚合为一个接口。
+
+3. CDN加速：使用CDN缓存技术可以有效减少服务器请求压力，提高网站访问速度。CDN缓存可以将接口的数据存储在缓存服务器中，减少对原始服务器的访问，加速数据传输速度。
+
+4. 使用 WebSocket：使用 WebSocket 可以建立一个持久的连接，避免反复连接请求。WebSocket 可以实现双向通信，大幅降低服务器响应时间。
+
+5. 使用 HTTP2 及其以上版本， 使用多路复用。
+
+6. 使用浏览器缓存技术：强缓存、协商缓存、离线缓存、Service Worker 缓存 等方向。
+
+7. 聚合一定量的静态资源： 比如提取页面公用复用部分代码打包到一个文件里面、对图片进行雪碧图处理， 多个图片只下载一个图片。
+
+8. 采用微前端工程架构： 只是对当前访问页面的静态资源进行下载， 而不是下载整站静态资源。
+
+9. 使用服务端渲染技术： 从服务端把页面首屏直接渲染好返回， 就可以避免掉首屏需要的数据再做额外加载和执行。

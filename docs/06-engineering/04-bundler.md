@@ -1,6 +1,170 @@
 
 # 打包工具
 
+## tapable 的设计思路与实现原理是什么？ {#p0-tapable}
+
+Webpack Tapable 的设计思路主要基于观察者模式（Observer Pattern）和发布-订阅模式（Publish-Subscribe Pattern），用于解耦各个插件之间的依赖关系，让插件能够独立作用于特定的钩子（Hook），从而实现可扩展性和灵活性。
+
+具体来说，Tapable 采用了钩子（Hook）的概念，每个钩子对应一组事件，Webpack 在不同的时刻触发这些钩子，插件可以注册自己的事件处理函数到对应的钩子上，以实现各种功能。
+
+为了避免插件之间的耦合，Tapable 将事件处理函数按照钩子类型分为同步钩子（Sync Hook）、异步钩子（Async Hook）、单向异步钩子（Async Parallel Hook）和多向异步钩子（Async Series Hook）四种类型。这样，不同类型的钩子对应着不同的事件处理顺序和调用方式，插件在注册自己的事件处理函数时，可以选择不同的钩子类型来适应不同的应用场景。
+
+除此之外，Tapable 还提供了一些辅助方法和工具函数，用于方便地创建和管理钩子、向钩子注册事件处理函数、调用钩子的事件处理函数等。这些工具函数的设计思路也遵循了解耦、简单易用的原则，为插件开发提供了很大的便利性。
+
+ Tapable 的使用
+
+Webpack Tapable 的使用分为三个步骤：
+
+1. 定义一个新的 Tapable 实例：在 Webpack 插件中定义一个新的 Tapable 实例，并定义需要监听的事件。
+
+```javascript
+const { SyncHook } = require('tapable')
+
+class MyPlugin {
+  constructor () {
+    this.hooks = {
+      beforeRun: new SyncHook(['compiler']),
+      done: new SyncHook(['stats'])
+    }
+  }
+
+  apply (compiler) {
+    this.hooks.beforeRun.tap('MyPlugin', compiler => {
+      console.log('Webpack is starting to run...')
+    })
+
+    this.hooks.done.tap('MyPlugin', stats => {
+      console.log('Webpack has finished running.')
+    })
+  }
+}
+```
+
+2. 触发事件：在 Webpack 的编译过程中，调用 Tapable 实例的触发方法，触发事件。
+
+```javascript
+compiler.hooks.beforeRun.call(compiler)
+// Webpack is starting to run...
+
+compiler.run((err, stats) => {
+  if (err) {
+    console.error(err)
+    return
+  }
+
+  console.log(stats)
+  compiler.hooks.done.call(stats)
+  // Webpack has finished running.
+})
+```
+
+3. 注册插件：在 Webpack 的配置文件中，将插件实例注册到 Webpack 中。
+
+```javascript
+const MyPlugin = require('./my-plugin')
+
+module.exports = {
+  plugins: [new MyPlugin()]
+}
+```
+
+以上是使用 Tapable 的基本流程，通过 Tapable 可以监听到编译过程中的各个事件，并对编译过程进行修改，从而实现各种插件。以下是一些常见的 Tapable 类型和用法：
+
+* SyncHook：同步 Hook，按照注册的顺序同步执行所有回调函数。
+
+```javascript
+const { SyncHook } = require('tapable')
+
+const hook = new SyncHook(['arg1', 'arg2'])
+
+hook.tap('MyPlugin', (arg1, arg2) => {
+  console.log(`Hook is triggered with arguments: ${arg1}, ${arg2}`)
+})
+
+hook.tap('MyPlugin', (arg1, arg2) => {
+  console.log('Second callback is called')
+})
+
+hook.call('Hello', 'world')
+// Hook is triggered with arguments: Hello, world
+// Second callback is called
+```
+
+* AsyncParallelHook：异步 Hook，按照注册的顺序异步执行所有回调函数，不关心回调函数的返回值。
+
+```javascript
+const { AsyncParallelHook } = require('tapable')
+
+const hook = new AsyncParallelHook(['arg1', 'arg2'])
+
+hook.tap('MyPlugin', (arg1, arg2, callback) => {
+  setTimeout(() => {
+    console.log(`Hook is triggered with arguments: ${arg1}, ${arg2}`)
+    callback()
+  }, 1000)
+})
+
+hook.tap('MyPlugin', (arg1, arg2, callback) => {
+  setTimeout(() => {
+    console.log('Second callback is called')
+    callback()
+  }, 500)
+})
+```
+
+ Tapable 是如何实现的？代码简单实现一下？
+
+Webpack Tapable 是基于发布-订阅模式的一个插件系统，它提供了一组钩子函数，让插件可以在相应的时机执行自己的逻辑。
+
+下面是一个简单的自定义 Tapable 的实现：
+
+```javascript
+class Tapable {
+  constructor () {
+    this.hooks = {}
+  }
+
+  // 注册事件监听函数
+  tap (name, callback) {
+    if (!this.hooks[name]) {
+      this.hooks[name] = []
+    }
+    this.hooks[name].push(callback)
+  }
+
+  // 触发事件
+  call (name, ...args) {
+    const callbacks = this.hooks[name]
+    if (callbacks && callbacks.length) {
+      callbacks.forEach((callback) => callback(...args))
+    }
+  }
+}
+```
+
+在这个例子中，我们定义了一个 `Tapable` 类，它有一个 `hooks` 对象属性，用于存储各个事件对应的监听函数。然后我们定义了 `tap` 方法，用于注册事件监听函数，以及 `call` 方法，用于触发事件。
+
+下面是一个使用自定义 Tapable 的例子：
+
+```javascript
+const tapable = new Tapable()
+
+tapable.tap('event1', (arg1, arg2) => {
+  console.log('event1 is triggered with arguments:', arg1, arg2)
+})
+
+tapable.tap('event2', (arg1, arg2) => {
+  console.log('event2 is triggered with arguments:', arg1, arg2)
+})
+
+tapable.call('event1', 'hello', 'world')
+tapable.call('event2', 'foo', 'bar')
+```
+
+在这个例子中，我们定义了两个事件 `event1` 和 `event2`，并为它们注册了监听函数。当我们调用 `call` 方法触发事件时，注册的监听函数就会依次执行。
+
+这个自定义 Tapable 的实现虽然简单，但它体现了 Tapable 的设计思路和核心功能。在实际使用中，Webpack 的 Tapable 提供了更多的功能和钩子，可以满足不同场景的需求。
+
 ## [webpack] module、chunk 、bundle 的区别 {#p0-bundler}
 
 首先上图：
@@ -43,6 +207,157 @@ module，chunk 和 bundle 其实就是同一份逻辑代码在不同转换场景
 10. 高度可定制化：打包工具通常提供丰富的插件和配置选项，允许开发人员根据项目需求进行定制。可以灵活配置打包过程中的各种处理和优化方式，以满足项目的具体需求。
 
 总结 - 现代前端应用需要打包工具进行打包编译的原因是为了： **实现模块化管理、解决兼容性问题、静态资源处理和优化、代码分割和按需加载、开发环境支持、性能提升、多技术支持、自动化工作流程、第三方库管理和可定制化等方面的需求**。
+
+`webpack` 的运行流程是一个串行的过程，它的工作流程就是将各个插件串联起来
+
+在运行过程中会广播事件，插件只需要监听它所关心的事件，就能加入到这条`webpack`机制中，去改变`webpack`的运作，使得整个系统扩展性良好
+
+从启动到结束会依次执行以下三大步骤：
+
+* 初始化流程：从配置文件和 `Shell` 语句中读取与合并参数，并初始化需要使用的插件和配置插件等执行环境所需要的参数
+* 编译构建流程：从 Entry 发出，针对每个 Module 串行调用对应的 Loader 去翻译文件内容，再找到该 Module 依赖的 Module，递归地进行编译处理
+* 输出流程：对编译后的 Module 组合成 Chunk，把 Chunk 转换成文件，输出到文件系统
+
+ 初始化流程
+
+从配置文件和 `Shell` 语句中读取与合并参数，得出最终的参数
+
+配置文件默认下为`webpack.config.js`，也或者通过命令的形式指定配置文件，主要作用是用于激活`webpack`的加载项和插件
+
+`webpack` 将 `webpack.config.js` 中的各个配置项拷贝到 `options` 对象中，并加载用户配置的 `plugins`
+完成上述步骤之后，则开始初始化`Compiler`编译对象，该对象掌控者`webpack`声明周期，不执行具体的任务，只是进行一些调度工作
+
+```js
+class Compiler extends Tapable {
+ constructor(context) {
+ super();
+ this.hooks = {
+ beforeCompile: new AsyncSeriesHook(["params"]),
+ compile: new SyncHook(["params"]),
+ afterCompile: new AsyncSeriesHook(["compilation"]),
+ make: new AsyncParallelHook(["compilation"]),
+ entryOption: new SyncBailHook(["context", "entry"])
+ // 定义了很多不同类型的钩子
+ };
+ // ...
+ }
+}
+
+function webpack(options) {
+ var compiler = new Compiler();
+ ...// 检查options,若watch字段为true,则开启watch线程
+ return compiler;
+}
+...
+
+```
+
+`Compiler` 对象继承自 `Tapable`，初始化时定义了很多钩子函数
+
+ 编译构建流程
+
+根据配置中的 `entry` 找出所有的入口文件
+
+```js
+module.exports = {
+  entry: './src/file.js'
+}
+```
+
+初始化完成后会调用`Compiler`的`run`来真正启动`webpack`编译构建流程，主要流程如下：
+
+* `compile` 开始编译
+* `make` 从入口点分析模块及其依赖的模块，创建这些模块对象
+* `build-module` 构建模块
+* `seal` 封装构建结果
+* `emit` 把各个chunk输出到结果文件
+
+ compile 编译
+
+执行了`run`方法后，首先会触发`compile`，主要是构建一个`Compilation`对象
+
+该对象是编译阶段的主要执行者，主要会依次下述流程：执行模块创建、依赖收集、分块、打包等主要任务的对象
+
+ make 编译模块
+
+当完成了上述的`compilation`对象后，就开始从`Entry`入口文件开始读取，主要执行`_addModuleChain()`函数，如下：
+
+```js
+_addModuleChain(context, dependency, onModule, callback) {
+ ...
+ // 根据依赖查找对应的工厂函数
+ const Dep = // @type {DepConstructor} */ (dependency.constructor);
+ const moduleFactory = this.dependencyFactories.get(Dep);
+
+ // 调用工厂函数NormalModuleFactory的create来生成一个空的NormalModule对象
+ moduleFactory.create({
+ dependencies: [dependency]
+ ...
+ }, (err, module) => {
+ ...
+ const afterBuild = () => {
+ this.processModuleDependencies(module, err => {
+ if (err) return callback(err);
+ callback(null, module);
+ });
+ };
+
+ this.buildModule(module, false, null, null, err => {
+ ...
+ afterBuild();
+ })
+ })
+}
+
+```
+
+过程如下：
+
+`_addModuleChain`中接收参数`dependency`传入的入口依赖，使用对应的工厂函数`NormalModuleFactory.create`方法生成一个空的`module`对象
+
+回调中会把此`module`存入`compilation.modules`对象和`dependencies.module`对象中，由于是入口文件，也会存入`compilation.entries`中
+
+随后执行`buildModule`进入真正的构建模块`module`内容的过程
+
+ build module 完成模块编译
+
+这里主要调用配置的`loaders`，将我们的模块转成标准的`JS`模块
+
+在用`Loader` 对一个模块转换完后，使用 `acorn` 解析转换后的内容，输出对应的抽象语法树（`AST`），以方便 `Webpack`后面对代码的分析
+
+从配置的入口模块开始，分析其 `AST`，当遇到`require`等导入其它模块语句时，便将其加入到依赖的模块列表，同时对新找出的依赖模块递归分析，最终搞清所有模块的依赖关系
+
+ 输出流程
+
+ seal 输出资源
+
+`seal`方法主要是要生成`chunks`，对`chunks`进行一系列的优化操作，并生成要输出的代码
+
+`webpack` 中的 `chunk` ，可以理解为配置在 `entry` 中的模块，或者是动态引入的模块
+
+根据入口和模块之间的依赖关系，组装成一个个包含多个模块的 `Chunk`，再把每个 `Chunk` 转换成一个单独的文件加入到输出列表
+
+ emit 输出完成
+
+在确定好输出内容后，根据配置确定输出的路径和文件名
+
+```js
+const config = {
+  // ...
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    filename: '[name].js'
+  }
+}
+```
+
+在 `Compiler` 开始生成文件前，钩子 `emit` 会被执行，这是我们修改最终文件的最后一个机会
+
+从而`webpack`整个打包过程则结束了
+
+ 小结
+
+![](https://foruda.gitee.com/images/1681308948652266689/0b4f6e27_7819612.png)
 
 ## 讲一下Webpack设计理念 {#p0-webpack-design}
 
@@ -1282,6 +1597,187 @@ getComponent().then((component) => {
 
 通过`splitChunks`的适当配置，我们可以大幅度减小初始加载所需的时间，并确保用户只下载当前真正需要的代码，这样就可以加快应用程序的交互速度。
 
+## 分包的方式有哪些？{#p0-webpack-package}
+
+1. 通过 `entry` 属性指定入口文件，在打包时，Webpack 会按照入口文件生成一个 chunk，每个 chunk 包含了一组代码块，最终生成一个或多个 bundle。
+
+2. 通过 `SplitChunksPlugin` 插件对公共依赖进行分割。该插件会把公共依赖提取出来，形成一个或多个独立的 chunk，以便在多个 bundle 中共享。
+
+3. 使用动态导入（Dynamic Import）技术进行按需加载。在代码中使用 `import()` 或 `require.ensure()`，Webpack 会将这些代码块按照配置的策略进行分割，生成一个或多个独立的 chunk。
+
+4. 使用 `DllPlugin` 插件将一些不经常变化的代码提取出来，形成一个动态链接库（DLL）。在打包时，可以直接引用这个 DLL，而不必重复打包。
+
+5. 通过 `externals` 属性将一些模块声明为外部依赖。在打包时，Webpack 会跳过这些模块的打包过程，而是在运行时从外部环境中加载。
+
+ SplitChunksPlugin 是怎么对公共依赖进行分割的 ?
+
+Webpack的SplitChunksPlugin插件是用来对公共依赖进行分割的，其原理是将公共模块提取出来，形成一个或多个共享块，并在需要时动态加载。这个插件会分析模块之间的依赖关系，将具有相同引用模块的代码块进行提取，以便于实现缓存和更快的加载。
+
+SplitChunksPlugin的默认配置包括以下三个块：
+
+1. 通过异步加载（异步块）生成的代码块
+2. 与初始块（即入口点）共享的代码块
+3. 在两个或更多块之间共享的代码块
+
+其中，第二个块是最常见的，它包括从多个入口点引用的公共模块。我们可以通过以下示例来说明：
+
+```javascript
+// webpack.config.js
+module.exports = {
+  entry: {
+    main: './src/main.js',
+    other: './src/other.js'
+  },
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  }
+}
+```
+
+在上面的配置中，我们定义了两个入口点`main`和`other`，并将`SplitChunksPlugin`配置为将从`node_modules`目录中引用的代码提取到名为`vendors`的代码块中。这个代码块将被引用到我们的入口点中，以便于减少加载时间和提高性能。
+
+当我们打包时，Webpack将分析这两个入口点，并发现它们都引用了`node_modules`目录下的依赖，于是将这些依赖提取到`vendors`代码块中。我们可以在`main.js`和`other.js`中看到这样的代码：
+
+```javascript
+import 'lodash' // 公共模块被引用
+```
+
+通过这种方式，Webpack能够将公共代码提取到单独的代码块中，以便于更高效地加载和缓存。
+
+ webpack DllPlugin 是如何提取依赖的？
+
+Webpack DllPlugin 是用于将某些库（例如第三方库）提前编译和打包，以便在开发和生产构建过程中减少依赖项的分析时间，提高打包速度的插件。
+
+具体来说，DllPlugin 分为两个步骤：第一步是生成一个包含库的映射文件（manifest.json），第二步是在开发或生产构建中使用该映射文件来引入预编译的库。
+
+DllPlugin 的基本原理是将库单独编译成一个或多个 dll 文件（动态链接库），同时生成一个 manifest.json 文件记录这些库文件的名称、路径等信息。在开发或生产构建过程中，通过引用 manifest.json 文件，将已经预编译好的库文件引入到项目中。这样可以避免在每次打包时都去分析和打包第三方库，提高构建速度。
+
+下面是一个简单的例子：
+
+在 webpack.config.dll.js 中定义打包的库：
+
+```lua
+luaCopy codeconst path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+ mode: 'production',
+ entry: {
+ vendor: ['react', 'react-dom', 'lodash']
+ },
+ output: {
+ path: path.join(__dirname, 'dist'),
+ filename: '[name].dll.js',
+ library: '[name]'
+ },
+ plugins: [
+ new webpack.DllPlugin({
+ name: '[name]',
+ path: path.join(__dirname, 'dist', '[name].manifest.json')
+ })
+ ]
+};
+```
+
+然后运行 `webpack --config webpack.config.dll.js`，会生成 `vendor.dll.js` 和 `vendor.manifest.json` 文件。
+
+在开发或生产环境中，通过引入生成的 manifest.json 文件，将预编译好的库文件引入项目中：
+
+```lua
+luaCopy codeconst path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+ mode: 'production',
+ entry: {
+ app: './src/index.js'
+ },
+ output: {
+ path: path.join(__dirname, 'dist'),
+ filename: '[name].js'
+ },
+ plugins: [
+ new webpack.DllReferencePlugin({
+ manifest: require('./dist/vendor.manifest.json')
+ })
+ ]
+};
+```
+
+这样，在打包过程中，webpack 会自动将 `vendor.dll.js` 中包含的第三方库从项目中分离出来，而不需要重复打包和分析这些库。
+
+## 异步加载原理是啥 {#p0-async-load}
+
+1. 使用动态 import: 使用 ES6 的 `import()` 语法，动态加载模块。
+
+```js
+import('./path/to/module')
+  .then(module => {
+    // do something with module
+  })
+  .catch(error => {
+    console.error(error)
+    // handle error
+  })
+```
+
+2. 使用 require.ensure: 异步加载模块并将其放置到指定的 chunk 中。
+
+```javascript
+require.ensure(['./path/to/module'], function (require) {
+  const module = require('./path/to/module')
+  // do something with module
+})
+```
+
+3. 使用 bundle-loader: 将模块放置到一个单独的文件中，按需加载。
+
+```js
+// eslint-disable-next-line
+const load = require('bundle-loader!./path/to/module')
+load(function (module) {
+  // do something with module
+})
+```
+
+4. 使用webpack的require.ensure API
+
+```javascript
+require.ensure([], function (require) {
+  // require dependencies
+  const foo = require('./foo')
+  // ...
+})
+```
+
+5. 使用webpack的import动态导入
+
+```javascript
+import('./dynamic-module.js').then(module => {
+  // do something with module
+})
+```
+
+这些方式都可以在 Webpack 中使用，具体使用哪种方式，取决于具体的场景和需求。
+
+ 动态加载的原理
+
+在 Webpack 中，异步加载组件的原理是利用动态导入（Dynamic import）特性。使用动态导入可以将模块的加载从编译时刻延迟到运行时刻。
+
+具体来说，当 Webpack 打包代码时，遇到动态导入语句时不会将其打包进入主文件，而是将其单独打包为一个新的文件。在运行时，当代码需要加载该组件时，会通过网络请求动态加载该文件。
+
+这样做的好处是可以减小主文件的体积，从而加快页面的加载速度，并且也可以提高代码的灵活性和可维护性。同时，Webpack 还可以对动态加载的文件进行代码分割和按需加载，进一步优化页面的性能。
+
+在使用动态导入时，需要注意一些细节。例如，在支持动态导入的浏览器中，需要使用 `import()` 函数进行动态导入；而在不支持动态导入的浏览器中，需要使用 Webpack 提供的 `require.ensure` 或 `require.include` 等方法进行模块的异步加载。同时，还需要注意动态导入的兼容性和性能问题。
+
 ## webpack 编译如何将源码和依赖打包到不同路径 {#p1-webpack-compile}
 
 1. **使用 Webpack 的`optimize-module-ids`插件（用于区分模块来源）**
@@ -1517,6 +2013,78 @@ module.exports = {
 | `terser-webpack-plugin` | 压缩 JavaScript 代码。 |
 
 这些 Loader 可以根据需要配置在 Webpack 的模块规则（`module.rules`）中，以实现对不同类型文件的处理和转换操作。
+
+## loader 和 plugin 有啥区别 {#p0-loader-plugin}
+
+* created_at: 2023-04-03T00:55:06Z
+* updated_at: 2023-04-03T00:55:06Z
+* labels: 工程化, 阿里巴巴
+* milestone: 中
+
+在Webpack中，Loader和Plugin是两个不同的概念，它们的作用和使用方式也有所不同。
+
+Loader用于对源代码文件进行转换和处理，而Plugin用于对Webpack的编译过程进行扩展和增强。
+
+* **Loader**
+
+Loader是Webpack中的一个核心概念，它用于处理源代码文件，将它们转换成Webpack可处理的模块。Webpack在处理代码模块的过程中，会根据模块的类型来选择相应的Loader进行处理，例如，处理CSS文件需要使用css-loader，处理图片需要使用file-loader等。使用Loader可以实现代码转换、文件处理、代码压缩等功能。
+
+Loader的使用方式是在Webpack的配置文件中定义module.rules属性，它是一个数组，每个元素是一个对象，用于描述如何处理特定类型的文件。一个Loader对象通常包括以下几个属性：
+
+* test：用于匹配需要处理的文件类型，通常是一个正则表达式。
+* use：指定需要使用的Loader，可以是一个字符串或一个数组，数组中的每个元素都是一个Loader。
+* exclude/include：指定需要排除/包含的文件夹。
+
+例如，处理CSS文件需要使用css-loader和style-loader，可以在Webpack配置文件中添加如下配置：
+
+```js
+const config = [
+  {
+    test: /\.css$/,
+    use: ['style-loader', 'css-loader']
+  }
+]
+```
+
+* **Plugin**
+
+Plugin是Webpack中的另一个核心概念，它用于扩展Webpack的功能。Plugin可以用于执行任意类型的任务，例如，生成HTML文件、压缩代码、提取公共代码等。使用Plugin可以实现Webpack无法处理的复杂任务。
+
+Plugin的使用方式是在Webpack的配置文件中定义plugins属性，它是一个数组，每个元素是一个Plugin实例。Plugin通常包括以下几个方法：
+
+* apply：用于安装插件，接收一个compiler对象作为参数。
+* 一些Webpack钩子函数的实现。
+
+例如，生成HTML文件需要使用HtmlWebpackPlugin，可以在Webpack配置文件中添加如下配置：
+
+```javascript
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+module.exports = {
+  // ...
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'My App',
+      template: './src/index.html'
+    })
+  ]
+}
+```
+
+**表格对比他们之间的差异和适用范围**
+
+|区别|Loader|Plugin|
+|---|---|---|
+|输入/输出|输入文件，输出处理后的文件|可以在Webpack构建过程中处理输出结果或做额外处理|
+|使用方式|在模块加载时直接调用|在Webpack配置中进行配置|
+|功能|用于处理某些类型的文件|可以处理打包过程的各个环节|
+|实现方式|导出一个函数|导出一个类|
+|配置方式|在Webpack配置中使用|在Webpack配置中使用|
+|作用|转换文件或模块|对整个构建过程进行自定义操作|
+|适用场景|处理各种类型的文件，如css、图片等|执行比较复杂的操作，如代码压缩、代码分割等|
+|使用方式|需要在Webpack中明确的指定|无法单独使用，必须在Webpack中明确的指定使用|
+|作用对象|针对每一个文件进行处理|针对整个构建过程进行处理|
+
+总体而言，Loader主要用于针对单个文件进行处理，可以根据不同文件类型来选择对应的Loader；Plugin则是针对整个构建过程进行自定义操作，比如代码压缩、分离CSS文件、创建HTML文件等。
 
 ## 手写 webpack loader 有哪些重要 api 与注意事项？ {#p1-webpack-loader}
 
@@ -1792,7 +2360,35 @@ module.exports = {
 
 这些插件可以根据需要配置在 Webpack 的插件列表（`plugins`）中，以实现对构建过程的各种增强和优化操作。
 
-## webpack externals 是如何加载外部依赖的 {#p2-webpack-externals}
+## webpack externals 是如何加载外部依赖的 {#p0-webpack-externals}
+
+`webpack` 中的 `externals` 配置项用于指定在打包时需要排除掉的模块，这些模块会被视为外部依赖，即不会被打包进最终的输出文件中，而是通过其他方式引入。
+
+使用 `externals` 配置项可以使得打包后的代码文件更小，同时也可以在运行时从外部获取依赖，例如通过 CDN、全局变量或者通过 `require` 的方式等。
+
+举个例子，假设我们需要在项目中引入 `jquery` 库，但我们并不想在打包的过程中将其打包进最终的输出文件中，而是从外部引入。我们可以通过以下的配置来实现：
+
+```js
+module.exports = {
+  // ...
+  externals: {
+    jquery: 'jQuery'
+  }
+}
+```
+
+这里的 `externals` 配置项告诉 `webpack` 在打包时忽略 `jquery` 模块的引用，而在代码运行时，我们需要手动将 `jquery` 通过 `script` 标签引入，并将其暴露在全局变量 `jQuery` 下，例如：
+
+```html
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+ window.jQuery = jQuery;
+</script>
+```
+
+这样在代码中引入 `jquery` 模块时，`webpack` 就会将其作为外部依赖进行处理，而不是将其打包进输出文件中。
+
+需要注意的是，使用 `externals` 配置项需要谨慎，因为如果在运行时无法正确获取到指定的外部依赖，就会导致代码运行出错。
 
 1. externals 配置, 是忽略此依赖，不打包，
 2. 基于运行环境确定处理方式
@@ -2045,6 +2641,18 @@ esbuild 和 Rollup 都是 Vite 的基础依赖，但它们在 Vite 中担负着�
 </Answer>
 
 ## tree-shaking {#p0-tree-shaking-principle}
+
+webpack实现tree shaking的原理是基于ES6模块化语法的静态特性。
+
+在编译阶段，Webpack会根据模块的依赖关系，通过AST（抽象语法树）进行静态分析，识别出那些代码块（函数、变量、对象等）被引用并且使用了。然后将这些代码块打包输出到最终的打包文件中。在这个过程中，Webpack会自动将未被引用的代码块进行剔除，这个过程就是tree shaking。
+
+具体来说，当Webpack在打包时遇到一个ES6模块导入语句（import），它会自动去加载这个模块并分析其导出对象。然后它会分析项目中哪些导出对象被引用了。如果一个导出对象没有被引用，那么Webpack会直接把它从最终的代码中剔除掉。
+
+需要注意的是，tree shaking只对ES6模块生效，对于CommonJS等其他模块化规范，由于其动态加载特性，无法在静态分析阶段确定哪些代码块被引用，因此无法进行tree shaking。
+
+另外，为了使Webpack能够正确识别和剔除未引用的代码块，开发者也需要做出一定的努力，例如将代码编写为纯函数的形式，避免使用全局变量等副作用等。
+
+具体哪些会导致 tree shaking 失效，可以看这个文章：[资料](https://github.com/pro-collection/interview-question/issues/235)
 
 在以下情况下，`webpack` 的 `tree-shaking` 可能会失效：
 
@@ -2300,6 +2908,54 @@ Webpack 5 增加了对一些 CommonJs 构造的支持，允许消除未使用的
 * 使用了副作用的代码：如果你的代码中包含有副作用的代码（例如在模块的顶级作用域中执行了一些操作），webpack 无法确定哪些代码是无用的，因此无法进行 tree-shaking。
 
 可以参考这个回答：[资料](https://github.com/pro-collection/interview-question/issues/523)
+
+ 以下是一些可能导致 webpack tree shaking 失效的情况
+
+1. 代码中使用了动态引入（Dynamic Imports）的语法，这种情况下，webpack 无法确定哪些代码会被使用，因此不会进行 tree shaking。
+
+2. 代码使用了函数式编程的方式，比如使用了 map、filter、reduce 等高阶函数，而这些函数很难通过静态分析确定代码的执行路径，所以可能会导致 tree shaking 失效。
+
+3. 代码中使用了 webpack 无法识别的模块系统，比如使用了 AMD 或者 CommonJS 的语法，这种情况下 webpack 也无法进行 tree shaking。
+
+4. 代码使用了 side effect，比如改变全局变量或者函数的参数，这种情况下 webpack 也无法进行 tree shaking。
+
+ 函数式编程的方式 filter 为何会导致无法 tree shaking
+
+函数式编程中常常使用高阶函数来组合函数，这种组合方式常常需要使用传递函数作为参数的方式，例如 map、filter 等高阶函数。这种情况下，如果参数传递的是一个函数表达式或者函数声明，那么无法进行 treeshaking。
+
+举个例子：
+
+```js
+// 代码中定义了一个 sum 函数
+// 调用了 lodash 库的 filter 函数，传递一个匿名函数表达式作为参数
+import { filter } from 'lodash'
+
+function sum (a, b) {
+  return a + b
+}
+
+const arr = [1, 2, 3, 4, 5]
+const result = filter(arr, item => {
+  if (item > 10) return sum(item, 1)
+  else return item
+})
+```
+
+上述代码中，使用了 lodash 库的 filter 函数，并且传递了一个匿名函数表达式作为参数。由于函数表达式无法被静态分析，不知道 sum 是否会被调用，因此无法进行 treeshaking，最终导致整个 sum 函数也被打包进了最终的代码中。
+
+ 为什么 commonjs 模块化会导致无法 tree shaking
+
+CommonJS 模块化语法是 Node.js 中的模块化规范，其使用了 `require()` 导入模块，使用 `module.exports` 或 `exports` 导出模块。它采用的是动态导入（require()）和同步加载的方式，这种导入方式无法在编译时确定所依赖的模块，因此在 Webpack 进行 Tree Shaking 时，这种导入方式的模块会被认为无法被静态分析，因而会被排除掉。
+
+相反，ES6 模块化语法采用的是静态导入的方式，例如 `import foo from './foo.js'`，可以在编译时分析出所依赖的模块，因此支持 Tree Shaking。
+
+因此，如果要使用 Tree Shaking，建议采用 ES6 模块化语法。如果必须使用 CommonJS 模块化规范，可以尝试使用动态导入`（import()）`语法，或者采用其他工具或手动实现 Tree Shaking。
+
+ side effect 是什么，为何会导致无法 tree shaking
+
+在编写 JavaScript 代码时，如果一个函数除了返回值外，还对外部的变量产生了其他的影响，比如修改了全局变量、读写了文件等操作，那么这个函数就被称为有“副作用”（side effect）。因为这种函数并不是纯函数，它可能会影响其他部分的代码执行结果，不便于优化和调试。
+
+在 Tree Shaking 的过程中，webpack 将模块打包成单独的 JavaScript 文件，它会从模块中找出哪些代码没有被使用到，并删除这些代码。但是，如果模块中存在带有副作用的代码，这些代码虽然没有被使用到，但它们仍然会被保留下来，因为这些代码可能会对其他部分的代码产生影响，因此不能简单地删除。这也是为什么带有副作用的代码会导致无法 Tree Shaking 的原因。
 
 ## babel 的理解？ {#p0-babel}
 
@@ -2673,6 +3329,30 @@ ReactDOM.render(<App2Button />, document.getElementById('root'))
 
 这只是一个简单的示例，实际使用中可能涉及更复杂的配置和场景。但通过以上配置，我们可以实现在不同应用程序之间共享模块，并通过动态加载的方式使用远程模块。
 
+## babel 的工作流程是如何的？ {#p0-babel}
+
+Babel 是一个 JavaScript 编译器，它的主要功能是将新版本的 JavaScript 代码转换成向后兼容的代码。Babel 的工作流程可以简单概括为以下几个步骤：
+
+1. 解析：将 JavaScript 代码解析成 AST（抽象语法树）。
+
+2. 转换：对 AST 进行遍历，进行代码转换。
+
+3. 生成：将转换后的 AST 生成 JavaScript 代码。
+
+具体来说，Babel 的工作流程如下：
+
+1. Babel 使用 babylon 解析器将 JavaScript 代码解析成 AST，babylon 是一个基于 AST 的 JavaScript 解析器。
+
+2. Babel 使用 babel-traverse 遍历器对 AST 进行遍历，找到需要转换的节点，进行转换。
+
+3. Babel 使用 babel-core 转换器将 AST 转换成 JavaScript 代码。babel-core 是 babel 的核心模块，它包含了所有的转换器和插件。
+
+4. Babel 使用 babel-generator 生成器将转换后的 AST 生成 JavaScript 代码。babel-generator 是一个将 AST 转换成 JavaScript 代码的工具。
+
+在整个流程中，Babel 还会使用 babel-preset-env、babel-plugin-transform-runtime、babel-polyfill 等插件和工具来完成更加复杂的任务，如将 ES6 模块转换成 CommonJS 模块，使用 Polyfill 来实现一些新的 API 等。
+
+需要注意的是，Babel 的转换过程是有损的，转换后的代码不一定与原始代码完全相同，也可能存在性能问题。因此，在使用 Babel 进行转换时，需要谨慎选择转换的规则和插件，以确保转换后的代码正确、高效。
+
 ## babel 插件 {#p0-bable-plugin}
 
 编写一个 babel 插件的基本步骤
@@ -2949,3 +3629,467 @@ import 'core-js/features/array/includes'
 这样只会加载和填充所需的功能，而不会加载整个 Polyfill 库。你可以根据具体的功能需求进行按需导入。
 
 请注意，使用按需加载的方式可以减小应用程序的文件大小，并且只填充需要的功能，但需要确保在使用相关功能之前已经导入了相应的 Polyfill。
+
+## webpack热更新原理是什么？ {#p1-hotreload}
+
+> `Hot Module Replacement`，简称`HMR`，无需完全刷新整个页面的同时，更新模块。`HMR`的好处，在日常开发工作中体会颇深：**节省宝贵的开发时间、提升开发体验**。
+
+刷新我们一般分为两种：
+
+* 一种是页面刷新，不保留页面状态，就是简单粗暴，直接`window.location.reload()`。
+* 另一种是基于`WDS (Webpack-dev-server)`的模块热替换，只需要局部刷新页面上发生变化的模块，同时可以保留当前的页面状态，比如复选框的选中状态、输入框的输入等。
+
+`HMR`作为一个`Webpack`内置的功能，可以通过`HotModuleReplacementPlugin`或`--hot`开启。那么，`HMR`到底是怎么实现热更新的呢？下面让我们来了解一下吧！
+
+ 1. webpack-dev-server 启动本地服务
+
+我们根据`webpack-dev-server`的`package.json`中的`bin`命令，可以找到命令的入口文件`bin/webpack-dev-server.js`。
+
+```pgsql
+// node_modules/webpack-dev-server/bin/webpack-dev-server.js
+
+// 生成webpack编译主引擎 compiler
+let compiler = webpack(config);
+
+// 启动本地服务
+let server = new Server(compiler, options, log);
+server.listen(options.port, options.host, (err) => {
+ if (err) {throw err};
+});
+```
+
+本地服务代码：
+
+```js
+// node_modules/webpack-dev-server/lib/Server.js
+class Server {
+ constructor() {
+ this.setupApp();
+ this.createServer();
+ }
+
+ setupApp() {
+ // 依赖了express
+  this.app = new express();
+ }
+
+ createServer() {
+ this.listeningApp = http.createServer(this.app);
+ }
+ listen(port, hostname, fn) {
+ return this.listeningApp.listen(port, hostname, (err) => {
+ // 启动express服务后，启动websocket服务
+ this.createSocketServer();
+ }
+ }
+}
+```
+
+这一小节代码主要做了三件事：
+
+* 启动`webpack`，生成`compiler`实例。`compiler`上有很多方法，比如可以启动 `webpack` 所有**编译**工作，以及**监听**本地文件的变化。
+* 使用`express`框架启动本地`server`，让浏览器可以请求本地的**静态资源**。
+* 本地`server`启动之后，再去启动`websocket`服务，如果不了解`websocket`，建议简单了解一下[websocket速成](https://link.juejin.cn?target=https%3A%2F%2Fwww.ruanyifeng.com%2Fblog%2F2017%2F05%2Fwebsocket.html "https://www.ruanyifeng.com/blog/2017/05/websocket.html")。通过`websocket`，可以建立本地服务和浏览器的双向通信。这样就可以实现当本地文件发生变化，立马告知浏览器可以热更新代码啦！
+
+上述代码主要干了三件事，但是源码在启动服务前又做了很多事，接下来便看看`webpack-dev-server/lib/Server.js`还做了哪些事？
+
+ 2. 修改webpack.config.js的entry配置
+
+启动本地服务前，调用了`updateCompiler(this.compiler)`方法。这个方法中有 2 段关键性代码。一个是获取`websocket`客户端代码路径，另一个是根据配置获取`webpack`热更新代码路径。
+
+```javascript
+// 获取websocket客户端代码
+const clientEntry = `${require.resolve(
+ '../../client/'
+)}?${domain}${sockHost}${sockPath}${sockPort}`
+
+// 根据配置获取热更新代码
+let hotEntry
+if (options.hotOnly) {
+  hotEntry = require.resolve('webpack/hot/only-dev-server')
+} else if (options.hot) {
+  hotEntry = require.resolve('webpack/hot/dev-server')
+}
+```
+
+修改后的`webpack`入口配置如下：
+
+```awk
+// 修改后的entry入口
+{ entry:
+ { index:
+ [
+ // 上面获取的clientEntry
+ 'xxx/node_modules/webpack-dev-server/client/index.js?http://localhost:8080',
+ // 上面获取的hotEntry
+ 'xxx/node_modules/webpack/hot/dev-server.js',
+ // 开发配置的入口
+ './src/index.js'
+  ],
+ },
+} 
+```
+
+为什么要新增了 2 个文件？在入口默默增加了 2 个文件，那就意味会一同打包到`bundle`文件中去，也就是线上运行时。
+
+**（1）webpack-dev-server/client/index.js**
+
+首先这个文件用于`websocket`的，因为`websoket`是双向通信，如果不了解`websocket`，建议简单了解一下[websocket速成](https://link.juejin.cn?target=https%3A%2F%2Fwww.ruanyifeng.com%2Fblog%2F2017%2F05%2Fwebsocket.html "https://www.ruanyifeng.com/blog/2017/05/websocket.html")。我们在第 1 步 `webpack-dev-server`初始化 的过程中，启动的是本地服务端的`websocket`。那客户端也就是我们的浏览器，浏览器还没有和服务端通信的代码呢？总不能让开发者去写吧hhhhhh。因此我们需要把`websocket`客户端通信代码偷偷塞到我们的代码中。客户端具体的代码后面会在合适的时机细讲哦。
+
+**（2）webpack/hot/dev-server.js**
+
+这个文件主要是用于检查更新逻辑的，这里大家知道就好，代码后面会在合适的时机（**第5步**）细讲。
+
+ 3. 监听webpack编译结束
+
+修改好入口配置后，又调用了`setupHooks`方法。这个方法是用来注册监听事件的，监听每次`webpack`编译完成。
+
+```javascript
+// node_modules/webpack-dev-server/lib/Server.js
+// 绑定监听事件
+setupHooks() {
+ const {done} = compiler.hooks;
+ // 监听webpack的done钩子，tapable提供的监听方法
+ done.tap('webpack-dev-server', (stats) => {
+ this._sendStats(this.sockets, this.getStats(stats));
+ this._stats = stats;
+ });
+};
+```
+
+当监听到一次`webpack`编译结束，就会调用`_sendStats`方法通过`websocket`给浏览器发送通知，`ok`和`hash`事件，这样浏览器就可以拿到最新的`hash`值了，做检查更新逻辑。
+
+```reasonml
+// 通过websoket给客户端发消息
+_sendStats() {
+ this.sockWrite(sockets, 'hash', stats.hash);
+ this.sockWrite(sockets, 'ok');
+}
+```
+
+ 4. webpack监听文件变化
+
+每次修改代码，就会触发编译。说明我们还需要监听本地代码的变化，主要是通过`setupDevMiddleware`方法实现的。
+
+这个方法主要执行了`webpack-dev-middleware`库。很多人分不清`webpack-dev-middleware`和`webpack-dev-server`的区别。其实就是因为`webpack-dev-server`只负责启动服务和前置准备工作，所有文件相关的操作都抽离到`webpack-dev-middleware`库了，主要是本地文件的**编译**和**输出**以及**监听**，无非就是职责的划分更清晰了。
+
+那我们来看下`webpack-dev-middleware`源码里做了什么事:
+
+```awk
+// node_modules/webpack-dev-middleware/index.js
+compiler.watch(options.watchOptions, (err) => {
+ if (err) { /*错误处理*/ }
+});
+
+// 通过“memory-fs”库将打包后的文件写入内存
+setFs(context, compiler); 
+```
+
+（1）调用了`compiler.watch`方法，在第 1 步中也提到过，`compiler`的强大。这个方法主要就做了 2 件事：
+
+* 首先对本地文件代码进行编译打包，也就是`webpack`的一系列编译流程。
+* 其次编译结束后，开启对本地文件的监听，当文件发生变化，重新编译，编译完成之后继续监听。
+
+为什么代码的改动保存会自动编译，重新打包？这一系列的重新检测编译就归功于`compiler.watch`这个方法了。监听本地文件的变化主要是通过**文件的生成时间**是否有变化，这里就不细讲了。
+
+（2）执行`setFs`方法，这个方法主要目的就是将编译后的文件打包到内存。这就是为什么在开发的过程中，你会发现`dist`目录没有打包后的代码，因为都在内存中。原因就在于访问内存中的代码比访问文件系统中的文件更快，而且也减少了代码写入文件的开销，这一切都归功于`memory-fs`。
+
+ 5. 浏览器接收到热更新的通知
+
+我们已经可以监听到文件的变化了，当文件发生变化，就触发重新编译。同时还监听了每次编译结束的事件。当监听到一次`webpack`编译结束，`_sendStats`方法就通过`websoket`给浏览器发送通知，检查下是否需要热更新。下面重点讲的就是`_sendStats`方法中的`ok`和`hash`事件都做了什么。
+
+那浏览器是如何接收到`websocket`的消息呢？回忆下第 2 步骤增加的入口文件，也就是`websocket`客户端代码。
+
+```
+'xxx/node_modules/webpack-dev-server/client/index.js?http://localhost:8080'
+```
+
+这个文件的代码会被打包到`bundle.js`中，运行在浏览器中。来看下这个文件的核心代码吧。
+
+```js
+// webpack-dev-server/client/index.js
+const socket = require('./socket')
+const onSocketMessage = {
+  hash: function hash (_hash) {
+    // 更新currentHash值
+    status.currentHash = _hash
+  },
+  ok: function ok () {
+    sendMessage('Ok')
+    // 进行更新检查等操作
+    reloadApp(options, status)
+  }
+}
+// 连接服务地址socketUrl，?http://localhost:8080，本地服务地址
+socket(socketUrl, onSocketMessage)
+
+function reloadApp () {
+  if (hot) {
+    log.info('[WDS] App hot update...')
+
+    // hotEmitter其实就是EventEmitter的实例
+    const hotEmitter = require('webpack/hot/emitter')
+    hotEmitter.emit('webpackHotUpdate', currentHash)
+  }
+}
+```
+
+`socket`方法建立了`websocket`和服务端的连接，并注册了 2 个监听事件。
+
+* `hash`事件，更新最新一次打包后的`hash`值。
+* `ok`事件，进行热更新检查。
+
+热更新检查事件是调用`reloadApp`方法。比较奇怪的是，这个方法又利用`node.js`的`EventEmitter`，发出`webpackHotUpdate`消息。这是为什么？为什么不直接进行检查更新呢？
+
+个人理解就是为了更好的维护代码，以及职责划分的更明确。`websocket`仅仅用于客户端（浏览器）和服务端进行通信。而真正做事情的活还是交回给了`webpack`。
+
+那`webpack`怎么做的呢？再来回忆下第 2 步。入口文件还有一个文件没有讲到，就是：
+
+```
+'xxx/node_modules/webpack/hot/dev-server.js'
+```
+
+这个文件的代码同样会被打包到`bundle.js`中，运行在浏览器中。这个文件做了什么就显而易见了吧！先瞄一眼代码：
+
+```javascript
+// node_modules/webpack/hot/dev-server.js
+const check = function check () {
+  module.hot.check(true)
+    .then(function (updatedModules) {
+      // 容错，直接刷新页面
+      if (!updatedModules) {
+        window.location.reload()
+        return
+      }
+
+      // 热更新结束，打印信息
+      if (upToDate()) {
+        log('info', '[HMR] App is up to date.')
+      }
+    })
+    .catch(function (err) {
+      window.location.reload()
+    })
+}
+
+const hotEmitter = require('./emitter')
+hotEmitter.on('webpackHotUpdate', function (currentHash) {
+  lastHash = currentHash
+  check()
+})
+```
+
+这里`webpack`监听到了`webpackHotUpdate`事件，并获取最新了最新的`hash`值，然后终于进行检查更新了。检查更新呢调用的是`module.hot.check`方法。那么问题又来了，`module.hot.check`又是哪里冒出来了的！答案是`HotModuleReplacementPlugin`搞得鬼。这里留个疑问，继续往下看。
+
+ 6. HotModuleReplacementPlugin
+
+前面好像一直是`webpack-dev-server`做的事，那`HotModuleReplacementPlugin`在热更新过程中又做了什么伟大的事业呢？
+
+首先你可以对比下，配置热更新和不配置时`bundle.js`的区别。内存中看不到？直接执行`webpack`命令就可以看到生成的`bundle.js`文件啦。不要用`webpack-dev-server`启动就好了。
+
+（1）没有配置的。
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/1/16ec0c9e8fd12349~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
+（2）配置了`HotModuleReplacementPlugin`或`--hot`的。
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/1/16ec0c90092fa0ac~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
+哦~ 我们发现`moudle`新增了一个属性为`hot`，再看`hotCreateModule`方法。 这不就找到`module.hot.check`是哪里冒出来的。
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/1/16ec0dc36018973f~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
+
+经过对比打包后的文件，`__webpack_require__`中的`moudle`以及代码行数的不同。我们都可以发现`HotModuleReplacementPlugin`原来也是默默的塞了很多代码到`bundle.js`中呀。这和第 2 步骤很是相似哦！为什么，因为检查更新是在浏览器中操作呀。这些代码必须在运行时的环境。
+
+你也可以直接看浏览器`Sources`下的代码，会发现`webpack`和`plugin`偷偷加的代码都在哦。在这里调试也很方便。
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/1/16ec0d4634af2b3c~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
+`HotModuleReplacementPlugin`如何做到的？这里我就不讲了，因为这需要你对`tapable`以及`plugin`机制有一定了解，可以看下我写的文章[Webpack插件机制之Tapable-源码解析](https://juejin.cn/post/6844904004435050503)。当然你也可以选择跳过，只关心热更新机制即可，毕竟信息量太大。
+
+ 7. moudle.hot.check 开始热更新
+
+通过第 6 步，我们就可以知道`moudle.hot.check`方法是如何来的啦。那都做了什么？之后的源码都是`HotModuleReplacementPlugin`塞入到`bundle.js`中的哦，我就不写文件路径了。
+
+* 利用上一次保存的`hash`值，调用`hotDownloadManifest`发送`xxx/hash.hot-update.json`的`ajax`请求；
+* 请求结果获取热更新模块，以及下次热更新的`Hash` 标识，并进入热更新准备阶段。
+
+```abnf
+hotAvailableFilesMap = update.c; // 需要更新的文件
+hotUpdateNewHash = update.h; // 更新下次热更新hash值
+hotSetStatus("prepare"); // 进入热更新准备状态
+```
+
+* 调用`hotDownloadUpdateChunk`发送`xxx/hash.hot-update.js` 请求，通过`JSONP`方式。
+
+```javascript
+function hotDownloadUpdateChunk (chunkId) {
+  const script = document.createElement('script')
+  script.charset = 'utf-8'
+  script.src = __webpack_require__.p + '' + chunkId + '.' + hotCurrentHash + '.hot-update.js'
+  if (null) script.crossOrigin = null
+  document.head.appendChild(script)
+}
+```
+
+这个函数体为什么要单独拿出来，因为这里要解释下为什么使用`JSONP`获取最新代码？主要是因为`JSONP`获取的代码可以直接执行。为什么要直接执行？我们来回忆下`/hash.hot-update.js`的代码格式是怎么样的。
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/1/16ec04316d6ac5e3~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
+
+可以发现，新编译后的代码是在一个`webpackHotUpdate`函数体内部的。也就是要立即执行`webpackHotUpdate`这个方法。
+
+再看下`webpackHotUpdate`这个方法。
+
+```ada
+window["webpackHotUpdate"] = function (chunkId, moreModules) {
+ hotAddUpdateChunk(chunkId, moreModules);
+} ;
+```
+
+* `hotAddUpdateChunk`方法会把更新的模块`moreModules`赋值给全局全量`hotUpdate`。
+* `hotUpdateDownloaded`方法会调用`hotApply`进行代码的替换。
+
+```reasonml
+function hotAddUpdateChunk(chunkId, moreModules) {
+ // 更新的模块moreModules赋值给全局全量hotUpdate
+ for (var moduleId in moreModules) {
+ if (Object.prototype.hasOwnProperty.call(moreModules, moduleId)) {
+  hotUpdate[moduleId] = moreModules[moduleId];
+ }
+ }
+ // 调用hotApply进行模块的替换
+ hotUpdateDownloaded();
+}
+```
+
+ 8. hotApply 热更新模块替换
+
+热更新的核心逻辑就在`hotApply`方法了。 `hotApply`代码有将近 400 行，还是挑重点讲了，看哭😭
+
+ ①删除过期的模块，就是需要替换的模块
+
+通过`hotUpdate`可以找到旧模块
+
+```cpp
+var queue = outdatedModules.slice();
+while (queue.length > 0) {
+ moduleId = queue.pop();
+ // 从缓存中删除过期的模块
+ module = installedModules[moduleId];
+ // 删除过期的依赖
+ delete outdatedDependencies[moduleId];
+
+ // 存储了被删掉的模块id，便于更新代码
+ outdatedSelfAcceptedModules.push({
+ module: moduleId
+ });
+}
+```
+
+ ②将新的模块添加到 modules 中
+
+```inform7
+appliedUpdate[moduleId] = hotUpdate[moduleId];
+for (moduleId in appliedUpdate) {
+ if (Object.prototype.hasOwnProperty.call(appliedUpdate, moduleId)) {
+ modules[moduleId] = appliedUpdate[moduleId];
+ }
+}
+```
+
+ ③通过\_\_webpack\_require\_\_执行相关模块的代码
+
+```abnf
+for (i = 0; i < outdatedSelfAcceptedModules.length; i++) {
+ var item = outdatedSelfAcceptedModules[i];
+ moduleId = item.module;
+ try {
+ // 执行最新的代码
+ __webpack_require__(moduleId);
+ } catch (err) {
+ // ...容错处理
+ }
+}
+
+```
+
+`hotApply`的确比较复杂，知道大概流程就好了，这一小节，要求你对webpack打包后的文件如何执行的有一些了解，大家可以自去看下。
+
+ 总结
+
+还是以阅读源码的形式画的图，①-④的小标记，是文件发生变化的一个流程。
+
+![](https://foruda.gitee.com/images/1681014860649655814/ea9d055f_7819612.png)
+
+ 参考文档
+
+* [轻松理解webpack热更新原理](https://juejin.cn/post/6844904008432222215)
+
+* [websocket基础知识了解](https://www.ruanyifeng.com/blog/2017/05/websocket.html)
+* [tapable: Webpack插件机制之Tapable-源码解析](https://juejin.cn/post/6844904004435050503)
+
+* [Webpack Hot Module Replacement 的原理解析](https://github.com/Jocs/jocs.github.io/issues/15)
+* [看完这篇，面试再也不怕被问 Webpack 热更新](https://juejin.cn/post/6844903953092591630)
+
+* [Webpack HMR 原理解析](https://zhuanlan.zhihu.com/p/30669007)
+
+## define plugin {#p1-define-plugin}
+
+Webpack 可以通过 DefinePlugin 插件给 web 应用注入环境变量。该插件会在编译过程中替换掉代码中指定的变量，以实现在运行时替换成环境变量的值。
+
+在 webpack 的配置文件中，需要先引入该插件，然后将需要注入的环境变量通过该插件进行配置。例如：
+
+```javascript
+const webpack = require('webpack')
+
+module.exports = {
+  // 其他配置
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      },
+      API_URL: JSON.stringify('http://api.example.com')
+    })
+  ]
+}
+```
+
+上述配置中，定义了两个需要注入的变量，分别是 `process.env.NODE_ENV` 和 `API_URL`。其中，`process.env.NODE_ENV` 是一个常用的环境变量，用来标识当前是开发环境还是生产环境；`API_URL` 是一个自定义的环境变量，用来存储 API 的地址。
+
+在代码中使用这些环境变量时，只需要直接引用即可：
+
+```javascript
+if (process.env.NODE_ENV === 'production') {
+  console.log('当前为生产环境')
+}
+
+fetch(API_URL + '/users')
+  .then(response => response.json())
+  .then(data => console.log(data))
+```
+
+Webpack 在编译时会将这些变量替换成对应的值，例如：
+
+```javascript
+if ('production' === 'production') {
+  console.log('当前为生产环境')
+}
+
+fetch('http://api.example.com' + '/users')
+  .then(response => response.json())
+  .then(data => console.log(data))
+```
+
+通过这种方式，我们就可以在代码中方便地使用环境变量，同时保证了在不同环境下都能正确地使用相应的变量值。
+
+## ES6 代码转成 ES5 代码的实现思路是什么？{#p0-es6-es5}
+
+ES6 代码转成 ES5 代码的实现思路主要是通过使用 Babel 这样的工具来实现。Babel 是一个广泛使用的 JavaScript 编译器，可以将 ES6 代码转换成向后兼容的 ES5 代码，从而在现有的浏览器和环境中运行。其主要实现思路如下：
+
+1. 词法分析：Babel 首先会将输入的代码进行词法分析，将代码分割成一个个词法单元。
+
+2. 语法分析：接下来 Babel 会对分割后的词法单元进行语法分析，生成抽象语法树(AST)。
+
+3. 转换：通过对 AST 进行遍历和修改，Babel 将 ES6 代码转换成 ES5 代码。
+
+4. 代码生成：最后，Babel 会根据转换后的 AST 生成可运行的 ES5 代码。
+
+在转换过程中，Babel 会根据预定义的插件和预设对代码进行转换。插件和预设可以分别处理一些特定的语法和功能，如箭头函数、类和模块等。同时，Babel 还支持开发者自定义插件和预设来处理更加特殊和个性化的需求。

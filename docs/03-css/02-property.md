@@ -243,6 +243,7 @@ self.addEventListener('message', (e) => {
       })
       .catch((error) => {
         postMessage(`Resource fetch error: ${url}`)
+        console.error(error)
       })
   })
 })

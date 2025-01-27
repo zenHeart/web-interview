@@ -24,6 +24,28 @@
 
 ## amd、commonjs、esm 理解
 
+AMD（Asynchronous Module Definition）和CMD（Common Module Definition）都是JavaScript模块化方案。它们的主要区别在于对依赖的处理方式上不同。
+
+AMD是在require.js推广过程中诞生的，它的特点是提前执行，强调依赖前置。也就是说，在定义模块时就需要声明其所有依赖的模块。它的语法如下：
+
+```javascript
+define(['dependency1', 'dependency2'], function (dependency1, dependency2) {
+  // 模块的定义
+})
+```
+
+CMD是在Sea.js推广过程中诞生的，它和AMD非常相似，但是更加懒惰，是依赖就近，延迟执行。也就是说，在模块中需要用到依赖时，才去引入依赖。它的语法如下：
+
+```javascript
+define(function (require, exports, module) {
+  const dependency1 = require('dependency1')
+  const dependency2 = require('dependency2')
+  // 模块的定义
+})
+```
+
+简单来说，AMD是提前执行、依赖前置，CMD是延迟执行、依赖就近。两种模块化方案各有优缺点，选择哪种模块化方案需要根据实际情况和个人偏好进行考虑。
+
 ## stage0、stage1、stage2 和 stage3 分别代表什么含义？ {#p4-es}
 
 stage0、stage1、stage2 和 stage3 这些术语指的是 ECMAScript 提案的不同阶段。ECMAScript 是 JavaScript 语言的标准化规范，新的特性进入标准之前会通过几个阶段的提案。

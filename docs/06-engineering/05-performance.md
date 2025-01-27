@@ -1220,6 +1220,222 @@ perfObserver.observe({ type: 'paint', buffered: true })
 
 ## 如何统计页面的 long task {#lp1-ong-task}
 
+主线程一次只能处理一个任务（任务按照队列执行）。**当任务超过某个确定的点时，准确的说是50毫秒，就会被称为长任务(Long Task)**。当长任务在执行时，如果用户想要尝试与页面交互或者一个重要的渲染更新需要重新发生，那么浏览器会等到Long Task执行完之后，才会处理它们。结果就会导致交互和渲染的延迟
+
+所以从以上信息可以得知，如果存在Long Task，那么对于我们Load（加载时）和Runtime（运行时）的性能都有影响
+
+阻塞主线程达 50 毫秒或以上的任务会导致以下问题：
+
+* 可交互时间 延迟
+* 严重不稳定的交互行为 (轻击、单击、滚动、滚轮等) 延迟（High/variable input latency）
+* 严重不稳定的事件回调延迟（High/variable event handling latency）
+* 紊乱的动画和滚动（Janky animations and scrolling）
+
+任何连续不间断的且主 UI 线程繁忙 50 毫秒及以上的时间区间。比如以下常规场景：
+
+* 长耗时的事件回调（long running event handlers）
+* 代价高昂的回流和其他重绘（expensive reflows and other re-renders）
+* 浏览器在超过 50 毫秒的事件循环的相邻循环之间所做的工作（work the browser does between different turns of the event loop that exceeds 50 ms）
+
+ 任务管理策略
+
+软件架构中有时候会将一个任务拆分成多个函数，这不仅能增强代码可读性，也让项目更容易维护，当然这样也更容易写测试。
+
+```js
+function saveSettings () {
+  validateForm()
+  showSpinner()
+  saveToDatabase()
+  updateUI()
+  sendAnalytics()
+}
+```
+
+在上面的例子中，该函数saveSettings调用了另外5个函数，包括验证表单、展示加载的动画、发送数据到后端等。理论上讲，这是很合理的架构。如果需调试这些功能，也只需要在项目中查找每个函数即可。
+然而，这样也有问题，就是js并不是为每个方法开辟一个单独的任务，因为这些方法都包含在saveSetting这个函数中，**也就是说这五个方法在一个任务中执行**
+saveSetting这个函数调用5个函数，这个函数的执行看起来就像一个特别长的长的任务。
+
+ 如何解决 Long Tasks
+
+那解决Long Task的方式有如下几种：
+
+* 使用setTimeout分割任务
+* 使用async/await分割任务
+* isInputPending
+* 专门编排优先级的api: Scheduler.postTask()
+* 使用 web worker，处理逻辑复杂的计算
+
+ SetTimeout
+
+setTimeout本身就是个Task。假如我们给某个函数加上setTimeout，是不是就可以将某个任务分离出去，成为单独的Task了。
+延迟了回调的执行，而且使用该方法，即便是将delay时间设定成0，也是有效的。
+
+```js
+function saveSettings () {
+  // Do critical work that is user-visible:
+  validateForm()
+  showSpinner()
+  updateUI()
+
+  // Defer work that isn't user-visible to a separate task:
+  setTimeout(() => {
+    saveToDatabase()
+    sendAnalytics()
+  }, 0)
+}
+```
+
+并不是所有场景都能使用这个方法。比如，如需要在循环中处理大数据量的数据，这个任务的耗时可能就会非常长（假设有数百万的数据量）
+
+ 使用async、await来创造让步点
+
+分解任务后，按照浏览器内部的优先级别划分，其他的任务可能优先级别调整的会更高。一种让步于主线程的方式是配合用了setTimeout的promise。
+
+```js
+function yieldToMain () {
+  return new Promise(resolve => {
+    setTimeout(resolve, 0)
+  })
+}
+```
+
+在saveSettings的函数中，可以在每次await函数yieldToMain后让步于主线程：
+
+```js
+async function saveSettings () {
+  // Create an array of functions to run:
+  const tasks = [validateForm, showSpinner, saveToDatabase, updateUI, sendAnalytics]
+
+  // Loop over the tasks:
+  while (tasks.length > 0) {
+    // Shift the first task off the tasks array:
+    const task = tasks.shift()
+
+    // Run the task:
+    task()
+
+    // Yield to the main thread:
+    await yieldToMain()
+  }
+}
+```
+
+ isInputPending
+
+假如有一堆的任务，但是只想在用户交互的时候才让步，该怎么办？正好有这种api--`isInputPending`
+
+isInputPending这个函数可以在任何时候调用，它能判断用户是否要与页面元素进行交互。调用isInputPending会返回布尔值，true代表要与页面元素交互，false则不交互。
+
+比如说，任务队列中有很多任务，但是不想阻挡用户输入，使用isInputPending和自定义方法yieldToMain方法，就能够保证用户交互时的input不会延迟。
+
+```js
+async function saveSettings () {
+  // 函数队列
+  const tasks = [validateForm, showSpinner, saveToDatabase, updateUI, sendAnalytics]
+
+  while (tasks.length > 0) {
+    // 让步于用户输入
+    if (navigator.scheduling.isInputPending()) {
+      // 如果有用户输入在等待，则让步
+      await yieldToMain()
+    } else {
+      // Shift the the task out of the queue:
+      const task = tasks.shift()
+
+      // Run the task:
+      task()
+    }
+  }
+}
+```
+
+使用isInputPending配合让步的策略，能让浏览器有机会响应用户的重要交互，这在很多情况下，尤其是很多执行很多任务时，能够提高页面对用户的响应能力。
+
+另一种使用isInputPending的方式，特别是担心浏览器不支持该策略，就可以使用另一种结合时间的方式。
+
+```js
+async function saveSettings () {
+  // A task queue of functions
+  const tasks = [validateForm, showSpinner, saveToDatabase, updateUI, sendAnalytics]
+
+  let deadline = performance.now() + 50
+
+  while (tasks.length > 0) {
+    // Optional chaining operator used here helps to avoid
+    // errors in browsers that don't support `isInputPending`:
+    if (navigator.scheduling?.isInputPending() || performance.now() >= deadline) {
+      // There's a pending user input, or the
+      // deadline has been reached. Yield here:
+      await yieldToMain()
+
+      // Extend the deadline:
+      deadline += 50
+
+      // Stop the execution of the current loop and
+      // move onto the next iteration:
+      continue
+    }
+
+    // Shift the the task out of the queue:
+    const task = tasks.shift()
+
+    // Run the task:
+    task()
+  }
+}
+```
+
+ 专门编排优先级的api: Scheduler.postTask()
+
+可以参考文档： [资料](https://developer.mozilla.org/en-US/docs/Web/API/Scheduler)
+
+postTask允许更细粒度的编排任务，该方法能让浏览器编排任务的优先级，以便地优先级别的任务能够让步于主线程。目前postTask使用promise，接受优先级这个参数设定。
+
+postTask方法有三个优先级别：
+
+* `background级`，适用于优先级别最低的任务
+* `user-visible级`，适用于优先级别中等的任务，如果没有入参，也是该函数的默认参数。
+* `user-blocking级`，适用于优先级别最高的任务。
+
+拿下面的代码来举例，postTask在三处分别都是最高优先级别，其他的另外两个任务优先级别都是最低。
+
+```js
+function saveSettings () {
+  // Validate the form at high priority
+  scheduler.postTask(validateForm, { priority: 'user-blocking' })
+
+  // Show the spinner at high priority:
+  scheduler.postTask(showSpinner, { priority: 'user-blocking' })
+
+  // Update the database in the background:
+  scheduler.postTask(saveToDatabase, { priority: 'background' })
+
+  // Update the user interface at high priority:
+  scheduler.postTask(updateUI, { priority: 'user-blocking' })
+
+  // Send analytics data in the background:
+  scheduler.postTask(sendAnalytics, { priority: 'background' })
+}
+```
+
+在上面例子中，通过这些任务的优先级的编排方式，能让高浏览器级别的任务，比如用户交互等得以触发。
+
+提醒：
+postTask 并不是所有浏览器都支持。可以检测是否空，或者考虑使用polyfill。
+
+ web worker
+
+web worker是运行在Main线程之外的一个线程，叫做worker线程。我们可以把一些计算量大的任务放到worker中去处理
+
+主线程上的所有Long Task都消失了，复杂的计算都到单独的worker线程去处理了。但是workder线程仍然存在Long Task，不过没有关系，只要主线程没有Long Task，那就不影响构建、渲染了。
+
+ 参考文档
+
+* [资料](https://zhuanlan.zhihu.com/p/606276325)
+
+* [资料](https://juejin.cn/post/7159807927908302884)
+* [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/PerformanceLongTaskTiming)
+
 统计网页中的 `LongTask` 是性能监控的一部分，特别是在测量和优化页面的响应能力方面非常有用。`LongTask` API 提供了一种监测浏览器主线程被长时间任务阻塞的能力，这些任务通常会影响用户体验，如使滚动卡顿或延迟输入响应。下面是一些基本步骤，帮助你开始监控 `LongTask`：
 
 1. **使用 Performance Observer API**: 这个 API 允许你注册一个观察者来获取性能相关的数据，包括 `LongTask`。
@@ -2414,3 +2630,52 @@ Canvas 是一种基于 JavaScript 的 2D/3D 绘图技术，它允许开发者直
 4. 可以缩放和裁剪：Canvas 可以进行缩放和裁剪操作，能够适应不同的屏幕分辨率和大小，同时也可以减少不必要的绘图计算。
 
 总之，Canvas 能够更加高效地处理大量的图形和动画，适用于需要复杂绘图和动画的场景，而 HTML/CSS 更适合处理文本和静态布局，适用于构建 Web 页面。
+
+* 优势：
+
+1. 矢量图形：SVG 使用矢量图形描述，图形会根据缩放和放大而保持清晰，适用于需要无损放大的情况。
+2. 文本处理：SVG 对于文本处理较好，可以方便地添加和编辑文本。
+3. 简单图形绘制：SVG 支持直接绘制基本图形，如矩形、圆形、线条等，方便快速绘制简单图表。
+
+* 劣势：
+
+1. 复杂图形处理：当图形复杂度较高时，SVG 的性能会受到影响，特别是在处理大量数据时。
+2. 动画效果：SVG 的动画效果相对较弱，复杂的动画效果可能导致性能下降。
+
+**Canvas：**
+
+* 优势：
+
+1. 像素级控制：Canvas 提供了像素级别的控制，可以绘制复杂的图形和图表。
+2. 性能较好：Canvas 可以通过 JavaScript 直接操作像素，适用于处理大量数据和复杂图形的场景。
+3. 动画效果：Canvas 可以通过 JavaScript 控制每一帧的绘制，实现复杂的动画效果。
+
+* 劣势：
+
+1. 缩放和放大：Canvas 绘制的图形是像素级别的，当需要缩放和放大时会导致图形模糊。
+2. 文本处理：相对于 SVG，Canvas 对于文本处理较为复杂，需要手动进行字体设置和绘制。
+
+**WebGL（Web Graphics Library）：**
+
+* 优势：
+
+1. 3D 图形渲染：WebGL 可以进行硬件加速的 3D 图形渲染，适用于创建复杂的 3D 场景和效果。
+2. 性能优异：WebGL 可以充分利用 GPU 的并行计算能力，具有较好的性能表现。
+
+* 劣势：
+
+1. 学习成本高：WebGL 使用 OpenGL ES 的接口，对于开发者要求一定的图形学和计算机图形学的知识。
+2. 兼容性问题：WebGL 需要浏览器支持，并且在某些设备和浏览器上可能存在兼容性问题。
+
+综上所述，选择适合的技术取决于具体的需求，如图形复杂性、数据量大小、动画效果的需求、对文本处理的要求等。在实际开发中，也可以结合使用不同的技术来满足不同的需求。
+
+**表格对比**
+
+|特性|Canvas|SVG|
+|---|---|---|
+|图形质量|像素级别的图形，适合绘制大量复杂动态的图形|矢量图，图形不会失真，适合绘制静态图形|
+|图形渲染|快速渲染，适合处理大量图形数据|慢速渲染，适合处理小规模静态图形|
+|交互性|事件处理复杂，需要手动编写交互逻辑|事件处理简单，内置事件处理机制|
+|动画效果|动画效果需要手动实现，实现复杂动画困难|内置 SMIL 动画支持，可实现较复杂动画效果|
+|浏览器支持|除 IE8 及以下版本外，其他浏览器都支持|除 IE9 及以下版本外，其他浏览器都支持|
+|适用场景|处理大量动态图形，如游戏开发、数据可视化等|绘制简单静态图形，如图标、线条、文字等|

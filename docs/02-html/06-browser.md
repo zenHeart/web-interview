@@ -130,10 +130,10 @@ self.onconnect = function (event) {
 
 ```javascript
 // 页面1
-var sharedWorker = new SharedWorker('worker.js')
+const sharedWorker = new SharedWorker('worker.js')
 
 // 获取共享 Worker 的端口
-var port = sharedWorker.port
+const port = sharedWorker.port
 
 // 发送消息
 port.postMessage('Message from Page 1')
@@ -147,10 +147,10 @@ port.onmessage = function (event) {
 }
 
 // 页面2
-var sharedWorker = new SharedWorker('worker.js')
+// var sharedWorker = new SharedWorker('worker.js')
 
-// 获取共享 Worker 的端口
-var port = sharedWorker.port
+// // 获取共享 Worker 的端口
+// var port = sharedWorker.port
 
 // 发送消息
 port.postMessage('Message from Page 2')
@@ -460,3 +460,59 @@ downloadLink.click()
 可以读写本地文件： 使用 file system api
 
 文档请看： [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/File_System_API)
+
+## 浏览器缓存中 Memory Cache 和 Disk Cache， 有啥区别？ {#p0-disk-memory}
+
+在浏览器缓存中，Memory Cache 和 Disk Cache 是两种不同的缓存类型，它们有以下区别：
+
+1. 存储位置：Memory Cache 存储在内存中，而 Disk Cache 存储在硬盘中。
+2. 读取速度：Memory Cache 读取速度比 Disk Cache 快，因为内存访问速度比硬盘访问速度快。
+3. 存储容量：Memory Cache 存储容量比较小，一般只有几十兆，而 Disk Cache 存储容量比较大，可以有数百兆或者更多。
+4. 生命周期：Memory Cache 生命周期短暂，一般只在当前会话中有效，当会话结束或者浏览器关闭时，Memory Cache 就会被清空；而 Disk Cache 生命周期比较长，数据可以被保存很长时间，即使浏览器关闭了，下次打开还可以使用。
+
+一般来说，浏览器在请求资源时，会优先从 Memory Cache 中读取，如果没有找到再去 Disk Cache 中查找。如果两种缓存中都没有找到，则会向服务器发送请求。如果需要强制刷新缓存，可以通过清空浏览器缓存来实现。
+
+ 什么情况下资源会缓存在 Memory Cache， 什么情况下会缓存在 Disk Cache ?
+
+浏览器中的缓存是为了提高网页访问速度和减少网络流量而存在的。缓存分为 Memory Cache 和 Disk Cache 两种。
+
+Memory Cache 是浏览器内存缓存，资源会被缓存在内存中，由于内存读取速度快，所以 Memory Cache 的读取速度也较快。资源被缓存在 Memory Cache 中的情况有：
+
+1. 当前页面中通过 `<link>` 或者 `<script>` 标签引入的资源；
+2. 当前页面通过 XMLHttpRequest 或 Fetch API 请求获取到的资源。
+
+Disk Cache 是浏览器磁盘缓存，资源会被缓存在磁盘中。由于磁盘读取速度相对内存较慢，所以 Disk Cache 的读取速度也较慢。资源被缓存在 Disk Cache 中的情况有：
+
+1. 当前页面中通过 `<img>` 标签引入的资源；
+2. 当前页面中通过 `<audio>` 或 `<video>` 标签引入的资源；
+3. 当前页面中通过 `iframe` 加载的资源；
+4. 当前页面中通过 `WebSocket` 加载的资源；
+5. 通过 `Service Worker` 缓存的资源。
+
+一般来说，比较大的资源会被缓存到 Disk Cache 中，而较小的资源则会被缓存到 Memory Cache 中。如果需要手动清除缓存，可以在浏览器设置中找到相应选项进行操作。
+
+## 浏览器 和 Node 事件循环有区别吗？ {#p0-eventloop-browser-node}
+
+浏览器和Node.js事件循环在本质上是相同的，它们都是基于事件循环模型实现异步操作。但是它们的实现细节和环境限制有所不同。
+
+在浏览器中，事件循环模型基于浏览器提供的`EventTarget`接口，包括浏览器环境下的DOM、XMLHttpRequest、WebSocket、Web Worker等等，所有的异步任务都会被推入任务队列，等待事件循环系统去处理。
+
+而在Node.js中，事件循环模型则基于Node提供的`EventEmitter`接口，所有的异步任务都会被推入libuv的事件队列中，等待事件循环系统去处理。同时，Node.js还有一个特点是支持I/O操作，也就是在I/O完成之前，会把任务挂起，不会把任务加入到事件队列中，以避免事件队列阻塞。
+
+另外，浏览器中的事件循环系统是单线程的，即所有的任务都在同一个线程中运行，因此需要注意不能有耗时的操作。而Node.js则是多线程的，它可以利用异步I/O等机制来充分利用多核CPU的能力，提高并发处理能力。
+
+---------------
+
+> 2023.05.15 补充
+
+Node.js 和浏览器的 Event Loop 的差异主要体现在以下几个方面：
+
+1.实现方法不同：Node.js 的 Event Loop 实现与浏览器中的不同。Node.js 使用了 libuv 库来实现 Event Loop，而浏览器中通常使用的是浏览器引擎自带的 Event Loop。
+
+2.触发时机不同：Node.js 和浏览器中的 Event Loop 的触发时机也有所不同。浏览器的 Event Loop 在主线程上执行，当主线程空闲时会执行 Event Loop，而 Node.js 的 Event Loop 是在一个单独的线程中运行，与主线程分离。
+
+3.内置的 API 不同：Node.js 的事件机制包含一些在浏览器中没有的 API，比如 fs、http、net 等模块，这些内置的 API 让 Node.js 的 Event Loop 更加强大。
+
+4.在浏览器中，有一些 Web API 是异步的，比如 setTimeout、setInterval、XMLHTTPRequest 等，这些 Web API 在事件队列中注册了一个回调函数，然后在一定时间后由 Event Loop 触发执行。而在 Node.js 中，它们同样存在，但是它们不是 Web API 的一部分。Node.js 通过 Timers、I/O Callbacks、Immediate 和 Close Callbacks 等回调机制来执行类似的任务，这些回调函数同样会被注册到事件队列中等待执行。
+
+总之，Node.js 和浏览器中的 Event Loop 主要差异在于实现方法、触发时机和内置 API 等方面。但无论在哪种环境中，Event Loop 都是 JavaScript 异步编程的基础。

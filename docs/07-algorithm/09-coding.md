@@ -958,3 +958,56 @@ function isCyclicLinkedList (head) {
 ```
 
 这段代码与之前给出的Python代码实现相同，使用快慢指针的方法判断单向链表是否成循环链表。只需遍历链表一次，时间复杂度为O(n)，其中n是链表的节点数。
+
+## 算法题之「移动零」 {#p0-move-zero}
+
+ 题目如下
+
+```
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+示例:
+输入: [0,1,0,3,12]
+输出: [1,3,12,0,0]
+
+说明:
+必须在原数组上操作，不能拷贝额外的数组。
+尽量减少操作次数。
+```
+
+ 解法
+
+解法1：
+
+```js
+function zeroMove (array) {
+  const len = array.length
+  let j = 0
+  for (let i = 0; i < len - j; i++) {
+    if (array[i] === 0) {
+      array.push(0)
+      array.splice(i, 1)
+      i--
+      j++
+    }
+  }
+  return array
+}
+```
+
+解法2：算法思路
+
+```js
+function moveZeroToLast (arr) {
+  let index = 0
+  for (let i = 0, length = arr.length; i < length; i++) {
+    if (arr[i] === 0) {
+      index++
+    } else if (index !== 0) {
+      arr[i - index] = arr[i]
+      arr[i] = 0
+    }
+  }
+  return arr
+}
+```

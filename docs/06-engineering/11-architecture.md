@@ -529,3 +529,210 @@ SPA（单页应用）通常会使用 hash 路由的方式来实现页面的导�
 5. 无需服务端配置：使用 hash 路由，不需要对服务端进行特殊的配置。所有的路由和页面切换逻辑都由前端控制，服务器只提供一个初始页面。这样可以减轻服务器的负担，并且可以将更多的逻辑放在前端处理，提升用户体验。
 
 虽然 hash 路由有一些好处，但也有一些局限性。例如，hash 路由的 URL 不够美观，也不利于 SEO（搜索引擎优化）。为了解决这些问题，现代的 SPA 框架通常使用更先进的路由方式，例如 HTML5 的 History API，它可以在不刷新整个页面的情况下改变 URL。不过，hash 路由仍然是一个简单可靠的选择，特别适用于简单的 SPA 或需要兼容较旧浏览器的情况。
+
+## 前端动画有哪些实现方式？{#p0-animation}
+
+**JS 的实现方式**
+
+* 通过定时器(`setTimeout`, `setInterval`)来间隔改变元素样式
+* requestAnimationFrame
+
+**CSS 3**
+
+* 过度动画：transition
+* animation 动画
+
+**HTML 5**
+
+* Canvas
+* WebGL
+* svg
+
+ requestAnimationFrame
+
+`window.requestAnimationFrame()` 告诉浏览器——你希望执行一个动画，并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。 该方法需要传入一个回调函数作为参数，该回调函数会在浏览器下一次重绘之前执行。
+
+当你准备更新动画时你应该调用此方法。这将使浏览器在下一次重绘之前调用你传入给该方法的动画函数 (即你的回调函数)。回调函数执行次数通常是**每秒 60 次**，但在大多数遵循 W3C 建议的浏览器中，回调函数执行次数通常与浏览器屏幕刷新次数相匹配。
+
+回调函数会被传入 **DOMHighResTimeStamp** 参数，**DOMHighResTimeStamp**指示当前被 `requestAnimationFrame()` 排序的回调函数被触发的时间。在同一个帧中的多个回调函数，它们每一个都会接受到一个相同的时间戳，即使在计算上一个回调函数的工作负载期间已经消耗了一些时间。该时间戳是一个十进制数，单位毫秒，最小精度为 1ms(1000μs)。
+
+**使用语法**： `window.requestAnimationFrame(callback);`
+
+参数： 下一次重绘之前更新动画帧所调用的函数 (即上面所说的回调函数)。该回调函数会被传入 `DOMHighResTimeStamp` 参数，该参数与 `performance.now()` 的返回值相同，它表示 `requestAnimationFrame()` 开始去执行回调函数的时刻。
+
+使用示范：
+
+```html
+<div id="demo"
+ style="position: absolute;width: 100px;height: 100px;background-color: #ccc;left: 0;top: 0;">
+</div>
+<script>
+ var demo = document.getElementById("demo");
+ function reader() {
+ demo.style.left = parseInt(demo.style.left) + 1 + "px";// 每一帧向右移动1px
+ }
+ requestAnimationFrame(function() {
+ reader();
+
+ // 当超过300px 后才停止
+ if (parseInt(demo.style.left) > 1300) demo.style.left = 0;
+ requestAnimationFrame(arguments.callee);
+ });
+</script>
+```
+
+ transition
+
+|属性名|说明|
+|---|---|
+|transition|用于简写设置四个过渡属性，包括：transition-property, transition-duration, transition-timing-function 和 transition-delay|
+|transition-property|规定应用过渡效果的 CSS 属性的名称，多个属性用逗号分隔，如：`transition-property: width, height;`，表示在 width 和 height 发生改变时会应用过渡效果|
+|transition-duration|规定过渡效果的持续时间，如：`transition-duration: 1s;`，表示过渡效果持续时间为 1 秒|
+|transition-timing-function|规定过渡效果的时间曲线，即过渡效果的速度变化。常用的值包括：`linear`, `ease`, `ease-in`, `ease-out`, `ease-in-out`, `cubic-bezier(n,n,n,n)`|
+|transition-delay|规定过渡效果何时开始，如：`transition-delay: 1s;`，表示在 1 秒之后开始应用过渡效果|
+
+可以通过设置不同的 transition 属性，来实现各种各样的过渡效果。例如：
+
+```css
+cssCopy codediv {
+ width: 100px;
+ height: 100px;
+ background-color: red;
+ transition: width 1s ease-in-out;
+}
+
+<div:hover {
+ width: 200px;
+}
+```
+
+上述代码表示当鼠标悬停在 div 元素上时，它的宽度会从 100px 变为 200px，过渡效果会持续 1 秒，且速度曲线为缓进缓出。
+
+ animation
+
+下面是 CSS3 animation 的属性表格：
+
+|属性|描述|
+|---|---|
+|animation-name|规定需要绑定到选择器的 keyframe 名称。|
+|animation-duration|规定动画完成一个周期所花费的秒或毫秒。|
+|animation-timing-function|规定动画的速度曲线。|
+|animation-delay|规定在动画开始之前的延迟。|
+|animation-iteration-count|规定动画应该播放的次数。|
+|animation-direction|规定是否应该轮流反向播放动画。|
+|animation-fill-mode|规定当动画不播放时（当动画完成之前，或当动画被暂停时），要应用到元素的样式。|
+|animation-play-state|规定动画是否正在运行或已暂停。|
+|animation|是 animation 属性的一个简写属性，包含六个独立属性。|
+
+其中，animation-name、animation-duration、animation-timing-function 是必须要指定的属性。其他属性都是可选的。通过这些属性，我们可以实现更加灵活的动画效果。
+
+一个使用 `animation` 的例子是实现旋转动画。例如，可以创建一个带有 CSS 类名 `.rotate` 的 `div` 元素，并使用以下样式：
+
+```css
+cssCopy code.rotate {
+ animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+ from {
+ transform: rotate(0deg);
+ }
+ to {
+ transform: rotate(360deg);
+ }
+}
+```
+
+这将在 `div` 元素上应用一个旋转动画，持续时间为 2 秒，并且以线性方式无限循环。在 `@keyframes` 规则中定义了旋转动画的动画过程。在 `from` 和 `to` 关键帧中，定义了元素旋转的起始和结束状态。在 `animation` 属性中，指定了动画名称、持续时间、时间函数和动画播放次数等参数。
+
+ Canvas 实现动画
+
+Canvas 可以通过一帧帧的绘制来实现动画。具体来说，可以通过 `requestAnimationFrame` 方法在浏览器下一次重绘之前执行指定的回调函数来不断地更新 Canvas 上的内容，从而实现动画效果。
+
+以下是 Canvas 实现动画的一般流程：
+
+1. 获取 Canvas 对象和上下文对象
+
+首先，需要获取 Canvas 对象和上下文对象。
+
+```javascript
+const canvas = document.getElementById('myCanvas')
+const ctx = canvas.getContext('2d')
+```
+
+2. 设置动画帧数和初始状态
+
+为了实现动画，需要对 Canvas 进行重绘。重绘的次数由动画的帧数决定，通常设置为每秒 60 帧。
+
+同时，还需要设置 Canvas 的初始状态，包括背景颜色、形状、大小等。
+
+3. 定义动画函数
+
+动画函数中主要包含两个部分：更新状态和绘制图形。更新状态指更新 Canvas 上的图形的位置、大小、颜色等属性，绘制图形指将更新后的图形绘制到 Canvas 上。
+
+```javascript
+function animate () {
+  // 更新状态
+  // ...
+
+  // 绘制图形
+  // ...
+}
+```
+
+4. 使用 requestAnimationFrame 方法执行动画
+
+最后，可以使用 `requestAnimationFrame` 方法不断执行动画函数，从而实现动画效果。
+
+```javascript
+function animate () {
+  // 更新状态
+  // ...
+
+  // 绘制图形
+  // ...
+
+  // 递归调用 requestAnimationFrame 方法执行动画
+  requestAnimationFrame(animate)
+}
+
+// 启动动画
+requestAnimationFrame(animate)
+```
+
+在动画函数中更新状态和绘制图形后，调用 `requestAnimationFrame` 方法递归执行动画函数，从而实现不断更新和绘制的动画效果。
+
+ svg 实现动画
+
+SVG（可缩放矢量图形）是一种使用 XML 描述 2D 图形的格式，它可以使用 CSS 和 JavaScript 进行动画操作。在 SVG 中，可以使用两种技术实现动画，分别是 SMIL（Synchronized Multimedia Integration Language）和 JavaScript。
+
+下面举一个使用 JavaScript 实现 SVG 动画的例子。假设有一个圆形，当鼠标悬停在圆形上时，圆形会变为红色并且向右移动：
+
+SVG 代码：
+
+```svg
+<svg width="200" height="200">
+ <circle id="circle" cx="50" cy="50" r="20" fill="blue" />
+</svg>
+```
+
+CSS 代码：
+
+```css
+#circle {
+ transition: fill 0.3s ease;
+}
+```
+
+JavaScript 代码：
+
+```js
+const circle = document.getElementById('circle')
+
+circle.addEventListener('mouseover', function () {
+  circle.setAttribute('fill', 'red')
+  circle.setAttribute('cx', '70')
+})
+```
+
+上面的代码中，通过给圆形添加 mouseover 事件监听器，当鼠标悬停在圆形上时，修改圆形的 fill 属性为红色，并将圆心的 x 坐标改为 70。由于圆形在 CSS 中定义了过渡效果，因此圆形会平滑地变为红色并向右移动。

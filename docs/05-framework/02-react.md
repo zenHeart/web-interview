@@ -19,11 +19,10 @@
 
 在初始化阶段,会用到 `constructor()` 这个构造函数，如：
 
-```javascript
-constructor(props) {
- super(props);
-}
-
+```js
+// constructor(props) {
+//  super(props);
+// }
 ```
 
 * `super`的作用
@@ -1542,49 +1541,49 @@ ReactDOM.render(<MyComponent />, document.getElementById('root'));
 
 总的属性如下：
 
-```js
-function FiberNode(
- tag: WorkTag,
- pendingProps: mixed,
- key: null | string,
- mode: TypeOfMode,
+```ts
+function FiberNode (
+  tag: WorkTag,
+  pendingProps: mixed,
+  key: null | string,
+  mode: TypeOfMode
 ) {
- // 作为静态数据结构的属性
- this.tag = tag;
- this.key = key;
- this.elementType = null;
- this.type = null;
- this.stateNode = null;
+  // 作为静态数据结构的属性
+  this.tag = tag
+  this.key = key
+  this.elementType = null
+  this.type = null
+  this.stateNode = null
 
- // 用于连接其他Fiber节点形成Fiber树
- this.return = null;
- this.child = null;
- this.sibling = null;
- this.index = 0;
+  // 用于连接其他Fiber节点形成Fiber树
+  this.return = null
+  this.child = null
+  this.sibling = null
+  this.index = 0
 
- this.ref = null;
+  this.ref = null
 
- // 作为动态的工作单元的属性
- this.pendingProps = pendingProps;
- this.memoizedProps = null;
- this.updateQueue = null;
- this.memoizedState = null;
- this.dependencies = null;
+  // 作为动态的工作单元的属性
+  this.pendingProps = pendingProps
+  this.memoizedProps = null
+  this.updateQueue = null
+  this.memoizedState = null
+  this.dependencies = null
 
- this.mode = mode;
+  this.mode = mode
 
- this.effectTag = NoEffect;
- this.nextEffect = null;
+  this.effectTag = NoEffect
+  this.nextEffect = null
 
- this.firstEffect = null;
- this.lastEffect = null;
+  this.firstEffect = null
+  this.lastEffect = null
 
- // 调度优先级相关
- this.lanes = NoLanes;
- this.childLanes = NoLanes;
+  // 调度优先级相关
+  this.lanes = NoLanes
+  this.childLanes = NoLanes
 
- // 指向该fiber在另一次更新时对应的fiber
- this.alternate = null;
+  // 指向该fiber在另一次更新时对应的fiber
+  this.alternate = null
 }
 ```
 
@@ -2128,37 +2127,276 @@ export default withRouter(MyComponent);
 
 总结起来，通过使用 `useEffect` 钩子函数和 `props.history.listen` 方法，可以在函数组件中监听和响应路由的变化。
 
-## redux
+## redux {#p0-redux}
 
-## redux 日志记录插件
+实现 Redux 的源码主要包括以下几个步骤：
 
-1. 创建日志插件函数：
+1. 实现 createStore 函数，创建 store 对象，该函数接收一个 reducer 函数作为参数，返回一个对象。
+2. 在 createStore 函数内部，定义一个 state 变量来存储当前的状态值，定义一个 listeners 数组来存储所有的监听函数。
+3. 实现 getState 方法，返回当前的状态值。
+4. 实现 dispatch 方法，接收一个 action 对象作为参数，将当前的状态值和 action 对象传给 reducer 函数，更新状态值。然后遍历 listeners 数组，调用所有的监听函数。
+5. 实现 subscribe 方法，接收一个监听函数作为参数，将该函数添加到 listeners 数组中，以便在状态更新时调用。
+6. 实现 combineReducers 函数，将多个 reducer 函数合并成一个 reducer 函数。
+7. 在 createStore 函数内部，将传入的 reducer 函数或者合并后的 reducer 函数赋值给一个内部的 currentReducer 变量。
+8. 在 dispatch 方法内部，将 currentReducer 赋值给一个局部变量，以保证在 reducer 函数中调用 dispatch 方法时可以获取到最新的 reducer 函数。
+
+下面是代码实现：
 
 ```javascript
-const loggerMiddleware = (store) => (next) => (action) => {
-  console.log('prev state', store.getState())
-  console.log('action', action)
-  const result = next(action)
-  console.log('next state', store.getState())
-  return result
+// 实现 createStore 函数
+function createStore (reducer) {
+  let state
+  const listeners = []
+
+  function getState () {
+    return state
+  }
+
+  function dispatch (action) {
+    state = reducer(state, action)
+    for (let i = 0; i < listeners.length; i++) {
+      listeners[i]()
+    }
+  }
+
+  function subscribe (listener) {
+    listeners.push(listener)
+  }
+
+  dispatch({})
+
+  return {
+    getState,
+    dispatch,
+    subscribe
+  }
+}
+
+// 实现 combineReducers 函数
+function combineReducers (reducers) {
+  return function (state = {}, action) {
+    const nextState = {}
+    for (const key in reducers) {
+      nextState[key] = reducers[key](state[key], action)
+    }
+    return nextState
+  }
 }
 ```
 
-这个函数接收一个 Redux store 对象，返回一个中间件函数。这个中间件函数接收下一个中间件的调用函数`next`和当前的动作`action`。
-
-2. 将日志插件添加到 Redux store：
+在使用时，可以先定义 reducer 函数：
 
 ```javascript
-import { createStore, applyMiddleware } from 'redux'
-import rootReducer from './reducers'
-import loggerMiddleware from './loggerMiddleware'
+function todos (state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [
+        ...state,
+        {
+          id: action.id,
+          text: action.text,
+          completed: false
+        }
+      ]
+    case 'TOGGLE_TODO':
+      return state.map(todo =>
+        todo.id === action.id ? { ...todo, completed: !todo.completed } : todo
+      )
+    default:
+      return state
+  }
+}
 
-const store = createStore(rootReducer, applyMiddleware(loggerMiddleware))
+function visibilityFilter (state = 'SHOW_ALL', action) {
+  switch (action.type) {
+    case 'SET_VISIBILITY_FILTER':
+      return action.filter
+    default:
+      return state
+  }
+}
 ```
 
-在创建 Redux store 的时候，使用`applyMiddleware`函数将日志插件中间件添加到 store 中。
+然后将它们传入 combineReducers 函数，创建一个 reducer 函数：
 
-这样，每当有动作被派发时，日志插件就会在控制台打印出当前的状态、动作和下一个状态，从而实现记录状态变更的目的。
+```javascript
+const reducer = combineReducers({
+  todos,
+  visibilityFilter
+})
+```
+
+最后调用 createStore 函数，创建一个 store 对象：
+
+```javascript
+const store = createStore(reducer)
+```
+
+现在就可以使用 store 对象来获取状态值、派发 action、监听状态变化了。
+
+可以参考文档: [资料](https://juejin.cn/post/6844903785689546760)
+
+Redux 和 React-Redux 是两个独立的库，但它们通常一起使用，因为 Redux 库本身并不针对 React，而是一个通用的状态管理库，而 React-Redux 则是一个用于将 Redux 集成到 React 应用程序中的库。
+
+React-Redux 提供了一组 React 组件和钩子，使得在 React 应用程序中使用 Redux 变得更加容易。它提供了一个 `Provider` 组件，可以将 Redux store 注入到整个 React 应用程序中，并且可以使用 `connect` 函数将组件连接到 Redux store，使它们可以访问和修改 store 中的数据。
+
+使用 React-Redux，我们可以将 Redux 的状态管理能力与 React 的组件化能力结合起来，使得应用程序的状态可以很方便地被管理和共享，并且组件也可以方便地访问和修改应用程序的状态。
+
+ react-redux 是如何集成到 UI 的？
+
+`react-redux` 提供了两个主要的组件 `Provider` 和 `connect`，它们用于将 Redux 状态管理与 React 组件相结合。
+
+首先，使用 `Provider` 组件将 Redux store 传递给整个应用程序。可以将 `<Provider>` 组件作为最高层的组件，这样在应用程序中的所有组件中都可以访问到 Redux store。
+
+下一步，使用 `connect` 函数连接 Redux store 和组件。`connect` 函数是一个高阶函数，它接收两个参数：`mapStateToProps` 和 `mapDispatchToProps`，并返回另一个函数，这个函数接受一个组件作为参数，并返回一个增强版的组件。
+
+`mapStateToProps` 函数用于从 Redux store 中获取需要的 state 数据，并将其映射到组件的 props 上。`mapDispatchToProps` 函数用于将 action creator 映射到组件的 props 上，这样组件就可以直接调用 action creator 发起 action，而不需要手动分发 dispatch。
+
+使用 `connect` 函数生成的增强版组件可以访问到 Redux store 中的 state 和 dispatch，并将它们作为 props 传递给原始组件。在组件中，可以直接使用这些 props 来获取和更新 state，以及发起 action。当组件中的 state 或 props 发生变化时，`connect` 函数会自动更新组件，以反映最新的 state 和 props。
+
+通过这种方式，`react-redux` 让我们可以在 React 组件中使用 Redux 进行状态管理，实现了 Redux 和 React 的无缝集成。
+
+ 简单写一下更新 UI 核心代码实现
+
+react-redux 是基于 React 和 Redux 的，主要用于将 Redux 的状态管理功能集成到 React 应用程序中。它主要包括两个部分：Provider 和 connect。
+
+Provider 组件是 react-redux 的核心，它将 Redux 的 store 作为 props 传递给 React 组件，并通过 React 的上下文（Context）使得后代组件能够访问到 store。
+
+connect 函数用于连接 React 组件与 Redux store，返回一个新的组件。该函数的主要作用是在组件中提供 mapStateToProps 和 mapDispatchToProps 函数，从而使组件能够从 Redux store 中读取数据，并向 store 分发 action。
+
+下面是一个简单的实现，用于说明 react-redux 是如何集成到 UI 的：
+
+```javascript
+// Provider.js
+import React from 'react';
+import PropTypes from 'prop-types';
+
+export const StoreContext = React.createContext();
+
+export default function Provider(props) {
+ const { store, children } = props;
+ return (
+ <StoreContext.Provider value={store}>
+ {children}
+ </StoreContext.Provider>
+ );
+}
+
+Provider.propTypes = {
+ store: PropTypes.object.isRequired,
+ children: PropTypes.any,
+};
+
+// connect.js
+import React from 'react';
+import PropTypes from 'prop-types';
+import { StoreContext } from './Provider';
+
+export default function connect(mapStateToProps, mapDispatchToProps) {
+ return function wrapWithConnect(WrappedComponent) {
+ class Connect extends React.Component {
+ componentDidMount() {
+ const { store } = this.context;
+ this.unsubscribe = store.subscribe(this.handleChange.bind(this));
+ }
+
+ componentWillUnmount() {
+ this.unsubscribe();
+ }
+
+ handleChange() {
+ this.forceUpdate();
+ }
+
+ render() {
+ const { store } = this.context;
+ const props = {
+ ...this.props,
+ ...mapStateToProps(store.getState(), this.props),
+ ...mapDispatchToProps(store.dispatch, this.props),
+ };
+ return <WrappedComponent {...props} />;
+ }
+ }
+
+ Connect.contextType = StoreContext;
+ Connect.propTypes = {
+ store: PropTypes.object,
+ };
+ Connect.displayName = `Connect(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
+
+ return Connect;
+ };
+}
+```
+
+这里的 Provider 组件用于将 Redux 的 store 传递给 React 组件：
+
+```javascript
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import App from './App'
+import rootReducer from './reducers'
+
+const store = createStore(rootReducer)
+
+ReactDOM.render(
+ <Provider store={store}>
+ <App />
+ </Provider>,
+ document.getElementById('root')
+)
+```
+
+而 connect 函数用于将 React 组件连接到 Redux store：
+
+```javascript
+import React from 'react'
+import { connect } from 'react-redux'
+import { increment } from './actions'
+
+function Counter (props) {
+  const { count, increment } = props
+  return (
+ <div>
+ <p>Count: {count}</p>
+ <button onClick={() => increment()}>+</button>
+ </div>
+  )
+}
+
+const mapStateToProps = state => {
+  return {
+    count: state.count
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    increment: () => dispatch(increment())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Counter)
+```
+
+Redux 的存储过程可以简单地分为以下几个步骤：
+
+1. Action Creator 函数被调用，生成一个 Action 对象；
+2. Action 对象被传递给 Store.dispatch() 方法；
+3. Redux Store 调用 Reducer 函数，将当前的 State 和 Action 作为参数传入；
+4. Reducer 函数根据 Action 的类型，生成一个新的 State；
+5. Redux Store 将新的 State 存储下来，用于下一次的状态更新；
+6. 组件通过调用 Store.subscribe() 方法，监听 Store 中 State 的变化；
+7. 当 State 发生变化时，Store 会通知所有的订阅者，订阅者会重新渲染相应的组件。
+
+这个过程可以简单地描述为：Action -> Reducer -> Store -> View。其中，Action 是一个纯对象，它描述了发生的事件；Reducer 是一个纯函数，它接收当前的 State 和 Action，返回一个新的 State；Store 是将 Action 和 Reducer 结合起来的对象，它维护了应用程序的 State；View 则是 React 组件，它通过 Store.subscribe() 方法监听 State 的变化，根据 State 的变化重新渲染页面。
+
+Redux 的 reducer 是纯函数，它的作用是接收一个旧的状态和一个操作，返回一个新的状态，是一个纯粹的状态转换函数，因此在 reducer 中不能执行异步操作，否则会破坏 reducer 的纯函数特性。如果在 reducer 中执行异步操作，会导致 reducer 不可预测和不可重现，因为异步操作的结果是不确定的，而 reducer 必须保证在相同的输入条件下，产生相同的输出结果。同时，在 reducer 中执行异步操作可能会导致应用的状态不一致或者有延迟的问题。
+
+为了解决这个问题，Redux 提供了中间件的机制，比如 `redux-thunk`、`redux-saga` 等，可以在中间件中进行异步操作，然后再将异步操作的结果传递给 reducer 进行状态更新。这样就可以避免在 reducer 中执行异步操作，保证 reducer 的纯函数特性，同时也可以完成异步操作的需求。
 
 ## mobx
 
@@ -2723,7 +2961,42 @@ function Counter() {
 
 `useReducer`通常与`Context`一起使用可以实现不同组件间的状态共享，这在避免 prop drilling（长距离传递 prop）的同时使状态更新更为模块化。
 
-## forwardsRef 作用是啥， 有哪些使用场景？{#p2-forwardsRef}
+## forwardsRef 作用是啥， 有哪些使用场景？{#p0-forwardsRef}
+
+`forwardRef` 是 React 提供的一个高阶函数，它可以让你在函数组件中访问子组件的 ref，并把该 ref 传递给子组件。
+
+使用 `forwardRef` 的主要场景是，当你需要访问子组件的 DOM 节点或实例时，比如要操作子组件的滚动条、聚焦输入框等等。在这些场景下，需要用到 `ref`，而 `ref` 又不能直接在函数组件中使用。
+
+下面是 `forwardRef` 的基本使用方式：
+
+```jsx
+jsxCopy codeimport React, { forwardRef } from 'react';
+
+const MyComponent = forwardRef((props, ref) => {
+ return <input type="text" ref={ref} />;
+});
+
+function App() {
+ const inputRef = React.createRef();
+
+ const handleClick = () => {
+ inputRef.current.focus();
+ };
+
+ return (
+ <div>
+ <MyComponent ref={inputRef} />
+ <button onClick={handleClick}>Focus Input</button>
+ </div>
+ );
+}
+```
+
+在上面的例子中，我们创建了一个 `MyComponent` 组件，并通过 `forwardRef` 来包裹它。这样，`MyComponent` 就可以在 props 中接收一个 `ref` 属性，而 `forwardRef` 将会将该属性转发到子组件中。
+
+在 `App` 组件中，我们创建了一个 `inputRef` 对象，并将它作为 `MyComponent` 的 `ref` 属性传递给了 `MyComponent` 组件。然后，我们在 `handleClick` 函数中使用 `inputRef` 来聚焦输入框。
+
+需要注意的是，`forwardRef` 的回调函数接收两个参数：`props` 和 `ref`。其中，`props` 是组件的属性对象，`ref` 是回调函数中定义的 ref 对象。在函数组件中，我们必须将 `ref` 传递给要访问的子组件，否则 `ref` 将无法访问到子组件的 DOM 节点或实例。
 
 在 React 中，`forwardRef` 是一个用来传递 `ref` 引用给子组件的技术。通常情况下，refs 是不会透传给子组件的，因为 refs 并不是像 `props` 那样的属性。`forwardRef` 提供了一种机制，可以将 `ref` 自动地通过组件传递到它的子组件。
 
@@ -3640,7 +3913,102 @@ ChildComponent 是一个子组件，它通过 props.additionalProp 获取到了�
 
 这样，通过 React.cloneElement() 方法，我们可以给 children 添加额外的属性。
 
-## hooks 和 memorizedState 是什么关系? {#p0-hooks-memorized}
+## hooks {#p0-hooks}
+
+在探索 useEffect 原理的时候，一直被一个问题困扰：useEffect 作用和用途是什么？当然，用于函数的副作用这句话谁都会讲。举个例子吧：
+
+```tsx
+function App () {
+  const [num, setNum] = useState(0)
+
+  useEffect(() => {
+    // 模拟异步请求后端数据
+    setTimeout(() => {
+      setNum(num + 1)
+    }, 1000)
+  }, [])
+
+  return <div>{!num ? '请求后端数据...' : `后端数据是 ${num}`}</div>
+}
+```
+
+这段代码，虽然这样组织可读性更高，毕竟可以将这个请求理解为函数的副作用。**但这并不是必要的**。完全可以不使用`useEffect`，直接使用`setTimeout`，并且它的回调函数中更新函数组件的 state。
+
+在 useEffect 的第二个参数中，我们可以指定一个数组，如果下次渲染时，数组中的元素没变，那么就不会触发这个副作用（可以类比 Class 类的关于 nextprops 和 prevProps 的生命周期）。好处显然易见，**相比于直接裸写在函数组件顶层，useEffect 能根据需要，避免多余的 render**。
+
+下面是一个不包括销毁副作用功能的 useEffect 的 TypeScript 实现：
+
+```tsx
+// 还是利用 Array + Cursor的思路
+const allDeps: any[][] = []
+let effectCursor = 0
+
+function useEffect (callback: () => void, deps: any[]) {
+  if (!allDeps[effectCursor]) {
+    // 初次渲染：赋值 + 调用回调函数
+    allDeps[effectCursor] = deps
+    ++effectCursor
+    callback()
+    return
+  }
+
+  const currenEffectCursor = effectCursor
+  const rawDeps = allDeps[currenEffectCursor]
+  // 检测依赖项是否发生变化，发生变化需要重新render
+  const isChanged = rawDeps.some(
+    (dep: any, index: number) => dep !== deps[index]
+  )
+  if (isChanged) {
+    callback()
+    allDeps[effectCursor] = deps // 感谢 juejin@carlzzz 的指正
+  }
+  ++effectCursor
+}
+
+function render () {
+  ReactDOM.render(<App />, document.getElementById('root'))
+  effectCursor = 0 // 注意将 effectCursor 重置为0
+}
+```
+
+对于 useEffect 的实现，配合下面案例的使用会更容易理解。当然，你也可以在这个 useEffect 中发起异步请求，并在接受数据后，调用 state 的更新函数，不会发生爆栈的情况。
+
+```tsx
+function App () {
+  const [num, setNum] = useState < number > 0
+  const [num2] = useState < number > 1
+
+  // 多次触发
+  // 每次点击按钮，都会触发 setNum 函数
+  // 副作用检测到 num 变化，会自动调用回调函数
+  useEffect(() => {
+    console.log('num update: ', num)
+  }, [num])
+
+  // 仅第一次触发
+  // 只会在compoentDidMount时，触发一次
+  // 副作用函数不会多次执行
+  useEffect(() => {
+    console.log('num2 update: ', num2)
+  }, [num2])
+
+  return (
+ <div>
+ <div>num: {num}</div>
+ <div>
+ <button onClick={() => setNum(num + 1)}>加 1</button>
+ <button onClick={() => setNum(num - 1)}>减 1</button>
+ </div>
+ </div>
+  )
+}
+```
+
+useEffect 第一个回调函数可以返回一个用于销毁副作用的函数，相当于 Class 组件的 unmount 生命周期。这里为了方便说明，没有进行实现。
+
+参考文档：
+
+* [资料](https://juejin.cn/post/6844903975838285838)
 
 * useState
 * useEffect
@@ -3668,12 +4036,11 @@ ChildComponent 是一个子组件，它通过 props.additionalProp 获取到了�
 
 `useSyncExternalStore`:是一个推荐用于**读取和订阅外部数据源**的 `hook`，其方式与选择性的 `hydration` 和时间切片等并发渲染功能兼容
 
-```javascript
+```js
 const state = useSyncExternalStore(
- subscribe,
- getSnapshot[, getServerSnapshot]
+  subscribe,
+  getSnapshot[getServerSnapshot]
 )
-
 ```
 
 * `subscribe`: 订阅函数，用于注册一个回调函数，**当存储值发生更改时被调用**。此外， `useSyncExternalStore` 会通过带有记忆性的 `getSnapshot` 来判别数据是否发生变化，如果发生变化，那么会**强制更新数据**。
@@ -3964,6 +4331,109 @@ class MyComponent extends React.Component {
 ```
 
 在上面的代码中，getInitialState 用于初始化组件的状态 count，该函数只会在组件实例化时调用一次。后续的更新不会再调用。需要注意的是，在 React 16.3 之后，getInitialState 已经不再被支持，需要使用 constructor 来初始化 state。
+
+## useState {#p0-useState}
+
+流程图如下：renderWithHooks 根据current来判断当前是首次渲染还是更新。 hooks加载时调用对应的mount函数，更新时调用对应的update函数。
+hooks生成单向链表，通过next连接，最后一个next指向null。 state hooks会生成update循环链表， effects会生成另外一个effectList循环链表。
+
+![image](https://user-images.githubusercontent.com/22188674/232322402-c4a5a5a0-feec-4bda-92b8-775cc4dfdb1a.png)
+
+ renderWithHooks
+
+react-reconciler/src/ReactFiberHooks.js
+
+```jsx
+// renderWithHooks中判断是否是首次渲染
+function renderWithHooks(current, workInProgress, Component, props, nextRenderLanes) {
+
+ //当前正在渲染的车道
+ renderLanes = nextRenderLanes
+ currentlyRenderingFiber = workInProgress;
+ //函数组件更新队列里存的effect
+ workInProgress.updateQueue = null;
+ //函数组件状态存的hooks的链表
+ workInProgress.memoizedState = null;
+ //如果有老的fiber,并且有老的hook链表
+ if (current !== null && current.memoizedState !== null) {
+ ReactCurrentDispatcher.current = HooksDispatcherOnUpdate;
+ } else {
+ ReactCurrentDispatcher.current = HooksDispatcherOnMount;
+ }
+
+//需要要函数组件执行前给ReactCurrentDispatcher.current赋值
+
+ const children = Component(props);
+ currentlyRenderingFiber = null;
+ workInProgressHook = null;
+ currentHook = null;
+ renderLanes = NoLanes;
+ return children;
+}
+```
+
+`HooksDispatcherOnMount和HooksDispatcherOnUpdate`对象分别存放hooks的挂载函数和更新函数
+
+ hooks的注册
+
+```typescript jsx
+function resolveDispatcher () {
+  return ReactCurrentDispatcher.current
+}
+
+/**
+ *
+@param {*} reducer 处理函数，用于根据老状态和动作计算新状态
+@param {*} initialArg 初始状态
+ */
+
+export function useState (initialState) {
+  const dispatcher = resolveDispatcher()
+  return dispatcher.useState(initialState)
+}
+```
+
+![image](https://user-images.githubusercontent.com/22188674/232322419-c4db85f8-f162-40b7-84a5-affc349b9b82.png)
+
+```typescript jsx
+/**
+构建新的hooks， 其主要作用是在 Fiber 树中遍历到某个组件时，
+根据该组件的类型和当前处理阶段（mount 或 update），处理该组件的 Hook 状态。
+ */
+function updateWorkInProgressHook () {
+  // 获取将要构建的新的hook的老hook
+  if (currentHook === null) {
+    const current = currentlyRenderingFiber.alternate
+    currentHook = current.memoizedState
+  } else {
+    currentHook = currentHook.next
+  }
+  // 根据老hook创建新hook
+  const newHook = {
+    memoizedState: currentHook.memoizedState,
+    queue: currentHook.queue,
+    next: null,
+    baseState: currentHook.baseState,
+    baseQueue: currentHook.baseQueue
+  }
+  if (workInProgressHook === null) {
+    currentlyRenderingFiber.memoizedState = workInProgressHook = newHook
+  } else {
+    workInProgressHook = workInProgressHook.next = newHook
+  }
+  return workInProgressHook
+}
+```
+
+ useState 实现
+
+接收一个初始状态值，返回一个数组，包含当前状态值和更新状态值的方法。可以通过调用更新方法来改变状态值，并触发组件的重新渲染
+
+参考文档
+
+* [资料](https://juejin.cn/post/6844903981836140552)
+
+* [资料](https://juejin.cn/post/7219129726078533693)
 
 ## useContext {#p0-useContext}
 
@@ -5234,10 +5704,9 @@ useEffect(() => {
 
 最后，利用React的Context进行封装，将其封装成一个组件和一个hook，使用者可以通过这个组件来进行监听，通过hook快速访问数据。我将这些代码放在了同一个.tsx文件中，保证了逻辑的高内聚。
 
-```typescript jsx
-import React, { createContext, useContext, useEffect, useRef } from "react";
-import { Location, useLocation } from "react-router-dom";
-
+```tsx
+import React, { createContext, useContext, useEffect, useRef } from 'react'
+import { Location, useLocation } from 'react-router-dom'
 
 type LocationTrans = {
  from: Location;
@@ -5245,31 +5714,31 @@ type LocationTrans = {
 };
 
 export const LocationContext =
- createContext<React.MutableRefObject<LocationTrans>>(null);
+ createContext<React.MutableRefObject<LocationTrans>>(null)
 
-export function WithLocationListener(props: { children: React.ReactNode }) {
- const location = useLocation();
+export function WithLocationListener (props: { children: React.ReactNode }) {
+  const location = useLocation()
 
- const locationState = useRef<LocationTrans>({
- from: null,
- to: null,
- });
+  const locationState = useRef<LocationTrans>({
+    from: null,
+    to: null
+  })
 
- useEffect(() => {
- locationState.current.from = locationState.current.to;
- locationState.current.to = location;
- }, [location]);
+  useEffect(() => {
+    locationState.current.from = locationState.current.to
+    locationState.current.to = location
+  }, [location])
 
- return (
+  return (
  <LocationContext.Provider value={locationState}>
  {props.children}
  </LocationContext.Provider>
- );
+  )
 }
 
-export function useLocationConsumer(): LocationTrans {
- const ref = useContext(LocationContext);
- return ref.current;
+export function useLocationConsumer (): LocationTrans {
+  const ref = useContext(LocationContext)
+  return ref.current
 }
 ```
 
@@ -5277,15 +5746,15 @@ export function useLocationConsumer(): LocationTrans {
 
 这个组件只能在RouterProvider的子组件中使用，因为useLocation只能在这个范围内使用。
 
-```typescript jsx
-//import ....
+```tsx
+// import ....
 
-function Layout() {
- return (
+function Layout () {
+  return (
  <WithLocationListener>
  {/* ..... */}
  </WithLocationListener>
- );
+  )
 }
 ```
 
@@ -5374,3 +5843,938 @@ function TextInputWithFocusButton() {
 也可以使用`current.focus()`来做`input`聚焦。
 
 > 这里要注意的是，子组件`TextInput`中的`useRef`对象，只是用来获取`input`元素的，大家不要和父组件的`useRef`混淆了。
+
+## React 18 的新特性有哪些 {#react-18}
+
+批量处理是指 React 将多个状态更新分组到一个重新渲染中，以获得更好的性能。如果没有自动批量处理，我们只对 React 事件处理程序中的更新进行批量处理。默认情况下，React 不会对
+Promise、setTimeout、原生事件处理程序或任何其它事件中的更新进行批量处理。有了自动批量处理，这些更新将被自动的批量处理。
+
+```typescript jsx
+// 之前：只对 React 事件执行批量处理
+setTimeout(() => {
+  setCount(c => c + 1)
+  setFlag(f => !f)
+  // React 将渲染两次，每次状态更新一次（无批量处理）
+}, 1000)
+
+// 之后：超时、Promises、本机事件处理程序
+// 或任何其他事件内的更新是批处理的。
+
+setTimeout(() => {
+  setCount(c => c + 1)
+  setFlag(f => !f)
+  // React 只会在最终重新渲染一次（这就是批量处理！）
+}, 1000)
+```
+
+ 新功能：过渡
+
+过渡是 React 中的一个新概念，用以区分紧急和非紧急更新。
+
+* 紧急更新 反映了直接的交互，如输入、点击、按压等。
+* 过渡更新 将 UI 从一个视图过渡到另一个。
+
+像输入、点击或按压这样的紧急更新，需要立即响应，以符合我们对物理对象行为方式的直觉。否则他们就会感到“不对劲儿”。然而，过渡是不同的，因为用户并不期望在屏幕上看到每个中间值。
+
+例如，当你在一个下拉菜单中选择一个过滤器时，你希望过滤器按钮本身在你点击时能立即做出反应。然而，实际结果可能会单独过渡。一个小的延迟将是难以察觉的，而且往往是预期的。并且，如果你在结果渲染完成之前再次改变过滤器，你只关心看到最新的结果。
+
+通常情况下，为了获得最佳的用户体验，一个用户输入应该同时导致一个紧急更新和一个非紧急更新。你可以在输入事件中使用 startTransition API 来告知 React 哪些是紧急更新，哪些是“过渡”：
+
+```typescript jsx
+import { startTransition } from 'react'
+
+// 紧急：显示输入的内容
+setInputValue(input)
+
+// 将内部的任何状态更新都标记为过渡
+startTransition(() => {
+  // 过渡：显示结果
+  setSearchQuery(input)
+})
+```
+
+被 startTransition 包裹的更新被当作非紧急事件处理，如有更紧急更新，如点击或按键，则会被中断。如果一个过渡被用户中断（例如，连续输入多个字符），React 会丢弃未完成的无效的渲染，而只渲染最新的更新。
+
+* useTransition：一个启动过渡的 Hook，包括一个值以跟踪待定状态。
+* startTransition：当 Hook 不能使用时，一个启动过渡的方法。
+
+过渡将选择并发渲染，这允许更新被中断。如果内容重新挂起，过渡也会告诉 React 继续显示当前内容，同时在后台渲染过渡内容。
+
+ 新的 Suspense 特性
+
+如果组件树的某一部分还没有准备好被显示，Suspense 可以让你声明式地指定加载状态：
+
+```typescript jsx
+<Suspense fallback={<Spinner />}>
+ <Comments />
+</Suspense>
+```
+
+Suspense 使“UI 加载状态”成为 React 编程模型中的第一类声明式概念。这让我们可以在它上面建立更高层次的功能。
+
+几年前，我们推出了一个有限的 Suspense 版本。然而，唯一支持的用例是用 React.lazy 拆分代码，且在服务端渲染时根本不支持。
+
+在 React 18 中，我们增加了对服务端的 Suspense 支持，并使用并发渲染特性扩展了其功能。
+
+React 18 中的 Suspense 在与过渡 API 结合时效果最好。如果你在过渡期间挂起，React 将防止已经可见的内容被回退取代。相反，React 会延迟渲染，直到有足够的数据加载，以防止出现糟糕的加载状态。
+
+ 新的客户端、服务端渲染 API
+
+在这个版本中，我们借此机会重新设计了我们为在客户端和服务端渲染所暴露的 API。这些更改允许用户在升级到 React 18 中的新 API 时继续使用 React 17 模式下的旧 API。
+
+**React DOM Client**
+
+这些新的 API 现在从 react-dom/client 导出：
+
+* createRoot：新的创建根的方法，以进行 render 或 unmount。使用它替代 ReactDOM.render。没有它，React 18 的新功能就不能工作。
+* hydrateRoot：新的方法用以创建服务端渲染应用。使用它替代 ReactDOM.hydrate 与新的 React DOM 服务端 API 一起使用。没有它，React 18 的新功能就不能工作。
+
+createRoot 和 hydrateRoot 都接受一个新的选项，叫做 onRecoverableError，以防你想在 React render 或 hydrate 从错误恢复时得到通知，以便记录。默认情况下，React会使用
+reportError，或在较旧的浏览器中使用 console.error。
+
+**React DOM Server**
+
+这些新的 API 现在从 react-dom/server 导出，并且完全支持服务端的流式 Suspense：
+
+* renderToPipeableStream：用于 Node 环境下的 Stream。
+* renderToReadableStream：用于现代边缘运行环境，如 Deno 和 Cloudflare workers。
+
+现有的 renderToString 方法仍然可用，但不鼓励使用。
+
+ 新的严格模式行为
+
+在未来，我们希望增加一个功能，允许 React 在保留状态的同时增加和删除部分的 UI。例如，当用户从一个屏幕切出并切回时，React 应该能够立即显示之前的屏幕。要做到这一点，React 将使用与之前相同的组件状态来卸载和重新装载树。
+
+这个功能将给 React 应用带来更好的开箱即用的性能，但需要组件对 effect 被多次装载和销毁具有弹性。大多数 effect 会正常工作而无需任何更改，但有些 effect 假设它们只被装载或销毁一次。
+
+为了帮助浮现这些问题，React 18 为严格模式引入了一个新的仅用于开发的检查。每当组件第一次装载时，此检查将自动卸载并重新装载每个组件，并在第二次装载时恢复先前的状态。
+
+在这个变化之前，React 会装载组件并创建 effect：
+
+```
+* React 装载组件
+layout effect 创建
+effect 创建
+```
+
+在 React 18 的严格模式下，React 会在开发模式下模拟卸载和重新装载组件：
+
+```
+* React 装载组件
+layout effect 创建
+effect 创建
+* React 模拟卸载组件
+layout effect 销毁
+effect 销毁
+* React 模拟装载组件（使用之前的状态）
+layout effect 创建
+effect 创建
+```
+
+ 新的 Hook
+
+**useId**
+
+useId 是一个新的 Hook，用于在客户端和服务端上生成唯一 ID，避免 hydrate 不匹配。它主要用于组件库，这些库集成了需要唯一 ID 的可访问性 API。这解决了 React 17 及更低版本中已经存在的问题，但在 React
+18 中更为重要，因为新的流式服务端渲染器对 HTML 的无序交付方式。
+
+**useTransition**
+
+useTransition 和 startTransition 让你把一些状态更新标记为不紧急。其他状态更新在默认情况下被认为是紧急的。React
+将允许紧急的状态更新（例如，更新一个文本输入）中断非紧急的状态更新（例如，渲染一个搜索结果列表）。
+
+**useDeferredValue**
+
+useDeferredValue 让你推迟重新渲染树的非紧急部分。它类似于 debounce，但与之相比有一些优势。它没有固定的时间延迟，React 会在第一次渲染反映在屏幕后立即尝试延迟渲染。延迟渲染是可中断的，它不会阻塞用户输入。
+
+**useSyncExternalStore**
+
+useSyncExternalStore 是一个新的 Hook，它允许外部存储支持并发读取，通过强制更新到 store 以同步。在实现对外部数据源的订阅时，它消除了对 useEffect 的需求，并被推荐给任何与 React
+外部状态集成的库。
+
+**useInsertionEffect**
+
+useInsertionEffect 是一个新的 Hook ，允许 CSS-in-JS 库解决在渲染中注入样式的性能问题。除非你已经建立了一个 CSS-in-JS 库，否则我们不希望你使用它。这个 Hook 将在 DOM 被变更后运行，但在
+layout effect 读取新布局之前。这解决了一个在 React 17 及以下版本中已经存在的问题，但在 React 18 中更加重要，因为 React 在并发渲染时向浏览器让步，给它一个重新计算布局的机会。
+
+ Concurrent Mode（并发模式）
+
+Concurrent Mode（以下简称 CM）翻译叫并发模式，这个概念我们或许已经听过很多次了，实际上，在去年这个概念已经很成熟了，在 React 17 中就可以通过一些试验性的api开启 CM。
+
+并发模式可帮助应用保持响应，并根据用户的设备性能和网速进行适当的调整，该模式通过使渲染可中断来修复阻塞渲染限制。在 Concurrent 模式中，React 可以同时更新多个状态。
+
+说的太复杂可能有点拗口，总结一句话就是：**React 17 和 React 18 的区别就是：从同步不可中断更新变成了异步可中断更新。**
+
+为了更好的管理root节点，React 18 引入了一个新的 root API，新的 root API 还支持 new concurrent renderer（并发模式的渲染），它允许你进入concurrent mode（并发模式）。
+
+```jsx
+// React 17
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+const root = document.getElementById('root')
+!;
+
+ReactDOM.render(<App />, root);
+
+// React 18
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = document.getElementById('root')
+!;
+
+ReactDOM.createRoot(root).render(<App />);
+```
+
+在 React 18 中，提供了新的 root api，我们只需要把 render 升级成 `createRoot(root).render(<App />)` 就可以开启并发模式了。
+
+那么这个时候，可能有同学会提问：开启并发模式就是开启了并发更新么？
+
+NO！ 在 React 17 中一些实验性功能里面，开启并发模式就是开启了并发更新，但是在 React 18 正式版发布后，由于官方策略调整，React 不再依赖并发模式开启并发更新了。
+
+换句话说：**开启了并发模式，并不一定开启了并发更新！**
+
+一句话总结：**在 18 中，不再有多种模式，而是以是否使用并发特性作为是否开启并发更新的依据。**
+
+可以从架构角度来概括下，当前一共有两种架构：
+
+* 采用不可中断的递归方式更新的 `Stack Reconciler`（老架构）
+* 采用可中断的遍历方式更新的 `Fiber Reconciler`（新架构）
+
+新架构可以选择是否开启并发更新，所以当前市面上所有 React 版本有四种情况：
+
+* 老架构（v15及之前版本）
+* 新架构，未开启并发更新，与情况1行为一致（v16、v17 默认属于这种情况）
+* 新架构，未开启并发更新，但是启用了并发模式和一些新功能（比如 Automatic Batching，v18 默认属于这种情况）
+* 新架构，开启并发模式，开启并发更新
+
+**并发特性指开启并发模式后才能使用的特性**，比如：
+
+* useDeferredValue
+* useTransition
+
+![1](https://foruda.gitee.com/images/1682007325938364918/c6174e9f_7819612.png)
+
+ startTransition 并发特性举例
+
+这个新的 API 可以通过将特定更新标记为“过渡”来显著改善用户交互，简单来说，就是被 startTransition 回调包裹的 setState 触发的渲染被标记为不紧急渲染，这些渲染可能被其他紧急渲染所抢占。
+
+```tsx
+import React, { useState, useEffect, useTransition } from 'react'
+
+const App: React.FC = () => {
+  const [list, setList] = useState<any[]>([])
+  const [isPending, startTransition] = useTransition()
+  useEffect(() => {
+    // 使用了并发特性，开启并发更新
+    startTransition(() => {
+      setList(new Array(10000).fill(null))
+    })
+  }, [])
+  return (
+ <>
+ {list.map((_, i) => (
+ <div key={i}>{i}</div>
+ ))}
+ </>
+  )
+}
+
+export default App
+```
+
+ useDeferredValue 并发特性举例
+
+从介绍上来看 useDeferredValue 与 useTransition 是否感觉很相似呢？
+
+相同：useDeferredValue 本质上和内部实现与 useTransition 一样，都是标记成了延迟更新任务。 不同：useTransition 是把更新任务变成了延迟更新任务，而 useDeferredValue
+是产生一个新的值，这个值作为延时状态。（一个用来包装方法，一个用来包装值）
+
+所以，上面 startTransition 的例子，我们也可以用 useDeferredValue 来实现：
+
+```jsx
+import React, { useState, useEffect, useDeferredValue } from 'react';
+
+const App: React.FC = () => {
+ const [list, setList] = useState < any[] > ([]);
+ useEffect(() => {
+ setList(new Array(10000).fill(null));
+ }, []);
+ // 使用了并发特性，开启并发更新
+ const deferredList = useDeferredValue(list);
+ return (
+ <>
+ {deferredList.map((_, i) => (
+ <div key={i}>{i}</div>
+ ))}
+ </>
+ );
+};
+
+export default App;
+```
+
+此时我们的任务被拆分到每一帧不同的 task 中，JS脚本执行时间大体在5ms左右，这样浏览器就有剩余时间执行样式布局和样式绘制，减少掉帧的可能性。
+
+ setState 自动批处理
+
+React 18 通过在默认情况下执行批处理来实现了开箱即用的性能改进。
+
+批处理是指为了获得更好的性能，在数据层，将多个状态更新批量处理，合并成一次更新（在视图层，将多个渲染合并成一次渲染）。
+
+ 在 React 18 之前：有一些情况下并不会合并更新
+
+在React 18 之前，我们只在 React 事件处理函数 中进行批处理更新。默认情况下，在 `promise、setTimeout、原生事件处理函数中`、或任`何其它事件内`的更新都不会进行批处理：
+
+**情况一：React 事件处理函数**
+
+下面的代码就会批量处理，只会渲染一次页面
+
+```typescript jsx
+import React, { useState } from 'react';
+
+// React 18 之前
+const App: React.FC = () => {
+ console.log('App组件渲染了！');
+ const [count1, setCount1] = useState(0);
+ const [count2, setCount2] = useState(0);
+ return (
+ <button
+ onClick={() => {
+ setCount1(count => count + 1);
+ setCount2(count => count + 1);
+ // 在React事件中被批处理
+ }}
+ >
+ {`count1 is ${count1}, count2 is ${count2}`}
+ </button>
+ );
+};
+
+export default App;
+```
+
+**情况二：setTimeout**
+
+如果我们把状态的更新放在`promise`或者`setTimeout`里面， 组件都会渲染两次，不会进行批量更新。
+
+```typescript jsx
+import React, { useState } from 'react';
+
+// React 18 之前
+const App: React.FC = () => {
+ console.log('App组件渲染了！');
+ const [count1, setCount1] = useState(0);
+ const [count2, setCount2] = useState(0);
+ return (
+ <div
+ onClick={() => {
+ setTimeout(() => {
+ setCount1(count => count + 1);
+ setCount2(count => count + 1);
+ });
+ // 在 setTimeout 中不会进行批处理
+ }}
+ >
+ <div>count1： {count1}</div>
+ <div>count2： {count2}</div>
+ </div>
+ );
+};
+
+export default App;
+```
+
+**情况三：原生js事件**
+
+在原生js事件中，结果跟情况二是一样的，每次点击更新两个状态，组件都会渲染两次，不会进行批量更新。
+
+```tsx
+import React, { useEffect, useState } from 'react'
+
+// React 18 之前
+const App: React.FC = () => {
+  console.log('App组件渲染了！')
+  const [count1, setCount1] = useState(0)
+  const [count2, setCount2] = useState(0)
+  useEffect(() => {
+    document.body.addEventListener('click', () => {
+      setCount1(count => count + 1)
+      setCount2(count => count + 1)
+    })
+    // 在原生js事件中不会进行批处理
+  }, [])
+  return (
+ <>
+ <div>count1： {count1}</div>
+ <div>count2： {count2}</div>
+ </>
+  )
+}
+
+export default App
+```
+
+ 在 React 18 中: 合并更新
+
+在 React 18 上面的三个例子只会有一次 render，因为所有的更新都将自动批处理。这样无疑是很好的提高了应用的整体性能。
+
+不过以下例子会在 React 18 中执行两次 render：
+
+```tsx
+import React, { useState } from 'react'
+
+// React 18
+const App: React.FC = () => {
+  console.log('App组件渲染了！')
+  const [count1, setCount1] = useState(0)
+  const [count2, setCount2] = useState(0)
+  return (
+ <div
+ onClick={async () => {
+   await setCount1(count => count + 1)
+   setCount2(count => count + 1)
+ }}
+ >
+ <div>count1： {count1}</div>
+ <div>count2： {count2}</div>
+ </div>
+  )
+}
+
+export default App
+```
+
+总结：
+
+* 在 18 之前，只有在react事件处理函数中，才会自动执行批处理，其它情况会多次更新
+* 在 18 之后，任何情况都会自动执行批处理，多次更新始终合并为一次
+
+ flushSync
+
+批处理是一个破坏性改动，如果你想退出批量更新，你可以使用 flushSync：
+
+```tsx
+import React, { useState } from 'react'
+import { flushSync } from 'react-dom'
+
+const App: React.FC = () => {
+  const [count1, setCount1] = useState(0)
+  const [count2, setCount2] = useState(0)
+  return (
+ <div
+ onClick={() => {
+   flushSync(() => {
+     setCount1(count => count + 1)
+   })
+   // 第一次更新
+   flushSync(() => {
+     setCount2(count => count + 1)
+   })
+ // 第二次更新
+ }}
+ >
+ <div>count1： {count1}</div>
+ <div>count2： {count2}</div>
+ </div>
+  )
+}
+
+export default App
+```
+
+ 其他
+
+ Suspense 不再需要 fallback 来捕获
+
+空的 fallback 属性的处理方式做了改变：不再跳过 缺失值 或 值为null 的 fallback 的 Suspense 边界。
+
+**更新前**
+
+以前，如果你的 Suspense 组件没有提供 fallback 属性，React 就会悄悄跳过它，继续向上搜索下一个边界：
+
+```jsx
+// React 17
+const App = () => {
+ return (
+ <Suspense fallback={<Loading />}>
+ <Suspense>
+ <Page />
+ </Suspense>
+ </Suspense>
+ );
+};
+
+export default App;
+```
+
+**更新后**
+
+现在，React将使用当前组件的 Suspense 作为边界，即使当前组件的 Suspense 的值为 null 或 undefined：
+
+```jsx
+// React 18
+const App = () => {
+ return (
+ <Suspense fallback={<Loading />}> 
+ <Suspense>
+ <Page />
+ </Suspense>
+ </Suspense>
+ );
+};
+
+export default App;
+```
+
+ 关于 React 组件的返回值
+
+* 在 React 17 中，如果你需要返回一个空组件，React只允许返回null。如果你显式的返回了 undefined，控制台则会在运行时抛出一个错误。
+* 在 React 18 中，不再检查因返回 undefined 而导致崩溃。既能返回 null，也能返回 undefined（但是 React 18 的dts文件还是会检查，只允许返回 null，你可以忽略这个类型错误）。
+
+ 结论
+
+* 并发更新的意义就是交替执行不同的任务，当预留的时间不够用时，React 将线程控制权交还给浏览器，等待下一帧时间到来，然后继续被中断的工作
+* 并发模式是实现并发更新的基本前提
+* 时间切片是实现并发更新的具体手段
+
+ 参考文档
+
+* [资料](https://zh-hans.legacy.reactjs.org/blog/2022/03/29/react-v18.html)
+* [资料](https://juejin.cn/post/7094037148088664078)
+* [资料](https://juejin.cn/post/7027995169211285512)
+
+## 父组件调用子组件的方法 {#p1-parent-call-children}
+
+在React中，我们经常在子组件中调用父组件的方法，一般用props回调即可。但是有时候也需要在父组件中调用子组件的方法，通过这种方法实现高内聚。有多种方法，请按需服用。
+
+ 类组件中
+
+ React.createRef()
+
+* 优点：通俗易懂，用ref指向。
+
+* 缺点：使用了HOC的子组件不可用，无法指向真是子组件
+
+ 比如一些常用的写法，mobx的@observer包裹的子组件就不适用此方法。
+
+```jsx
+import React, { Component } from 'react'
+
+class Sub extends Component {
+  callback () {
+    console.log('执行回调')
+  }
+
+  render () {
+    return <div>子组件</div>
+  }
+}
+
+class Super extends Component {
+  constructor (props) {
+    super(props)
+    this.sub = React.createRef()
+  }
+
+  handleOnClick () {
+    this.sub.callback()
+  }
+
+  render () {
+    return (
+ <div>
+ <Sub ref={this.sub}></Sub>
+ </div>
+    )
+  }
+}
+```
+
+ ref的函数式声明
+
+* 优点：ref写法简洁
+* 缺点：使用了HOC的子组件不可用，无法指向真是子组件（同上）
+
+使用方法和上述的一样，就是定义ref的方式不同。
+
+```csharp
+...
+
+<Sub ref={ref => this.sub = ref}></Sub>
+
+...
+
+
+```
+
+ 使用props自定义onRef属性
+
+* 优点：假如子组件是嵌套了HOC，也可以指向真实子组件。
+* 缺点：需要自定义props属性
+
+```tsx
+import React, { Component } from 'react'
+import { observer } from 'mobx-react'
+
+@observer
+class Sub extends Component {
+  componentDidMount () {
+    // 将子组件指向父组件的变量
+    this.props.onRef && this.props.onRef(this)
+  }
+
+  callback () {
+    console.log('执行我')
+  }
+
+  render () {
+    return (<div>子组件</div>)
+  }
+}
+
+class Super extends Component {
+  handleOnClick () {
+    // 可以调用子组件方法
+    this.Sub.callback()
+  }
+
+  render () {
+    return (
+ <div>
+   <div onClick={this.handleOnClick}>click</div>
+   {/* eslint-disable-next-line */}
+   <Sub onRef={ node => this.Sub = node }></Sub>
+    </div>)
+  }
+}
+```
+
+ 函数组件、Hook组件
+
+ useImperativeHandle
+
+* 优点： 1、写法简单易懂 2、假如子组件嵌套了HOC，也可以指向真实子组件
+* 缺点： 1、需要自定义props属性 2、需要自定义暴露的方法
+
+```javascript
+import React, { useImperativeHandle } from 'react'
+import { observer } from 'mobx-react'
+
+const Parent = () => {
+  const ChildRef = React.createRef()
+
+  function handleOnClick () {
+    ChildRef.current.func()
+  }
+
+  return (
+ <div>
+ <button onClick={handleOnClick}>click</button>
+ <Child onRef={ChildRef} />
+ </div>
+  )
+}
+
+const Child = observer(props => {
+  // 用useImperativeHandle暴露一些外部ref能访问的属性
+  useImperativeHandle(props.onRef, () => {
+    // 需要将暴露的接口返回出去
+    return {
+      func
+    }
+  })
+  function func () {
+    console.log('执行我')
+  }
+  return <div>子组件</div>
+})
+
+export default Parent
+```
+
+ forwardRef
+
+使用forwardRef抛出子组件的ref
+
+这个方法其实更适合自定义HOC。但问题是，withRouter、connect、Form.create等方法并不能抛出ref，假如Child本身就需要嵌套这些方法，那基本就不能混着用了。forwardRef本身也是用来抛出子元素，如input等原生元素的ref的，并不适合做组件ref抛出，因为组件的使用场景太复杂了。
+
+```javascript
+import React, { useRef, useImperativeHandle } from 'react'
+import ReactDOM from 'react-dom'
+import { observer } from 'mobx-react'
+
+const FancyInput = React.forwardRef((props, ref) => {
+  const inputRef = useRef()
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus()
+    }
+  }))
+
+  return <input ref={inputRef} type="text" />
+})
+
+const Sub = observer(FancyInput)
+
+const App = props => {
+  const fancyInputRef = useRef()
+
+  return (
+ <div>
+ <FancyInput ref={fancyInputRef} />
+ <button
+ onClick={() => fancyInputRef.current.focus()}
+ >父组件调用子组件的 focus</button>
+ </div>
+  )
+}
+
+export default App
+```
+
+ 总结
+
+父组件调子组件函数有两种情况
+
+* 子组件无HOC嵌套：推荐使用ref直接调用
+* 有HOC嵌套：推荐使用自定义props的方式
+
+## 为什么不能在循环、条件或嵌套函数中调用 Hooks？{#p0-call-in-statement}
+
+如果在条件语句中使用hooks，React会抛出 error。
+
+这与React Hooks的底层设计的数据结构相关，先抛出结论：**react用链表来严格保证hooks的顺序**。
+
+一个典型的useState使用场景：
+
+```js
+const [name, setName] = useState('leo')
+
+setName('Lily')
+```
+
+那么hooks在这两条语句分别作了什么？
+
+![](https://pic.rmb.bdstatic.com/bjh/89d2fa7124b06495bbbfd4b5758bd6e5.png)
+
+上图是 `useState` 首次渲染的路径，其中，跟我们问题相关的是 `mountState` 这个过程，简而言之，这个过程初始化了一个hooks，并且将其追加到链表结尾。
+
+```tsx
+// 进入 mounState 逻辑
+
+function mountState(initialState) {
+
+ // 将新的 hook 对象追加进链表尾部
+ var hook = mountWorkInProgressHook();
+
+ // initialState 可以是一个回调，若是回调，则取回调执行后的值
+
+ if (typeof initialState === 'function') {
+
+ // $FlowFixMe: Flow doesn't like mixed types
+
+ initialState = initialState();
+ }
+
+ // 创建当前 hook 对象的更新队列，这一步主要是为了能够依序保留 dispatch
+
+ const queue = hook.queue = {
+
+ last: null,
+
+ dispatch: null,
+
+ lastRenderedReducer: basicStateReducer,
+
+ lastRenderedState: (initialState: any),
+
+ };
+
+ // 将 initialState 作为一个“记忆值”存下来
+
+ hook.memoizedState = hook.baseState = initialState;
+
+ // dispatch 是由上下文中一个叫 dispatchAction 的方法创建的，这里不必纠结这个方法具体做了什么
+
+ var dispatch = queue.dispatch = dispatchAction.bind(null, currentlyRenderingFiber$1, queue);
+
+ // 返回目标数组，dispatch 其实就是示例中常常见到的 setXXX 这个函数，想不到吧？哈哈
+
+ return [hook.memoizedState, dispatch];
+}
+```
+
+从这段源码中我们可以看出，mounState 的主要工作是初始化 Hooks。在整段源码中，最需要关注的是 `mountWorkInProgressHook` 方法，它为我们道出了 Hooks 背后的数据结构组织形式。以下是 `mountWorkInProgressHook` 方法的源码：
+
+```js
+function mountWorkInProgressHook () {
+
+  // 注意，单个 hook 是以对象的形式存在的
+  const hook = {
+
+    memoizedState: null,
+
+    baseState: null,
+
+    baseQueue: null,
+
+    queue: null,
+
+    next: null
+
+  }
+
+  if (workInProgressHook === null) {
+    // 这行代码每个 React 版本不太一样，但做的都是同一件事：将 hook 作为链表的头节点处理
+    firstWorkInProgressHook = workInProgressHook = hook
+  } else {
+    // 若链表不为空，则将 hook 追加到链表尾部
+    workInProgressHook = workInProgressHook.next = hook
+  }
+  // 返回当前的 hook
+  return workInProgressHook
+}
+```
+
+到这里可以看出，hook 相关的所有信息收敛在一个 hook 对象里，而 hook 对象之间以单向链表的形式相互串联。
+
+接着，我们来看更新过程
+
+![](https://pic.rmb.bdstatic.com/bjh/1cc5bd4c72e4f22d1aa828df3c831f2d.png)
+
+上图中，需要注意的是updateState的过程：按顺序去遍历之前构建好的链表，取出对应的数据信息进行渲染。
+
+我们把 mountState 和 updateState 做的事情放在一起来看：mountState（首次渲染）构建链表并渲染；updateState 依次遍历链表并渲染。
+
+hooks 的渲染是通过“依次遍历”来定位每个 hooks 内容的。如果前后两次读到的链表在顺序上出现差异，那么渲染的结果自然是不可控的。
+
+这个现象有点像我们构建了一个长度确定的数组，数组中的每个坑位都对应着一块确切的信息，后续每次从数组里取值的时候，只能够通过索引（也就是位置）来定位数据。也正因为如此，在许多文章里，都会直截了当地下这样的定义：Hooks 的本质就是数组。但读完这一课时的内容你就会知道，Hooks 的本质其实是链表。
+
+我们举个例子：
+
+```tsx
+ let mounted = false;
+
+if(!mounted){
+ // eslint-disable-next-line
+ const [name,setName] = useState('leo');
+ const [age,setAge] = useState(18);
+ mounted = true;
+}
+const [career,setCareer] = useState('码农');
+console.log('career',career);
+
+......
+
+<div onClick={()=>setName('Lily')}>
+ 点我点我点我
+<div>
+```
+
+点击div后，我们期望的输出是 "码农"，然而事实上(尽管会error，但是打印还是执行)打印的为 "Lily"
+
+原因是，三个useState在初始化的时候已经构建好了一个三个节点的链表结构，依次为： `name('leo') --> age(18) --> career('码农')`
+
+每个节点都已经派发了一个与之对应的update操作，因此执行setName时候，三个节点就修改为了 `name('Lily') --> age(18) --> career('码农')`
+
+然后执行update渲染操作，从链表依次取出值，此时，条件语句的不再执行，第一个取值操作会从链表的第一个，也就是name对应的hooks对象进行取值：此时取到的为 `name:Lily`
+
+必须按照顺序调用从根本上来说是因为 useState 这个钩子在设计层面并没有“状态命名”这个动作，也就是说你每生成一个新的状态，React 并不知道这个状态名字叫啥，所以需要通过顺序来索引到对应的状态值
+
+## 虚拟DOM 一定会比直接操作 真实 DOM 快吗 {#p0-vdom}
+
+大家惯有的思维模式下，我们普遍的认为，虚拟DOM一定会比原生DOM要快的多。
+
+但实际上并不是这样。
+
+**仅从React的角度来说 : React的官网可从来都没有说过虚拟DOM会比原生操作DOM更快。**
+
+虚拟DOM和原生操作DOM谁更快这个问题。如果要我来回答的话，**一定是原生DOM比虚拟DOM更快性能更好。**
+
+值得注意的是，**虚拟DOM并不是比原生DOM快，更确切的来说，虚拟DOM是比操作不当的原生DOM快**。实际上，如果对原生DOM的操作得当的话，原生DOM的性能一定优于虚拟DOM。
+
+我们来剖析一下。
+
+ 虚拟DOM为什么而存在
+
+**其最核心的思想是提升开发效率而非提升性能**
+
+使用 React/Vue 这些框架的时候，我们不需要去考虑对DOM的操作，只需要关心数据的改变。我们以前还在使用JQ的时候，数据改变之后我们需要调用`$("#id").append(node)`等操作去手动追加DOM。而在使用React/Vue之后，我们只需要关心数据的改变。至于对DOM的一系列动作，在我们的数据改变之后，React/Vue会为我们代劳。这极大程度的提升了我们的开发效率。也是React/Vue的核心思想和初衷。
+
+至于很多人都说，虚拟DOM会比操作原生DOM更快，这个说法并不全面。比如，**首次渲染或者所有节点都需要进行更新的时候。这个时候采用虚拟DOM会比直接操作原生DOM多一重构建虚拟DOM树的操作。这会更大的占用内存和延长渲染时间。**
+
+ 举个例子
+
+**首次渲染👇不采用虚拟DOM的步骤**
+
+1. 浏览器接受绘制指令
+2. 创建所有节点
+
+**首次渲染👇采用虚拟DOM的步骤**
+
+1. 浏览器接受绘制指令
+2. 创建虚拟DOM
+3. 创建所有节点
+
+不难发现，在首次渲染的时候，采用虚拟DOM会比不采用虚拟DOM要多一个**创建虚拟DOM**的步骤。
+
+> 注意:虚拟DOM的存在，并不是免费的，比对新旧虚拟DOM树的差异会带来一定的性能开销。
+
+**虚拟DOM的优势在于我们更新节点时候。它会检查哪些节点需要更新。尽量复用已有DOM，减少DOM的删除和重新创建。并且这些操作我们是可以通过自己手动操作javascript底层api实现的。只是我们手动操作会非常耗费我们的时间和精力。这个工作由虚拟DOM代劳，会让我们开发更快速便捷。**
+
+ 举个例子👇
+
+在采用虚拟DOM的前提下
+
+假设我们有节点A，下辖两个子节点B/C.
+
+然后我们删除了节点C
+
+这个时候会有两棵虚拟DOM树，
+
+一颗是修改前的，A->B/C。
+
+另一颗是修改后的A->B。
+
+`diff算法会去比对两颗树的差异`，然后发现A->B没有更改，那么A->B节点保留，C节点执行删除动作。
+
+那么，A->B两个节点的删除和创建渲染操作就被省略了。
+
+如果不采用虚拟DOM的话。使用JQ那时候的模板.
+
+我们可能会把A->B/C三个节点全部删除.
+
+再全都重新创建。而A->B是完全没有改动的。
+
+他们的删除和创建则完全不必要。
+
+ 框架的意义
+
+我们需要知道:不论是React还是Vue或者是Angular。这些框架本身，都是基于原生的基础上创造的。它们，底层依赖的还是javascript，并不是一门新的语言。在他们的底层逻辑下。我们使用框架所做出的一切行为，都会被框架转化为对原生DOM的操作。**框架，只是一个转化语法的工具。**
+
+既然原生DOM可以创造出这些框架。当然我们使用原生DOM自然是可以写出比这些框架更好的性能。
+
+但是:为什么对原生DOM进行操作的性能明明可以比使用框架更好。为什么大家都在使用框架，而没有人去直接对原生DOM进行操作。
+
+这背后涉及`成本`和`普适性`。
+
+如果我们直接去操作真实DOM,当然，我们可以做到在性能上比虚拟DOM更快。但问题是，技术水准能做到这个地步的人，又有多少人呢。不说比虚拟DOM快。即使是做到和虚拟DOM不分上下的性能，拥有这种水平的前端玩家，也是寥寥无几。**基于这样的客观情况下，框架的出现解决了这个问题。**
+
+框架存在的意义 : 在为我们提供只需要关注数据的前提下。框架本身已经做好了底层原理上的性能优化（包括但不限于,对DOM的调用,算法上的优化）已经是高度封装。这样就可以让我们使用一些简单的较为容易理解的技术去做我们原本做不到的事情。 这其实就像调用网上的第三方包，某一个功能，自己写是写不出来，写出来性能也不会很好。但是同样的功能，我们去网上引入其他大神已经封装完成的第三方包。我们就会用，功能就可以实现并且性能上也过得去。
+
+如果让大家直接对DOM进行操作完成比框架更优秀的性能。这绝不是大多数人可以做到的。让大多数可以接受，框架需要做的，就是让大多数人使用尽量使用简单的技术，完成相对困难的操作。这是`普适性`。
+
+并且，如果完成同一个性能效果，需要我们去*精通原生javascript*和*学习框架上的一些简单的API和结构*。明显后者的学习成本更低。如果说使用框架我们所能完成的某一阶段的性能所需要的学习成本是2个月的话。 那么学习javascript完成同一阶段的性能可能需要一年。
+
+框架的初衷就是让用户使用尽量简单的技术，完成相对复杂的工作并提升一定的性能 *（这其中包括但不限于:可维护性，可复用性，渲染效率等）* 。这样，即使我们的水平不是很高，使用框架以后。项目在性能上也能过得去。
+
+总结
+
+1. 虚拟DOM不一定会比操作原生DOM更快。
+2. 虚拟DOM的优势在于节点进行改动的时候尽量减少开销
+3. React从来没说过虚拟DOM会比原生更快。
+4. 框架的本质是提升开发效率，让我们的注意力更集中于数据

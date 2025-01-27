@@ -1,5 +1,431 @@
 # vue
 
+## v-for 时给每项元素绑定事件需要用事件代理吗？为什么？ {#p1-vue-for}
+
+ Vue 并没有在源码中做代理
+
+vue 并没有在源码中做代理， 至少是 2.x 是没有做事件代理的。但是理论上来说使用事件代理性能会更好一点。
+
+阅读 vue 源码的过程中，并没有发现 vue 会自动做事件代理，但是一般给 v-for 绑定事件时，都会让节点指向同一个事件处理程序（第二种情况可以运行，但是 eslint 会警告），一定程度上比每生成一个节点都绑定一个不同的事件处理程序性能好，但是监听器的数量仍不会变，所以使用事件代理会更好一点。
+
+react 是委托到 document 上, 然后自己生成了合成事件, 冒泡到 document 的时候进入合成事件, 然后他通过 getParent() 获取该事件源的所有合成事件, 触发完毕之后继续冒泡。但是一些特殊的比如focus这种必须放在input这些dom上。
+
+ 为何事件代理会让性能好一些
+
+说一下我个人理解，先说结论，可以使用
+
+事件代理作用主要是 2 个
+
+1. 将事件处理程序代理到父节点，减少内存占用率
+2. 动态生成子节点时能自动绑定事件处理程序到父节点
+
+这里我生成了十万个 span 节点，通过 performance monitor 来监控内存占用率和事件监听器的数量，对比以下 3 种情况
+
+1. 不使用事件代理，每个 span 节点绑定一个 click 事件，并指向同一个事件处理程序
+
+```html
+<div>
+ <span 
+ v-for="(item,index) of 100000" 
+ :key="index" 
+ @click="handleClick">
+ {{item}}
+ </span>
+</div>
+```
+
+2. 不使用事件代理，每个 span 节点绑定一个 click 事件，并指向不同的事件处理程序
+
+```html
+<div>
+ <span 
+ v-for="(item,index) of 100000" 
+ :key="index" 
+ @click="function () {}">
+ {{item}}
+ </span>
+</div>
+```
+
+3. 使用事件代理
+
+```html
+<div @click="handleClick">
+ <span 
+ v-for="(item,index) of 100000" 
+ :key="index">
+ {{item}}
+ </span>
+</div>
+```
+
+可以通过 chrome devtools performance monitor 查看内存使用情况
+
+可以看到使用事件代理无论是监听器数量和内存占用率都比前两者要少
+
+ 为什么 Vue 不适用事件委托
+
+首先我们需要知道事件代理主要有什么作用？
+
+1. 事件代理能够避免我们逐个的去给元素新增和删除事件
+2. 事件代理比每一个元素都绑定一个事件性能要更好
+
+从vue的角度上来看上面两点
+
+* 在v-for中，我们直接用一个for循环就能在模板中将每个元素都绑定上事件，并且当组件销毁时，vue也会自动给我们将所有的事件处理器都移除掉。所以事件代理能做到的第一点vue已经给我们做到了
+* 在v-for中，给元素绑定的都是相同的事件，所以除非上千行的元素需要加上事件，其实和使用事件代理的性能差别不大，所以也没必要用事件代理
+
+## vue3 的响应式库是独立出来的，它单独使用的时候是什么效果 {#p0-vue3-reactivity}
+
+ 该话题涉及的相关内容
+
+* 原理：Proxy、track、trigger
+* 新增属性
+* 遍历后新增
+* 遍历后删除或者清空
+* 获取 keys
+* 删除对象属性
+* 判断属性是否存在
+* 性能
+
+推荐阅读文档： [资料](https://juejin.cn/post/6844904122479542285)
+
+ 响应式仓库
+
+Vue3 不同于 Vue2 也体现在源码结构上，Vue3 把耦合性比较低的包分散在 `packages` 目录下单独发布成 `npm` 包。 这也是目前很流行的一种大型项目管理方式 `Monorepo`。
+
+其中负责响应式部分的仓库就是 `@vue/reactivity`，它不涉及 Vue 的其他的任何部分，是非常非常 「正交」 的一种实现方式。
+
+甚至可以`轻松的集成进 React` [资料](https://juejin.cn/post/6844904095594381325)
+
+ 区别
+
+Proxy 和 Object.defineProperty 的使用方法看似很相似，其实 Proxy 是在 「更高维度」 上去拦截属性的修改的，怎么理解呢？
+
+Vue2 中，对于给定的 data，如 `{ count: 1 }`，是需要根据具体的 key 也就是 `count`，去对「修改 data.count 」 和 「读取 data.count」进行拦截，也就是
+
+```javascript
+Object.defineProperty(data, 'count', {
+  get () {},
+  set () {}
+})
+```
+
+必须预先知道要拦截的 key 是什么，这也就是为什么 Vue2 里对于对象上的新增属性无能为力。
+
+而 Vue3 所使用的 Proxy，则是这样拦截的：
+
+```js
+const p = new Proxy(data, {
+  get (key) { },
+  set (key, value) { }
+})
+```
+
+可以看到，根本不需要关心具体的 key，它去拦截的是 「修改 data 上的任意 key」 和 「读取 data 上的任意 key」。
+
+所以，不管是已有的 key 还是新增的 key，都逃不过它的魔爪。
+
+但是 Proxy 更加强大的地方还在于 Proxy 除了 get 和 set，还可以拦截更多的操作符。
+
+ 简单的例子🌰
+
+先写一个 Vue3 响应式的最小案例，本文的相关案例都只会用 `reactive` 和 `effect` 这两个 api。如果你了解过 React 中的 `useEffect`，相信你会对这个概念秒懂，Vue3 的 `effect` 不过就是去掉了手动声明依赖的「进化版」的 `useEffect`。
+
+React 中手动声明 `[data.count]` 这个依赖的步骤被 Vue3 内部直接做掉了，在 `effect` 函数内部读取到 `data.count` 的时候，它就已经被收集作为依赖了。
+
+Vue3：
+
+```kotlin
+// 响应式数据
+const data = reactive({
+ count: 1
+})
+
+// 观测变化
+effect(() => console.log('count changed', data.count))
+
+// 触发 console.log('count changed', data.count) 重新执行
+data.count = 2
+
+```
+
+React：
+
+```scss
+// 数据
+const [data, setData] = useState({
+ count: 1
+})
+
+// 观测变化 需要手动声明依赖
+useEffect(() => {
+ console.log('count changed', data.count)
+}, [data.count])
+
+// 触发 console.log('count changed', data.count) 重新执行
+setData({
+ count: 2
+})
+
+```
+
+也可以把 `effect` 中的回调函数联想到视图的重新渲染、 watch 的回调函数等等…… 它们是同样基于这套响应式机制的。
+
+而本文的核心目的，就是探究这个基于 Proxy 的 reactive api，到底能强大到什么程度，能监听到用户对于什么程度的修改。
+
+ 讲讲原理
+
+先最小化的讲解一下响应式的原理，其实就是在 Proxy 第二个参数 `handler` 也就是陷阱操作符中，拦截各种取值、赋值操作，依托 `track` 和 `trigger` 两个函数进行依赖收集和派发更新。
+
+`track` 用来在读取时收集依赖。
+
+`trigger` 用来在更新时触发依赖。
+
+ track
+
+```vbnet
+function track(target: object, type: TrackOpTypes, key: unknown) {
+ const depsMap = targetMap.get(target);
+ // 收集依赖时 通过 key 建立一个 set
+ let dep = new Set()
+ targetMap.set(ITERATE_KEY, dep)
+ // 这个 effect 可以先理解为更新函数 存放在 dep 里
+ dep.add(effect)
+}
+
+```
+
+`target` 是原对象。
+
+`type` 是本次收集的类型，也就是收集依赖的时候用来标识是什么类型的操作，比如上文依赖中的类型就是 `get`，这个后续会详细讲解。
+
+`key` 是指本次访问的是数据中的哪个 key，比如上文例子中收集依赖的 key 就是 `count`
+
+首先全局会存在一个 `targetMap`，它用来建立 `数据 -> 依赖` 的映射，它是一个 WeakMap 数据结构。
+
+而 `targetMap` 通过数据 `target`，可以获取到 `depsMap`，它用来存放这个数据对应的所有响应式依赖。
+
+`depsMap` 的每一项则是一个 Set 数据结构，而这个 Set 就存放着对应 key 的更新函数。
+
+是不是有点绕？我们用一个具体的例子来举例吧。
+
+```ini
+const target = { count: 1}
+const data = reactive(target)
+
+const effection = effect(() => {
+ console.log(data.count)
+})
+
+```
+
+对于这个例子的依赖关系，
+
+1. 全局的 `targetMap` 是：
+
+```js
+targetMap: {
+ { count: 1 }: dep
+}
+
+```
+
+2. dep 则是
+
+```js
+dep: {
+ count: Set { effection }
+}
+
+```
+
+这样一层层的下去，就可以通过 `target` 找到 `count` 对应的更新函数 `effection` 了。
+
+ trigger
+
+这里是最小化的实现，仅仅为了便于理解原理，实际上要复杂很多，
+
+其实 `type` 的作用很关键，先记住，后面会详细讲。
+
+```typescript
+export function trigger (
+  target: object,
+  type: TriggerOpTypes,
+  key?: unknown
+) {
+  // 简化来说 就是通过 key 找到所有更新函数 依次执行
+  const dep = targetMap.get(target)
+  dep.get(key).forEach(effect => effect())
+}
+```
+
+vue3 的响应式库是独立出来的，它可以很方便的集成进 React， 作为 React 的状态管理库使用！
+
+ 使用示范
+
+定义 store
+
+```typescript
+// store.ts
+import { reactive, computed, effect } from '@vue/reactivity'
+
+export const state = reactive({
+  count: 0
+})
+
+const plusOne = computed(() => state.count + 1)
+
+effect(() => {
+  console.log('plusOne changed: ', plusOne)
+})
+
+const add = () => (state.count += 1)
+
+export const mutations = {
+  // mutation
+  add
+}
+
+export const store = {
+  state,
+  computed: {
+    plusOne
+  }
+}
+
+export type Store = typeof store;
+```
+
+消费使用
+
+```js
+// Index.tsx
+import { Provider, useStore } from 'rxv'
+import { mutations, store, Store } from './store.ts'
+function Count() {
+ const countState = useStore((store: Store) => {
+ const { state, computed } = store;
+ const { count } = state;
+ const { plusOne } = computed;
+
+ return {
+ count,
+ plusOne,
+ };
+ });
+
+ return (
+ <Card hoverable style={{ marginBottom: 24 }}>
+ <h1>计数器</h1>
+ <div className="chunk">
+ <div className="chunk">store中的count现在是 {countState.count}</div>
+ <div className="chunk">computed值中的plusOne现在是 {countState.plusOne.value}</div>
+ <Button onClick={mutations.add}>add</Button>
+ </div>
+ </Card>
+ );
+}
+
+export default () => {
+ return (
+ <Provider value={store}>
+ <Count />
+ </Provider>
+ );
+};
+```
+
+可以看出，store的定义只用到了@vue/reactivity，而rxv只是在组件中做了一层桥接，连通了Vue3和React，正如它名字的含义：React x Vue。
+
+ 如何实现
+
+只要effect能接入到React系统中，那么其他的api都没什么问题，因为它们只是去收集effect的依赖，去通知effect触发更新。
+
+effect接受的是一个函数，而且effect还支持通过传入schedule参数来自定义依赖更新的时候需要触发什么函数，
+
+而rxv的核心api: useStore接受的也是一个函数selector，它会让用户自己选择在组件中需要访问的数据。
+
+把selector包装在effect中执行，去收集依赖。
+
+指定依赖发生更新时，需要调用的函数是当前正在使用useStore的这个组件的forceUpdate强制渲染函数。
+
+简单的看一下核心实现
+
+share.ts
+
+```typescript
+export const useForceUpdate = () => {
+  const [, forceUpdate] = useReducer(s => s + 1, 0)
+  return forceUpdate
+}
+
+export const useEffection = (...effectArgs: Parameters<typeof effect>) => {
+  // 用一个ref存储effection
+  // effect函数只需要初始化执行一遍
+  const effectionRef = useRef<ReactiveEffect>()
+  if (!effectionRef.current) {
+    effectionRef.current = effect(...effectArgs)
+  }
+
+  // 卸载组件后取消effect
+  const stopEffect = () => {
+    stop(effectionRef.current!)
+  }
+  useEffect(() => stopEffect, [])
+
+  return effectionRef.current
+}
+```
+
+核心逻辑在此
+
+```typescript
+import React, { useContext } from 'react'
+import { useForceUpdate, useEffection } from './share'
+
+type Selector<T, S> = (store: T) => S;
+
+const StoreContext = React.createContext<any>(null)
+
+const useStoreContext = () => {
+  const contextValue = useContext(StoreContext)
+  if (!contextValue) {
+    throw new Error(
+      'could not find store context value; please ensure the component is wrapped in a <Provider>'
+    )
+  }
+  return contextValue
+}
+
+/**
+在组件中读取全局状态
+需要通过传入的函数收集依赖
+ */
+export const useStore = <T, S>(selector: Selector<T, S>): S => {
+  const forceUpdate = useForceUpdate()
+  const store = useStoreContext()
+
+  const effection = useEffection(() => selector(store), {
+    scheduler: job => {
+      if (job() === undefined) return
+      forceUpdate()
+    },
+    lazy: true
+  })
+
+  const value = effection()
+  return value
+}
+
+export const Provider = StoreContext.Provider
+```
+
+参考文档：
+
+* [资料](https://github.com/sl1673495/react-composition-api)
+* [资料](https://juejin.cn/post/6844904054192078855)
+
 ## 响应式原理 {#p0-reactivity-theory}
 
 Vue.js 的响应式原理主要是通过数据劫持（Object.defineProperty()）实现。当我们在Vue实例中定义了一个 data 属性时，Vue 会对这个属性进行劫持，即在getter和setter时做一些操作。
@@ -1125,6 +1551,44 @@ Vue3的diff算法采用了一种称为"逐层比较"的策略，即从根节点�
 * 触发组件的重新渲染
 
 ## computed 和 watch 的区别 {#p0-computed-watch}
+
+1. 支持缓存，只有依赖数据发生改变，才会重新进行计算，计算属性可用于快速计算视图（View）中显示的属性。这些计算将被缓存，并且只在需要时更新。computed是计算属性的; 它会根据所依赖的数据动态显示新的计算结果, 该计算结果会被缓存起来。computed的值在getter执行后是会被缓存的。如果所依赖的数据发生改变时候, 就会重新调用getter来计算最新的结果。
+
+2. 不支持异步，当computed内有异步操作时无效，无法监听数据的变化
+
+3. computed 属性值会默认走缓存，计算属性是基于它们的响应式依赖进行缓存的，也就是基于data中声明过或者父组件传递的props中的数据通过计算得到的值
+
+4. 如果一个属性是由其他属性计算而来的，这个属性依赖其他属性，是一个多对一或者一对一，一般用computed
+
+5. 如果computed属性属性值是函数，那么默认会走get方法；函数的返回值就是属性的属性值；在computed中的，属性都有一个get和一个set方法，当数据变化时，调用set方法。
+
+6. 适用于一些重复使用数据或复杂及费时的运算。我们可以把它放入computed中进行计算, 然后会在computed中缓存起来, 下次就可以直接获取了。
+
+7. 如果我们需要的数据依赖于其他的数据的话, 我们可以把该数据设计为computed中。
+
+8. computed 是基于响应性依赖来进行缓存的。只有在响应式依赖发生改变时它们才会重新求值, 也就是说, 当msg属性值没有发生改变时, 多次访问 reversedMsg 计算属性会立即返回之前缓存的计算结果, 而不会再次执行computed中的函数。但是methods方法中是每次调用, 都会执行函数的, methods它不是响应式的。
+
+9. computed中的成员可以只定义一个函数作为只读属性, 也可以定义成 get/set变成可读写属性, 但是methods中的成员没有这样的。
+
+**侦听属性watch：**
+
+1.watch它是一个对data的数据监听回调, 当依赖的data的数据变化时, 会执行回调。在回调中会传入newVal和oldVal两个参数。Vue实列将会在实例化时调用$watch(), 他会遍历watch对象的每一个属性。watch的使用场景是：当在data中的某个数据发生变化时, 我们需要做一些操作, 或者当需要在数据变化时执行异步或开销较大的操作时. 我们就可以使用watch来进行监听。watch普通监听和深度监听不支持缓存，数据变，直接会触发相应的操作；
+
+2.watch里面有一个属性为deep，含义是：是否深度监听某个对象的值, 该值默认为false。watch支持异步；
+
+3.监听的函数接收两个参数，第一个参数是最新的值；第二个参数是输入之前的值；
+
+4.当一个属性发生变化时，需要执行对应的操作；一对多；
+
+5.监听数据必须是data中声明过或者父组件传递过来的props中的数据，当数据变化时，触发其他操作，函数有两个参数，
+
+**watch 和 computed的区别是：**
+
+相同点：他们两者都是观察页面数据变化的。
+
+不同点：computed只有当依赖的数据变化时才会计算, 当数据没有变化时, 它会读取缓存数据。 watch每次都需要执行函数。watch更适用于数据变化时的异步操作。
+
+当需要在数据变化时执行异步或开销较大的操作时，这个方式是最有用的。这是和computed最大的区别，请勿滥用。
 
 在 Vue 中，`computed` 和 `watch` 是两种用于监听和响应数据变化的方式。
 
@@ -3366,3 +3830,37 @@ Vue.js通过编译器对模板进行解析，识别和解析指令，并将其�
 5. 渲染时执行：在组件渲染时，渲染函数会被调用，并执行其中的代码。对于`v-bind`，生成的函数调用会在渲染函数执行时被触发，将绑定的数据或计算属性的值应用到对应的属性上。
 
 在渲染函数执行时，生成的函数调用会被触发，将绑定的数据或计算属性的值应用到对应的属性上。通过这种方式，`v-bind`指令实现了将数据动态绑定到属性上的功能。其他指令的执行原理也类似，通过编译器将指令解析为可执行的代码，并在渲染函数执行时进行相应的操作。
+
+## Vuex redux {#p0-redux-vuex}
+
+Redux和Vuex都是用于在前端应用中管理状态的JavaScript库。它们的设计思想都基于Flux架构，强调单向数据流的概念，以避免数据的混乱和不可预测的状态变化。
+
+Redux的设计思想可以总结为三个原则：
+
+1. 单一数据源：Redux中所有的状态数据都保存在单一的store对象中，便于管理和维护。
+
+2. 状态只读：Redux的状态数据是只读的，唯一的改变方式是通过dispatch一个action来触发reducer函数对状态进行更新。
+
+3. 纯函数更新状态：Redux的reducer函数必须是纯函数，即接收一个旧的状态和一个action对象，返回一个新的状态。通过这种方式，Redux保证了状态的可控和可预测性。
+
+Vuex的设计思想类似于Redux，但又有所不同：
+
+1. 单一数据源：Vuex也采用了单一数据源的思想，将所有状态保存在store对象中。
+
+2. 显示状态修改：和Redux不同的是，Vuex允许组件直接修改状态，但这必须是通过commit一个mutation来实现的，mutation也必须是同步的。
+
+3. 模块化：Vuex提供了模块化机制，可以将store对象分解成多个模块，以提高可维护性和代码复用性。
+
+Redux和Vuex都是通过一些基本概念来实现状态管理：
+
+1. Store：保存状态的对象，整个应用只有一个Store。
+
+2. Action：描述状态变化的对象，由View层发起。
+
+3. Reducer：一个纯函数，接收旧的状态和一个Action对象，返回新的状态。
+
+4. Dispatch：一个函数，用来触发Action。
+
+5. Mutation：类似于Redux的Reducer，但必须是同步的。用来更新状态。
+
+总之，Redux和Vuex都是优秀的状态管理库，通过它们可以有效地管理前端应用的状态，实现数据的单向流动和可预测性。同时，Redux和Vuex都遵循了Flux架构的设计思想，使得状态管理更加规范化和可控。
