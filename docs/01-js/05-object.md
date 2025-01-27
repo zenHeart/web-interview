@@ -280,9 +280,7 @@ console.log(array) // ['apple', 'banana']
 
 这些方法都可以将类数组对象转换为真正的数组，使其具备数组的方法和属性。需要注意的是，类数组对象必须具有 length 属性和通过索引访问元素的能力才能成功转换为数组。
 
-## 有使用过 Promise 么， 讲解下 Promise 的使用?
-
-回答思路，三要素 what,why,how
+## promise {#p0-promise}
 
 1. what -> Promsie 是 ES6 引入的异步编程对象
 2. why -> 解决异步编程中常见的回调地狱问题
@@ -371,6 +369,41 @@ promise.cancel()
 在上述示例中，我们使用第三方库`p-cancelable`，它提供了可取消 Promise 的功能。我们创建了一个`PCancelable`实例，并在 Promise 的执行过程中注册了一个取消回调函数。通过调用`promise.cancel()`方法，我们可以取消 Promise 的执行，并触发取消回调函数。
 
 这些例子展示了如何通过不同的方式模拟取消 Promise 的效果。请注意，这些方法并不是 Promise 的原生功能，而是通过不同的实现方式来达到类似的效果。
+
+`Promise.finally()` 方法是在 ES2018 中引入的，用于指定不管 Promise 状态如何都要执行的回调函数。与 `Promise.then()` 和 `Promise.catch()` 不同的是，`Promise.finally()` 方法不管 Promise 是成功还是失败都会执行回调函数，而且不会改变 Promise 的状态。如果返回的值是一个 Promise，那么 `Promise.finally()` 方法会等待该 Promise 执行完毕后再继续执行。
+
+`Promise.finally()` 方法的实现思路如下：
+
+1. `Promise.finally()` 方法接收一个回调函数作为参数，返回一个新的 Promise 实例。
+
+2. 在新的 Promise 实例的 `then()` 方法中，首先调用原 Promise 的 `then()` 方法，将原 Promise 的结果传递给下一个 `then()` 方法。
+
+3. 在新的 Promise 实例的 `then()` 方法中，调用回调函数并将原 Promise 的结果传递给回调函数。
+
+4. 如果回调函数返回一个 Promise，则需要在新的 Promise 实例的 `then()` 方法中等待该 Promise 执行完毕，再将结果传递给下一个 `then()` 方法。
+
+5. 在新的 Promise 实例的 `finally()` 方法中，返回一个新的 Promise 实例。
+
+下面是一个简单的实现示例：
+
+```js
+// eslint-disable-next-line
+Promise.prototype.finally = function (callback) {
+  const P = this.constructor
+  return this.then(
+    value => P.resolve(callback()).then(() => value),
+    reason => P.resolve(callback()).then(() => { throw reason })
+  )
+}
+```
+
+这个实现方法中，使用了 `Promise.resolve()` 来返回一个新的 Promise 实例，因此可以避免了 Promise 链的状态改变。另外，由于 `finally()` 方法只是在 Promise 链的最后执行回调函数，因此不需要使用异步函数。
+
+`Promise.then()` 方法可以接受两个参数，第一个参数是 `onFulfilled` 回调函数，第二个参数是 `onRejected` 回调函数。当 Promise 状态变为 `fulfilled` 时，将会调用 `onFulfilled` 回调函数；当 Promise 状态变为 `rejected` 时，将会调用 `onRejected` 回调函数。其中，第二个参数 `onRejected` 是可选的。
+
+`Promise.catch()` 方法是一个特殊的 `Promise.then()` 方法，它只接受一个参数，即 `onRejected` 回调函数。如果 Promise 状态变为 `rejected`，则会调用 `onRejected` 回调函数；如果状态变为 `fulfilled`，则不会调用任何回调函数。因此，`Promise.catch()` 方法可以用来捕获 Promise 中的错误，相当于使用 `Promise.then(undefined, onRejected)`。
+
+区别主要在于使用的方式不同。`Promise.then(onFulfilled, onRejected)` 可以同时传递两个回调函数，用来处理 Promise 状态变为 `fulfilled` 或者 `rejected` 的情况；而 `Promise.catch(onRejected)` 则只能用来处理 Promise 状态变为 `rejected` 的情况，并且使用更加简洁明了。
 
 ## iterator ? {#p0-iterator}
 

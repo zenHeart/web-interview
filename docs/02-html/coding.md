@@ -3236,3 +3236,139 @@ document.addEventListener('readystatechange', () => {
 ```
 
 使用 `nprogress` 可以自定义进度条的样式，同时也提供了更多的 API 供我们使用，比如说手动控制进度条的显示和隐藏，以及支持 Promise 和 Ajax 请求的进度条等等。
+
+## 前端如何实现截图？ {#p0-screenshot}
+
+前端实现截图需要使用 HTML5 的 Canvas 和相关 API，具体步骤如下：
+
+1. 首先在页面中创建一个 Canvas 元素，并设置其宽高和样式。
+2. 使用 Canvas API 在 Canvas 上绘制需要截图的内容，比如页面的某个区域、某个元素、图片等。
+3. 调用 Canvas API 中的 `toDataURL()` 方法将 Canvas 转化为 base64 编码的图片数据。
+4. 将 base64 编码的图片数据传递给后端进行处理或者直接在前端进行显示。
+
+以下是一个简单的例子，实现了对整个页面的截图：
+
+```html
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="UTF-8">
+ <title>截图示例</title>
+ <style>
+ #canvas {
+ position: fixed;
+ left: 0;
+ top: 0;
+ z-index: 9999;
+ }
+ </style>
+ </head>
+ <body>
+ <h1>截图示例</h1>
+ <p>这是一个简单的截图示例。</p>
+ <button id="btn">截图</button>
+ <canvas id="canvas"></canvas>
+ <script>
+ const canvas = document.getElementById('canvas');
+ const ctx = canvas.getContext('2d');
+ const btn = document.getElementById('btn');
+ canvas.width = window.innerWidth;
+ canvas.height = window.innerHeight;
+
+ btn.addEventListener('click', () => {
+ ctx.clearRect(0, 0, canvas.width, canvas.height);
+ ctx.drawImage(document.documentElement, 0, 0);
+ const imgData = canvas.toDataURL();
+ console.log(imgData);
+ });
+ </script>
+ </body>
+</html>
+```
+
+这个例子中，在页面中创建了一个 `canvas` 元素，并设置其宽高和样式，将其放在页面最上方。在点击“截图”按钮时，通过 `toDataURL()` 方法将整个页面的截图转换为 base64 编码的图片数据，并打印到控制台上。
+
+## 文件上传和上传文件解析的原理是啥？
+
+ 前端如何上传图片等文件
+
+在前端上传图片或其他文件字段，一般使用 HTML 中的 `<input>` 元素，并设置 `type="file"`，这样就可以让用户选择本地的文件进行上传。
+
+例如：
+
+```html
+htmlCopy code<form enctype="multipart/form-data">
+ <input type="file" name="image" accept="image/*">
+ <input type="submit" value="上传">
+</form>
+```
+
+在这个例子中，`<form>` 元素的 `enctype` 属性设置为 `multipart/form-data`，这样就可以将文件作为二进制数据进行上传。
+
+当用户选择了本地的文件后，提交表单时就会将文件作为 `FormData` 对象的一部分进行发送。在 JavaScript 中，可以通过 `FormData` 构造函数来创建一个 `FormData` 对象，并使用 `append()` 方法向其中添加上传的文件数据。例如：
+
+```javascript
+const formData = new FormData()
+const fileInput = document.querySelector('input[type="file"]')
+formData.append('image', fileInput.files[0])
+```
+
+这样就可以将文件数据添加到 `formData` 对象中，然后使用 `fetch()` 方法或其他方式将其发送到后端进行处理。
+
+需要注意的是，由于安全原因，浏览器限制了用户上传文件的大小和类型。可以使用 `accept` 属性来限制文件的类型，例如 `accept="image/*"` 表示只允许上传图片类型的文件。可以使用 `multiple` 属性来允许用户选择多个文件进行上传。同时，还需要在后端对上传的文件进行处理和验证，以确保安全性和正确性。
+
+ 后端如何解析？koa 为例
+
+在 Koa 中解析上传的文件需要使用一个叫做 `koa-body` 的中间件，它可以自动将 `multipart/form-data` 格式的请求体解析成 JavaScript 对象，从而获取到上传的文件和其他表单数据。
+
+以下是一个使用 `koa-body` 中间件解析上传文件的例子：
+
+```javascript
+const Koa = require('koa')
+const koaBody = require('koa-body')
+
+const app = new Koa()
+
+// 注册 koa-body 中间件
+app.use(koaBody({
+  multipart: true // 支持上传文件
+}))
+
+// 处理上传文件的请求
+app.use(async (ctx) => {
+  const { files, fields } = ctx.request.body // 获取上传的文件和其他表单数据
+  const file = files && files.image // 获取上传的名为 image 的文件
+
+  if (file) {
+    console.log(`Received file: ${file.name}, type: ${file.type}, size: ${file.size}`)
+    // 处理上传的文件
+  } else {
+    console.log('No file received')
+  }
+
+  // 返回响应
+  ctx.body = 'Upload success'
+})
+
+app.listen(3000)
+```
+
+在上述代码中，使用 `koa-body` 中间件注册了一个解析请求体的函数，并在请求处理函数中获取到了上传的文件和其他表单数据。其中，`files` 对象包含了所有上传的文件，`fields` 对象包含了所有非文件类型的表单数据。
+
+可以根据实际需要从 `files` 对象中获取到需要处理的文件，例如上面的例子中使用了 `files.image` 来获取名为 `image` 的上传文件。可以使用上传文件的属性，如 `name`、`type` 和 `size` 来获取文件的信息，并进行处理。最后返回响应，表示上传成功。
+
+需要注意的是，`koa-body` 中间件需要设置 `multipart: true` 才能支持上传文件。另外，在处理上传文件时需要注意安全性和正确性，可以使用第三方的文件上传处理库来进行处理。
+
+ 解析上传文件的原理是啥？
+
+在 HTTP 协议中，上传文件的请求通常使用 `multipart/form-data` 格式的请求体。这种格式的请求体由多个部分组成，每个部分以一个 boundary 字符串作为分隔符，每个部分都代表一个字段或一个文件。
+
+对于一个上传文件的请求，浏览器会将请求体按照 `multipart/form-data` 格式构造，其中每个部分都有一些描述信息和内容，例如文件名、文件类型、文件大小、内容等。
+
+服务器端需要对这些部分进行解析，提取出所需要的信息。常见的解析方式有两种：
+
+1. 手动解析：根据 `multipart/form-data` 格式的规范，按照 boundary 字符串将请求体切分为多个部分，然后解析每个部分的头部和内容，提取出文件名、文件类型、文件大小等信息。这种方式比较麻烦，需要手动处理较多的细节，容易出错。
+
+2. 使用第三方库：可以使用第三方的解析库，如 `multer`、`formidable`、`busboy` 等，来方便地解析 `multipart/form-data` 格式的请求体。这些库通常会将解析出的信息存储到一个对象中，方便进一步处理。
+
+在 Node.js 中，使用 `http` 模块自己实现 `multipart/form-data` 的解析比较麻烦，常见的做法是使用第三方库来解析上传文件，例如在 Koa 中使用 `koa-body` 中间件就可以方便地处理上传文件。

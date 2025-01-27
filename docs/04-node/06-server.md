@@ -83,6 +83,309 @@ PM2部署Node.js应用程序有以下几个优势：
 
 参考文档： [资料](https://zhuanlan.zhihu.com/p/627009546)
 
+## koa 中间件的异常处理是怎么做的？
+
+在 Koa 中，中间件函数的异常处理可以通过两种方式来实现：
+
+1. 使用 `try...catch` 捕获异常：在中间件函数中使用 `try...catch` 语句来捕获异常，然后通过 `ctx.throw()` 方法抛出异常信息，例如：
+
+```vbnet
+vbnetCopy codeasync function myMiddleware(ctx, next) {
+ try {
+ await next();
+ } catch (err) {
+ ctx.throw(500, 'Internal Server Error');
+ }
+}
+```
+
+在这个例子中，`await next()` 表示调用下一个中间件函数，如果这个函数抛出异常，就会被捕获到，然后通过 `ctx.throw()` 方法抛出一个包含错误状态码和错误信息的异常。
+
+2. 使用 Koa 的错误处理中间件：Koa 提供了一个错误处理中间件 `koa-json-error`，可以通过在应用程序中使用该中间件来处理异常。这个中间件会自动捕获应用程序中未被处理的异常，并将错误信息以 JSON 格式返回给客户端。例如：
+
+```javascript
+const Koa = require('koa')
+const jsonError = require('koa-json-error')
+
+const app = new Koa()
+
+// 注册错误处理中间件
+app.use(jsonError())
+
+// 中间件函数
+async function myMiddleware (ctx, next) {
+  await next()
+  throw new Error('Internal Server Error')
+}
+
+// 应用中间件
+app.use(myMiddleware)
+
+// 启动服务器
+app.listen(3000)
+```
+
+在这个例子中，`koa-json-error` 中间件会自动捕获应用程序中未被处理的异常，并将错误信息以 JSON 格式返回给客户端。开发人员可以通过自定义错误处理函数来处理异常，例如：
+
+```javascript
+const Koa = require('koa')
+const jsonError = require('koa-json-error')
+
+const app = new Koa()
+
+// 自定义错误处理函数
+function errorHandler (err, ctx) {
+  ctx.status = err.status || 500
+  ctx.body = {
+    message: err.message,
+    status: ctx.status
+  }
+}
+
+// 注册错误处理中间件
+app.use(jsonError(errorHandler))
+
+// 中间件函数
+async function myMiddleware (ctx, next) {
+  await next()
+  throw new Error('Internal Server Error')
+}
+
+// 应用中间件
+app.use(myMiddleware)
+
+// 启动服务器
+app.listen(3000)
+```
+
+在这个例子中，我们自定义了一个错误处理函数 `errorHandler`，将错误信息格式化为 JSON 格式，并设置响应状态码。然后将这个函数作为参数传递给 `koa-json-error` 中间件，用于处理异常。
+
+## koa 在没有async await 的时候, koa是怎么实现的洋葱模型？
+
+说到洋葱模型，就必须聊一聊中间件，中间件这个概念，我们并不陌生，比如平时我们用的 `redux`、`express` 、`koa` 这些库里，都离不开中间件。
+
+那 `koa` 里面的中间件是什么样的呢？其本质上是一个函数，这个函数有着特定，单一的功能，`koa`将一个个中间件注册进来，通过**组合**实现强大的功能。
+
+先看 `demo` ：
+
+```js
+// index.js
+const Koa = require('koa')
+const app = new Koa()
+
+// 中间件1
+app.use(async (ctx, next) => {
+  console.log('1')
+  await next()
+  console.log('2')
+})
+// 中间件2
+app.use(async (ctx, next) => {
+  console.log('3')
+  await next()
+  console.log('4')
+})
+// 中间件3
+app.use(async (ctx, next) => {
+  console.log('5')
+  await next()
+  console.log('6')
+})
+app.listen(8002)
+```
+
+先后注册了三个中间件，运行一下`index.js` ，可以看到输出结果为：
+
+```js
+1
+3
+5
+6
+4
+2
+```
+
+没接触过洋葱模型的人第一眼可能会疑惑，为什么调用了一个 `next` 之后，直接从`1` 跳到了 `3` ，而不是先输出`1` ，再输出`2`呢。 其实这就是洋葱模型特点，下图是它的执行过程：
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/80798be002944d67a46c456d4af3c03c~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?) 一开始我们先后注册了三个中间件，分别是中间件1，中间件2，中间件3，调用`listen`方法，打开对应端口的页面，触发了中间件的执行。
+
+首先会先执行第一个中间件的 `next` 的前置语句，相当于 `demo` 里面的 `console.log('1')` ，当调用 `next()` 之后，会直接进入第二个中间件，继续重复上述逻辑，直至最后一个中间件，就会执行 `next` 的后置语句，然后继续上一个中间件的后置语句，继续重复上述逻辑，直至执行第一个中间件的后置语句，最后输出。
+
+![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/935675e49480426eb517a68c224673c7~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp?) 正是因为它这种执行机制，才被称为**洋葱模型**。
+
+* 首先调用 `use` 方法收集中间件，调用 `listen` 方法执行中间件。
+* 每一个中间件都有一个`next`参数（暂时不考虑ctx参数），`next`参数可以控制进入下一个中间件的时机。
+
+**需要解决的问题**
+
+* 最后一个中间件调用next如何处理
+* 如何解决同一个中间件多次调用next
+
+**完整代码**
+
+其中最精华的部分就是`compose`函数，细数一下，只有`11`行代码，1比1还原了`koa`的`compose`函数（去除了不影响主逻辑判断）。
+
+> koa是利用koa-compose这个库进行组合中间件的，在koa-compose里面，next返回的都是一个promise函数。
+
+```js
+function Koa () {
+  this.middleares = []
+}
+Koa.prototype.use = function (middleare) {
+  this.middleares.push(middleare)
+  return this
+}
+Koa.prototype.listen = function () {
+  const fn = compose(this.middleares)
+}
+function compose (middleares) {
+  let index = -1
+  const dispatch = (i) => {
+    if (i <= index) throw new Error('next（） 不能调用多次')
+    index = i
+    if (i >= middleares.length) return
+    const middleare = middleares[i]
+    return middleare('ctx', dispatch.bind(null, i + 1))
+  }
+  return dispatch(0)
+}
+
+const app = new Koa()
+app.use(async (ctx, next) => {
+  console.log('1')
+  next()
+  console.log('2')
+})
+app.use(async (ctx, next) => {
+  console.log('3')
+  next()
+  console.log('4')
+})
+app.use(async (ctx, next) => {
+  console.log('5')
+  next()
+  console.log('6')
+})
+
+app.listen()
+```
+
+**使用**
+
+```js
+const Koa = require('koa')
+const app = new Koa()
+
+// 中间件过多，可以创建一个middleares文件夹，将cors函数放到middleares/cors.js文件里面
+const cors = () => {
+  return async (ctx, next) => {
+    ctx.set('Access-Control-Allow-Headers', 'X-Requested-With')
+    ctx.set('Access-Control-Allow-Origin', '*')
+    ctx.set('Access-Control-Allow-Methods', 'GET,HEAD,PUT,POST,DELETE,PATCH')
+    await next()
+  }
+}
+
+app.use(cors())
+app.use(async (ctx, next) => {
+  console.log('第一个中间件', ctx.request.method, ctx.request.url)
+  await next()
+  ctx.body = 'hello world'
+})
+```
+
+`koa`的中间件都是有固定模板的，首先是一个函数，并且返回一个`async`函数（闭包的应用），这个`async`函数有两个参数，一个是`koa`的`context`，一个是`next`函数。
+
+在没有 `async/await` 的时候，Koa 通过使用 ES6 的生成器函数来实现洋葱模型。具体来说，Koa 中间件函数是一个带有 `next` 参数的生成器函数，当中间件函数调用 `next` 方法时，它会挂起当前的执行，转而执行下一个中间件函数，直到执行完最后一个中间件函数，然后将执行权返回到前一个中间件函数，继续执行下面的代码。这个过程就像一层一层剥开洋葱一样，因此被称为洋葱模型。
+
+下面是一个使用生成器函数实现的简单的 Koa 中间件函数：
+
+```javascript
+function * myMiddleware (next) {
+  // 中间件函数的代码
+  console.log('Start')
+  yield next
+  console.log('End')
+}
+```
+
+在这个中间件函数中，`yield next` 表示挂起当前的执行，执行下一个中间件函数。假设我们有两个中间件函数 `middleware1` 和 `middleware2`，它们的代码如下：
+
+```javascript
+function * middleware1 (next) {
+  console.log('middleware1 Start')
+  yield next
+  console.log('middleware1 End')
+}
+
+function * middleware2 (next) {
+  console.log('middleware2 Start')
+  yield next
+  console.log('middleware2 End')
+}
+```
+
+我们可以使用 `compose` 函数将它们组合成一个洋葱模型：
+
+```scss
+scssCopy codeconst compose = require('koa-compose');
+
+const app = compose([middleware1, middleware2]);
+
+app();
+```
+
+在这个例子中，`compose` 函数将 `middleware1` 和 `middleware2` 组合成一个函数 `app`，然后调用这个函数即可执行整个中间件链。执行的结果如下：
+
+```sql
+sqlCopy codemiddleware1 Start
+middleware2 Start
+middleware2 End
+middleware1 End
+```
+
+可以看到，这个结果与洋葱模型的特点相符。
+
+## koa body-parser 中间件实现原理？
+
+Koa 中间件 `koa-bodyparser` 的原理是将 HTTP 请求中的 `request body` 解析成 JavaScript 对象，并将其挂载到 `ctx.request.body` 属性上，方便后续的处理。
+
+具体来说，`koa-bodyparser` 中间件会监听 HTTP 请求的 `data` 事件和 `end` 事件，然后将请求中的数据流解析成一个 JavaScript 对象，并将其作为参数传递给 `ctx.request.body` 属性，最后调用 `await next()`，将控制权交给下一个中间件。
+
+在实现过程中，`koa-bodyparser` 中间件会根据请求头中的 `Content-Type` 字段来判断请求体的类型，支持解析的请求体类型有 `application/json`、`application/x-www-form-urlencoded` 和 `multipart/form-data`。对于其他类型的请求体，`koa-bodyparser` 会将其解析成一个空对象 `{}`。
+
+下面是一个简单的 `koa-bodyparser` 中间件的实现示例：
+
+```javascript
+function bodyParser () {
+  return async (ctx, next) => {
+    if (ctx.request.method === 'POST' || ctx.request.method === 'PUT') {
+      let data = ''
+      ctx.req.on('data', (chunk) => {
+        data += chunk
+      })
+      ctx.req.on('end', () => {
+        if (ctx.request.headers['content-type'] === 'application/json') {
+          ctx.request.body = JSON.parse(data)
+        } else if (ctx.request.headers['content-type'] === 'application/x-www-form-urlencoded') {
+          ctx.request.body = querystring.parse(data)
+        } else if (ctx.request.headers['content-type'].startsWith('multipart/form-data')) {
+          // 解析 multipart/form-data 请求体
+          // ...
+        } else {
+          ctx.request.body = {}
+        }
+        return next()
+      })
+    } else {
+      return next()
+    }
+  }
+}
+```
+
+在这个实现中，如果请求方法为 `POST` 或者 `PUT`，则开始监听 `data` 事件和 `end` 事件，将请求体数据解析成一个 JavaScript 对象并挂载到 `ctx.request.body` 上，最后调用 `next()` 将控制权交给下一个中间件。对于其他请求方法，则直接调用 `next()` 交给下一个中间件处理。注意，这个实现只支持解析 `application/json` 和 `application/x-www-form-urlencoded` 类型的请求体，对于其他类型的请求体需要进行特殊处理。
+
 ## koa 如何解析 post 请求参数 {#p0-koa-parser}
 
 如果你不想使用任何中间件来解析 POST 请求参数，你可以手动解析请求体数据。在 Koa 中，你可以通过以下步骤来解析 POST 请求的参数：

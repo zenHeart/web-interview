@@ -724,12 +724,189 @@ import 'lib-flexible/flexible.js'
 
 具体实现方式还取决于应用的具体场景和需求，以上只是一个大致的思路。
 
-## 156 实现 table header 吸顶， 有哪些实现方式？
+## 实现 table header 吸顶， 有哪些实现方式？ {#p0-table-stick}
 
-* created_at: 2023-03-26T06:25:35Z
-* updated_at: 2023-03-26T06:25:36Z
-* labels: CSS
-* milestone: 中
+实现 table header 吸顶的方法有多种，以下是一些基于 CSS 的实现方式：
+
+1. 使用 position: sticky 属性：在表格头部的 CSS 中，使用 position: sticky 属性可以使表格头部保持在视窗的顶部或底部，而不会随着滚动而消失。例如：
+
+ ```css
+ cssCopy codeth {
+ position: sticky;
+ top: 0;
+ background-color: #fff;
+ }
+ ```
+
+2. 使用 CSS transform 属性：在表格头部的 CSS 中，使用 CSS transform 属性可以使表格头部保持固定位置，而不会随着滚动而消失。例如：
+
+ ```css
+ cssCopy codeth {
+ position: relative;
+ z-index: 1;
+ }
+ thead {
+ position: fixed;
+ top: 0;
+ visibility: hidden;
+ z-index: 2;
+ transform: translateY(0);
+ }
+ tbody {
+ margin-top: 50px;
+ }
+ ```
+
+3. 使用 JavaScript 和 CSS：使用 JavaScript 和 CSS 可以使表格头部保持在视窗的顶部或底部，而不会随着滚动而消失。例如：
+
+ ```html
+ htmlCopy code<div class="table-wrapper">
+ <table>
+ <thead>
+ <tr>
+ <th>Column 1</th>
+ <th>Column 2</th>
+ <th>Column 3</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>Row 1, Column 1</td>
+ <td>Row 1, Column 2</td>
+ <td>Row 1, Column 3</td>
+ </tr>
+ <tr>
+ <td>Row 2, Column 1</td>
+ <td>Row 2, Column 2</td>
+ <td>Row 2, Column 3</td>
+ </tr>
+ ...
+ </tbody>
+ </table>
+ </div>
+ <script>
+ window.onscroll = function() {
+ var header = document.querySelector(".table-wrapper thead");
+ if (window.pageYOffset > 150) {
+ header.classList.add("sticky");
+ } else {
+ header.classList.remove("sticky");
+ }
+ };
+ </script>
+ <style>
+ .table-wrapper {
+ position: relative;
+ }
+ .table-wrapper thead {
+ position: fixed;
+ top: 0;
+ z-index: 1;
+ background-color: #fff;
+ }
+ .table-wrapper th {
+ height: 50px;
+ }
+ .table-wrapper.sticky thead {
+ position: absolute;
+ top: 50px;
+ }
+ </style>
+ ```
+
+通过以上方法的一些组合使用，可以实现 table header 吸顶，提升表格的用户体验和易用性。
+
+
+实现 table header 吸顶的方法有多种，以下是一些基于 CSS 的实现方式：
+
+1. 使用 position: sticky 属性：在表格头部的 CSS 中，使用 position: sticky 属性可以使表格头部保持在视窗的顶部或底部，而不会随着滚动而消失。例如：
+
+ ```css
+ cssCopy codeth {
+ position: sticky;
+ top: 0;
+ background-color: #fff;
+ }
+ ```
+
+2. 使用 CSS transform 属性：在表格头部的 CSS 中，使用 CSS transform 属性可以使表格头部保持固定位置，而不会随着滚动而消失。例如：
+
+ ```css
+ cssCopy codeth {
+ position: relative;
+ z-index: 1;
+ }
+ thead {
+ position: fixed;
+ top: 0;
+ visibility: hidden;
+ z-index: 2;
+ transform: translateY(0);
+ }
+ tbody {
+ margin-top: 50px;
+ }
+ ```
+
+3. 使用 JavaScript 和 CSS：使用 JavaScript 和 CSS 可以使表格头部保持在视窗的顶部或底部，而不会随着滚动而消失。例如：
+
+ ```html
+ htmlCopy code<div class="table-wrapper">
+ <table>
+ <thead>
+ <tr>
+ <th>Column 1</th>
+ <th>Column 2</th>
+ <th>Column 3</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>Row 1, Column 1</td>
+ <td>Row 1, Column 2</td>
+ <td>Row 1, Column 3</td>
+ </tr>
+ <tr>
+ <td>Row 2, Column 1</td>
+ <td>Row 2, Column 2</td>
+ <td>Row 2, Column 3</td>
+ </tr>
+ ...
+ </tbody>
+ </table>
+ </div>
+ <script>
+ window.onscroll = function() {
+ var header = document.querySelector(".table-wrapper thead");
+ if (window.pageYOffset > 150) {
+ header.classList.add("sticky");
+ } else {
+ header.classList.remove("sticky");
+ }
+ };
+ </script>
+ <style>
+ .table-wrapper {
+ position: relative;
+ }
+ .table-wrapper thead {
+ position: fixed;
+ top: 0;
+ z-index: 1;
+ background-color: #fff;
+ }
+ .table-wrapper th {
+ height: 50px;
+ }
+ .table-wrapper.sticky thead {
+ position: absolute;
+ top: 50px;
+ }
+ </style>
+ ```
+
+通过以上方法的一些组合使用，可以实现 table header 吸顶，提升表格的用户体验和易用性。
+
 
 实现 table header 吸顶的方法有多种，以下是一些基于 CSS 的实现方式：
 

@@ -1056,6 +1056,19 @@ Vue 3 引入了组合式 API，随之而来的是一系列新的生命周期钩�
 
 ## 组件通信策略和方法 {#p0-component-communicate}
 
+Vue 父子组件通信
+
+* Prop（常用）
+* $emit (组件封装用的较多)
+* .sync语法糖 （较少）
+* $attrs & $listeners (组件封装用的较多)
+* provide & inject （高阶组件/组件库用的较多）
+* slot-scope & v-slot （vue@2.6.0+）新增
+* scopedSlots 属性
+* 其他方式通信
+
+具体使用场景参考链接：[资料](https://juejin.cn/post/6844903700243316749)
+
  在Vue中 组件之间的通信总结
 
 在Vue中，组件之间的通信可以通过以下几种方式实现：
