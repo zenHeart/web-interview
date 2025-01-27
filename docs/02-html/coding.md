@@ -2618,3 +2618,155 @@ function simulateLoad () {
 上面的代码使用了`touchstart`、`touchmove`和`touchend`事件来监测用户的手势操作，实现了下拉刷新和上拉加载的功能。通过修改`refresh`和`loading`元
 
 素的内容和样式，可以实现相应的状态展示效果。
+
+## 使用 ajax 封装一个上传文件的函数 {#p0-upload-file}
+
+下面是一个使用 AJAX 封装的上传文件函数的示例代码：
+
+```javascript
+function uploadFile (file, url, progressCallback, successCallback, errorCallback) {
+  const xhr = new XMLHttpRequest()
+  const formData = new FormData()
+
+  // 将文件添加到 FormData 对象
+  formData.append('file', file)
+
+  xhr.open('POST', url, true)
+
+  // 监听上传进度
+  xhr.upload.addEventListener('progress', function (event) {
+    if (event.lengthComputable) {
+      const progress = Math.round((event.loaded / event.total) * 100)
+      // 调用进度回调函数
+      progressCallback(progress)
+    }
+  })
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        // 上传成功
+        // 解析响应数据
+        const response = JSON.parse(xhr.responseText)
+        // 调用成功回调函数
+        successCallback(response)
+      } else {
+        // 上传失败
+        // 创建错误对象
+        const error = new Error(`File upload failed with status ${xhr.status}`)
+        // 调用错误回调函数
+        errorCallback(error)
+      }
+    }
+  }
+
+  // 发送请求
+  xhr.send(formData)
+}
+
+// 使用示例
+const fileInput = document.getElementById('file-input')
+const uploadButton = document.getElementById('upload-button')
+const progressElement = document.getElementById('progress')
+const statusElement = document.getElementById('status')
+
+uploadButton.addEventListener('click', function () {
+  const file = fileInput.files[0]
+  const url = 'https://api.example.com/upload'
+
+  uploadFile(
+    file,
+    url,
+    function (progress) {
+      // 更新进度
+      progressElement.textContent = `Upload Progress: ${progress}%`
+    },
+    function (response) {
+      // 上传成功
+      statusElement.textContent = 'Upload Successful'
+      console.log('Response:', response)
+    },
+    function (error) {
+      // 上传失败
+      statusElement.textContent = 'Upload Failed'
+      console.error('Error:', error)
+    }
+  )
+})
+```
+
+在上述示例代码中，定义了一个 `uploadFile` 函数用于上传文件。该函数接收文件对象、上传 URL、进度回调函数、成功回调函数和错误回调函数作为参数。
+
+函数内部通过创建 `XMLHttpRequest` 对象，将文件添加到 `FormData` 对象，并使用 `POST` 方法发送请求到指定的 URL。同时，通过监听 `upload` 事件来获取上传进度，并调用进度回调函数进行更新。在请求的状态改变时，根据响应状态码判断上传成功与否，并调用相应的回调函数。
+
+使用示例中，通过监听按钮点击事件，获取选择的文件对象，并调用 `uploadFile` 函数进行文件上传。在回调函数中更新进度和状态信息，并处理成功和失败的情况。
+
+## ajax 取消请求 {#p0-cancel}
+
+**`xhr.abort()` 方法用于中止当前的请求**。调用该方法会导致 XHR 对象触发 abort 事件，且触发 readystatechange 事件的处理函数，xhr.readyState 的值将变为 0。
+
+下面是一个示例代码，展示了如何使用标志位实现取消请求的效果：
+
+```javascript
+let isRequestCanceled = false
+
+function sendGetRequest (url, callback) {
+  const xhr = new XMLHttpRequest()
+  xhr.open('GET', url, true)
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE && !isRequestCanceled) {
+      if (xhr.status === 200) {
+        // 请求成功
+        const response = JSON.parse(xhr.responseText)
+        callback(null, response)
+      } else {
+        // 请求失败
+        const error = new Error(`Request failed with status ${xhr.status}`)
+        callback(error, null)
+      }
+    }
+  }
+
+  xhr.send()
+
+  // 取消请求
+  function cancelRequest () {
+    if (xhr.readyState !== XMLHttpRequest.DONE) {
+      xhr.abort()
+      isRequestCanceled = true
+      callback(new Error('Request canceled'), null)
+    }
+  }
+
+  // 返回取消请求的函数
+  return cancelRequest
+}
+
+// 使用示例
+const apiUrl = 'https://api.example.com/data'
+const cancelRequest = sendGetRequest(apiUrl, (error, response) => {
+  if (error) {
+    console.error('Error:', error)
+  } else {
+    console.log('Response:', response)
+  }
+})
+
+// 取消请求
+cancelRequest()
+```
+
+在上述示例代码中，添加了一个 `cancelRequest` 函数用于取消请求。该函数会在请求发送后立即返回，并中止请求的发送。同时，将标志位 `isRequestCanceled` 设为 true，并通过回调函数返回一个错误对象，表示请求被取消。
+
+需要注意的是，虽然通过标志位模拟了请求的取消，但实际上请求已经发送到服务器并得到了响应。只是在客户端这边忽略了响应结果。在真实的网络请求中，服务器仍然会继续处理请求并返回响应，但客户端会忽略该响应。
+
+**取消ajax请求的意义**
+
+* 已发出的请求可能仍然会到达后端
+
+* 取消后续的回调处理，避免多余的回调处理，以及特殊情况，先发出的后返回，导致回调中的数据错误覆盖
+
+* 取消loading效果，以及该请求的其他交互效果，特别是在单页应用中，A页面跳转到B页面之后，A页面的请求应该取消，否则回调中的一些处理可能影响B页面
+
+* 超时处理，错误处理等都省去了，节约资源

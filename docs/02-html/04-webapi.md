@@ -2,6 +2,65 @@
 
 web 下常用 api
 
+## XMLHTTPRequest 对象 {#p0-XMLHTTPRequest}
+
+XMLHttpRequest 是一个在浏览器中用于发送 HTTP 请求的 JavaScript 对象。它提供了一种在客户端与服务器之间进行数据交互的方式，可以异步地发送请求并获取服务器的响应。
+
+XMLHttpRequest 对象的特点和功能包括：
+
+1. 异步请求：XMLHttpRequest 支持异步请求，可以在后台发送请求并在请求完成后执行回调函数，而不会阻塞浏览器的主线程。
+2. 支持多种 HTTP 请求方法：XMLHttpRequest 可以发送多种类型的 HTTP 请求，包括 GET、POST、PUT、DELETE 等。
+3. 发送和接收数据：XMLHttpRequest 可以发送数据到服务器并接收服务器的响应数据，支持发送请求时携带的数据和接收到的响应数据的处理。
+4. 监听请求状态：XMLHttpRequest 提供了一些事件和方法来监听请求的不同状态，如请求开始、请求完成、请求成功等。
+5. 设置请求头：XMLHttpRequest 允许设置请求的头部信息，如 Content-Type、Authorization 等。
+6. 处理跨域请求：XMLHttpRequest 支持处理跨域请求，可以通过设置 CORS（跨域资源共享）相关的头部信息来实现跨域请求。
+7. 支持上传和下载：XMLHttpRequest 可以用于上传文件到服务器或下载服务器上的文件。
+
+使用 XMLHttpRequest 对象可以实现与服务器的数据交互，发送请求并处理响应数据。通过设置回调函数来处理异步请求的结果，可以根据请求的状态码和响应数据进行相应的处理和展示。
+
+ 示范
+
+下面是一个简单的示例代码，展示如何基于 XMLHttpRequest 封装一个发送 GET 请求的函数：
+
+```javascript
+function sendGetRequest (url, callback) {
+  const xhr = new XMLHttpRequest()
+  xhr.open('GET', url, true)
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      if (xhr.status === 200) {
+        // 请求成功
+        const response = JSON.parse(xhr.responseText)
+        callback(null, response)
+      } else {
+        // 请求失败
+        const error = new Error(`Request failed with status ${xhr.status}`)
+        callback(error, null)
+      }
+    }
+  }
+
+  xhr.send()
+}
+
+// 使用示例
+const apiUrl = 'https://api.example.com/data'
+sendGetRequest(apiUrl, (error, response) => {
+  if (error) {
+    console.error('Error:', error)
+  } else {
+    console.log('Response:', response)
+  }
+})
+```
+
+上述代码定义了一个 `sendGetRequest` 函数，接受一个 URL 和一个回调函数作为参数。在函数内部，创建了一个 XMLHttpRequest 对象，使用 `open` 方法设置请求的类型（GET）、URL 和是否异步。然后，通过监听 `readystatechange` 事件来处理请求的状态变化。
+
+当请求的状态为 `XMLHttpRequest.DONE`（值为 4）时，判断响应的状态码。如果状态码为 200，表示请求成功，将响应数据解析为 JSON 格式并通过回调函数返回。如果状态码不是 200，表示请求失败，将错误信息封装为 Error 对象并通过回调函数返回。
+
+使用示例中，调用了 `sendGetRequest` 函数并传入一个 API 的 URL 和一个回调函数。在回调函数中，根据是否存在错误来处理请求结果。如果有错误，输出错误信息；如果没有错误，输出响应数据。
+
 ## XHR 和 Fetch 是否支持取消请求 {#p0-api}
 
 **XHR 支持取消请求**
@@ -51,7 +110,7 @@ controller.abort()
 
 需要注意的是，AbortController 是一个较新的 API，不是所有浏览器都完全支持。为了确保在不支持 AbortController 的情况下仍能取消 fetch 请求，你可以使用 polyfill 或使用第三方库（如 Axios）来实现取消功能。
 
-## 请求对象 {#p0-ajax-fetch}
+## ajax fetch {#p0-ajax-fetch}
 
 Ajax、Axios和Fetch都是用于进行HTTP请求的工具或技术，但它们在实现细节和功能方面有所不同。
 
@@ -84,6 +143,23 @@ Ajax、Axios和Fetch都是用于进行HTTP请求的工具或技术，但它们�
 * Axios和Fetch提供了更好的错误处理机制，而Ajax在错误处理方面相对简单。
 
 选择使用哪种工具或技术取决于具体的需求和项目情况。如果需要较低级别的控制和自定义配置，可以选择原生的Ajax或Fetch。而如果需要更丰富的功能和更方便的API，可以选择使用Axios或其他类似的库。
+
+| 维度 | Fetch API | Ajax (XMLHttpRequest) |
+| ------------ | -------------------------------------------------------------- | ------------------------------------------------------------ |
+| API | 提供了更现代化的 API，使用 `fetch()` 方法进行请求 | 使用 `XMLHttpRequest` 对象进行请求 |
+| 语法 | 基于 Promise，使用链式调用方式进行请求和处理响应 | 使用回调函数方式处理请求和响应 |
+| 跨域支持 | 默认情况下，不发送跨域请求，可以使用 CORS 进行跨域请求 | 可以发送跨域请求，但受到同源策略的限制 |
+| 请求类型 | 支持多种请求类型，如 GET、POST、PUT、DELETE 等 | 支持多种请求类型，如 GET、POST、PUT、DELETE 等 |
+| 请求头 | 使用 `Headers` 对象设置请求头 | 使用 `setRequestHeader()` 方法设置请求头 |
+| 请求体 | 可以直接使用 `FormData`、`Blob`、`URLSearchParams` 等作为请求体 | 可以使用字符串或 `FormData` 对象作为请求体 |
+| 取消请求 | 支持使用 `AbortController` 和 `AbortSignal` 取消请求 | 需要手动处理取消请求，如终止 `XMLHttpRequest` 对象 |
+| 进度事件 | 提供了更方便的进度事件处理方式，如 `upload` 和 `download` 事件 | 提供了 `progress` 事件用于跟踪请求和下载进度 |
+| 错误处理 | 在请求返回时，只在网络错误或请求被中止时才会抛出异常 | 可以根据响应状态码或其他条件来处理错误 |
+| JSON 处理 | 提供了 `json()` 方法用于解析 JSON 数据 | 需要手动解析返回的 JSON 数据 |
+| 文件上传/下载 | 支持直接上传和下载文件，支持 `Blob` 对象 | 支持通过 `FormData` 和 `responseType` 实现文件上传和下载 |
+| 浏览器兼容性 | 部分功能在旧版本浏览器中不支持，需要使用 polyfill 进行兼容性处理 | 在大多数现代浏览器中都支持 |
+
+需要注意的是，Fetch API 是基于 Promise 的，而 Ajax 是基于回调函数的。Fetch API 提供了更现代化、更简洁的语法，并支持更多的功能，如跨域请求、取消请求、进度事件等。然而，由于 Fetch API 是较新的标准，不同浏览器的兼容性可能会有所差异，需要使用 polyfill 或考虑兼容性处理。
 
 ## getComputedStyle用法? {#p4-getcomputedstyle}
 
