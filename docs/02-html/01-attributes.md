@@ -41,6 +41,35 @@ attribute 方法
 
 ## data- 属性的好处是什么？{#p1-data-attribute}
 
+HTML 中前缀为 `data-` 开头的元素属性被称为自定义数据属性（Custom Data Attributes）或者数据属性（Data Attributes）。
+
+这些属性的命名以 `data-` 开头，后面可以跟上任意自定义的名称。这样的属性可以用来存储与元素相关的自定义数据，以便在 JavaScript 或 CSS 中进行访问和操作。
+
+自定义数据属性的命名应该遵循以下规则：
+
+* 属性名必须以 `data-` 开头。
+* 属性名可以包含任意`字母、数字、连字符（-）、下划线（_）和小数点（.）`。
+* 属性名不应该包含大写字母，因为 HTML 属性名是不区分大小写的。
+
+通过自定义数据属性，我们可以在 HTML 元素中嵌入自定义的数据，然后在 JavaScript 中使用 `getAttribute()` 方法或直接通过元素对象的 `dataset` 属性来访问这些数据。
+
+例如，在 HTML 中定义了一个自定义数据属性 `data-color="red"`：
+
+```html
+<div id="myDiv" data-color="red"></div>
+```
+
+在 JavaScript 中可以通过以下方式获取该自定义数据属性的值：
+
+```javascript
+const myDiv = document.getElementById('myDiv')
+const color = myDiv.getAttribute('data-color') // 获取属性值为 "red"
+const dataset = myDiv.dataset // 获取包含所有自定义数据属性的对象 { color: "red" }
+const colorValue = dataset.color // 获取属性值为 "red"
+```
+
+通过自定义数据属性，我们可以将相关的数据绑定到 HTML 元素上，方便在 JavaScript 中进行处理和操作，增强了 HTML 和 JavaScript 之间的交互性。
+
 * [data-](https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese)
 
 ## src 和 href 有什么区别 {#p0-src-href}
@@ -57,6 +86,35 @@ attribute 方法
 | 作用 | 嵌入外部资源 | 指向其他页面或资源 |
 
 请注意，这些是`src`和`href`属性的一般规则，但某些特定标签可能会有不同的行为。
+
+`src` 和 `href` 是两个在 HTML 中常用的属性，它们具有不同的作用和用途，主要区别如下：
+
+1. 用途：
+
+* `src` 属性用于指定嵌入资源的 URL，如图片、音频、视频等。
+* `href` 属性用于创建超链接，定义链接到的目标 URL 地址。
+
+2. 资源加载：
+
+* `src` 属性用于指定需要加载的资源，浏览器会根据 `src` 属性的值去请求资源，并将其嵌入到文档中。例如，`<img>`、`<script>`、`<iframe>` 等标签使用 `src` 属性加载外部资源。
+* `href` 属性用于指定链接的目标 URL，通过点击链接，浏览器会导航到指定的 URL 地址。例如，`<a>`、`<link>`、`<link rel="stylesheet">` 等标签使用 `href` 属性创建超链接或引入外部样式表。
+
+3. 标签使用：
+
+* `src` 属性主要用于嵌入资源的标签，如 `<img>`、`<script>`、`<audio>`、`<video>` 等。
+* `href` 属性主要用于超链接标签，如 `<a>`，以及用于引入外部资源的标签，如 `<link>`。
+
+4. 加载顺序：
+
+* `src` 属性的资源会按照标签在文档中的顺序依次加载，其中某些标签可能会阻塞页面的渲染，比如 `<script>` 标签会阻塞页面的解析和渲染。
+* `href` 属性的资源加载不会阻塞页面的解析和渲染，通常用于引入外部样式表或字体等。
+
+总结：
+
+* `src` 属性用于嵌入资源的标签，指定需要加载的资源。
+* `href` 属性用于创建超链接的标签，指定链接的目标 URL 或引入外部资源的 URL。
+
+需要根据具体的使用场景和标签来选择使用 `src` 还是 `href` 属性。
 
 ## crossorigin 的作用是什么 {#p1-crossorigin}
 

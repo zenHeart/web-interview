@@ -51,13 +51,39 @@ controller.abort()
 
 需要注意的是，AbortController 是一个较新的 API，不是所有浏览器都完全支持。为了确保在不支持 AbortController 的情况下仍能取消 fetch 请求，你可以使用 polyfill 或使用第三方库（如 Axios）来实现取消功能。
 
-## 请求对象
+## 请求对象 {#p0-ajax-fetch}
 
-1. ajax
-2. fetch
+Ajax、Axios和Fetch都是用于进行HTTP请求的工具或技术，但它们在实现细节和功能方面有所不同。
 
-* 请求进度
-* 文件上传
+1. Ajax（Asynchronous JavaScript and XML）:
+
+* Ajax是一种用于在后台与服务器进行异步通信的技术。
+* Ajax使用XMLHttpRequest对象发送和接收数据，可以通过JavaScript来更新页面的局部内容，而无需刷新整个页面。
+* Ajax可以通过原生JavaScript编写，或者使用库如jQuery等来简化操作。
+
+2. Axios:
+
+* Axios是一个基于Promise的HTTP客户端，可以在浏览器和Node.js环境中使用。
+* Axios提供了更简洁、易用的API，支持请求和响应拦截、请求取消、全局配置等功能。
+* Axios可以处理请求的错误，并提供了更方便的错误处理机制。
+* Axios支持在浏览器中自动转换JSON数据，可以方便地发送JSON格式的请求和接收JSON格式的响应。
+
+3. Fetch:
+
+* Fetch是Web API提供的一种用于发送HTTP请求的新特性，主要用于替代XMLHttpRequest。
+* Fetch使用Promise来处理异步操作，提供了更简洁、灵活的API。
+* Fetch基于Promise设计，可以更好地处理请求和响应，并支持链式调用和异步操作。
+* Fetch支持跨域请求和对请求和响应进行拦截、转换等处理。
+
+区别：
+
+* Ajax是一种技术概念，而Axios和Fetch是具体的工具或技术实现。
+* Axios相比Ajax和Fetch具有更多的功能和便捷的API，支持更多的扩展和配置。
+* Fetch是基于Promise的新API，相对于Ajax和Axios更为现代化，并且支持更多的特性如跨域请求、拦截器等。
+* Ajax可以通过原生JavaScript或库来实现，Axios和Fetch是专门的库。
+* Axios和Fetch提供了更好的错误处理机制，而Ajax在错误处理方面相对简单。
+
+选择使用哪种工具或技术取决于具体的需求和项目情况。如果需要较低级别的控制和自定义配置，可以选择原生的Ajax或Fetch。而如果需要更丰富的功能和更方便的API，可以选择使用Axios或其他类似的库。
 
 ## getComputedStyle用法? {#p4-getcomputedstyle}
 
@@ -840,7 +866,86 @@ observer.disconnect()
 
 1. 埋点
 
-## 拖曳
+## drag {#p0-drag}
+
+HTML5 Drag API 提供了一组用于实现拖放操作的接口和事件。以下是 HTML5 Drag API 中常用的一些接口和事件：
+
+1. `draggable` 属性：将元素设置为可拖动。可以通过设置元素的 `draggable` 属性为 `true` 或 `false` 来控制元素是否可以被拖动。
+
+2. `ondragstart` 事件：拖动操作开始时触发的事件，通常在此事件中设置被拖动的数据类型和数据内容。
+
+3. `ondrag` 事件：拖动过程中持续触发的事件，可以在此事件中进行一些自定义的操作，如实时更新拖动元素的位置。
+
+4. `ondragend` 事件：拖动操作结束时触发的事件，通常在此事件中执行一些清理操作，如移除拖动时设置的样式。
+
+5. `ondragenter` 事件：拖动元素进入目标元素时触发的事件，可以在此事件中进行一些针对目标元素的操作，如改变目标元素的样式。
+
+6. `ondragleave` 事件：拖动元素离开目标元素时触发的事件，可以在此事件中进行一些清除或还原目标元素的操作。
+
+7. `ondragover` 事件：在目标元素上拖动时持续触发的事件，可以在此事件中阻止默认的拖放行为或执行一些自定义操作。
+
+8. `ondrop` 事件：在目标元素上释放拖动元素时触发的事件，通常在此事件中处理拖放操作，如获取拖放数据并执行相应的操作。
+
+以上是 HTML5 Drag API 中常用的接口和事件。通过使用这些接口和事件，可以实现灵活的拖拽功能并与其他元素进行交互。需要注意的是，拖放操作的实现还涉及到一些其他的 DOM 操作和事件处理。
+
+ 应用举例
+
+下面是一个使用 HTML5 Drag API 的简单示例，展示了如何实现拖拽功能：
+
+```html
+<!DOCTYPE html>
+<html>
+ <head>
+ <style>
+ .draggable {
+ width: 100px;
+ height: 100px;
+ background-color: red;
+ cursor: move;
+ }
+
+ .droppable {
+ width: 200px;
+ height: 200px;
+ background-color: blue;
+ }
+ </style>
+ </head>
+ <body>
+ <div class="draggable" draggable="true">Drag Me</div>
+ <div class="droppable">Drop Here</div>
+
+ <script>
+ const draggableElement = document.querySelector('.draggable');
+ const droppableElement = document.querySelector('.droppable');
+
+ draggableElement.addEventListener('dragstart', (event) => {
+ // 设置拖动数据
+ event.dataTransfer.setData('text/plain', 'Draggable Element');
+ });
+
+ droppableElement.addEventListener('dragover', (event) => {
+ // 阻止默认的拖放行为
+ event.preventDefault();
+ });
+
+ droppableElement.addEventListener('drop', (event) => {
+ // 获取拖放数据
+ const data = event.dataTransfer.getData('text/plain');
+
+ // 在目标元素上执行操作
+ droppableElement.textContent = data;
+ });
+ </script>
+ </body>
+</html>
+```
+
+在上面的示例中，`.draggable` 类的元素被设置为可拖动（`draggable="true"`），当开始拖动时，触发了 `dragstart` 事件，并设置了拖动数据。
+
+`.droppable` 类的元素作为目标元素，它监听了 `dragover` 事件以阻止默认的拖放行为，并在 `drop` 事件中获取拖放数据并执行相应的操作。
+
+通过以上代码，你可以在浏览器中看到一个红色的可拖动元素和一个蓝色的目标元素。你可以尝试将可拖动元素拖放到目标元素上，拖放完成后，目标元素的内容将会被设置为拖放的数据。
 
 * [drag api](https://developer.mozilla.org/zh-CN/docs/Web/API/HTML_Drag_and_Drop_API)
 
@@ -1354,3 +1459,124 @@ IndexedDB 的存储空间大小通常由浏览器的策略决定，并且在大�
 7. **使用WebSocket**：WebSocket是一种双向通信协议，可以在不同页面之间建立持久的连接，实现实时的跨页面通信。
 
 以上是一些常见的跨页面通信方式，选择适合自己需求的方式来实现跨页面通信。
+
+## 原生 js 如何进行监听路由的变化 {#p0-router-change}
+
+在原生 JavaScript 中，可以使用 window 对象上的 popstate 事件来监听路由的变化。popstate 事件在浏览器的历史记录发生变化时触发，包括当用户点击浏览器的前进或后退按钮、调用 history.pushState() 或 history.replaceState() 方法等。
+
+下面是一个简单的示例代码，演示如何使用 popstate 事件监听路由的变化：
+
+```javascript
+// 监听 popstate 事件
+window.addEventListener('popstate', function (event) {
+  // 在这里可以执行路由变化后的处理逻辑
+  console.log('路由发生了变化')
+})
+
+// 修改 URL 并添加一条历史记录
+history.pushState(null, null, '/new-route')
+
+// 或者使用 history.replaceState() 方法替换当前历史记录
+// history.replaceState(null, null, '/new-route');
+```
+
+在上面的代码中，当 popstate 事件触发时，回调函数会被执行。你可以在回调函数中添加适当的处理逻辑，例如更新页面内容、重新渲染视图等。
+
+需要注意的是，popstate 事件不会在页面加载时触发，因此如果你需要在页面加载时执行一些初始化的路由处理逻辑，可以将该逻辑封装为一个函数，并在加载时调用一次，然后再通过 popstate 事件监听路由的变化。
+
+另外，还可以使用 history.state 属性来获取当前历史记录的状态对象，该对象可以在调用 history.pushState() 或 history.replaceState() 方法时传入。这样可以在 popstate 事件回调函数中访问和使用该状态对象。
+
+```javascript
+window.addEventListener('popstate', function (event) {
+  const state = history.state
+  // 在这里可以访问和使用历史记录的状态对象
+})
+```
+
+通过监听 popstate 事件，可以在原生 JavaScript 中轻松地监听和响应路由的变化，从而实现相应的页面切换和处理逻辑。
+
+## History API {#p0-history-api}
+
+当使用 HTML5 的 History API 进行导航时，页面实际上没有进行完全的刷新。相反，只是通过 JavaScript 动态地更改 URL，并通过这个新的 URL 加载相应的内容。
+
+这种方式被称为前端路由，因为页面的切换是在前端处理的，而不是通过向服务器请求新的页面。在导航期间，浏览器会保留当前页面的状态和数据，以便在返回时恢复。
+
+这种页面切换的方式有以下几个特点：
+
+1. 前端渲染：页面的内容是通过 JavaScript 动态渲染的，可以实现无刷新的页面切换效果。
+2. 只加载部分内容：仅加载页面中需要更新的部分，而不是整个页面的内容。
+3. 保留页面状态：页面切换后，不会丢失当前页面的状态和数据，可以在返回时恢复。
+
+虽然页面实际上没有进行完全的切换和刷新，但对于用户而言，他们会感知到页面的切换效果，因为 URL 和页面内容发生了变化。这种方式能够提供更流畅的用户体验，并提高了应用的性能。
+
+需要注意的是，使用 History API 进行导航时，需要确保服务器配置正确，以便在直接访问 URL 或刷新页面时能够正确地返回相应的内容。这通常需要在服务器端设置一个后备规则，以便将所有请求都指向应用的入口文件，例如 index.html，从而实现前端路由的正常工作。
+
+## requestAnimationFrame {#p0-requestAnimationFrame}
+
+`requestAnimationFrame` 是一种优化动画性能的方法，它会在浏览器重绘之前执行指定的回调函数。相比于传统的 `setInterval` 或 `setTimeout` 方法，`requestAnimationFrame` 会在浏览器的下一次重绘之前执行回调函数，能够更好地与浏览器的渲染机制结合，减少页面的卡顿和闪烁。
+
+`requestAnimationFrame` 的使用方法如下：
+
+```javascript
+let animationId
+
+function animate () {
+  animationId = requestAnimationFrame(animate)
+  // 在这里执行动画代码
+}
+
+animate() // 启动动画
+```
+
+在上面的代码中，`requestAnimationFrame` 方法返回一个唯一的标识符，可以用来取消动画，如下所示：
+
+```javascript
+cancelAnimationFrame(animationId) // 取消动画
+```
+
+需要注意的是，`requestAnimationFrame` 并不一定每秒都会执行 60 次，它会根据浏览器的刷新频率来自动调整执行次数，保证动画的流畅性。同时，由于 `requestAnimationFrame` 是在浏览器的主线程中执行，如果动画计算量过大，会占用过多的 CPU 资源，导致页面的卡顿和性能问题。因此，需要合理使用 `requestAnimationFrame`，避免在单个动画中进行复杂的计算。
+
+## escape、encodeURI、encodeURIComponent 区别 {#p0-escape}
+
+在 JavaScript 中，`escape()`、`encodeURI()` 和 `encodeURIComponent()` 都是用于编码 URL 或字符串的函数，但它们有一些区别：
+
+1. `escape()` 函数用于编码字符串中的特殊字符，使其能够安全地传输。它对字符进行编码，包括非 ASCII 字符和特殊字符。但需要注意的是，`escape()` 不会编码 URL 中的保留字符（例如 `:/?#[]@!$&'()*+,;=`），它只会编码其他字符。
+
+```javascript
+// 输出：%48%65%6c%6c%6f%20%57%6f%72%6c%64%21
+console.log(escape('Hello World!'))
+```
+
+2. `encodeURI()` 函数用于对整个 URL 进行编码，用于将 URL 中的特殊字符转换为可传输的形式。它不会编码 URL 中的保留字符和一些特殊字符（例如 `:/?#[]@!$&'()*+,;=`）。它主要用于编码整个 URL，而不是编码 URL 的参数值。
+
+```javascript
+// 输出：http://example.com/page.php?id=123
+console.log(encodeURI('http://example.com/page.php?id=123'))
+```
+
+3. `encodeURIComponent()` 函数用于编码 URL 的参数值，它会对所有特殊字符进行编码，包括 URL 中的保留字符和其他特殊字符。它用于编码 URL 参数中的特殊字符，以确保它们在 URL 中的传输和解析过程中不会被误解。
+
+```javascript
+// 输出：Hello%20World%21
+console.log(encodeURIComponent('Hello World!'))
+```
+
+需要注意的是，`escape()` 函数已被废弃，不推荐使用。在大多数情况下，建议使用 `encodeURI()` 或 `encodeURIComponent()` 函数进行 URL 编码。选择使用哪个函数取决于具体的需求，是否需要编码整个 URL 或只是其中的一部分（如参数值）。
+
+----------
+
+**补充**
+
+| 函数 | 编码范围 | 编码空格 | 编码特殊字符 | 可逆性 |
+| --------------------- | ----------------- | -------- | ------------ | ------ |
+| `escape` | ASCII 字符外的所有字符 | `+` | 是 | 是 |
+| `encodeURI` | URL 中的部分字符 | 否 | 否 | 是 |
+| `encodeURIComponent` | URL 中的所有字符 | `%20` | 是 | 是 |
+
+下面是对每个函数的详细解释：
+
+1. `escape` 函数用于编码字符串中的所有字符，包括非 ASCII 字符和某些特殊字符。它会将这些字符转换为 `%xx` 形式的十六进制转义序列，其中 `xx` 是字符的 ASCII 值的十六进制表示。它还会将空格编码为 `+` 符号。该函数可以对编码后的字符串进行反转义，以还原原始字符串。
+
+2. `encodeURI` 函数用于对 URL 中的某些字符进行编码，包括保留字符和一些特殊字符。它会将这些字符转换为 `%xx` 形式的十六进制转义序列，其中 `xx` 是字符的 ASCII 值的十六进制表示。与 `escape` 不同，`encodeURI` 不会编码空格。该函数可以对编码后的字符串进行反转义，以还原原始字符串。
+
+3. `encodeURIComponent` 函数用于对 URL 中所有字符进行编码，包括保留字符和特殊字符。它会将这些字符转换为 `%xx` 形式的十六进制转义序列，其中 `xx` 是字符的 ASCII 值的十六进制表示。与 `encodeURI` 不同，`encodeURIComponent` 会将空格编码为 `%20`。该函数可以对编码后的字符串进行反转义，以还原原始字符串。

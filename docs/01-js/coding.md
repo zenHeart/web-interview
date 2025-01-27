@@ -1251,4 +1251,278 @@ function capitalizeFirstLetter (string) {
 
 const threeDimensionalArray = convertToThreeDimensionalArray(data)
 console.log(threeDimensionalArray)
-````
+```
+
+## 如何封装一个请求，让其多次调用的时候，实际只发起一个请求的时候，返回同一份结果 {#p1-sigleton-request}
+
+最优解： **使用deferred思想来实现请求的等待队列，可以借助Promise和async/await语法**。
+
+下面是使用`deferred`思想来实现的代码示例：
+
+```js
+class Deferred {
+  constructor () {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve
+      this.reject = reject
+    })
+  }
+}
+
+// 创建一个全局的锁标识
+let lock = false
+
+// 创建一个缓存对象
+const cache = {}
+
+// 创建一个等待队列数组
+const waitingRequests = []
+
+// 封装请求函数
+async function request (url, params) {
+  const cacheKey = `${url}-${JSON.stringify(params)}`
+
+  // 判断锁的状态
+  if (lock) {
+    const deferred = new Deferred()
+    // 如果锁已经被占用，将请求添加到等待队列中
+    waitingRequests.push({
+      deferred,
+      cacheKey
+    })
+    await deferred.promise
+    return cache[cacheKey]
+  }
+
+  // 设置锁的状态为true，表示当前请求正在执行
+  lock = true
+
+  try {
+    // 发起实际的请求
+    const response = await fetch(url, params)
+    const data = await response.json()
+    // 将结果存入缓存对象
+    cache[cacheKey] = data
+    return data
+  } finally {
+    // 释放锁，将锁的状态设置为false
+    lock = false
+
+    // 处理等待队列中的请求
+    if (waitingRequests.length > 0) {
+      const request = waitingRequests.shift()
+      request.deferred.resolve(cache[request.cacheKey])
+    }
+  }
+}
+
+// 调用请求函数
+request('https://api.example.com/data', { method: 'GET' })
+  .then(data => {
+    // 处理请求结果
+    console.log(data)
+  })
+
+// 同时发起另一个请求
+request('https://api.example.com/data', { method: 'GET' })
+  .then(data => {
+    // 直接从缓存中获取结果，而不发起实际的请求
+    console.log(data)
+  })
+```
+
+在上述代码中，`Deferred`类用于创建一个延迟对象，其中`promise`属性是一个`Promise`对象，`resolve`和`reject`方法分别用于解决和拒绝该延迟对象的`promise`。通过`await`关键字等待延迟对象的`promise`完成，当锁被占用时，将请求添加到等待队列中，并使用`await`等待对应的延迟对象的`promise`完成后再返回结果。当请求完成后，解锁并处理等待队列中的请求。
+
+## 实现管道函数 {#p0-pipe}
+
+管道函数是一种函数编程的概念，它可以将多个函数串联起来，将前一个函数的输出作为后一个函数的输入。以下是一个简单的实现示例：
+
+```javascript
+// 简化版的管道函数实现
+function pipe (...fns) {
+  return function (input) {
+    return fns.reduce((output, fn) => fn(output), input)
+  }
+}
+
+// 示例函数
+function addOne (num) {
+  return num + 1
+}
+
+function double (num) {
+  return num2
+}
+
+function square (num) {
+  return num2
+}
+
+// 创建一个管道函数
+const myPipe = pipe(addOne, double, square)
+
+// 使用管道函数进行计算
+const result = myPipe(2) // 2 -> addOne -> 3 -> double -> 6 -> square -> 36
+
+console.log(result) // 输出 36
+```
+
+在上述示例中，我们首先定义了三个简单的示例函数：addOne、double和square。然后，通过调用pipe函数，将这三个函数串联起来创建了一个管道函数myPipe。最后，我们可以通过调用myPipe函数并传入初始值2，得到最终的计算结果36。
+
+在管道函数的实现中，使用了ES6的扩展运算符（...）和Array的reduce方法。reduce方法接受一个累加器函数和初始值，并将累加器函数应用于数组的每个元素，返回最终的累积结果。在这里，累加器函数将前一个函数的输出作为后一个函数的输入，从而实现了函数的串联。
+
+## 模拟new操作 {#p0-simulate-new}
+
+可以使用以下代码来模拟`new`操作：
+
+```javascript
+function myNew (constructor, ...args) {
+  // 创建一个新对象，该对象继承自构造函数的原型
+  const obj = Object.create(constructor.prototype)
+
+  // 调用构造函数，并将新对象作为this值传递进去
+  const result = constructor.apply(obj, args)
+
+  // 如果构造函数返回一个对象，则返回该对象，否则返回新创建的对象
+  return typeof result === 'object' && result !== null ? result : obj
+}
+```
+
+使用示例：
+
+```javascript
+function Person (name, age) {
+  this.name = name
+  this.age = age
+}
+
+Person.prototype.sayHello = function () {
+  console.log(`Hello, my name is ${this.name} and I'm ${this.age} years old.`)
+}
+
+const john = myNew(Person, 'John', 25)
+john.sayHello() // 输出：Hello, my name is John and I'm 25 years old.
+```
+
+在上述代码中，`myNew`函数模拟了`new`操作的过程：
+
+1. 首先，通过`Object.create`创建了一个新对象`obj`，并将构造函数的原型对象赋值给该新对象的原型。
+2. 然后，使用`apply`方法调用构造函数，并传入新对象`obj`作为`this`值，以及其他参数。
+3. 最后，根据构造函数的返回值判断，如果返回的是一个非空对象，则返回该对象；否则，返回新创建的对象`obj`。
+
+这样，我们就可以使用`myNew`函数来模拟`new`操作了。
+
+## 手写实现 instanceof {#p0-instanceof}
+
+instanceof 运算符用于检测一个对象是否是某个构造函数的实例。其作用是判断一个对象是否属于某个类（或其父类）的实例，类似于类的继承关系，如果是则返回 true，否则返回 false。通常情况下，用于判断一个对象的类型或类别。可以结合构造函数和原型链来理解。
+
+示例代码：
+
+```javascript
+function Person (name) {
+  this.name = name
+}
+
+const person = new Person('张三')
+console.log(person instanceof Person) // Output: true
+console.log(person instanceof Object) // Output: true
+console.log(person instanceof Array) // Output: false
+```
+
+在上面的示例中，我们通过 `new` 关键字创建了一个 Person 类的实例 `person`。然后我们使用 `instanceof` 运算符检测 `person` 对象是否是 `Person` 类的实例，结果为 true。同样地，我们也可以检测 `person` 对象是否是 `Object` 类的实例，结果也为 true，因为 `Person` 类是 `Object` 类的子类。而 `Array` 类则是 `Object` 类的子类，但不是 `Person` 类的子类，因此检测 `person` 对象是否是 `Array` 类的实例，结果为 false。
+
+**手写实现**
+
+instanceof 运算符用于检测一个对象是否是某个构造函数的实例。可以通过以下方式手写实现 instanceof 运算符。
+
+```javascript
+function myInstanceof (obj, constructor) {
+  let proto = Object.getPrototypeOf(obj)
+  while (proto) {
+    if (proto === constructor.prototype) {
+      return true
+    }
+    proto = Object.getPrototypeOf(proto)
+  }
+  return false
+}
+
+// Example usage
+const arr = [1, 2, 3]
+console.log(myInstanceof(arr, Array)) // Output: true
+console.log(myInstanceof(arr, Object)) // Output: true
+console.log(myInstanceof(arr, RegExp)) // Output: false
+```
+
+该实现方式获取传入对象的原型对象，并逐层向上搜索其原型链，直到找到目标构造函数的原型对象或者原型链到达最顶层 Object.prototype。如果找到目标构造函数的原型对象，则返回 true，否则返回 false。
+
+## 手写实现 Object.create {#p1-object-create}
+
+Object.create() 方法可以用于创建一个新对象，使其原型与指定的对象完全相同。可以通过以下方式手写实现 Object.create() 方法。
+
+```javascript
+function createObject (proto) {
+  function F () {}
+  F.prototype = proto
+  return new F()
+}
+
+// Example usage
+const person = {
+  firstName: 'John',
+  lastName: 'Doe',
+  fullName: function () {
+    return this.firstName + ' ' + this.lastName
+  }
+}
+
+const anotherPerson = createObject(person)
+anotherPerson.firstName = 'Jane'
+console.log(anotherPerson.fullName()) // Output: "Jane Doe"
+```
+
+该实现方式创建了一个名为 F 的空函数，将其原型设置为传入的 proto 对象，然后返回一个新创建的 F 函数对象。这个新对象的原型与传入的 proto 对象相同，从而实现了 Object.create() 的功能。
+
+## 实现一个缓存函数 {#p0-cache}
+
+用于创建一个带有缓存功能的函数。下面是一个简化版本的手写实现，展示了如何自己实现 `memoize` 函数：
+
+```javascript
+function memoize (func) {
+  const cache = {}
+
+  return function (...args) {
+    const key = JSON.stringify(args)
+
+    if (cache[key]) {
+      return cache[key]
+    }
+
+    const result = func.apply(this, args)
+    cache[key] = result
+
+    return result
+  }
+}
+
+// 示例用法
+const expensiveFunction = memoize(function (n) {
+  console.log('Computing...')
+  return n2
+})
+
+console.log(expensiveFunction(5)) // 第一次调用，输出：Computing... 10
+console.log(expensiveFunction(5)) // 第二次调用，直接从缓存中获取结果，输出：10
+console.log(expensiveFunction(10)) // 新的参数，再次计算并缓存结果，输出：Computing... 20
+console.log(expensiveFunction(10)) // 再次调用，直接从缓存中获取结果，输出：20
+```
+
+上述代码中的 `memoize` 函数接受一个函数 `func` 作为参数，并返回一个新的函数。返回的函数具有缓存的能力，即根据参数的不同缓存计算结果。
+
+在返回的函数内部，首先将传入的参数 `args` 转换成一个唯一的字符串 `key`，以便作为缓存对象 `cache` 然后检查 `cache` 对象中是否存在对应的缓存结果，如果存在直接返回缓存结果，否则执行原始函数 `func` 并将结果缓存起来。
+
+通过这种方式，对于相同的参数，后续的调用将直接从缓存中获取结果，而不会再次执行函数。这样可以避免重复计算，提高函数的性能。
+
+在示例中，我们创建了一个名为 `expensiveFunction` 的函数，并使用 `memoize` 进行包装。第一次调用时，函数会执行计算，并输出 `"Computing..."`，结果为 10。第二次调用时，函数直接从缓存中获取结果，无需再次计算。最后两次调用分别使用了不同的参数，会触发新的计算并缓存结果。
+
+需要注意的是，这个手写的 `memoize` 函数是一个简化版本，仅适用于参数为基本类型的情况。对于参数为复杂类型（如对象、数组等）的情况，需要使用更复杂的缓存键值生成方法，以确保正确的缓存行为。此外，实际的 Lodash 库中的 `memoize` 函数还提供了其他选项和功能，例如自定义缓存键生成函数、缓存过期时间等。

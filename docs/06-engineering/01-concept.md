@@ -47,10 +47,12 @@ function add1 (a, b, c) {
 使用对象作为独立块编程
 
 ```js
-var myModule={
- a:1,
- b:2,
- add:function(m,n){...}
+const myModule = {
+  a: 1,
+  b: 2,
+  add: function (m, n) {
+  // ...
+  }
 }
 ```
 
@@ -66,18 +68,18 @@ var myModule={
 **使用立即执行函数来创建块，可以形成独立的作用域，外面无法访问，借助window对象来向外暴露接口**
 
 ```js
-(function($){
- var a=1;
- var b=2;
- function add(m,n){
- ...
- }
- $('#id').addClass('.hehe');
- window.myModule={
- a:a,
- b:b,
- add:add
- }
+(function ($) {
+  const a = 1
+  const b = 2
+  function add (m, n) {
+    // ...
+  }
+  $('#id').addClass('.hehe')
+  window.myModule = {
+    a,
+    b,
+    add
+  }
 })()
 ```
 
@@ -100,16 +102,15 @@ var myModule={
 **CommonJS规定每个文件就是一个模块，以同步的方式引入其他模块**
 
 ```js
-//a.js
-function add(m,n){
- return m+n;
-}
-module.exports={add:add}
+// //a.js
+// function add(m,n){
+//  return m+n;
+// }
+// module.exports={add:add}
 
-
-//b.js
-const {add} = require('./a.js');
-console.log(add(1,2)); // 3
+// //b.js
+// const { add } = require('./a.js');
+// console.log(add(1,2)); // 3
 ```
 
 这种方式是node端独有的，浏览器端如果想要使用，需要使用 **Browserify** 工具来解析。
@@ -158,6 +159,7 @@ require(['b'], function (b) {
 ```js
 define(['a', 'b'], function (a, b) {
   let sum = a.add(1, 2)
+  // eslint-disable-next-line
   if (false) {
     sum = b.add(1, 2) // b模块是没有被使用的，应该是不需要执行模块内部代码的
   }
@@ -220,15 +222,15 @@ ES6开始，在语法标准上实现了模块化功能。简称ES Module
 **前面所说的三种方案都是动态模块化方案，依赖模块都是动态引入的，而且模块都是一个对象。而ES Module中，模块不是一个对象，模块与模块之间也不是动态引入的，而且编译期间静态引入的，所以无法实现条件加载**
 
 ```js
-//a.js
-function add(m,n){
- return m+n;
-}
-export {add};
+// a.js
+// function add(m,n){
+//  return m+n;
+// }
+// export {add};
 
-// b.js
-import {add} from './a.js';
-console.log(add(1,2)); //3
+// // b.js
+// import {add} from './a.js';
+// console.log(add(1,2)); //3
 ```
 
 **参考文档**

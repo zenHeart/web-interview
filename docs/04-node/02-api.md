@@ -27,9 +27,9 @@
 * 例如：
 
  ```javascript
- exports = function () {
-   console.log('This is a new function.')
- }
+//  exports = function () {
+//    console.log('This is a new function.')
+//  }
  ```
 
 * 在这种情况下，模块将不再导出之前可能通过`exports.xxx = yyy`添加的属性，而是只导出这个新的函数。

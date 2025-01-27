@@ -272,6 +272,48 @@ function Counter() {
 
 需要注意的是，这只是一些常见的区别，并不是所有的区别。在实际开发中，具体的区别可能还会根据需求和使用的React版本而有所变化。
 
+**关键词**：React函数组件对比类组件、React函数组件对比类组件性能、React函数组件对比类组件状态管理、React函数组件与类组件
+
+函数组件和类组件是React中两种定义组件的方式，它们有以下区别：
+
+1. 语法：函数组件是使用函数声明的方式定义组件，而类组件是使用ES6的class语法定义组件。
+
+2. 写法和简洁性：函数组件更为简洁，没有类组件中的繁琐的生命周期方法和this关键字。函数组件只是一个纯粹的JavaScript函数，可以直接返回JSX元素。
+
+3. 状态管理：在React的早期版本中，函数组件是无法拥有自己的状态（state）和生命周期方法的。但是从React 16.8开始，React引入了Hooks（钩子）机制，使得函数组件也能够拥有状态和使用生命周期方法。
+
+4. 性能：由于函数组件不拥有实例化的过程，相较于类组件，它的性能会稍微高一些。但是在React 16.6之后，通过React.memo和PureComponent的优化，类组件也能够具备相对较好的性能表现。
+
+总体来说，函数组件更加简洁、易读，适合用于无需复杂逻辑和生命周期方法的场景，而类组件适合于需要较多逻辑处理和生命周期控制的场景。另外，使用Hooks后，函数组件也能够拥有与类组件类似的能力，因此在开发中可以更加灵活地选择使用哪种方式来定义组件。
+
+**状态管理方面做对比**
+
+从状态管理的角度来看，函数组件和类组件在React中的区别主要体现在以下几个方面：
+
+1. 类组件中的状态管理：类组件通过使用`state`属性来存储和管理组件的状态。`state`是一个对象，可以通过`this.state`进行访问和修改。类组件可以使用`setState`方法来更新状态，并通过`this.setState`来触发组件的重新渲染。在类组件中，状态的更新是异步的，React会将多次的状态更新合并为一次更新，以提高性能。
+
+2. 函数组件中的状态管理：在React之前的版本中，函数组件是没有自己的状态的，只能通过父组件通过`props`传递数据给它。但是从React 16.8版本开始，通过引入Hooks机制，函数组件也可以使用`useState`钩子来定义和管理自己的状态。`useState`返回一个状态值和一个更新该状态值的函数，通过解构赋值的方式进行使用。每次调用状态更新函数，都会触发组件的重新渲染。
+
+3. 类组件的生命周期方法：类组件有很多生命周期方法，例如`componentDidMount`、`componentDidUpdate`、`componentWillUnmount`等等。这些生命周期方法可以用来在不同的阶段执行特定的逻辑，例如在`componentDidMount`中进行数据的初始化，在`componentDidUpdate`中处理状态或属性的变化等等。通过这些生命周期方法，类组件可以对组件的状态进行更加细粒度的控制。
+
+4. 函数组件中的副作用处理：在函数组件中，可以使用`useEffect`钩子来处理副作用逻辑，例如数据获取、订阅事件、DOM操作等。`useEffect`接收一个回调函数和一个依赖数组，可以在回调函数中执行副作用逻辑，依赖数组用于控制副作用的执行时机。函数组件的副作用处理与类组件的生命周期方法类似，但是可以更灵活地控制执行时机。
+
+函数组件和类组件在状态管理方面的主要区别是函数组件通过使用Hooks机制来定义和管理状态，而类组件通过`state`属性来存储和管理状态。
+函数组件中使用`useState`来定义和更新状态，而类组件则使用`setState`方法。
+另外，函数组件也可以使用`useEffect`来处理副作用逻辑，类似于类组件的生命周期方法。通过使用Hooks，函数组件在状态管理方面的能力得到了大幅度的提升和扩展。
+
+**性能方面做对比**
+
+在性能方面，函数组件和类组件的表现也有一些区别。
+
+1. 初始渲染性能：函数组件相对于类组件来说，在初始渲染时具有更好的性能。这是因为函数组件本身的实现比类组件更加简单，不需要进行实例化和维护额外的实例属性。函数组件在渲染时更轻量化，因此在初始渲染时更快。
+
+2. 更新性能：当组件的状态或属性发生变化时，React会触发组件的重新渲染。在类组件中，由于状态的更新是异步的，React会将多次的状态更新合并为一次更新，以提高性能。而在函数组件中，由于每次状态更新都会触发组件的重新渲染，可能会导致性能略低于类组件。但是，通过使用React的memo或useMemo、useCallback等优化技术，可以在函数组件中避免不必要的重新渲染，从而提高性能。
+
+3. 代码拆分和懒加载：由于函数组件本身的实现比类组件更加简单，所以在进行代码拆分和懒加载时，函数组件相对于类组件更容易实现。React的Suspense和lazy技术可以在函数组件中实现组件的按需加载，从而提高应用的性能。
+
+函数组件相对于类组件在初始渲染和代码拆分方面具有优势，在更新性能方面可能稍逊一筹。然而，React的优化技术可以在函数组件中应用，以提高性能并减少不必要的渲染。此外，性能的差异在实际应用中可能并不明显，因此在选择使用函数组件还是类组件时，应根据具体场景和需求进行综合考量。
+
 ## React.Children.map 和 props.children 的区别 {#p3-react-children-map-props-children}
 
 ## 类组件和函数组件的使用场景 {#p4-class-component-function-component}
@@ -770,6 +812,71 @@ React Router是React官方提供的用于构建单页应用的路由库，主要
 
 以上是React Router的主要包和API。根据具体的需求，你可以使用这些API来构建和处理路由相关的逻辑。
 
+## 如何进行路由变化监听 {#router-event}
+
+在 React 中，你可以使用 React Router 库来进行路由变化的监听。React Router 是 React 的一个常用路由库，它提供了一组组件和 API 来帮助你在应用中管理路由。
+
+下面是一个示例代码，演示如何使用 React Router 监听路由的变化：
+
+然后，在你的 React 组件中，使用 BrowserRouter 或 HashRouter 组件包裹你的应用：
+
+```jsx
+import React from 'react';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
+
+function App() {
+ return (
+ // 使用 BrowserRouter 或 HashRouter 包裹你的应用
+ <BrowserRouter>
+ {/* 在这里编写你的应用内容 */}
+ </BrowserRouter>
+ );
+}
+
+export default App;
+```
+
+当使用函数组件时，可以使用 `useEffect` 钩子函数来监听路由变化。下面是修改后的示例代码：
+
+```jsx
+import React, { useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
+
+function MyComponent(props) {
+ useEffect(() => {
+ const handleRouteChange = (location, action) => {
+ // 路由发生变化时执行的处理逻辑
+ console.log('路由发生了变化', location, action);
+ };
+
+ // 在组件挂载后，添加路由变化的监听器
+ const unlisten = props.history.listen(handleRouteChange);
+
+ // 在组件卸载前，移除监听器
+ return () => {
+ unlisten();
+ };
+ }, [props.history]);
+
+ return (
+ <div>
+ {/* 在这里编写组件的内容 */}
+ </div>
+ );
+}
+
+// 使用 withRouter 高阶组件将路由信息传递给组件
+export default withRouter(MyComponent);
+```
+
+在上面的代码中，我们使用了 `useEffect` 钩子函数来添加路由变化的监听器。在 `useEffect` 的回调函数中，我们定义了 `handleRouteChange` 方法来处理路由变化的逻辑。然后，通过 `props.history.listen` 方法来添加监听器，并将返回的取消监听函数赋值给 `unlisten` 变量。
+
+同时，我们还在 `useEffect` 返回的清理函数中调用了 `unlisten` 函数，以确保在组件卸载时移除监听器。
+
+需要注意的是，由于 `useEffect` 的依赖数组中包含了 `props.history`，所以每当 `props.history` 发生变化时（即路由发生变化时），`useEffect` 的回调函数会被调用，从而更新路由变化的监听器。
+
+总结起来，通过使用 `useEffect` 钩子函数和 `props.history.listen` 方法，可以在函数组件中监听和响应路由的变化。
+
 ## redux
 
 ## redux 日志记录插件
@@ -1107,6 +1214,26 @@ React 选择自定义合成事件系统主要是为了提供一个统一的事�
  React 的合成事件系统使得开发者可以更容易地调试事件处理代码，因为事件对象具有一致的结构和属性。
 
 综上所述，React 的自定义合成事件系统是为了提供一个更加一致、高效和安全的事件处理机制，使得开发者可以更容易地构建高性能的用户界面。
+
+在React中，合成事件和原生事件的触发顺序是先合成事件，然后是原生事件。
+
+React使用了一种称为"合成事件"的机制来处理事件。当你在组件中使用事件属性（例如onClick）时，React会在底层创建合成事件，并将其附加到相应的DOM元素上。合成事件是React自己实现的一套事件系统，它通过事件委托和其他技术来提供更好的性能和一致的事件处理方式。
+
+当触发一个合成事件时，React会首先执行事件的处理函数，然后会调用合成事件的`stopPropagation()`方法来阻止事件冒泡。如果处理函数调用了`stopPropagation()`，则合成事件会终止，不再触发原生事件。
+
+如果合成事件没有被终止，并且对应的DOM元素上还有原生事件监听器，React会触发相应的原生事件。原生事件是由浏览器提供的，React并没有对其进行改变或拦截。
+
+因此，合成事件和原生事件的触发顺序是**先合成事件，然后是原生事件**。这意味着在事件处理函数中，你可以放心地使用合成事件对象，而不需要担心原生事件的影响。
+
+**为何有一些文章是说， 原生事件先执行？**
+
+原生事件先执行的说法是因为在React早期的版本中，React使用事件委托的方式来处理事件。事件委托是指将事件处理函数绑定在父元素上，然后利用事件冒泡机制，通过父元素捕获并处理子元素的事件。这种方式会导致在事件冒泡阶段，父元素的事件处理函数会先于子元素的事件处理函数执行。
+
+在这种情况下，如果一个组件有一个合成事件和一个原生事件绑定在同一个元素上，原生事件的处理函数会在合成事件的处理函数之前执行。这就造成了一些文章中提到的原生事件先执行的观察结果。
+
+然而，从React v16开始，React改变了事件处理的方式，不再使用事件委托，而是直接将事件处理函数绑定在目标元素上。这样做的好处是提高了性能，并且保证了事件处理函数的执行顺序与绑定顺序一致。
+
+因此，根据React的最新版本，合成事件会先于原生事件执行。如果你发现有一些旧的文章提到原生事件先执行，那可能是因为这些文章对React的早期版本进行了描述，不适用于目前的React版本。
 
 ## scheduler 调度机制原理 {#scheduler}
 
@@ -2196,3 +2323,274 @@ function LoginForm() {
 React会比较`username`和`password`的旧值和新值，如果有变化，会更新对应的Fiber节点中的`memoizedState`，然后重新渲染组件，并将最新的`username`和`password`值传递给相应的input元素。
 
 通过比较`memorizedState`，React能够检测到状态的变化，并只更新发生变化的部分，以提高性能和优化渲染过程。
+
+## ref 有哪些使用场景，请举例 {#p0-ref}
+
+React的ref用于获取组件或DOM元素的引用。它有以下几个常见的使用场景：
+
+1. 访问子组件的方法或属性：通过ref可以获取子组件的实例，并调用其方法或访问其属性。
+
+```jsx
+import React, { useRef } from 'react';
+
+function ChildComponent() {
+ const childRef = useRef(null);
+
+ const handleClick = () => {
+ childRef.current.doSomething();
+ }
+
+ return (
+ <div>
+ <button onClick={handleClick}>Click</button>
+ <Child ref={childRef} />
+ </div>
+ );
+}
+
+const Child = React.forwardRef((props, ref) => {
+ const doSomething = () => {
+ console.log('Doing something...');
+ }
+
+ // 将ref引用绑定到组件的实例
+ React.useImperativeHandle(ref, () => ({
+ doSomething
+ }));
+
+ return <div>Child Component</div>;
+});
+```
+
+2. 获取DOM元素：通过ref可以获取组件渲染后的DOM元素，并进行操作。
+
+```jsx
+import React, { useRef } from 'react';
+
+function MyComponent() {
+ const inputRef = useRef(null);
+
+ const handleClick = () => {
+ inputRef.current.focus();
+ }
+
+ return (
+ <div>
+ <input ref={inputRef} type="text" />
+ <button onClick={handleClick}>Focus Input</button>
+ </div>
+ );
+}
+```
+
+3. 动态引用：通过ref可以在函数组件中动态地引用不同的组件或DOM元素。
+
+```jsx
+import React, { useRef } from 'react';
+
+function MyComponent() {
+ const ref = useRef(null);
+ const condition = true;
+
+ const handleClick = () => {
+ ref.current.doSomething();
+ }
+
+ return (
+ <div>
+ {condition ? (
+ <ChildComponent ref={ref} />
+ ) : (
+ <OtherComponent ref={ref} />
+ )}
+ <button onClick={handleClick}>Click</button>
+ </div>
+ );
+}
+```
+
+这些例子展示了一些使用React的ref的常见场景，但实际上，ref的用途非常灵活，可以根据具体需求进行扩展和应用。
+
+## constructor 和 getInitialState 的区别? {#p0-getInitialState}
+
+在 React 中，constructor 是一个类的构造函数，用于初始化类的成员变量和方法，这个函数不仅会在组件实例化时调用，还会在后续的组件更新时调用。而 getInitialState 是一个组件的声明周期函数，用于初始化组件的状态，该函数只会在组件实例化时调用一次，后续的更新不会再调用。
+
+具体来说，constructor 用于初始化类成员变量和方法，如下面的示例代码所示：
+
+```
+class MyComponent extends React.Component {
+ constructor(props) {
+ super(props);
+ this.state = {
+ count: 0
+ };
+ this.handleClick = this.handleClick.bind(this);
+ }
+
+ handleClick() {
+ this.setState({ count: this.state.count + 1 });
+ }
+
+ render() {
+ return (
+ <div>
+ <p>Count: {this.state.count}</p>
+ <button onClick={this.handleClick}>Click me</button>
+ </div>
+ );
+ }
+}
+```
+
+在上面的代码中，constructor 用于初始化组件的状态 count 和绑定 handleClick 方法的 this 指向。每次组件更新时，constructor 函数都会被调用。
+
+而 getInitialState 则是用于初始化组件的状态，如下面的示例代码所示：
+
+```
+class MyComponent extends React.Component {
+ getInitialState() {
+ return {
+ count: 0
+ };
+ }
+
+ handleClick() {
+ this.setState({ count: this.state.count + 1 });
+ }
+
+ render() {
+ return (
+ <div>
+ <p>Count: {this.state.count}</p>
+ <button onClick={this.handleClick}>Click me</button>
+ </div>
+ );
+ }
+}
+```
+
+在上面的代码中，getInitialState 用于初始化组件的状态 count，该函数只会在组件实例化时调用一次。后续的更新不会再调用。需要注意的是，在 React 16.3 之后，getInitialState 已经不再被支持，需要使用 constructor 来初始化 state。
+
+## useContext {#p0-useContext}
+
+如何合理使用 useContext
+
+useContext 是 React 中提供的一种跨组件传递数据的方式，可以让我们在不同层级的组件之间共享数据，避免了繁琐的 props 传递过程。使用 useContext 可以大大简化组件之间的通信方式，提高代码可维护性和可读性。
+
+下面是一些使用 useContext 的最佳实践：
+
+1. 合理使用 context 的层级
+
+context 可以跨组件传递数据，但是过多的 context 层级会使代码变得复杂、难以维护，而且会影响性能。因此，应该尽量避免嵌套过多 context 的层级，保持简单的组件结构。
+
+2. 将 context 统一定义在一个文件中
+
+为了方便管理和使用，我们应该将 context 的定义统一放在一个文件中，这样能够避免重复代码，也能方便其他组件引用。
+
+3. 使用 context.Provider 提供数据
+
+使用 context.Provider 来提供数据，将数据传递给子组件。在 Provider 中可以设置 value 属性来传递数据。
+
+4. 使用 useContext 获取数据
+
+使用 useContext hook 来获取 context 中的数据。useContext 接收一个 context 对象作为参数，返回 context 的当前值。这样就可以在组件中直接使用 context 中的数据。
+
+5. 避免滥用 useContext
+
+虽然 useContext 可以方便地跨组件传递数据，但是滥用 useContext 也会使代码变得难以维护。因此，在使用 useContext 时，应该优先考虑组件通信是否真的需要使用
+useContext。只有在需要跨越多级组件传递数据时，才应该使用 useContext 解决问题。
+
+ 如何避免使用 context 的时候， 引起整个挂载节点树的重新渲染？
+
+使用 context 时，如果 context 中的值发生了变化，会触发整个组件树的重新渲染。这可能会导致性能问题，特别是在组件树较大或者数据变化频繁的情况下。
+
+为了避免这种情况，可以采用以下方法：
+
+1. 对 context 值进行优化
+
+如果 context 中的值是一个对象或者数组，可以考虑使用 useMemo 或者 useCallback 对其进行优化。这样可以确保只有在值发生变化时才会触发重新渲染。
+
+2. 将 context 的值进行拆分
+
+如果 context 中的值包含多个独立的部分，可以考虑将其进行拆分，将不需要更新的部分放入另一个 context 中。这样可以避免因为一个值的变化而导致整个组件树的重新渲染。
+
+3. 使用 shouldComponentUpdate 或者 React.memo 进行优化
+
+对于一些需要频繁更新的组件，可以使用 shouldComponentUpdate 或者 React.memo 进行优化。这样可以在值发生变化时，只重新渲染需要更新的部分。
+
+4. 使用其他数据管理方案
+
+如果 context 不能满足需求，可以考虑使用其他数据管理方案，如 Redux 或者 MobX。这些方案可以更好地控制数据更新，避免不必要的渲染。
+
+**如果 context 中的值是一个对象或者数组，可以考虑使用 useMemo 或者 useCallback 对其进行优化**
+
+代码举例： 以下是一个使用 useMemo 对 context 值进行优化的示例代码：
+
+```tsx
+import React, { useMemo, createContext } from 'react'
+
+// 创建一个 Context
+const MyContext = createContext()
+
+// 创建一个 Provider
+const MyProvider = ({ children }) => {
+  // 定义一个复杂的数据对象
+  const data = useMemo(() => {
+    // 这里可以是一些复杂的计算逻辑
+    return {
+      name: 'Alice',
+      age: 18,
+      hobbies: ['Reading', 'Traveling', 'Sports'],
+      friends: [
+        { name: 'Bob', age: 20 },
+        { name: 'Charlie', age: 22 },
+        { name: 'David', age: 24 }
+      ]
+    }
+  }, [])
+
+  return (
+ // 将 data 作为 value 传入 context.Provider
+ <MyContext.Provider value={data}>
+ {children}
+ </MyContext.Provider>
+  )
+}
+
+// 在 Consumer 中使用 context
+const MyConsumer = () => {
+  return (
+ <MyContext.Consumer>
+ {data => (
+ <div>
+ <div>Name: {data.name}</div>
+ <div>Age: {data.age}</div>
+ <div>Hobbies: {data.hobbies.join(', ')}</div>
+ <div>Friends:
+ <ul>
+ {data.friends.map(friend => (
+ <li key={friend.name}>
+ {friend.name} ({friend.age})
+ </li>
+ ))}
+ </ul>
+ </div>
+ </div>
+ )}
+ </MyContext.Consumer>
+  )
+}
+
+// 使用 MyProvider 包裹需要使用 context 的组件
+const App = () => {
+  return (
+ <MyProvider>
+ <MyConsumer />
+ </MyProvider>
+  )
+}
+
+export default App
+```
+
+在上面的示例中，我们使用了 useMemo 对复杂的数据对象进行了缓存。这样，当 context 中的值变化时，只会重新计算数据对象的值，而不是重新创建一个新的对象。这样可以有效地减少不必要的渲染。

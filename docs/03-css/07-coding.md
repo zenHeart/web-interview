@@ -454,3 +454,128 @@ CSS中没有直接的属性可以实现省略样式。但是，可以使用一�
 ```
 
 请注意，`-webkit-line-clamp`属性只在某些WebKit浏览器中（如Chrome和Safari）支持。在其他浏览器中，可能需要使用其他解决方案来实现多行文本的省略样式。
+
+## 实现页面顶部， 自定义滚动进度条样式 {#p0-custom-scrool}
+
+要实现页面顶部的自定义滚动进度条样式，可以按照以下步骤进行：
+
+1. 在HTML中添加滚动进度条的容器元素，通常可以使用一个`<div>`元素作为容器，放在页面顶部的合适位置。
+
+```html
+<div id="scroll-progress"></div>
+```
+
+2. 在CSS中定义滚动进度条的样式。可以使用背景颜色、高度、透明度等属性来自定义样式。
+
+```css
+#scroll-progress {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 5px;
+ background-color: #f00; // 自定义进度条颜色 */
+ opacity: 0.7; // 自定义进度条透明度 */
+ z-index: 9999; // 确保进度条显示在最顶层 */
+}
+```
+
+3. 使用JavaScript来监听页面滚动事件，并更新滚动进度条的宽度。
+
+```javascript
+const scrollProgress = document.getElementById('scroll-progress')
+let requestId
+
+function updateScrollProgress () {
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop
+  const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
+  const progress = (scrollTop / (scrollHeight - window.innerHeight)) * 100
+  scrollProgress.style.width = progress + '%'
+  requestId = null
+}
+
+function scrollHandler () {
+  if (!requestId) {
+    requestId = requestAnimationFrame(updateScrollProgress)
+  }
+}
+
+window.addEventListener('scroll', scrollHandler)
+```
+
+以上就是一个简单的实现页面顶部自定义滚动进度条样式的方法。根据自己的需求，可以调整CSS样式和JavaScript的逻辑来实现不同的效果。
+
+完整代码：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+ <title>自定义滚动进度条样式</title>
+ <style>
+ #scroll-progress {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 5px;
+ background-color: #f00; // 自定义进度条颜色 */
+ opacity: 0.7; // 自定义进度条透明度 */
+ z-index: 9999; // 确保进度条显示在最顶层 */
+ }
+ </style>
+</head>
+<body>
+<div id="scroll-progress"></div>
+
+<!-- 假设有很长的内容 -->
+<div style="height: 2000px;"></div>
+
+<script>
+ var scrollProgress = document.getElementById('scroll-progress');
+ var requestId;
+
+ function updateScrollProgress() {
+ var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+ var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+ var progress = (scrollTop / (scrollHeight - window.innerHeight))100;
+ scrollProgress.style.width = progress + '%';
+ requestId = null;
+ }
+
+ function scrollHandler() {
+ if (!requestId) {
+ requestId = requestAnimationFrame(updateScrollProgress);
+ }
+ }
+
+ window.addEventListener('scroll', scrollHandler);
+</script>
+</body>
+</html>
+```
+
+## css 隐藏元素的方法有哪些 {#p0-hide-element}
+
+有多种方法可以隐藏元素的CSS。
+
+1. `display: none;`：将元素完全隐藏，不占据任何空间。
+2. `visibility: hidden;`：将元素隐藏，但仍占据空间。
+3. `opacity: 0;`：将元素透明化，但仍占据空间。
+4. `position: absolute; left: -9999px;`：将元素定位到屏幕外部，不显示在可见区域。
+5. `height: 0; width: 0; overflow: hidden;`：将元素高度和宽度设为0，同时隐藏溢出内容。
+6. `clip-path: polygon(0 0, 0 0, 0 0);`：使用剪切路径将元素隐藏。
+
+这些方法可以根据具体的需求选择合适的方式来隐藏元素。使用 `display: none;` 是最常见和常用的隐藏元素的方法，它会完全移除元素并且不占据页面空间。而其他方法则可以根据需要在元素隐藏的同时保留占位空间或其他特殊效果。
+
+**`display: none;`、`visibility: hidden;` 和 `opacity: 0;` 区别是啥**
+
+`display: none;`、`visibility: hidden;` 和 `opacity: 0;` 是用于隐藏元素的CSS属性，它们之间有一些区别：
+
+1. `display: none;`：该属性会完全移除元素，并且不占据页面空间。隐藏后的元素在文档流中不可见，也不会影响其他元素的布局。相当于元素被完全移除了，无法通过任何方式找到它。当需要彻底从页面中移除元素时，可以使用该属性。
+
+2. `visibility: hidden;`：该属性会将元素隐藏，但仍然占据页面空间。隐藏后的元素在文档流中保留了位置，仅仅是不可见了。元素隐藏后不会影响其他元素的布局。可以通过JavaScript或其他方式找到该元素，并且可以在需要时将其重新显示。
+
+3. `opacity: 0;`：该属性将元素设置为完全透明。元素仍然占据页面空间，但是不可见。透明元素在文档流中保留位置，并且不会影响其他元素的布局。可以通过JavaScript或其他方式找到该元素，并在需要时将其重新设置为可见。
+
+综上所述，`display: none;` 完全移除元素并且不占据空间，`visibility: hidden;` 保留元素位置但不可见，`opacity: 0;` 使元素透明但仍然占据空间。根据具体需求选择合适的属性来隐藏元素。

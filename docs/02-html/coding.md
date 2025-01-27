@@ -2388,3 +2388,233 @@ observer.observe(targetNode, config)
 5. 合并文件块：在所有文件块都上传完成后，服务器可以将这些文件块合并为完整的文件。可以通过将所有文件块的内容拼接在一起或使用服务器端的工具进行合并。
 
 需要注意的是，断点续传的实现还需要服务器端的支持。服务器端需要接收和处理分片上传的请求，并保存和管理已上传的文件块，以便在续传时恢复文件的完整性。因此，前端实现断点续传需要和后端进行协作。
+
+## 如何通过设置失效时间清除本地存储的数据？ {#p0-store-expired}
+
+要清除本地存储的数据，可以通过设置失效时间来实现。以下是一种常见的方法：
+
+1. 将数据存储到本地存储中，例如使用localStorage或sessionStorage。
+
+2. 在存储数据时，同时设置一个失效时间。可以将失效时间存储为一个时间戳或特定的日期时间。
+
+3. 在读取数据时，检查当前时间是否超过了失效时间。如果超过了失效时间，则认为数据已过期，需要清除。
+
+4. 如果数据已过期，则使用localStorage.removeItem(key)或sessionStorage.removeItem(key)方法删除该数据。
+
+以下是一个示例代码：
+
+```javascript
+// 存储数据
+function setLocalStorageData (key, data, expiration) {
+  const item = {
+    data,
+    expiration
+  }
+  localStorage.setItem(key, JSON.stringify(item))
+}
+
+// 读取数据
+function getLocalStorageData (key) {
+  let item = localStorage.getItem(key)
+  if (item) {
+    item = JSON.parse(item)
+    if (item.expiration && new Date().getTime() > item.expiration) {
+      // 数据已过期，清除数据
+      localStorage.removeItem(key)
+      return null
+    }
+    return item.data
+  }
+  return null
+}
+
+// 示例用法
+const data = { name: 'John', age: 30 }
+const expiration = new Date().getTime() + 36001000 // 设置失效时间为当前时间后的1小时
+setLocalStorageData('user', data, expiration)
+
+const storedData = getLocalStorageData('user')
+console.log(storedData)
+```
+
+在示例代码中，setLocalStorageData函数用于存储数据，并接受一个失效时间参数。getLocalStorageData函数用于读取数据，并检查失效时间是否已过期。如果数据已过期，则清除数据。示例中的失效时间设置为当前时间后的1小时。
+
+## 如何判断dom元素是否在可视区域 {#p0-element-visible}
+
+判断 DOM 元素是否在可视区域可以使用以下方法：
+
+1. getBoundingClientRect() 方法
+
+该方法返回元素的大小及其相对于视口的位置，包括 top、right、bottom、left 四个属性。我们可以根据这四个属性来判断元素是否在可视区域内。
+
+```javascript
+function isInViewport (element) {
+  const rect = element.getBoundingClientRect()
+  return (
+    rect.top >= 0 &&
+ rect.left >= 0 &&
+ rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+ rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  )
+}
+
+// Example usage
+const element = document.getElementById('my-element')
+if (isInViewport(element)) {
+  console.log('Element is in viewport')
+} else {
+  console.log('Element is not in viewport')
+}
+```
+
+2. IntersectionObserver API
+
+该 API 可以观察元素与其祖先元素或视口交叉的情况，并且可以设置回调函数，当元素的可见性发生变化时会调用该回调函数。
+
+```javascript
+function callback (entries, observer) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      console.log('Element is in viewport')
+    } else {
+      console.log('Element is not in viewport')
+    }
+  })
+}
+
+const observer = new IntersectionObserver(callback)
+
+const element = document.getElementById('my-element')
+observer.observe(element)
+```
+
+使用 IntersectionObserver API 的优点是可以减少不必要的计算和事件监听，提高了性能。
+
+## 移动端如何实现上拉加载，下拉刷新？{#p0-mobile-scroll}
+
+移动端实现上拉加载和下拉刷新通常使用一些特定的库或框架来简化开发。以下是两种常见的实现方式：
+
+1. 使用第三方库：一些流行的移动端UI库（如iScroll、BetterScroll、Ant Design Mobile等）提供了上拉加载和下拉刷新的功能，你可以使用它们来实现。这些库通常提供了易于使用的API和配置选项，可以在你的应用中轻松地集成上拉加载和下拉刷新功能。
+
+2. 自定义实现：如果你想更自定义地实现上拉加载和下拉刷新，可以使用原生的触摸事件（如touchstart、touchmove、touchend等）和滚动事件（如scroll）来监测用户的手势操作和滚动行为，并根据这些事件来触发相应的加载或刷新逻辑。你可以监听触摸事件来检测用户的下拉或上拉手势，当达到一定的阈值时，触发刷新或加载的操作。同时，你还需要监听滚动事件来判断当前滚动位置是否已经到达页面底部，从而触发上拉加载的操作。
+
+当自定义实现上拉加载和下拉刷新时，你可以使用JavaScript和HTML/CSS来编写代码。下面是一个简单的示例，演示了如何通过原生事件来实现上拉加载和下拉刷新的功能：
+
+HTML 结构：
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+ <title>上拉加载和下拉刷新示例</title>
+ <style>
+ // 用于展示加载和刷新状态的样式 */
+ .loading {
+ text-align: center;
+ padding: 10px;
+ background-color: #f1f1f1;
+ }
+
+ .refresh {
+ text-align: center;
+ padding: 10px;
+ background-color: #f1f1f1;
+ }
+ </style>
+</head>
+<body>
+ <div id="content">
+ <!-- 内容区域 -->
+ </div>
+ <div id="loading" class="loading">
+ 加载中...
+ </div>
+ <div id="refresh" class="refresh">
+ 下拉刷新
+ </div>
+
+ <script src="your_script.js"></script>
+</body>
+</html>
+```
+
+JavaScript 代码（your_script.js）：
+
+```javascript
+// 获取相关元素
+const content = document.getElementById('content')
+const loading = document.getElementById('loading')
+const refresh = document.getElementById('refresh')
+
+let isRefreshing = false
+let isLoading = false
+
+// 监听触摸事件
+let startY = 0
+let moveY = 0
+content.addEventListener('touchstart', function (event) {
+  startY = event.touches[0].pageY
+})
+
+content.addEventListener('touchmove', function (event) {
+  moveY = event.touches[0].pageY
+
+  // 下拉刷新
+  if (moveY - startY > 100 && !isRefreshing) {
+    refresh.innerHTML = '释放刷新'
+  }
+
+  // 上拉加载
+  const scrollTop = content.scrollTop
+  const scrollHeight = content.scrollHeight
+  const offsetHeight = content.offsetHeight
+  if (scrollTop + offsetHeight >= scrollHeight && !isLoading) {
+    loading.style.display = 'block'
+  }
+})
+
+content.addEventListener('touchend', function (event) {
+  // 下拉刷新
+  if (moveY - startY > 100 && !isRefreshing) {
+    refresh.innerHTML = '刷新中...'
+    simulateRefresh()
+  }
+
+  // 上拉加载
+  const scrollTop = content.scrollTop
+  const scrollHeight = content.scrollHeight
+  const offsetHeight = content.offsetHeight
+  if (scrollTop + offsetHeight >= scrollHeight && !isLoading) {
+    loading.style.display = 'block'
+    simulateLoad()
+  }
+
+  // 重置状态
+  startY = 0
+  moveY = 0
+})
+
+// 模拟刷新
+function simulateRefresh () {
+  isRefreshing = true
+  setTimeout(function () {
+    // 刷新完成后的操作
+    refresh.innerHTML = '刷新成功'
+    isRefreshing = false
+  }, 2000)
+}
+
+// 模拟加载
+function simulateLoad () {
+  isLoading = true
+  setTimeout(function () {
+    // 加载完成后的操作
+    loading.style.display = 'none'
+    isLoading = false
+  }, 2000)
+}
+```
+
+上面的代码使用了`touchstart`、`touchmove`和`touchend`事件来监测用户的手势操作，实现了下拉刷新和上拉加载的功能。通过修改`refresh`和`loading`元
+
+素的内容和样式，可以实现相应的状态展示效果。

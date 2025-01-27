@@ -214,3 +214,90 @@ printObjectInfo(myObj) // 输出: Printing...
 在上述示例中，我们定义了一个接口 `Printable`，具有一个方法 `print`。然后定义了一个类 `MyClass`，它实现了 `Printable` 接口，并且实现了 `print` 方法。接着定义了一个函数 `printObjectInfo`，它接收一个参数 `obj`，类型为 `any`。在函数内部，我们使用 `in` 运算符检查 `obj` 对象是否实现了 `Printable` 接口，如果是则调用 `print` 方法。
 
 总的来说，`in` 关键字在 TypeScript 中用于检查对象是否具有指定的属性或类实例是否实现了指定的接口。它可以帮助我们在运行时根据对象的属性或接口的实现情况来进行相应的处理。
+
+## 479 模拟new操作【热度: 1,186】
+
+- created_at: 2023-07-18T14:50:21Z
+- updated_at: 2023-07-18T14:50:22Z
+- labels: JavaScript, 滴滴
+- milestone: 中
+
+**关键词**：模拟 new
+
+可以使用以下代码来模拟`new`操作：
+
+```javascript
+function myNew (constructor, ...args) {
+  // 创建一个新对象，该对象继承自构造函数的原型
+  const obj = Object.create(constructor.prototype)
+
+  // 调用构造函数，并将新对象作为this值传递进去
+  const result = constructor.apply(obj, args)
+
+  // 如果构造函数返回一个对象，则返回该对象，否则返回新创建的对象
+  return typeof result === 'object' && result !== null ? result : obj
+}
+```
+
+使用示例：
+
+```javascript
+function Person (name, age) {
+  this.name = name
+  this.age = age
+}
+
+Person.prototype.sayHello = function () {
+  console.log(`Hello, my name is ${this.name} and I'm ${this.age} years old.`)
+}
+
+const john = myNew(Person, 'John', 25)
+john.sayHello() // 输出：Hello, my name is John and I'm 25 years old.
+```
+
+在上述代码中，`myNew`函数模拟了`new`操作的过程：
+
+1. 首先，通过`Object.create`创建了一个新对象`obj`，并将构造函数的原型对象赋值给该新对象的原型。
+2. 然后，使用`apply`方法调用构造函数，并传入新对象`obj`作为`this`值，以及其他参数。
+3. 最后，根据构造函数的返回值判断，如果返回的是一个非空对象，则返回该对象；否则，返回新创建的对象`obj`。
+
+这样，我们就可以使用`myNew`函数来模拟`new`操作了。
+
+## Object.is() 与比较操作符 “===”、“==” 有什么区别
+
+`Object.is()` 方法和比较操作符 "==="、"==" 用于比较两个值的相等性，但它们在比较方式和行为上有一些区别。
+
+1. `Object.is()` 方法是严格相等比较，而 "===" 操作符也是严格相等比较，但 "==" 操作符是相等比较。
+
+- 严格相等比较（`===`）要求比较的两个值在类型和值上完全相同才会返回 `true`。
+- 相等比较（`==`）会进行类型转换，将两个值转换为相同类型后再进行比较。
+
+2. `Object.is()` 方法对于一些特殊的值比较更准确：
+
+- 对于 NaN 和 NaN 的比较，`Object.is(NaN, NaN)` 返回 `true`，而 `NaN === NaN` 返回 `false`。
+- 对于 +0 和 -0 的比较，`Object.is(+0, -0)` 返回 `false`，而 `+0 === -0` 返回 `true`。
+
+下面是一些示例：
+
+```javascript
+console.log(Object.is(1, 1)) // true
+console.log(Object.is('foo', 'foo')) // true
+console.log(Object.is(true, true)) // true
+
+console.log(Object.is(null, null)) // true
+console.log(Object.is(undefined, undefined)) // true
+
+console.log(Object.is(NaN, NaN)) // true
+// eslint-disable-next-line
+console.log(NaN === NaN) // false
+
+console.log(Object.is(+0, -0)) // false
+// eslint-disable-next-line
+console.log(+0 === -0) // true
+
+console.log(Object.is({}, {})) // false
+// eslint-disable-next-line
+console.log({} === {}) // false
+```
+
+`Object.is()` 方法更精确地比较两个值的相等性，尤其是在处理一些特殊的值时，而 "===" 操作符和 "==" 操作符则具有不同的类型转换行为和比较规则。

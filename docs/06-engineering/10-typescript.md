@@ -419,7 +419,7 @@ type FunctionPropNames = GetKeyByValueType<SomeProps, Function>; // 'c' | 'd'
 
 运算过程如下：
 
-```typescript
+```ts
 // 开始
 {
  a: string
@@ -463,7 +463,7 @@ function handleValue (val: All) {
       break
     default:
       // val 在这里是 never
-      const exhaustiveCheck: never = val
+      // const exhaustiveCheck: never = val
       break
   }
 }

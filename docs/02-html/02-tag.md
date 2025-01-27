@@ -2,8 +2,6 @@
 
 ## doctype(文档类型) 的作用是什么？ {#p0-doctype}
 
-<Answer>
-
 在 html 标准未统一之前,浏览器都有自己的渲染规则，在标准统一后,为了兼容旧版本,存在两种渲染模式。
 
 * **quirks mode** 怪异模式,浏览器自行决定
@@ -20,7 +18,17 @@
 * [doctype](https://hsivonen.fi/doctype)
 * [whatwg](https://quirks.spec.whatwg.org)
 
-</Answer>
+`<!DOCTYPE html>` 是 HTML5 的文档类型声明（Document Type Declaration），它的作用是告诉浏览器当前文档使用的是 HTML5 规范。
+
+具体来说，`<!DOCTYPE html>` 的作用有以下几个方面：
+
+1. 指定文档类型：文档类型声明告诉浏览器当前文档所使用的 HTML 版本，即 HTML5。这样浏览器就可以按照 HTML5 的规范来解析和渲染文档。
+
+2. 规范浏览器行为：文档类型声明还可以影响浏览器的行为。HTML5 的文档类型声明告诉浏览器以标准模式（standards mode）来解析文档，以确保一致的行为和渲染结果。
+
+3. 提供更好的兼容性：使用 `<!DOCTYPE html>` 可以确保文档在不同浏览器中具有一致的处理方式。不同的浏览器对不同版本的 HTML 有不同的处理方式，而使用 HTML5 的文档类型声明可以使浏览器以最新的标准模式来解析文档，提供更好的兼容性和一致性。
+
+总结来说，`<!DOCTYPE html>` 是 HTML5 的文档类型声明，它告诉浏览器当前文档使用的是 HTML5 规范，以规范浏览器的行为，并提供更好的兼容性和一致性。在编写 HTML5 文档时，通常将 `<!DOCTYPE html>` 放置在文档的开头作为文档类型声明。
 
 ## 说一下什么是语义化标签 {#p0-semantic-tag}
 
@@ -189,7 +197,6 @@
 
 ## 请解释 `<script>、<script async> 和 <script defer>` 的区别 {#p0-script-async-defer}
 
-<Answer>
 async:
 
 * 异步加载
@@ -202,7 +209,35 @@ defer:
 * DOM 解析完成后执行
 * 按照顺序执行
 
-</Answer>
+在HTML中，`<script>`标签用于引入或嵌入JavaScript代码。`<script>`标签可以使用以下属性来调整脚本的行为：
+
+**常用属性**
+
+1. `src`：指定要引入的外部JavaScript文件的URL。例如：`<script src="script.js"></script>`。通过这个属性，浏览器会下载并执行指定的外部脚本文件。
+
+2. `async`：可选属性，用于指示浏览器异步加载脚本。这意味着脚本会在下载的同时继续解析HTML文档，不会阻塞其他资源的加载。例如：`<script src="script.js" async></script>`。
+
+3. `defer`：可选属性，用于指示浏览器延迟执行脚本，直到文档解析完成。这样可以确保脚本在文档完全呈现之前不会执行。例如：`<script src="script.js" defer></script>`。
+
+4. `type`：指定脚本语言的MIME类型。通常是`text/javascript`或者`module`（用于ES6模块）。如果未指定该属性，浏览器默认将其视为JavaScript类型。例如：`<script type="text/javascript">...</script>`。
+
+5. `charset`：指定外部脚本文件的字符编码。例如：`<script src="script.js" charset="UTF-8"></script>`。
+
+6. `integrity`：用于指定外部脚本文件的Subresource Integrity（SRI）。SRI可以确保浏览器在加载脚本时验证其完整性，防止通过恶意更改文件来执行潜在的攻击。例如：`<script src="script.js" integrity="sha256-qznLcsROx4GACP2dm0UCKCzCG+HiZ1guq6ZZDob/Tng="></script>`。
+
+**不常用属性**
+
+7. `crossorigin`：正常的 script 元素将最小的信息传递给 window.onerror，用于那些没有通过标准 CORS 检查的脚本。要允许对静态媒体使用独立域名的网站进行错误记录，请使用此属性。参见 CORS 设置属性。
+
+8. `fetchpriority`：提供一个指示，说明在获取外部脚本时要使用的相对优先级。
+
+9. `nomodule`： 这个布尔属性被设置来标明这个脚本不应该在支持 ES 模块的浏览器中执行。实际上，这可用于在不支持模块化 JavaScript 的旧浏览器中提供回退脚本。
+
+10. `nonce`: 在 `script-src Content-Security-Policy (en-US)` 中允许脚本的一个一次性加密随机数（nonce）。服务器每次传输策略时都必须生成一个唯一的 nonce 值。提供一个无法猜测的 nonce 是至关重要。
+
+11. `referrerpolicy`: 表示在获取脚本或脚本获取资源时，要发送哪个 referrer。
+
+可以参考文档：[资料](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/script)
 
 ## 为什么通常推荐将 CSS `<link>` 放置在 `<head></head>` 之间，而将 JS `<script>` 放置在 `</body>` 之前？你知道有哪些例外吗？{#p2-css-link-js-script}
 
@@ -264,7 +299,39 @@ HTML 中的行内元素（Inline elements）和块级元素（Block-level elemen
 
 即使块级元素和行内元素默认特征不同，你还是可以通过 **CSS 的`display`属性来更改它们的行为**。例如，`display: inline;`会让块级元素表现得像行内元素，并且它们将在其父容器的同一行内显示。另一方面，`display: block;`会让行内元素表现得像块级元素。
 
-## iframe有那些缺点？ {#p1-iframe-disadvantages}
+## iframe {#p0-iframe-disadvantages}
+
+`<iframe>` 标签是 HTML 中的内嵌框架元素，它具有一些优点和缺点，如下所示：
+
+优点：
+
+1. 分隔内容：`<iframe>` 允许将不同的 HTML 文档嵌入到当前文档中，实现内容的分隔和独立。每个 `<iframe>` 都有自己的文档上下文，可以在不同的 `<iframe>` 中加载和操作不同的内容。
+2. 并行加载：每个 `<iframe>` 是独立的，可以并行加载，这样可以提高页面加载速度和性能。
+3. 代码隔离：`<iframe>` 中的内容与主页面的内容相互隔离，可以避免一些 CSS 样式或 JavaScript 代码的冲突，提高代码的可维护性和可靠性。
+4. 安全性：由于 `<iframe>` 是独立的文档上下文，可以用于实现一些安全隔离的措施，例如加载来自不可信源的内容，可以将其放置在 `<iframe>` 中，以保护主页面的安全性。
+
+缺点：
+
+1. SEO 不友好：搜索引擎对 `<iframe>` 中的内容索引能力较弱，可能影响页面的搜索引擎优化。
+2. 高度难以控制：`<iframe>` 的高度默认会根据内容的高度自动调整，如果内容高度动态变化，可能导致页面布局出现问题。
+3. 页面性能：每个 `<iframe>` 都会增加页面的请求量和渲染成本，特别是当页面中存在大量的 `<iframe>` 时，会影响页面的性能。
+4. 安全性风险：如果在 `<iframe>` 中加载来自不受信任的源的内容，可能存在安全风险，例如跨域脚本攻击（XSS）。
+
+**应用场景**
+
+`<iframe>` 元素在以下场景中常被使用：
+
+1. 嵌入其他网页：通过 `<iframe>` 可以将其他网页嵌入到当前页面中。这在一些需要展示其他网页内容的情况下非常有用，例如嵌入地图、视频、社交媒体小部件等。
+
+2. 广告展示：广告平台通常会提供 `<iframe>` 代码片段，用于在页面上嵌入广告内容。这样可以实现广告与页面的分离，保持页面结构简洁，并且提供安全隔离，防止广告脚本对页面产生负面影响。
+
+3. 安全隔离：通过将不受信任的内容放置在 `<iframe>` 中，可以实现安全隔离，防止不受信任的内容对主页面进行攻击。这在加载来自第三方或不可信任源的内容时非常有用。
+
+4. 无刷新文件上传：在需要实现文件上传的场景中，可以使用 `<iframe>` 创建一个隐藏的表单，并通过该表单实现文件上传操作。由于 `<iframe>` 的独立上下文，可以实现无刷新上传，同时避免页面刷新带来的不良用户体验。
+
+5. 跨域通信：通过使用 `<iframe>` 和窗口通信 API（如 `postMessage`），可以实现跨域的安全通信。这在需要在不同域之间进行数据交互或嵌入第三方内容时非常有用。
+
+请注意，尽管 `<iframe>` 在上述场景中有用，但也要注意潜在的性能问题、安全风险以及对 SEO 的影响。因此，在使用 `<iframe>` 时需要谨慎权衡利弊，并根据具体需求选择适当的解决方案。
 
 ## 页面导入样式时，使用link和@import有什么区别？ {#p2-link-import}
 

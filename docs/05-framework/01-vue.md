@@ -1,8 +1,32 @@
 # vue
 
-## 双向数据绑定原理 {#p0-reactivity-theory}
+## 响应式原理 {#p0-reactivity-theory}
 
-**关键词**：vue Object.defineProperty、vue proxy 使用
+Vue.js 的响应式原理主要是通过数据劫持（Object.defineProperty()）实现。当我们在Vue实例中定义了一个 data 属性时，Vue 会对这个属性进行劫持，即在getter和setter时做一些操作。
+
+具体实现流程如下：
+
+1. 在Vue实例化时，Vue 会对 data 对象进行遍历，使用 Object.defineProperty() 方法将每个属性转换为 getter 和 setter。
+2. 当数据发生变化时，setter 会被调用，并通知所有相关联的视图进行更新。
+3. 当视图进行更新时，Vue 会对新旧 VNode 进行比对（diff）, 只对发生了变化的部分进行更新，从而提高效率。
+
+这种数据劫持的方式能够让开发者以声明式的方式来编写代码，同时又能够监测到数据的变化，并及时地通知相关视图进行更新。
+
+Vue 的响应式原理还包括了watcher和dep的概念。Watcher 用于监听数据的变化，并在变化时触发相应的回调函数，而 Dep 则用于收集 Watcher，当数据发生变化时通知所有相关的 Watcher 去更新视图。
+
+Vue 的响应式原理是一种通过数据劫持实现的观察者模式，通过对数据的监听和更新，实现了数据驱动视图的变化，提高了代码的可维护性和开发效率。
+
+响应式流程:
+
+1. Observe：Vue 在实例化时会对 data 对象进行遍历，将每个属性转换为 getter 和 setter，以进行数据劫持。当数据发生变化时，setter 会被调用。在 setter 中，Vue 会通知所有相关的 Watcher 去更新视图。
+
+2. Compile：Compile 是 Vue 的编译器，用于编译模板，将模板转换为 VNode。在编译模板时，Compile 会根据模板中的指令和表达式创建对应的 Watcher。当数据发生变化时，相关的 Watcher 会被触发，从而更新视图。
+
+3. Watcher：Watcher 是订阅者，用于监听数据的变化，并在变化时触发相应的回调函数。每个 Watcher 都会对应一个数据项和一个表达式。当数据发生变化时，Watcher 会重新计算表达式的值，并触发回调函数。
+
+4. Dep：Dep 用于收集 Watcher，当数据发生变化时通知所有相关的 Watcher 去更新视图。在 Observe 中，每个属性都会对应一个 Dep。在 getter 中，如果当前 Watcher 存在，则会将该 Watcher 添加到 Dep 中。在 setter 中，如果数据发生变化，则会通知 Dep 中所有的 Watcher 去更新视图。
+
+综上所述，Observe、Compile、Watcher 和 Dep 一起构成了 Vue 的响应式流程。这一流程包括了数据劫持、模板编译、订阅者监听和更新视图等多个环节，从而实现了 Vue 的数据驱动视图的特性。
 
 Vue 在早期版本中使用了 `Object.defineProperty` 来实现响应式系统。但是，在 `Object.defineProperty` 中存在一些限制和局限性，导致在某些场景下无法完全满足需求。因此，Vue 在最新的版本中引入了 `Proxy` 来替代 `Object.defineProperty`。
 
@@ -1415,6 +1439,21 @@ console.log(state.age) // 输出: 25
 
 这些函数是 Vue 3 Composition API 中用于创建和处理响应式数据的重要工具。通过它们，我们可以更灵活地管理和使用响应式数据。
 
+## Vue2.0 和 Vue3.0 有什么区别 {#p0-vue2-vue3}
+
+1. 响应式系统的重新配置，使用proxy替换Object.defineProperty
+2. typescript支持
+3. 新增组合API，更好的逻辑重用和代码组织
+4. v-if和v-for的优先级
+5. 静态元素提升
+6. 虚拟节点静态标记
+7. 生命周期变化
+8. 打包体积优化
+9. ssr渲染性能提升
+10. 支持多个根节点
+
+* 参考文档: [资料](https://juejin.cn/post/6858558735695937544)
+
 ## vue2 和 vue3 数组变化是如何处理的
 
 数组拦截包括
@@ -2482,7 +2521,7 @@ export default {
 * **自定义组件开发**：当开发自定义组件时，如果需要实现双向绑定的属性，使用`defineModel`可以简化代码，提高组件的易用性。
 * **复杂业务逻辑处理**：在组合式函数中处理复杂的业务逻辑时，`defineModel`可以帮助更好地管理响应式数据，实现数据的双向绑定。
 
-## 9 useTemplateRef {#p2-use-template-ref}
+## useTemplateRef {#p2-use-template-ref}
 
 ## watchEffect {#p2-wactheffect}
 
@@ -2650,6 +2689,62 @@ Vue.component('async-component', (resolve, reject) => ({
   timeout: 3000
 }))
 ```
+
+## 你做过哪些性能优化 {#vue-profile}
+
+1、`v-if`和`v-show`
+
+* 频繁切换时使用`v-show`，利用其缓存特性
+* 首屏渲染时使用`v-if`，如果为`false`则不进行渲染
+
+2、`v-for`的`key`
+
+* 列表变化时，循环时使用唯一不变的`key`，借助其本地复用策略
+* 列表只进行一次渲染时，`key`可以采用循环的`index`
+
+3、侦听器和计算属性
+
+* 侦听器`watch`用于数据变化时引起其他行为
+* 多使用`compouter`计算属性顾名思义就是新计算而来的属性，如果依赖的数据未发生变化，不会触发重新计算
+
+4、合理使用生命周期
+
+* 在`destroyed`阶段进行绑定事件或者定时器的销毁
+* 使用动态组件的时候通过`keep-alive`包裹进行缓存处理，相关的操作可以在`actived`阶段激活
+
+5、数据响应式处理
+
+* 不需要响应式处理的数据可以通过`Object.freeze`处理，或者直接通过`this.xxx = xxx`的方式进行定义
+* 需要响应式处理的属性可以通过`this.$set`的方式处理，而不是`JSON.parse(JSON.stringify(XXX))`的方式
+
+6、路由加载方式
+
+* 页面组件可以采用异步加载的方式
+
+7、插件引入
+
+* 第三方插件可以采用按需加载的方式，比如`element-ui`。
+
+8、减少代码量
+
+* 采用`mixin`的方式抽离公共方法
+* 抽离公共组件
+* 定义公共方法至公共`js`中
+* 抽离公共`css`
+
+9、编译方式
+
+* 如果线上需要`template`的编译，可以采用完成版`vue.esm.js`
+* 如果线上无需`template`的编译，可采用运行时版本`vue.runtime.esm.js`，相比完整版体积要小大约`30%`
+
+10、渲染方式
+
+* 服务端渲染，如果是需要`SEO`的网站可以采用服务端渲染的方式
+* 前端渲染，一些企业内部使用的后端管理系统可以采用前端渲染的方式
+
+11、字体图标的使用
+
+* 有些图片图标尽可能使用字体图标
 
 ## 3.x 中 app.config 有哪些应用配置？ {#p4-app-config-has-which-application-configuration}
 

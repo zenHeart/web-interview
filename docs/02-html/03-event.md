@@ -183,3 +183,27 @@
 * **对子元素的响应**：`mouseOver` 和 `mouseOut` 会在鼠标指针移动到子元素上时也被触发，而 `mouseEnter` 和 `mouseLeave` 在鼠标指针移动到子元素上时不会被触发。
 
 在处理具有嵌套子元素的元素时，使用 `mouseEnter` 和 `mouseLeave` 可以避免多余的事件触发，因为它们不会在鼠标从父元素移动到子元素时触发事件。(即不会对内部子元素的进入和离开反应敏感)。而 `mouseOver` 和 `mouseOut` 更适合需要监测鼠标指针是否有移动到子元素上的情况。
+
+## onpopstate 可以监听到一个pushstate的事件吗 {#p0-onpopstate}
+
+**`onpopstate` 事件只能监听到浏览器历史记录的前进和后退操作，无法直接监听到 `pushState` 或 `replaceState` 的调用**。这是因为 `pushState` 和 `replaceState` 方法可以修改浏览器历史记录而不触发 `onpopstate` 事件。
+
+但是，您可以在调用 `pushState` 或 `replaceState` 之后手动触发 `popstate` 事件，来模拟类似的效果。示例如下：
+
+```javascript
+// 监听 popstate 事件
+window.addEventListener('popstate', function (event) {
+  console.log('popstate event triggered')
+})
+
+// 调用 pushState 方法
+window.history.pushState(null, null, '/new-url')
+
+// 手动触发 popstate 事件
+const popStateEvent = new PopStateEvent('popstate', { state: null })
+window.dispatchEvent(popStateEvent)
+```
+
+在上述示例中，我们首先通过 `addEventListener` 方法监听 `popstate` 事件。然后，我们调用 `pushState` 方法来修改浏览器历史记录，并在之后手动创建一个 `PopStateEvent` 对象，并使用 `dispatchEvent` 方法来触发 `popstate` 事件。
+
+这样就可以实现在调用 `pushState` 或 `replaceState` 之后手动触发一个事件来模拟监听到 `pushState` 的效果。

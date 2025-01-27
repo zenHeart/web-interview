@@ -42,6 +42,45 @@
 
 ## Object.create 实现原型继承
 
+## hasOwnProperty 与 instanceof 区别 {#p0-hasOwnProperty-instanceof}
+
+hasOwnProperty 和 instanceof 是两个不同的操作符，用于不同的目的。
+
+1. hasOwnProperty
+
+hasOwnProperty 是一个对象的原型方法，用来检测一个对象自身是否具有指定名称的属性（不会检查原型链上的属性）。其语法如下：
+
+```
+object.hasOwnProperty(property)
+```
+
+其中，object 是要检测的对象，property 是要检测的属性名。如果对象自身具有指定名称的属性，则返回 true，否则返回 false。
+
+2. instanceof
+
+instanceof 是一个运算符，用来检测一个对象是否是某个类的实例。其语法如下：
+
+```
+object instanceof constructor
+```
+
+其中，object 是要检测的对象，constructor 是要检测的类（构造函数）。如果对象是指定类的实例，则返回 true，否则返回 false。
+
+举个例子来说，假设有以下代码：
+
+```
+function Person(name) {
+ this.name = name;
+}
+
+var john = new Person("John");
+
+console.log(john.hasOwnProperty("name")); // true
+console.log(john instanceof Person); // true
+```
+
+上述代码中，我们创建了一个 Person 类，并使用构造函数创建了一个实例 john。然后我们分别使用 hasOwnProperty 和 instanceof 操作符检测 john 对象是否具有 name 属性和是否是 Person 类的实例，得到的结果分别为 true 和 true。
+
 ## array
 
 * 数组开头插入,删除元素
@@ -103,6 +142,70 @@
 
 * 如果需要修改原数组，并且需要添加、删除或替换元素，可以使用 `splice()` 方法。
 * 如果只是需要提取指定范围内的元素，并且不想修改原数组，可以使用 `slice()` 方法。
+
+## 类数组转换成数组的方法有哪些 {#p0-like-array}
+
+伪数组（Array-like）和类数组（Array-like Object）都是描述一种类似数组的对象结构，它们在外观和行为上类似于数组，但实际上不是真正的数组。
+
+伪数组（Array-like）：
+
+* 伪数组是指具有类似数组的结构，但不具备数组的方法和属性的对象。
+* 伪数组对象通常拥有一个 length 属性，用于表示其元素的个数。
+* 伪数组对象可以通过索引访问元素，类似于数组的下标访问。
+* 伪数组对象不具备数组的方法，如 push、pop、slice 等。
+
+类数组（Array-like Object）：
+
+* 类数组是指具有类似数组的结构，但不是由 Array 构造函数创建的对象。
+* 类数组对象通常拥有一个 length 属性，用于表示其元素的个数。
+* 类数组对象可以通过索引访问元素，类似于数组的下标访问。
+* 类数组对象不具备数组的方法，如 push、pop、slice 等。
+
+示例：
+
+```javascript
+// 伪数组
+const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
+console.log(arrayLike[0]) // 'apple'
+console.log(arrayLike.length) // 2
+console.log(arrayLike.push) // undefined
+
+// 类数组
+const arrayLikeObject = document.querySelectorAll('div')
+console.log(arrayLikeObject[0]) // DOM元素
+console.log(arrayLikeObject.length) // 元素数量
+console.log(arrayLikeObject.push) // undefined
+```
+
+需要注意的是，伪数组和类数组虽然具有类似数组的结构，但它们没有继承自 Array 的方法和属性，因此无法直接使用数组的方法。如果需要使用数组的方法，可以将伪数组或类数组对象转换为真正的数组，例如通过 `Array.from()`、`Array.prototype.slice.call()` 或展开运算符 `...` 等方法进行转换。
+
+有几种常见的方法可以将类数组对象转换为真正的数组：
+
+1. Array.from()：使用 Array.from() 方法可以将可迭代对象或类数组对象转换为数组。
+
+```javascript
+const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
+const array = Array.from(arrayLike)
+console.log(array) // ['apple', 'banana']
+```
+
+2. Array.prototype.slice.call()：通过调用 Array.prototype.slice() 方法，并将类数组对象作为参数传入，可以将其转换为数组。
+
+```javascript
+const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
+const array = Array.prototype.slice.call(arrayLike)
+console.log(array) // ['apple', 'banana']
+```
+
+3. Spread Operator（展开运算符）：使用展开运算符 `...` 可以将可迭代对象或类数组对象展开为数组。
+
+```javascript
+const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
+const array = [...arrayLike]
+console.log(array) // ['apple', 'banana']
+```
+
+这些方法都可以将类数组对象转换为真正的数组，使其具备数组的方法和属性。需要注意的是，类数组对象必须具有 length 属性和通过索引访问元素的能力才能成功转换为数组。
 
 ## 有使用过 Promise 么， 讲解下 Promise 的使用?
 
@@ -672,6 +775,113 @@ WeakMap 提供了以下的 API：
 需要注意的是，由于 WeakMap 的键是弱引用，只能使用对象作为键，同时也意味着无法通过值来查找对应的键。所以 WeakMap 适用于需要存储对象的私有数据或附加元数据的场景，而不适合用于需要根据值来查找键的情况。
 
 ## Proxy
+
+JavaScript的Proxy对象提供了一种拦截并定制JavaScript对象底层操作的机制。它允许你在对象上定义自定义行为，例如访问、赋值、函数调用等操作。Proxy对象包裹着目标对象，并拦截对目标对象的访问，使你能够自定义处理这些操作。
+
+Proxy可以用于实现很多功能，包括：
+
+1. 属性验证和拦截：可以拦截对象属性的读取、写入和删除操作，并进行验证和处理。例如，你可以拦截对属性的访问，验证属性的值是否符合特定规则。
+
+2. 对象扩展和变形：可以拦截对象属性的读取和写入操作，并根据需求进行变形或扩展。例如，你可以在访问对象属性时，动态生成属性的值。
+
+3. 函数调用的拦截：可以拦截函数的调用和构造，以便进行自定义处理。例如，你可以在函数调用之前或之后执行额外的逻辑。
+
+4. 数组操作的拦截：可以拦截数组的操作，如push、pop、shift等，允许你对数组的操作进行自定义处理。例如，你可以在数组操作之后触发其他逻辑。
+
+通过使用Proxy对象，你可以拦截和修改对象的底层操作，实现更加灵活和定制化的行为。然而需要注意的是，Proxy对象的使用可能会导致性能上的一些影响，所以在使用时要谨慎考虑。
+
+**`Proxy`的实际使用场景有很多，以下是一些常见的示例**：
+
+1. 数据验证和过滤：你可以使用`Proxy`来拦截对对象属性的访问和修改，从而进行数据验证和过滤。例如，你可以使用`Proxy`来确保一个对象的属性只能是特定的类型或范围。
+
+```javascript
+const person = {
+  name: 'Alice',
+  age: 25
+}
+
+const personProxy = new Proxy(person, {
+  set (target, key, value) {
+    if (key === 'age' && (typeof value !== 'number' || value < 0)) {
+      throw new Error('Invalid age')
+    }
+
+    target[key] = value
+    return true
+  }
+})
+
+personProxy.age = -10 // 抛出错误：Invalid age
+```
+
+2. 计算属性：你可以使用`Proxy`来动态计算属性的值，而无需实际存储它们。这对于需要根据其他属性的值来计算衍生属性的情况非常有用。
+
+```javascript
+const person = {
+  firstName: 'Alice',
+  lastName: 'Smith'
+}
+
+const personProxy = new Proxy(person, {
+  get (target, key) {
+    if (key === 'fullName') {
+      return `${target.firstName} ${target.lastName}`
+    }
+
+    return target[key]
+  }
+})
+
+console.log(personProxy.fullName) // Alice Smith
+```
+
+3. 资源管理和延迟加载：你可以使用`Proxy`来延迟加载资源，直到它们被真正需要。这在处理大型数据集或昂贵的资源时非常有用，可以节省内存和提高性能。
+
+```javascript
+const expensiveResource = {
+  // 一些昂贵的操作
+}
+
+const expensiveResourceProxy = new Proxy(expensiveResource, {
+  get (target, key) {
+    // 在需要的时候才加载资源
+    if (!target.loaded) {
+      target.load()
+      target.loaded = true
+    }
+
+    return target[key]
+  }
+})
+
+console.log(expensiveResourceProxy.someProperty) // 加载资源并返回属性值
+```
+
+4. 日志记录和调试：你可以使用`Proxy`来记录对象属性的访问和修改，以便进行调试和日志记录。
+
+```javascript
+const person = {
+  name: 'Alice',
+  age: 25
+}
+
+const personProxy = new Proxy(person, {
+  get (target, key) {
+    console.log(`Getting property '${key}'`)
+    return target[key]
+  },
+  set (target, key, value) {
+    console.log(`Setting property '${key}' to '${value}'`)
+    target[key] = value
+    return true
+  }
+})
+
+personProxy.age // 记录：Getting property 'age'
+personProxy.age = 30 // 记录：Setting property 'age' to '30'
+```
+
+这些只是`Proxy`的一些实际使用场景示例，`Proxy`的强大之处在于它提供了对对象的底层操作的拦截和自定义能力，可以根据具体需求进行灵活的应用。
 
 Proxy(代理) 是 ES6 中新增的一个特性。Proxy 让我们能够以简洁易懂的方式控制外部对对象的访问。其功能非常类似于设计模式中的代理模式。
 使用 Proxy 的好处是：对象只需关注于核心逻辑，一些非核心的逻辑 （如：读取或设置对象的某些属性前记录日志；设置对象的某些属性值前，需要验证；某些属性的访问控制等）可以让 Proxy 来做。 从而达到关注点分离，降级对象复杂度的目的。
@@ -1492,3 +1702,52 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
  immutableObject.prop = 'newValue'
  delete immutableObject.prop
  ```
+
+## JS 创建对象的方式有哪些？ {#p0-js-create-object}
+
+1. 使用对象字面量创建对象。
+
+```
+var obj = { 
+ name: "John", 
+ age: 30 
+};
+```
+
+2. 使用 Object 构造函数创建对象。
+
+```
+var obj = new Object();
+obj.name = "John";
+obj.age = 30;
+```
+
+3. 使用构造函数创建对象。
+
+```
+function Person(name, age) {
+ this.name = name;
+ this.age = age;
+}
+var john = new Person("John", 30);
+```
+
+4. 使用 Object.create() 方法创建对象。
+
+```
+var obj = Object.create(null);
+obj.name = "John";
+obj.age = 30;
+```
+
+5. 使用类和继承创建对象。
+
+```
+class Person {
+ constructor(name, age) {
+ this.name = name;
+ this.age = age;
+ }
+}
+var john = new Person("John", 30);
+```
