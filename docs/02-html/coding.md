@@ -158,6 +158,158 @@ const params = qs.parse(queryString)
 
 在这个例子中，使用`qs.parse`方法将查询字符串解析为一个对象，其中键是参数名，值是参数值。
 
+下面是一个简单的 JavaScript 函数，用于解析 URL 参数并返回一个包含参数键值对的对象：
+
+```javascript
+function parseUrlParams (url) {
+  const params = {}
+  const queryString = url.split('?')[1]
+
+  if (queryString) {
+    const pairs = queryString.split('&')
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('=')
+      params[key] = decodeURIComponent(value)
+    })
+  }
+
+  return params
+}
+```
+
+这个函数接受一个 URL 字符串作为参数，并返回解析后的参数对象。例如：
+
+```javascript
+const url = 'https://example.com?name=John&age=30&city=New%20York'
+const params = parseUrlParams(url)
+
+console.log(params)
+// Output: { name: "John", age: "30", city: "New York" }
+```
+
+这个函数的实现思路是先从 URL 字符串中提取查询字符串部分，然后将查询字符串按照 `&` 分割成键值对数组。接着遍历键值对数组，将每个键值对按照 `=` 分割，然后将键和值存储到结果对象 `params` 中，注意要对值进行 URL 解码以处理特殊字符。最后返回解析后的参数对象。
+
+ 进阶 - 支持json字符串参数
+
+如果要支持复杂的 JSON 字符串作为查询参数，可以使用 `JSON.parse()` 方法解析 JSON 字符串，并在解析后的对象中处理参数。
+
+下面是一个修改后的函数，支持解析复杂的 JSON 字符串作为查询参数：
+
+```javascript
+function parseUrlParams (url) {
+  const params = {}
+  const queryString = url.split('?')[1]
+
+  if (queryString) {
+    const pairs = queryString.split('&')
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('=')
+      const decodedValue = decodeURIComponent(value)
+
+      try {
+        params[key] = JSON.parse(decodedValue)
+      } catch (error) {
+        // 如果解析 JSON 失败，则将原始字符串存储到参数对象中
+        params[key] = decodedValue
+      }
+    })
+  }
+
+  return params
+}
+```
+
+现在，如果查询参数是一个 JSON 字符串，它将被解析为相应的 JavaScript 对象，并作为参数对象的值。如果解析失败（例如，不是有效的 JSON 字符串），则将保留原始字符串作为值存储在参数对象中。
+
+以下是一个示例：
+
+```javascript
+const url = 'https://example.com?name=John&age=30&address={"city":"New York","zipcode":10001}'
+const params = parseUrlParams(url)
+
+console.log(params)
+// Output: { name: "John", age: "30", address: { city: "New York", zipcode: 10001 } }
+```
+
+ 再次进阶-支持更复杂的场景， 比如嵌套对象， 数组
+
+下面是修改后的函数，支持解析复杂的查询参数，包括嵌套对象和数组：
+
+```javascript
+function parseUrlParams (url) {
+  const params = {}
+  const queryString = url.split('?')[1]
+
+  if (queryString) {
+    const pairs = queryString.split('&')
+    pairs.forEach(pair => {
+      const [key, value] = pair.split('=')
+      const decodedValue = decodeURIComponent(value)
+
+      const keys = key.split('.')
+      let current = params
+
+      for (let i = 0; i < keys.length; i++) {
+        const nestedKey = keys[i]
+        const isArray = /\[\]$/.test(nestedKey)
+
+        if (isArray) {
+          const arrayKey = nestedKey.slice(0, -2)
+
+          if (!current[arrayKey]) {
+            current[arrayKey] = []
+          }
+
+          if (i === keys.length - 1) {
+            current[arrayKey].push(parseValue(decodedValue))
+          } else {
+            const newIndex = current[arrayKey].length
+            if (!current[arrayKey][newIndex]) {
+              current[arrayKey][newIndex] = {}
+            }
+            current = current[arrayKey][newIndex]
+          }
+        } else {
+          if (i === keys.length - 1) {
+            current[nestedKey] = parseValue(decodedValue)
+          } else {
+            if (!current[nestedKey]) {
+              current[nestedKey] = {}
+            }
+            current = current[nestedKey]
+          }
+        }
+      }
+    })
+  }
+
+  return params
+}
+
+function parseValue (value) {
+  try {
+    return JSON.parse(value)
+  } catch (error) {
+    // 解析失败，则返回原始值
+    return value
+  }
+}
+```
+
+现在，该函数可以正确解析包含嵌套对象和数组的查询参数。
+
+以下是一个示例：
+
+```javascript
+const url = 'https://example.com?name=John&age=30&address.city=New%20York&address.zipcode=10001&tags[]=tag1&tags[]=tag2'
+const params = parseUrlParams(url)
+
+console.log(params)
+// Output: { name: "John", age: "30", address: { city: "New York", zipcode: 10001 }, tags: ["tag1", "tag2"] }
+```
+
+在这个修改后的函数中，当遇到嵌套对象时，它会递归创建相应的对象属性。当遇到数组时，它会创建一个数组，并将值添加到数组中。
+
 ## 前端如何处理一个页面多主题色可供选择的场景 {#p2-multi-theme-color}
 
 页面主题色切换通常涉及到修改网页中的颜色方案，以提供不同的视觉体验，例如从明亮模式切换到暗黑模式。实现这一功能，可以通过配合使用 CSS、JavaScript 和本地存储来进行。以下是实施页面主题色切换的几种方法：
@@ -2335,6 +2487,64 @@ axios.get('/api/data')
 
 ## web 网页如何禁止别人移除水印 {#p0-remove-water-pring}
 
+明水印和暗水印的区别
+
+前端水印可以分为明水印和暗水印两种类型。它们的区别如下：
+
+1. 明水印：明水印是通过在文本或图像上覆盖另一层图像或文字来实现的。这种水印会明显地出现在页面上，可以用来显示版权信息或其他相关信息。
+
+2. 暗水印：暗水印是指在文本或图像中隐藏相关信息的一种技术。这种水印不会直接出现在页面上，只有在特殊的程序或工具下才能被检测到。暗水印通常用于保护敏感信息以及追踪网页内容的来源和版本。
+
+ 添加明水印手段有哪些
+
+可以参考这个文档： [资料](https://zhuanlan.zhihu.com/p/374734095)
+
+总计一下：
+
+1. 重复的dom元素覆盖实现： 在页面上覆盖一个position:fixed的div盒子，盒子透明度设置较低，设置pointer-events: none;样式实现点击穿透，在这个盒子内通过js循环生成小的水印div，每个水印div内展示一个要显示的水印内容
+
+2. canvas输出背景图： 绘制出一个水印区域，将这个水印通过toDataURL方法输出为一个图片，将这个图片设置为盒子的背景图，通过backgroud-repeat：repeat；样式实现填满整个屏幕的效果。
+
+3. svg实现背景图： 与canvas生成背景图的方法类似，只不过是生成背景图的方法换成了通过svg生成
+
+4. 图片加水印
+
+ css 添加水印的方式， 如何防止用户删除对应的 css ， 从而达到去除水印的目的
+
+使用 CSS 添加水印的方式本身并不能完全防止用户删除对应的 CSS 样式，从而删除水印。但是，可以采取一些措施来增加删除难度，提高水印的防伪能力。以下是一些常见的方法：
+
+1. 调用外部CSS文件：将水印样式单独设置在一个CSS文件内，并通过外链的方式在网站中调用，可以避免用户通过编辑页面HTML文件或内嵌样式表的方式删除水印。
+
+2. 设置样式为 !important：在CSS样式中使用 !important 标记可以避免被覆盖。但是，这种方式会影响网页的可读性，需慎重考虑。
+
+3. 添加自定义类名：通过在CSS样式中加入自定义的class类名，可以防止用户直接删掉该类名，进而删除水印。但是，用户也可以通过重新定义该类名样式来替换水印。
+
+4. 将水印样式应用到多个元素上：将水印样式应用到多个元素上，可以使得用户删除水印较为困难。例如，在网站的多个位置都加上"Power by XXX"的水印样式。
+
+5. 使用JavaScript动态生成CSS样式：可以监听挂载水印样式的dom 节点， 如果用户改变了该 dom , 重新生成 对应的水印挂载上去即可。 这种方法可通过JS动态生成CSS样式，从而避免用户直接在网页源文件中删除CSS代码。但需要注意的是，这种方案会稍稍加重网页的加载速度，需要合理权衡。
+
+6. 混淆CSS代码：通过多次重复使用同一样式，或者采用CSS压缩等混淆手段，可以使CSS样式表变得复杂难懂，增加水印被删除的难度。
+
+7. 采用图片水印的方式：将水印转化为一个透明的PNG图片，然后将其作为网页的背景图片，可以更有效地防止水印被删除。
+
+8. 使用SVG图形：可以将水印作为SVG图形嵌入到网页中进行展示。由于SVG的矢量性质，这种方式可以保证水印在缩放或旋转后的清晰度，同时也增加了删除难度。
+
+ 暗水印是如何把水印信息隐藏起来的
+
+暗水印的基本原理是在原始数据（如文本、图像等）中嵌入信息，从而实现版权保护和溯源追踪等功能。暗水印把信息隐藏在源数据中，使得人眼难以察觉，同时对源数据的影响尽可能小，保持其自身的特征。
+
+一般来说，暗水印算法主要包括以下几个步骤：
+
+1. 水印信息处理：将待嵌入的信息经过处理和加密后，转化为二进制数据。
+
+2. 源数据处理：遍历源数据中的像素或二进制数据，根据特定规则对其进行调整，以此腾出空间插入水印二进制数据。
+
+3. 嵌入水印：将水印二进制数据插入到源数据中的指定位置，以某种方式嵌入到源数据之中。
+
+4. 提取水印：在使用暗水印的过程中，需要从带水印的数据中提取出隐藏的水印信息。提取水印需要使用特定的解密算法和提取密钥。
+
+暗水印的一个关键问题是在嵌入水印的过程中，要保证水印对源数据的伤害尽可能的小，同时嵌入水印后数据的分布、统计性质等不应发生明显变化，以更好地保持数据的质量和可视效果。
+
 关于加水印的问题， 可以看这篇文档： [资料](https://github.com/pro-collection/interview-question/issues/351)
 
 关于如何防止移除水印：
@@ -2770,3 +2980,54 @@ cancelRequest()
 * 取消loading效果，以及该请求的其他交互效果，特别是在单页应用中，A页面跳转到B页面之后，A页面的请求应该取消，否则回调中的一些处理可能影响B页面
 
 * 超时处理，错误处理等都省去了，节约资源
+
+## （Ant Design）的 Tooltip 组件是如何实现的 {#p0-tooltip}
+
+Antd（Ant Design）的 Tooltip 组件是通过 CSS 和 JavaScript 结合实现的。
+
+在 CSS 方面，Tooltip 组件使用了绝对定位和一些样式规则来定义 Tooltip 的外观。它通常包括一个触发元素和一个浮动在触发元素旁边的提示框。通过设置样式属性，如 position: absolute、top、left、display 等，可以控制提示框的位置、显示和隐藏等。
+
+在 JavaScript 方面，Tooltip 组件通过事件监听和操作 DOM 元素来实现交互行为。当鼠标悬停在触发元素上时，会触发相应的事件处理函数。在事件处理函数中，通常会修改提示框元素的样式或类名，以实现显示或隐藏提示框的效果。同时，还可以根据鼠标位置调整提示框的位置，使其相对于触发元素居中或显示在特定的位置。
+
+另外，Tooltip 组件还支持一些额外的配置选项，如延迟显示、自定义内容等。这些选项可以通过传递属性或配置项给 Tooltip 组件来进行设置。
+
+**Tooltip 组件的动态偏移样式计算**
+
+1. 监听触发元素的事件：Tooltip 组件通常在触发元素上监听鼠标悬停或点击等事件。
+
+2. 获取触发元素的位置信息：在事件处理函数中，通过 DOM 操作获取触发元素的位置信息，包括宽度、高度、左偏移和上偏移等。
+
+3. 计算偏移样式：根据触发元素的位置信息，结合组件配置项或属性中的偏移参数，计算出提示框相对于触发元素的偏移样式。
+
+4. 设置提示框的样式：通过修改提示框元素的样式属性，如 top、left、transform 等，将计算得到的偏移样式应用于提示框，使其出现在预期的位置。
+
+具体实现上述步骤的方式可以有多种，取决于具体的实现框架或库。一种常见的方式是使用 JavaScript 来监听事件、获取位置信息和设置样式，配合 CSS 来定义样式规则。
+
+在实际开发中，可以使用一些常见的技术手段来计算动态偏移样式，例如：
+
+* 使用 CSS 的 position: absolute 将提示框定位在触发元素的相对位置上。
+* 使用 JavaScript 的 getBoundingClientRect() 方法获取触发元素的位置信息，包括宽度、高度、左偏移和上偏移等。
+* 结合触发元素的位置信息和组件配置项中的偏移参数，通过计算得到最终的偏移值。
+* 将计算得到的偏移值应用于提示框的样式属性，如 top、left、transform 等，使其相对于触发元素进行动态偏移。
+
+需要注意的是，具体的实现方式可能因框架、库或组件的不同而有所差异，但核心思想是通过监听事件、获取位置信息和计算样式来实现动态偏移效果。
+
+## 如何优化大规模 dom 操作的场景 {#p0-batch-dom-operation}
+
+在处理大规模DOM操作的场景中，可以采取以下一些优化策略：
+
+1. 使用批量操作：避免频繁地进行单个DOM操作，而是将多个操作合并为一个批量操作。例如，使用`DocumentFragment`来创建一个离线的DOM片段，将多个元素一次性添加到片段中，然后再将整个片段插入到文档中。这样可以减少DOM操作的次数，提高性能。
+
+2. 避免重复访问和查询：避免在循环或递归操作中重复访问和查询DOM元素。在执行循环或递归操作前，先将需要操作的DOM元素保存在变量中，以减少重复查询的开销。
+
+3. 使用虚拟DOM（Virtual DOM）：虚拟DOM是一种将真实DOM结构映射到JavaScript对象的技术。通过在JavaScript中对虚拟DOM进行操作，然后再将变更应用到真实DOM上，可以减少对真实DOM的直接操作次数，提高性能。常见的虚拟DOM库有React和Vue等。
+
+4. 分割任务：将大规模DOM操作拆分成多个小任务，并使用`requestAnimationFrame`或`setTimeout`等方法在每个任务之间进行异步处理，以避免长时间阻塞主线程，提高页面的响应性能。
+
+5. 使用事件委托：利用事件冒泡机制，将事件处理程序绑定到DOM结构的父元素上，通过事件委托的方式处理子元素的事件。这样可以减少事件处理程序的数量，提高性能。
+
+6. 避免频繁的重绘和重排：DOM的重绘（Repaint）和重排（Reflow）是比较昂贵的操作，会导致页面重新布局和重新渲染。尽量避免频繁地修改样式属性，可以使用CSS类进行批量的样式变更，或使用`display: none`将元素隐藏起来进行操作，最后再显示出来。
+
+7. 使用合适的工具和库：选择合适的工具和库来处理大规模DOM操作的场景。例如，使用专门的数据绑定库或UI框架，如React、Vue或Angular等，它们提供了高效的组件化和数据更新机制，能够优化DOM操作的性能。
+
+通过以上优化策略，可以减少对DOM的频繁操作，提高大规模DOM操作场景下的性能和响应性能。

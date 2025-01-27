@@ -386,3 +386,77 @@ updateUI(largeData)
 5. 合理配置服务器响应头：使用适当的缓存策略和 HTTP 响应头，可以帮助浏览器更好地处理资源的预解析和缓存。
 
 需要注意的是，浏览器在进行文档预解析时会根据具体的算法和策略进行优化，不同浏览器可能会有略微不同的行为。此外，预解析并不一定在所有情况下都能带来明显的性能提升，具体效果会受到网络环境、服务器响应时间和页面结构等因素的影响。因此，在实际开发中，除了依赖浏览器的自动预解析外，还可以采用其他优化手段，如合并和压缩资源、使用缓存等，以提升页面加载和渲染的性能。
+
+## 浏览器有读写能力吗？
+
+在一般情况下，浏览器本身不具备直接的读写能力。浏览器是用于显示网页内容的客户端应用程序，其主要功能是发送HTTP请求，接收和渲染服务器返回的HTML、CSS和JavaScript等资源。然而，浏览器提供了一些特定的API，允许开发人员在浏览器中进行读写操作。
+
+下面是一些允许浏览器进行读写操作的API：
+
+1. Web Storage API：通过localStorage和sessionStorage提供了在浏览器中存储数据的能力。开发人员可以使用这些API将数据以键值对的形式存储在浏览器本地，读取和修改数据。
+
+2. IndexedDB API：IndexedDB是浏览器提供的一种高性能的非关系型数据库API。开发人员可以使用IndexedDB API在浏览器中创建和管理数据库，进行复杂的数据存储、查询和索引操作。
+
+3. File API：File API允许浏览器读取和处理本地文件。开发人员可以使用 File API选择本地文件并读取其内容，也可以通过Blob 将数据保存本地文件。
+
+需要注意的是，浏览器的读写能力受到一些限制，如同源策略、跨域限制等。为了保障安全性和用户隐私，浏览器会限制对本地文件系统的直接读写访问。读写操作通常是通过浏览器提供的特定API进行，并且需要经过用户的授权和同意。
+
+------------------------
+
+**关于读写能力的讨论**：
+
+读取是通过 FileReader: [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/FileReader)
+
+写是通过 blob 实现： [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/Blob)
+
+但是这个写了之后， 要想保存在本地， 需要自己手动操作：
+
+> 现代浏览器支持File API，它提供了通过JavaScript读取和操作本地文件的能力。
+> 使用File API，您可以通过文件选择对话框选择本地文件，并使用JavaScript读取文件内容、将文件内容写入到本地等操作。但是需要注意的是，**出于安全性的考虑，浏览器限制了对本地文件系统的访问权限，只能在用户主动选择文件的情况下进行操作**。
+
+**示范**：
+使用File API来读写本地文档的步骤如下：
+
+1. 通过input元素创建文件选择对话框。在HTML中添加一个input元素，设置type属性为file，例如：
+
+```html
+<input type="file" id="fileInput">
+```
+
+2. 使用JavaScript获取选择的文件。在JavaScript中，通过访问input元素的files属性来获取选择的文件对象，例如：
+
+```javascript
+const fileInput = document.getElementById('fileInput')
+const selectedFile = fileInput.files[0]
+```
+
+3. 读取文件内容。使用FileReader对象来读取文件内容。创建一个新的FileReader对象，然后使用它的readAsText()方法来读取文件内容，例如：
+
+```javascript
+const reader = new FileReader()
+reader.onload = function (event) {
+  const fileContent = event.target.result
+  // 在这里对文件内容进行操作
+}
+reader.readAsText(selectedFile)
+```
+
+4. 对文件内容进行操作。在上一步的回调函数中，可以获取到文件的内容，然后可以对该内容进行任何需要的操作，例如将其显示在页面上或者发送到服务器。
+
+5. 写入文件。如果需要将内容写入本地文件，可以使用FileWriter对象来实现。创建一个新的FileWriter对象，然后使用它的write()方法来写入内容，例如：
+
+```javascript
+const fileOutput = new Blob([fileContent], { type: 'text/plain' })
+const downloadLink = document.createElement('a')
+downloadLink.href = URL.createObjectURL(fileOutput)
+downloadLink.download = 'output.txt'
+downloadLink.click()
+```
+
+------
+
+> 2024.05.12 作者更新
+
+可以读写本地文件： 使用 file system api
+
+文档请看： [资料](https://developer.mozilla.org/zh-CN/docs/Web/API/File_System_API)

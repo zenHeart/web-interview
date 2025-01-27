@@ -657,7 +657,40 @@ function Counter () {
 
 在这个例子中，`useState` 被用来初始化 `count` 状态，并提供了一个 `setCount` 函数来更新它。每次点击按钮时，`setCount` 被调用，React 计划重新渲染组件，并在下一次渲染周期中使用新的状态值。
 
-## useMemo 是否支持异步函数 {#p1-use-memo-async}
+## useMemo {#p0-useMemo}
+
+`React.memo` 和 `useMemo` 是在 React 中处理性能优化的两个工具，虽然它们名称相似，但是它们的作用和使用方法是不同的。
+
+`React.memo` 是高阶组件，它可以用来优化函数组件的渲染性能。它会比较当前组件的 `props` 和 `state` 是否发生了变化，如果都没有变化，就不会重新渲染该组件，而是直接使用之前的结果。例如：
+
+```jsx
+import React from 'react';
+ 
+const MyComponent = React.memo(props => {
+ return <div>{props.value}</div>;
+});
+```
+
+在上面的代码中，`React.memo` 包装了一个简单的函数组件 `MyComponent`。如果该组件的 `value` prop 和 `state` 没有发生变化，那么就会直接使用之前的结果不会重新渲染。
+
+`useMemo` 是 `React` 中一个 hooks，它可以用来缓存计算结果，从而优化组件渲染性能。它接受两个参数：要缓存的计算函数和依赖项数组。每当依赖项发生变化时，该计算函数就会重新计算，并返回一个新的结果。例如：
+
+```jsx
+import React, { useMemo } from 'react';
+ 
+const MyComponent = props => {
+ const result = useMemo(() => expensiveComputation(props.value), [props.value]);
+ return <div>{result}</div>;
+};
+```
+
+在上面的代码中，我们传递了一个计算函数 `expensiveComputation`，以及一个依赖项数组 `[props.value]`。如果依赖项没有发生变化，`myValue` 就会被缓存起来，不会重新计算。
+
+总的来说：
+
+`React.memo` 的作用是优化函数组件的渲染性能，它可以比较组件的 `props` 和 `state` 是否发生变化，如果没有变化，就不会重新渲染。
+
+`useMemo` 的作用是缓存计算结果，从而避免重复计算，它接受一个计算函数和一个依赖项数组，当依赖项发生变化时，计算函数就会重新计算，返回一个新的结果，否则就会使用之前的缓存结果。
 
 ## useCallback 是否支持异步函数 {#p1-use-callback-async}
 
@@ -1566,6 +1599,47 @@ React 使用了所谓的“适配器模式”（Adapter Pattern），`react` 包
 
 当你在浏览器中构建 React 应用程序时，你通常会同时安装并使用这两个包。在引导你的应用程序时，你将使用 `react` 包来定义你的组件，然后用 `react-dom` 包将你的顶层组件渲染到页面中的 DOM 元素上。这样的分离也为服务器端渲染或在其他渲染目标上使用 React 打下了基础。
 
+## createPortal 了解多少？ {#p0-createPortal}
+
+`createPortal` 是 React 中一个用于将子元素渲染到指定 DOM 元素下的 API。
+
+在 React 应用中，通常会通过组件树传递 props、状态等数据来渲染 UI，并由 React 自动管理 DOM 元素的创建、更新和销毁等操作。不过，有时我们需要将某些 UI 元素渲染到根节点之外的 DOM 元素下，例如弹出框、模态框等。这时，`createPortal` 就能派上用场了。
+
+`createPortal` 的用法如下：
+
+```jsx
+ReactDOM.createPortal(child, container)
+```
+
+其中，`child` 是指要渲染的子元素，可以是任何有效的 React 元素，包括组件、HTML 元素等等；`container` 是指要将子元素渲染到的 DOM 元素，可以是一个有效的 DOM 元素对象，例如通过 `document.getElementById` 获取到的 DOM 元素。`createPortal` 会将 `child` 渲染到 `container` 中，但仍然能够受到 React 生命周期的管理，例如 `componentDidMount` 和 `componentWillUnmount` 等方法。
+
+下面是一个例子，它展示了如何使用 `createPortal` 来将一个弹出框渲染到根节点之外的 DOM 元素下：
+
+```jsx
+function Dialog(props) {
+ return ReactDOM.createPortal(
+ <div className="dialog">
+ <h2>{props.title}</h2>
+ <div>{props.content}</div>
+ </div>,
+ document.getElementById('dialog-container')
+ );
+}
+
+function App() {
+ return (
+ <div>
+ <p>这是一个文本内容。</p>
+ <Dialog title="提示" content="这是一个弹出框。" />
+ </div>
+ );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+```
+
+在这个例子中，`Dialog` 组件使用 `createPortal` 将其子元素渲染到 `#dialog-container` 这个元素下，而不是直接渲染到 `#root` 下。这个功能使得我们可以在 React 应用中方便地处理弹出框等类似需求。
+
 ## Portals 作用是什么， 有哪些使用场景？ {#p2-portals}
 
 React Portals 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的方式。通常，组件的渲染输出会被插入到其在组件树中的父组件下，但是 Portals 提供了一种穿透组件层次结构直接渲染到任意 DOM 节点的方法。
@@ -1865,6 +1939,105 @@ const MyComponent = withDataFetching(MyOriginalComponent);
 ```
 
 总的来说，React高阶组件提供了一种灵活的方式来对组件进行组合和功能增强，可以在不修改原始组件的情况下对其进行扩展和定制。
+
+## createElement {#p0-createElement}
+
+ `createElement` 和 `cloneElement` 有什么区别?
+
+React 中的 `createElement` 和 `cloneElement` 都可以用来创建元素，但它们用法有所不同。
+
+`createElement` 用于在 React 中动态地创建一个新的元素，并返回一个 React 元素对象。它的用法如下：
+
+```jsx
+React.createElement(type, [props], [...children]);
+```
+
+其中，`type` 是指要创建的元素的类型，可以是一个 HTML 标签名（如 `div`、`span` 等），也可以是一个 React 组件类（如自定义的组件），`props` 是一个包含该元素需要设置的属性信息的对象，`children` 是一个包含其子元素的数组。`createElement` 会以这些参数为基础创建并返回一个 React 元素对象，React 将使用它来构建真正的 DOM 元素。
+
+`cloneElement` 用于复制一个已有的元素，并返回一个新的 React 元素，同时可以修改它的一些属性。它的用法如下：
+
+```jsx
+React.cloneElement(element, [props], [...children]);
+```
+
+其中，`element` 是指要复制的 React 元素对象，`props` 是一个包含需要覆盖或添加的属性的对象，`children` 是一个包含其修改后的子元素的数组。`cloneElement` 会以这些参数为基础复制该元素，并返回一个新的 React 元素对象。
+
+在实际使用中，`createElement` 通常用于创建新的元素（如动态生成列表），而 `cloneElement` 更适用于用于修改已有的元素，例如在一个组件内部使用 `cloneElement` 来修改传递进来的子组件的属性。
+
+ `cloneElement` 有哪些应用场景
+
+React 中的 `cloneElement` 主要适用于以下场景：
+
+1. 修改 props
+
+`cloneElement` 可以用于复制一个已有的元素并覆盖或添加一些新的属性。例如，可以复制一个带有默认属性的组件并传递新的属性，达到修改属性的目的。
+
+```jsx
+// 假设有这样一个组件
+function MyComponent(props) {
+ // ...
+}
+
+// 在另一个组件中使用 cloneElement 修改 MyComponent 的 props
+function AnotherComponent() {
+ return React.cloneElement(<MyComponent />, { color: 'red' });
+}
+```
+
+2. 渲染列表
+
+在渲染列表时，可以使用 `Array.map()` 生成一系列的元素数组，也可以使用 `React.Children.map()` 遍历子元素并返回一系列的元素数组，同时使用 `cloneElement` 复制元素并传入新的 key 和 props。
+
+```jsx
+// 使用 Children.map() 遍历子元素并复制元素
+function MyList({ children, color }) {
+ return (
+ <ul>
+ {React.Children.map(children, (child, index) =>
+ React.cloneElement(child, { key: index, color })
+ )}
+ </ul>
+ );
+}
+
+// 在组件中使用 MyList 渲染列表元素
+function MyPage() {
+ return (
+ <MyList color="red">
+ <li>Item 1</li>
+ <li>Item 2</li>
+ <li>Item 3</li>
+ </MyList>
+ );
+}
+```
+
+3. 修改子元素
+
+使用 `cloneElement` 也可以在一个组件内部修改传递进来的子组件的属性，例如修改按钮的样式。
+
+```jsx
+function ButtonGroup({ children, style }) {
+ return (
+ <div style={style}>
+ {React.Children.map(children, (child) =>
+ React.cloneElement(child, { style: { color: 'red' } })
+ )}
+ </div>
+ );
+}
+
+function MyPage() {
+ return (
+ <ButtonGroup style={{ display: 'flex' }}>
+ <button>Save</button>
+ <button>Cancel</button>
+ </ButtonGroup>
+ );
+}
+```
+
+总之，`cloneElement` 可以方便地复制已有的 React 元素并修改其属性，适用于许多场景，例如修改 props、渲染列表和修改子元素等。
 
 ## 为什么 react 组件， 都必须要申明一个 `import React from 'react';` {#p4-import-react}
 
@@ -2594,3 +2767,139 @@ export default App
 ```
 
 在上面的示例中，我们使用了 useMemo 对复杂的数据对象进行了缓存。这样，当 context 中的值变化时，只会重新计算数据对象的值，而不是重新创建一个新的对象。这样可以有效地减少不必要的渲染。
+
+## react-router 页面跳转时，是如何传递下一个页面参数的？ {#p1-use-router}
+
+React Router 是一个用于管理前端路由的库，它与 React 应用程序集成在一起，提供了一种在单页面应用中处理路由的方式。React Router 并没有直接提供数据存储的功能，它主要负责路由的匹配和导航。
+
+在 React Router 中，路由相关的数据主要存储在组件的 props 和组件的状态中。以下是一些常见的数据存储方式：
+
+1. 路由参数（Route Parameters）：
+ React Router 允许通过路径参数（如 `/users/:id`）传递参数给路由组件。这些参数可以通过 `props.match.params` 对象在路由组件中获取。路由参数通常用于标识唯一资源的ID或其他需要动态变化的数据。
+
+1. 查询参数（Query Parameters）：
+ 查询参数是通过 URL 查询字符串传递的键值对数据，如 `/users?id=123&name=John`。React Router 可以通过 `props.location.search` 属性获取查询字符串，并通过解析库（如 `query-string`）将其转换为 JavaScript 对象。查询参数通常用于筛选、分页或其他需要传递额外数据的场景。
+
+1. 路由状态（Route State）：
+ 在某些情况下，可能需要将一些状态信息传递给路由组件，例如从一个页面跳转到另一个页面时需要携带一些额外的状态。React Router 提供了 `props.location.state` 属性，可以用于存储和传递路由状态。
+
+1. 上下文（Context）：
+ React Router 提供了一个 `Router` 组件，可以使用 React 的上下文功能共享路由相关的数据。通过在 `Router` 组件的上下文中提供数据，可以在路由组件中访问该数据，而无需通过 props 层层传递。这在需要在多个嵌套层级中访问路由数据时非常方便。
+
+总的来说，React Router 并没有专门的数据存储机制，它主要利用 React 组件的 props 和状态来传递和存储路由相关的数据。这些数据可以通过路由参数、查询参数、路由状态以及上下文等方式来传递和获取。根据具体的需求和场景，可以选择适合的方式来存储和管理路由相关的数据。
+
+ 路由状态是如何存储的
+
+在 React Router 中，路由状态可以通过 `props.location.state` 属性来存储和获取。
+
+当使用 React Router 进行页面导航时，可以通过 `history.push` 或 `history.replace` 方法传递一个包含状态数据的对象作为第二个参数。例如：
+
+```jsx
+history.push('/dashboard', { isLoggedIn: true, username: 'John' });
+```
+
+这个对象会被存储在新页面的 `props.location.state` 中，可以在目标页面的组件中通过 `props.location.state` 来访问它。例如：
+
+```jsx
+import { useLocation } from 'react-router-dom';
+
+function Dashboard() {
+ const location = useLocation();
+ const { isLoggedIn, username } = location.state;
+
+ // 使用路由状态数据
+ // ...
+}
+```
+
+需要注意的是，路由状态仅在通过 `history.push` 或 `history.replace` 导航到新页面时才可用。如果用户通过浏览器的前进/后退按钮进行导航，或者直接输入 URL 地址访问页面，路由状态将不会被保留。
+
+另外，路由状态也可以在类组件中通过 `this.props.location.state` 进行访问，或者在函数组件中使用 `props.location.state`。
+
+ props.location.state 数据是如何存储的
+
+在 React Router 中，路由状态数据实际上是存储在客户端的内存中。
+
+当使用 `history.push` 或 `history.replace` 方法导航到一个新页面时，React Router 将路由状态数据作为对象附加到浏览器历史记录中的对应路由条目。这个对象会存储在浏览器的会话历史中，并在新页面加载时被 React Router 读取并提供给组件。
+
+具体地说，React Router 使用 HTML5 的 History API（`pushState` 或 `replaceState` 方法）来实现路由导航，并将路由状态数据作为一个特殊的字段存储在历史记录中。这个字段通常被称为 `state` 字段，用于存储路由状态数据。
+
+在浏览器中，历史记录和相应的状态数据会被保存在内存中。当用户进行前进、后退或直接访问某个 URL 时，浏览器会根据历史记录加载对应的页面，并将相关的状态数据提供给 React Router。这样，组件就能够通过 `props.location.state` 来访问之前存储的路由状态数据。
+
+需要注意的是，路由状态数据仅在客户端内存中存在，每个用户的路由状态是独立的。如果用户刷新页面或关闭浏览器，路由状态数据将丢失，并需要重新通过导航操作来设置。因此，路由状态适合存储短期或临时的数据，而对于长期或持久化的数据，应该考虑其他的数据存储方式，如服务器端存储或状态管理库。
+
+## createContext 和 useContext 有什么区别， 是做什么用的 {#p0-createContext}
+
+ `createContext` 和 `useContext`
+
+`createContext`和`useContext`是React中用于处理上下文（Context）的两个钩子函数，它们用于在组件之间共享数据。
+
+`createContext`用于创建一个上下文对象，该对象包含`Provider`和`Consumer`两个组件。`createContext`接受一个初始值作为参数，该初始值将在没有匹配的`Provider`时被使用。
+
+`useContext`用于在函数组件中访问上下文的值。它接受一个上下文对象作为参数，并返回当前上下文的值。
+
+具体区别和用途如下：
+
+1. `createContext`：`createContext`用于创建一个上下文对象，并指定初始值。它返回一个包含`Provider`和`Consumer`组件的对象。`Provider`组件用于在组件树中向下传递上下文的值，而`Consumer`组件用于在组件树中向上获取上下文的值。
+
+```jsx
+const MyContext = createContext(initialValue);
+```
+
+2. `useContext`：`useContext`用于在函数组件中访问上下文的值。它接受一个上下文对象作为参数，并返回当前上下文的值。使用`useContext`可以避免使用`Consumer`组件进行嵌套。
+
+```jsx
+const value = useContext(MyContext);
+```
+
+使用上下文的主要目的是在组件树中共享数据，避免通过逐层传递`props`的方式传递数据。上下文可以在跨组件层级的情况下方便地共享数据，使组件之间的通信更加简洁和灵活。
+
+使用步骤如下：
+
+1. 使用`createContext`创建一个上下文对象，并提供初始值。
+2. 在组件树中的某个位置使用`Provider`组件，将要共享的数据通过`value`属性传递给子组件。
+3. 在需要访问上下文数据的组件中使用`useContext`钩子，获取上下文的值。
+
+需要注意的是，上下文中的数据变化会触发使用该上下文的组件重新渲染，因此应谨慎使用上下文，避免无谓的性能损耗。
+
+ 代码示范
+
+当使用`createContext`和`useContext`时，以下是一个简单的代码示例：
+
+```jsx
+import React, { createContext, useContext } from 'react';
+
+// 创建上下文对象
+const MyContext = createContext();
+
+// 父组件
+function ParentComponent() {
+ const value = 'Hello, World!';
+
+ return (
+ // 提供上下文的值
+ <MyContext.Provider value={value}>
+ <ChildComponent />
+ </MyContext.Provider>
+ );
+}
+
+// 子组件
+function ChildComponent() {
+ // 使用 useContext 获取上下文的值
+ const value = useContext(MyContext);
+
+ return <div>{value}</div>;
+}
+
+// 使用上述组件
+function App() {
+ return <ParentComponent />;
+}
+```
+
+在上述示例中，我们首先使用`createContext`创建一个上下文对象`MyContext`。然后，在`ParentComponent`组件中，我们通过`MyContext.Provider`组件提供了上下文的值，值为`'Hello, World!'`。在`ChildComponent`组件中，我们使用`useContext`钩子获取了上下文的值，并将其显示在页面上。
+
+最终，我们在`App`组件中使用`ParentComponent`组件作为根组件。当渲染应用程序时，`ChildComponent`将获取到上下文的值并显示在页面上。
+
+通过这种方式，`ParentComponent`提供了上下文的值，`ChildComponent`通过`useContext`钩子获取并使用该值，实现了组件之间的数据共享。

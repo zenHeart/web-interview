@@ -1526,3 +1526,315 @@ console.log(expensiveFunction(10)) // 再次调用，直接从缓存中获取结
 在示例中，我们创建了一个名为 `expensiveFunction` 的函数，并使用 `memoize` 进行包装。第一次调用时，函数会执行计算，并输出 `"Computing..."`，结果为 10。第二次调用时，函数直接从缓存中获取结果，无需再次计算。最后两次调用分别使用了不同的参数，会触发新的计算并缓存结果。
 
 需要注意的是，这个手写的 `memoize` 函数是一个简化版本，仅适用于参数为基本类型的情况。对于参数为复杂类型（如对象、数组等）的情况，需要使用更复杂的缓存键值生成方法，以确保正确的缓存行为。此外，实际的 Lodash 库中的 `memoize` 函数还提供了其他选项和功能，例如自定义缓存键生成函数、缓存过期时间等。
+
+## 使用 Promise 实现一个异步流量控制的函数(限制并发数) {#p0-async-control}
+
+**关键词**：异步流量控制的函数
+
+下面是使用 Promise 实现异步流量控制的函数的示例：
+
+```javascript
+function asyncFlowControl (tasks, limit) {
+  let runningCount = 0 // 当前正在运行的任务数
+  let index = 0 // 当前执行的任务索引
+  const results = [] // 存储任务的结果
+
+  return new Promise((resolve, reject) => {
+    function runTask () {
+      if (runningCount >= limit || index >= tasks.length) {
+        // 达到并发限制或所有任务已执行完毕，返回结果
+        if (results.length === tasks.length) {
+          resolve(results)
+        }
+        return
+      }
+
+      const task = tasks[index]
+      const currentIndex = index // 保存当前任务索引
+
+      index++
+      runningCount++
+
+      task().then((result) => {
+        results[currentIndex] = result // 存储任务结果
+        runningCount--
+        runTask() // 递归执行下一个任务
+      }).catch((error) => {
+        reject(error)
+      })
+
+      runTask() // 递归执行下一个任务
+    }
+
+    runTask() // 开始执行任务
+  })
+}
+
+// 示例用法
+function asyncTask (value) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log(value)
+      resolve(value)
+    }, Math.random() * 1000)
+  })
+}
+
+const tasks = [
+  () => asyncTask(1),
+  () => asyncTask(2),
+  () => asyncTask(3),
+  () => asyncTask(4),
+  () => asyncTask(5)
+]
+
+asyncFlowControl(tasks, 2).then((results) => {
+  console.log('All tasks completed:', results)
+}).catch((error) => {
+  console.error('Error occurred:', error)
+})
+```
+
+以上示例中的 `asyncFlowControl` 函数接受一个任务数组 `tasks` 和一个并发限制 `limit`，它会按照并发限制逐个执行任务，并返回一个 Promise 对象。在示例中，任务数组中的每个任务都是一个返回 Promise 的函数，通过 `setTimeout` 模拟异步操作。
+
+在执行过程中，`asyncFlowControl` 函数会维护一个 `runningCount` 变量来跟踪当前正在运行的任务数，并使用递归的方式执行任务。当达到并发限制或所有任务都已执行完毕时，函数会返回结果。
+
+通过控制并发任务的数量，我们可以限制同时执行的异步操作，实现异步流量控制。在上述示例中，设置并发限制为 2，可以确保最多同时执行 2 个任务，并在任务执行完毕后再执行下一个任务。
+
+## 手写 JSON.stringify 和 手写 JSON.parse 实现 {#p0-json-parser}
+
+ 手写`JSON.stringify`
+
+`JSON.stringify` 是一个将 JavaScript 对象或值转换为 JSON 字符串的函数。下面是一个简化的实现，主要考虑以下几种类型：字符串、数字、布尔值、对象和数组。
+
+```javascript
+function jsonStringify (value) {
+  const type = typeof value
+
+  if (type === 'string') {
+    return `"${value}"`
+  }
+
+  if (type === 'number' || type === 'boolean' || value === null) {
+    return String(value)
+  }
+
+  if (type === 'object') {
+    if (Array.isArray(value)) {
+      const arrayItems = value.map((item) => jsonStringify(item)).join(',')
+      return `[${arrayItems}]`
+    } else {
+      const objectKeys = Object.keys(value)
+      const objectItems = objectKeys.map((key) => {
+        const keyValue = jsonStringify(value[key])
+        return keyValue !== undefined ? `"${key}":${keyValue}` : undefined
+      }).filter((item) => item !== undefined).join(',')
+      return `{${objectItems}}`
+    }
+  }
+
+  return undefined // 这里省略了对函数、Symbol、循环引用等类型的处理
+}
+
+// 使用示例
+const obj = {
+  a: 'hello',
+  b: 42,
+  c: true,
+  d: { e: 'world', f: [1, 2, 3] }
+}
+
+console.log(jsonStringify(obj)) // {"a":"hello","b":42,"c":true,"d":{"e":"world","f":[1,2,3]}}
+```
+
+请注意，这个实现有很多限制，适用于简单场景。它没有处理循环引用、函数、`Symbol` 类型等复杂情况。实际项目中，你还是应该使用内置的 `JSON.stringify` 函数。
+
+ 手写 `JSON.parse`
+
+`JSON.parse` 是一个将 JSON 字符串转换为 JavaScript 对象或值的函数。手写一个简化版的 `JSON.parse` 可能不会涵盖所有的细节和兼容性问题，这里提供一个基于 JavaScript 的 eval 函数实现的简单版本。请注意，在实际项目中应使用原生的 `JSON.parse` 函数以保证安全性和性能。
+
+```javascript
+function jsonParse (jsonString) {
+  // eslint-disable-next-line
+  return eval('(' + jsonString + ')')
+}
+
+// 使用示例
+const jsonString = '{"a": "hello", "b": 42, "c": true, "d": {"e": "world", "f": [1, 2, 3]}}'
+
+console.log(jsonParse(jsonString))
+/* 输出：
+{
+ a: "hello",
+ b: 42,
+ c: true,
+ d: { e: "world", f: [1, 2, 3] },
+}
+*/
+```
+
+虽然使用 `eval` 函数能简单地实现 JSON 字符串的解析，但在实践过程中使用 `eval` 并不安全，因为它会执行任意字符串中包含的 JavaScript 代码。因此，强烈建议实际项目中使用 `JSON.parse` 和 `JSON.stringify` 函数。
+
+## 如何将JavaScript代码解析成抽象语法树(AST) {#ast}
+
+ 如何将JavaScript代码解析成抽象语法树
+
+要将JavaScript代码解析成抽象语法树（Abstract Syntax Tree，AST），你可以使用工具或库来实现。以下是几种常用的方法：
+
+1. Esprima: Esprima 是一个流行的JavaScript解析器，它可以将JavaScript代码解析成AST。你可以使用它的 JavaScript API 来将代码解析成AST对象。
+
+```javascript
+const esprima = require('esprima')
+const code = 'var x = 5;'
+const ast = esprima.parseScript(code)
+console.log(ast)
+```
+
+2. Acorn: Acorn 是另一个广泛使用的JavaScript解析器，它也可以将JavaScript代码解析成AST。你可以使用它的 JavaScript API 来解析代码并获取AST对象。
+
+```javascript
+const acorn = require('acorn')
+const code = 'var x = 5;'
+const ast = acorn.parse(code, { ecmaVersion: 2020 })
+console.log(ast)
+```
+
+3. Babel: Babel 是一个功能强大的JavaScript编译器，它可以将代码转换为AST，并提供了丰富的插件系统，用于转换和操作AST。你可以使用 Babel 的 API 来解析代码并获取AST对象。
+
+```javascript
+const babelParser = require('@babel/parser')
+const code = 'const x = 5;'
+const ast = babelParser.parse(code, { sourceType: 'module' })
+console.log(ast)
+```
+
+这些工具和库都可以将JavaScript代码解析成AST对象，从而使你能够对代码进行进一步的分析、转换或处理。你可以根据自己的需求选择其中之一，并根据其文档了解更多关于解析选项和AST节点的信息。
+
+ JavaScript代码解析成抽象语法树的原理是什么
+
+JavaScript代码解析成抽象语法树（Abstract Syntax Tree，AST）的过程涉及以下几个主要步骤：
+
+1. 词法分析（Lexical Analysis）：词法分析器（Lexer）将源代码拆分成词法单元（tokens），比如变量名、关键字、操作符、标点符号等。它根据一组定义好的规则（词法规范）来识别和分类这些词法单元。
+
+2. 语法分析（Syntax Analysis）：语法分析器（Parser）接收词法分析器生成的词法单元，并根据语法规则构建AST。语法分析器使用上下文无关文法（Context-Free Grammar）来定义语言的语法规则，它通过递归下降、LR(1) 等算法来处理这些规则，以确定输入是否符合语法规则并生成相应的AST。
+
+3. 构建AST：在语法分析的过程中，语法分析器根据语法规则构建AST。AST是一个树状结构，其中每个节点表示源代码中的一个语法结构，如表达式、语句、函数等。不同节点类型代表不同的语法结构，它们之间通过父子关系和兄弟关系来表示源代码的层次结构和逻辑关联。
+
+4. 后续处理：生成AST后，可以进行进一步的处理和分析。这可能包括语义分析、类型推断、符号解析、代码优化等。这些步骤可以根据具体的需求和工具进行。
+
+总结：将JavaScript代码解析成AST的过程是通过词法分析器将源代码拆分成词法单元，然后语法分析器根据语法规则构建AST。AST提供了对代码结构的抽象表示，便于进一步分析、转换和操作代码。
+
+## 如何做 promise 缓存？上一次调用函数的 promise 没有返回， 那么下一次调用函数依然返回上一个 promise {#p0-async-cache}
+
+可以使用闭包实现 promise 缓存的功能。下面是一个示例代码：
+
+```js
+function cachedPromise (promiseFunction) {
+  let lastPromise = null
+
+  return function () {
+    if (lastPromise !== null) {
+      return lastPromise
+    }
+
+    lastPromise = promiseFunction()
+    return lastPromise
+  }
+}
+
+const promiseFunction = () => {
+  // 这里可以是任何一个返回 Promise 的异步函数
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve('Resolved!')
+    }, 2000)
+  })
+}
+
+const cachedPromiseFunction = cachedPromise(promiseFunction)
+
+cachedPromiseFunction().then(result => {
+  console.log(result) // Resolved!
+})
+
+// 因为上次调用函数的 Promise 还未 resolve，所以这里直接返回上次的 Promise
+cachedPromiseFunction().then(result => {
+  console.log(result) // Resolved!
+})
+```
+
+在上面的代码中，我们先定义了一个 `cachedPromise` 函数，它接收一个返回 Promise 的异步函数 `promiseFunction`，并返回一个新的函数。这个新函数会维护一个 `lastPromise` 变量，用来记录上一次调用 `promiseFunction` 函数返回的 Promise。
+
+当第一次调用 `cachedPromiseFunction` 时，`lastPromise` 变量还没有值，因此会调用 `promiseFunction`，并将返回的 Promise 赋值给 `lastPromise` 变量。同时，返回这个 Promise。
+
+当第二次调用 `cachedPromiseFunction` 时，由于 `lastPromise` 变量已经被赋值，表示上一次调用 `promiseFunction` 返回的 Promise 还没有返回，因此直接返回 `lastPromise` 变量，而不再调用 `promiseFunction`。
+
+当第一个 Promise 返回时，会将 `lastPromise` 重置为空，这样下一次调用 `cachedPromiseFunction` 就会重新执行 `promiseFunction`。
+
+通过这种方式，我们就实现了 promise 缓存的功能，即如果上一次调用的 Promise 没有返回，那么下一次调用函数依然会返回上一个 Promise。
+
+ 如果上一次的函数调用 promise 已经返回，下一次调用就是一个新的 promise
+
+修改上述的代码，让 `cachedPromise` 函数可以检测上一次的 Promise 是否已经完成，如果已经完成，则返回新的 Promise 对象。
+
+下面是修改后的代码：
+
+```
+function cachedPromise(promiseFunction) {
+ let lastPromise = null;
+ 
+ return function() {
+ if (lastPromise !== null) {
+ if (lastPromise.isFulfilled()) { // 如果上一次 Promise 已经完成
+ lastPromise = null; // 重置上一次 Promise
+ } else {
+ return lastPromise; // 直接返回上一次 Promise
+ }
+ }
+ 
+ lastPromise = promiseFunction();
+ return lastPromise;
+ }
+}
+
+const promiseFunction = () => {
+ // 这里可以是任何一个返回 Promise 的异步函数
+ return new Promise(resolve => {
+ setTimeout(() => {
+ resolve('Resolved!');
+ }, 2000)
+ })
+}
+
+const cachedPromiseFunction = cachedPromise(promiseFunction);
+
+cachedPromiseFunction().then(result => {
+ console.log(result); // Resolved!
+});
+
+// 因为上次调用函数的 Promise 还未 resolve，所以这里直接返回上次的 Promise
+cachedPromiseFunction().then(result => {
+ console.log(result); // Resolved!
+});
+
+setTimeout(() => {
+ // 上一次 Promise 已经完成，这里会返回新的 Promise 对象
+ cachedPromiseFunction().then(result => {
+ console.log(result); // Resolved!
+ });
+}, 3000);
+```
+
+在这段代码中，我们在闭包函数中判断上一次的 Promise 是否已经完成，如果已经完成，则将其重置为空，在下一次调用时会再次执行 `promiseFunction`，并返回新的 Promise 对象。
+
+请注意，由于 `lastPromise` 变量被修改了，我们使用了一个名为 `isFulfilled()` 的方法来检测 Promise 是否已经完成。这个方法可以使用任何一个符合 Promises/A+ 规范的 Promise 库（如 bluebird.js）来实现。如果你使用的是原生的 Promise 对象，可以使用 `then()` 方法代替 `isFulfilled()`，如下所示：
+
+```
+if (typeof lastPromise.then !== 'function') {
+ lastPromise = null; // 重置上一次 Promise
+} else {
+ return lastPromise; // 直接返回上一次 Promise
+}
+```
+
+这样，我们就实现了一个可以检测 Promise 完成状态的 promise 缓存函数。
