@@ -112,6 +112,277 @@ controller.abort()
 
 ## ajax fetch {#p0-ajax-fetch}
 
+深入fetch
+
+fetch 的简单介绍
+
+Fetch 被称为下一代Ajax技术,采用Promise方式来处理数据。
+是一种简洁明了的API，比XMLHttpRequest更加简单易用。
+
+页面中需要向服务器请求数据时，基本上都会使用Ajax来实现。
+Ajax的本质是使用XMLHttpRequest对象来请求数据，而XMLHttpRequest对象是通过事件的模式来实现返回数据的处理。
+与XMLHttpRequest类似，Fetch允许你发出AJAX请求。
+区别在于Fetch API使用Promise方式，Promise是已经正式发布的ES6的内容之一，
+因此是一种简洁明了的API，比XMLHttpRequest更加简单易用。
+
+MLHttpRequest 的使用
+
+AJAX半遮半掩的底层API是饱受诟病的一件事情. XMLHttpRequest 并不是专为Ajax而设计的。
+虽然各种框架对 XHR 的封装已经足够好用, 但我们可以做得更好。更好用的API是 fetch 。
+下面简单介绍 window.fetch 方法, 在最新版的 Firefox 和 Chrome 中已经提供支持。
+
+在我看来 XHR 有点复杂。使用XHR的方式大致如下:
+
+```javascript
+const getJson = function (url) {
+  return new Promise(function (resolve, reject) {
+    const client = new XMLHttpRequest()
+    client.open('GET', url)
+    client.setRequestHeader('Accept', 'application/json')
+    client.responseType = 'json'
+    client.onreadystatechange = function () {
+      if (this.status === 200) {
+        resolve(this.response)
+      } else {
+        reject(this.statusText)
+      }
+    }
+    client.send()
+  })
+}
+```
+
+etch 的使用
+
+fetch 是全局量 window 的一个方法, 第一个参数是URL:
+
+```javascript
+// url (必须), options (可选)
+fetch('/some/url', {
+  method: 'get'
+}).then(function (response) {
+
+}).catch(function (err) {
+  // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+})
+```
+
+fetch API 也使用了 JavaScript Promises 来处理结果/回调:
+
+```javascript
+// 对响应的简单处理
+fetch('/some/url').then(function (response) {
+
+}).catch(function (err) {
+  // 出错了;等价于 then 的第二个参数,但这样更直观 :(
+})
+
+// 链式处理,将异步变为类似单线程的写法: 高级用法.
+fetch('/some/url').then(function (response) {
+  return new Promise() // ... 执行成功, 第1步...
+}).then(function (returnedValue) {
+  // ... 执行成功, 第2步...
+}).catch(function (err) {
+  // 中途任何地方出错...在此处理 :(
+})
+```
+
+求头(Request Headers)
+
+自定义请求头信息极大地增强了请求的灵活性。我们可以通过 new Headers() 来创建请求头:
+
+```javascript
+// 创建一个空的 Headers 对象,注意是Headers，不是Header
+var headers = new Headers()
+
+// 添加(append)请求头信息
+headers.append('Content-Type', 'text/plain')
+headers.append('X-My-Custom-Header', 'CustomValue')
+
+// 判断(has), 获取(get), 以及修改(set)请求头的值
+headers.has('Content-Type') // true
+headers.get('Content-Type') // "text/plain"
+headers.set('Content-Type', 'application/json')
+
+// 删除某条请求头信息(a header)
+headers.delete('X-My-Custom-Header')
+
+// 创建对象时设置初始化信息
+var headers = new Headers({
+  'Content-Type': 'text/plain',
+  'X-My-Custom-Header': 'CustomValue'
+})
+```
+
+可以使用的方法包括: append, has, get, set, 以及 delete 。
+
+需要创建一个 Request 对象来包装请求头:
+
+```javascript
+var request = new Request('/some-url', {
+ headers: new Headers({
+ 'Content-Type': 'text/plain'
+ })
+});
+
+fetch(request).then(function() { // handle response */ });
+```
+
+equest 简介
+
+Request 对象表示一次 fetch 调用的请求信息。传入 Request 参数来调用 fetch, 可以执行很多自定义请求的高级用法:
+
+* method - 支持 GET, POST, PUT, DELETE, HEAD
+* url - 请求的 URL
+* body(String): HTTP的请求参数
+* headers - 对应的 Headers 对象
+* referrer - 请求的 referrer 信息
+* mode - 可以设置 cors, no-cors, same-origin
+* credentials - 设置 cookies 是否随请求一起发送。可以设置: omit, same-origin
+* redirect - follow, error, manual
+* integrity - subresource 完整性值(integrity value)
+* cache - 设置 cache 模式 (default, reload, no-cache)
+
+Request 的示例如下:
+
+```javascript
+var request = new Request('/users.json', {
+ method: 'POST', 
+ mode: 'cors', 
+ redirect: 'follow',
+ headers: new Headers({
+ 'Content-Type': 'text/plain'
+ })
+});
+
+fetch(request).then(function() { // handle response */ });
+```
+
+只有第一个参数 URL 是必需的。在 Request 对象创建完成之后, 所有的属性都变为只读属性.
+请注意, Request 有一个很重要的 clone 方法, 特别是在 Service Worker API 中使用时 —— 一个 Request 就代表一串流(stream), 如果想要传递给另一个 fetch 方法,则需要进行克隆。
+
+fetch 的方法签名(signature,可理解为配置参数), 和 Request 很像, 示例如下:
+
+```javascript
+fetch('/users.json', {
+ method: 'POST', 
+ mode: 'cors', 
+ redirect: 'follow',
+ headers: new Headers({
+ 'Content-Type': 'text/plain'
+ })
+}).then(function() { // handle response */ });
+```
+
+esponse 简介
+
+Response 代表响应, fetch 的 then 方法接收一个 Response 实例,
+当然你也可以手动创建 Response 对象 —— 比如在 service workers 中可能会用到. Response 可以配置的参数包括:
+
+* type - 类型,支持: basic, cors
+* url
+* useFinalURL - Boolean 值, 代表 url 是否是最终 URL
+* status - 状态码 (例如: 200, 404, 等等)
+* ok - Boolean值,代表成功响应(status 值在 200-299 之间)
+* statusText - 状态值(例如: OK)
+* headers - 与响应相关联的 Headers 对象.
+
+```javascript
+// 在 service worker 测试中手动创建 response
+// new Response(BODY, OPTIONS)
+const response = new Response('.....', {
+  ok: false,
+  status: 404,
+  url: '/'
+})
+
+// fetch 的 `then` 会传入一个 Response 对象
+fetch('/')
+  .then(function (responseObj) {
+    console.log('status: ', responseObj.status)
+  })
+```
+
+**Response 提供的方法如下:**
+
+* clone() - 创建一个新的 Response 克隆对象.
+* error() - 返回一个新的,与网络错误相关的 Response 对象.
+* redirect() - 重定向,使用新的 URL 创建新的 response 对象..
+* arrayBuffer() - Returns a promise that resolves with an ArrayBuffer.
+* blob() - 返回一个 promise, resolves 是一个 Blob.
+* formData() - 返回一个 promise, resolves 是一个 FormData 对象.
+* json() - 返回一个 promise, resolves 是一个 JSON 对象.
+* text() - 返回一个 promise, resolves 是一个 USVString (text).
+
+ 处理 JSON响应
+
+假设需要请求 JSON —— 回调结果对象 response 中有一个json()方法,用来将原始数据转换成 JavaScript 对象:
+
+```javascript
+fetch('https://davidwalsh.name/demo/arsenal.json').then(function (response) {
+  // 转换为 JSON
+  return response.json()
+}).then(function (j) {
+  // 现在, `j` 是一个 JavaScript object
+  console.log(j)
+})
+```
+
+ 处理基本的Text / HTML响应
+
+JSON 并不总是理想的请求/响应数据格式, 那么我们看看如何处理 HTML或文本结果:
+
+```javascript
+fetch('/next/page')
+  .then(function (response) {
+    return response.text()
+  }).then(function (text) {
+    // <!DOCTYPE ....
+    console.log(text)
+  })
+```
+
+ 处理Blob结果
+
+如果你想通过 fetch 加载图像或者其他二进制数据, 则会略有不同:
+
+```javascript
+fetch('flowers.jpg')
+  .then(function (response) {
+    return response.blob()
+  })
+  .then(function (imageBlob) {
+    document.querySelector('img').src = URL.createObjectURL(imageBlob)
+  })
+```
+
+ 提交表单数据(Posting Form Data)
+
+另一种常用的 AJAX 调用是提交表单数据 —— 示例代码如下:
+
+```javascript
+fetch('/submit', {
+  method: 'post',
+  body: new FormData(document.getElementById('comment-form'))
+})
+```
+
+提交 JSON 的示例如下:
+
+```javascript
+fetch('/submit-json', {
+ method: 'post',
+ body: JSON.stringify({
+ email: document.getElementById('email').value
+ answer: document.getElementById('answer').value
+ })
+});
+```
+
+etch取消
+
+fetch 并不支持 取消请求的功能
+
 Ajax、Axios和Fetch都是用于进行HTTP请求的工具或技术，但它们在实现细节和功能方面有所不同。
 
 1. Ajax（Asynchronous JavaScript and XML）:
@@ -274,7 +545,63 @@ resizeObserver.observe(targetElement)
 
 ## Cookie和Session区别？{#p1-cookie-session-difference}
 
-## 如何取消请求 {#p0-cancel-request}
+cookie 和 session 有什么区别？
+
+ 工作方式有所不同
+
+Cookie和Session都是用来在Web应用程序中维护用户状态的机制，但是它们的工作方式有所不同：
+
+**Cookie**：
+Cookie是存储在用户计算机中的小文件，通常由Web服务器发送给Web浏览器。当用户在Web浏览器中发送请求时，浏览器会将Cookie发送回服务器，从而让服务器了解用户的状态信息。Cookie通常用于存储持久性数据，例如用户的首选项、购物车内容等。Cookie可以在Web浏览器中设置过期时间，一旦过期，它就不再有效。
+
+**Session**：
+Session是存储在服务器端的会话信息。当用户在Web浏览器中发送请求时，服务器会为每个会话创建一个唯一的标识符（Session ID），并将Session ID发送给Web浏览器。Web浏览器将Session ID存储在Cookie中（或者在URL参数中，如果Cookie不可用），然后将Session ID发送回服务器，从而让服务器知道用户的状态信息。Session通常用于存储短期数据，例如用户登录状态、购物车信息等。Session的数据会在一定时间内保持有效，一旦超过这个时间，数据就会被销毁。
+
+总的来说，Cookie通常用于存储持久性数据，Session通常用于存储短期数据。Cookie存储在用户计算机中，Session存储在服务器端。另外，Cookie的安全性相对较差，因为Cookie中的数据可以被用户查看和修改，而Session的安全性相对较高，因为Session数据存储在服务器端，不容易被篡改。
+
+ 还有啥区别？
+
+除了上述提到的区别，Cookie和Session还有以下几个方面的区别：
+
+存储位置：
+Cookie数据存储在用户的浏览器中，而Session数据存储在服务器端的内存或者文件系统中。
+
+安全性：
+Cookie的数据可以被用户查看和修改，而Session数据存储在服务器端，对于客户端来说是不可见的，因此相对来说更加安全。
+
+大小限制：
+Cookie的大小通常受浏览器和操作系统的限制，一般不能超过4KB。而Session的大小没有明确的限制，可以存储大量的数据。
+
+性能：
+由于Session数据存储在服务器端，因此每次请求都需要从服务器端读取Session数据，对服务器造成了一定的负担，而Cookie数据存储在客户端，因此每次请求都不需要从服务器端读取数据，对服务器的负担相对较小。
+
+总的来说，Cookie和Session都是常用的用于在Web应用程序中维护用户状态的机制，它们各自有其优点和缺点，需要根据具体应用场景选择合适的机制。
+
+cookie、sessionStorage和localStorage都是存储在浏览器端的客户端存储方式，用于存储一些客户端数据。
+
+它们之间的区别如下：
+
+1. 生命周期
+
+cookie的生命周期由Expires和Max-Age两个属性控制。当设置了Expires属性时，cookie的生命周期为设置的过期时间；当设置了Max-Age属性时，cookie的生命周期为设置的秒数。cookie在浏览器关闭时也会过期。而sessionStorage和localStorage的生命周期则与浏览器窗口相关，当窗口被关闭时，sessionStorage数据也会被清空，而localStorage数据则会一直存在，直到用户手动删除。
+
+2. 存储容量
+
+cookie的存储容量限制为4KB，而sessionStorage和localStorage的存储容量则较大，可以达到5MB或更高。
+
+3. 数据共享
+
+cookie可以被所有同源窗口（指协议、域名、端口相同）访问，而sessionStorage和localStorage只能被创建它们的窗口访问。
+
+4. 传输方式
+
+cookie会随着http请求发送到服务器，而sessionStorage和localStorage不会发送到服务器，只存在于浏览器端。
+
+5. 数据类型
+
+cookie只能存储字符串类型的数据，而sessionStorage和localStorage可以存储除了对象以外的数据类型，如数字、布尔值、数组、甚至是其他复杂的数据结构。但是，它们都可以通过JSON.stringify和JSON.parse方法将数据转化为字符串进行存储和读取。
+
+综上所述，这三种存储方式都有各自的优缺点和适用场景。在实际应用中，我们需要根据实际情况选择合适的存储方式。
 
 ## 如何批量触发多个请求 {#p2-batch-request}
 

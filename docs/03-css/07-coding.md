@@ -103,10 +103,68 @@ body {
 1. 三栏布局
 2. 圣杯布局
 
-## 参考资料
+[Front-end-Developer-Interview-Questions/css](https://h5bp.org/Front-end-Developer-Interview-Questions/questions/css-questions/) github 仓库前端面试题
 
-* [Front-end-Developer-Interview-Questions/css](https://h5bp.org/Front-end-Developer-Interview-Questions/questions/css-questions/) github 仓库前端面试题
 * [front-end-interview-handbook/css](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md) 上面面试题的答案
+
+1、要实现行内元素 `<span>、<a>` 等的水平居中：text-align:center;
+
+2、要实现块状元素（display:block）的水平居中: margin:0 auto;
+
+3、多个水平排列的块状元素的水平居中:
+
+```
+#container{
+ text-align:center;
+}
+#center{
+ display:inline-block;
+}
+```
+
+4、flexbox
+
+```
+#container {
+ display: flex;
+}
+#container {
+ display: inline-flex;
+}
+```
+
+5、一直宽度水平居中:绝对定位与负边距实现。
+
+```
+#container{
+ position:relative;
+}
+
+#center{
+ width:100px;
+ height:100px;
+ position:absolute;
+ top:50%;
+ left:50%;
+ margin:-50px 0 0 -50px;
+}
+```
+
+6、绝对定位与margin：
+
+```
+#container{
+ position:relative;
+}
+#center{
+ position:absolute;
+ margin:auto;
+ top:0;
+ bottom:0;
+ left:0;
+ right:0;
+}
+```
 
 ## 实现阿拉伯数字转中文 {#p0-arabic-to-chinese}
 
@@ -816,7 +874,6 @@ import 'lib-flexible/flexible.js'
 
 通过以上方法的一些组合使用，可以实现 table header 吸顶，提升表格的用户体验和易用性。
 
-
 实现 table header 吸顶的方法有多种，以下是一些基于 CSS 的实现方式：
 
 1. 使用 position: sticky 属性：在表格头部的 CSS 中，使用 position: sticky 属性可以使表格头部保持在视窗的顶部或底部，而不会随着滚动而消失。例如：
@@ -906,7 +963,6 @@ import 'lib-flexible/flexible.js'
  ```
 
 通过以上方法的一些组合使用，可以实现 table header 吸顶，提升表格的用户体验和易用性。
-
 
 实现 table header 吸顶的方法有多种，以下是一些基于 CSS 的实现方式：
 
@@ -3163,3 +3219,49 @@ function reactive (obj) {
 ```
 
 在上面的`reactive`函数中，我们将一个对象转换成响应式对象。这是Vue内部实现响应式的简化版原理。不过，Vue的响应式系统要复杂得多，它还涉及依赖收集和派发更新等机制。
+
+## 未知高度和宽度元素的水平垂直居中的方案有哪些， 简单手写一下？ {#p0-layout}
+
+知高度和宽度元素的水平垂直居中
+
+1、当要被居中的元素是inline或者inline-block元素
+
+```
+ #container{
+ display:table-cell;
+ text-align:center;
+ vertical-align:middle;
+}
+
+#center{
+
+}
+```
+
+2、利用Css3的transform，可以轻松的在未知元素的高宽的情况下实现元素的垂直居中。
+
+```
+#container{
+ position:relative;
+}
+#center{
+ position: absolute;
+ top: 50%;
+ left: 50%;
+ transform: translate(-50%, -50%);
+}
+```
+
+3、flex
+
+```
+#container{
+ display:flex;
+ justify-content:center;
+ align-items: center;
+}
+
+#center{
+
+}
+```

@@ -1,5 +1,16 @@
 # vue
 
+## template {#p0-template}
+
+整体流程图：
+![image](https://user-images.githubusercontent.com/22188674/227268064-b92063be-ca08-419b-9241-d23f7980847c.png)
+
+参考文档：
+
+* [Vue 编译三部曲：如何将 template 编译成 AST ?](https://juejin.cn/post/7116296421816418311)
+* [Vue 编译三部曲：模型树优化](https://juejin.cn/post/7117085295798911012)
+* [Vue 编译三部曲：最后一曲，render code 生成](https://juejin.cn/post/7121504219588198413)
+
 ## v-for 时给每项元素绑定事件需要用事件代理吗？为什么？ {#p1-vue-for}
 
  Vue 并没有在源码中做代理
@@ -428,6 +439,402 @@ export const Provider = StoreContext.Provider
 
 ## 响应式原理 {#p0-reactivity-theory}
 
+如果一个对象中有属性有方法，那么调用属性可以直接. 就可以调用，但是如果是调用方法的时候，是通过入参来决定key的值来调用的话，请用[]来表示：
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
+ <head>
+ <meta charset="UTF-8">
+ <title>MVVM 双项绑定</title>
+ <style>
+ #app {
+ text-align: center;
+ margin-top: 100px;
+ color: #888;
+ }
+
+ h1 {
+ color: #aaa;
+ }
+
+ input {
+ padding: 0 10px;
+ width: 600px;
+ line-height: 2.5;
+ border: 1px solid #ccc;
+ border-radius: 2px;
+ }
+
+ .bind {
+ color: #766;
+ }
+
+ strong {
+ color: #05BC00;
+ }
+
+ button {
+ padding: 5px 10px;
+ border: 1px solid #777777;
+ border-radius: 5px;
+ background: #ffffff;
+ color: #777777;
+ cursor: pointer;
+
+ }
+ </style>
+ </head>
+ <body>
+ <div id="app">
+ <h1>Hi，MVVM</h1>
+ <input v-model="name" placeholder="请输入内容" type="text">
+ <h1 class="bind">{{name}} 's age is <strong>{{age}}</strong></h1>
+ <button v-on:click="sayHi">点击欢迎您</button>
+ </div>
+ <script>
+ function observe(data) {
+ //如果不是一个对象，直接终止程序
+ if (!data || typeof data !== 'object') {
+ return false;
+ }
+ for (let key in data) {
+ let val = data[key];
+ let subject = new Subject();
+ Object.defineProperty(data, key, {
+ enumerable: true,
+ configurable: true,
+ get: function () {
+ if (currentObserver) {
+ currentObserver.subscribeTo(subject)
+ }
+ return val
+ },
+ set: function (newVal) {
+ val = newVal;
+ subject.notify()
+ }
+ });
+ if (typeof val === 'object') {
+ observe(val)
+ }
+ }
+ }
+
+ let id = 0;
+ let currentObserver = null;
+
+ /bin /sbin订阅者对象
+ */
+ class Subject {
+ constructor() {
+ this.id = id++;
+ this.observers = []
+ }
+
+ addObserver(observer) {
+ this.observers.push(observer)
+ }
+
+ removeObserver(observer) {
+ let index = this.observers.indexOf(observer)
+ if (index > -1) {
+ this.observers.splice(index, 1)
+ }
+ }
+
+ notify() {
+ this.observers.forEach(observer => {
+ observer.update()
+ })
+ }
+ }
+
+ /bin /sbin观察者对象
+ */
+ class Observer {
+ constructor(vm, key, cb) {
+ this.subjects = {};
+ this.vm = vm;
+ this.key = key;
+ this.cb = cb;
+ this.value = this.getValue()
+ }
+
+ //如果新旧数据不相同，就直接调用cb方法
+ update() {
+ let oldVal = this.value;
+ let value = this.getValue();
+ if (value !== oldVal) {
+ this.value = value;
+ this.cb.bind(this.vm)(value, oldVal)
+ }
+ }
+
+ //添加观察者
+ subscribeTo(subject) {
+ if (!this.subjects[subject.id]) { //如果当前换擦着中不存在这个当前id的一个对象，那么吧这个对象添加为观察者
+ subject.addObserver(this);
+ this.subjects[subject.id] = subject //放在观察者对象中，根据自增id来区分
+ }
+ }
+
+ getValue() {
+ currentObserver = this;
+ let value = this.vm.$data[this.key]; //获取vm实例兑现中的data数据
+ currentObserver = null;
+ return value
+ }
+ }
+
+ /bin /sbin编译对象
+ */
+ class Compile {
+ constructor(vm) {
+ this.vm = vm; //vm对象
+ this.node = vm.$el; //获取挂载的元素dom
+ this.compile();//执行核心功能
+ }
+
+ compile() {
+ this.traverse(this.node);//传入的参数是挂载元素dom
+ }
+
+ traverse(node) {
+ if (node.nodeType === 1) { //节点类型1：element元素
+ this.compileNode(node); //触发节点事件 双向绑定和事件触发
+ node.childNodes.forEach(childNode => {
+ this.traverse(childNode); // 递归调用，如果是有子节点，重新递归
+ })
+ } else if (node.nodeType === 3) { // 节点类型3： 文本元素
+ this.compileText(node); // 处理文本元素的编译
+ }
+ }
+
+ // 文本编译入口
+ compileText(node) {
+ let reg = /{{(.+?)}}/g;
+ let match;
+ while (match = reg.exec(node.nodeValue)) { //获取到文本内容
+ let raw = match[0]
+ let key = match[1].trim()
+ node.nodeValue = node.nodeValue.replace(raw, this.vm.$data[key]);
+ new Observer(this.vm, key, function (val, oldVal) { // 订阅者核心方法
+ node.nodeValue = node.nodeValue.replace(oldVal, val)
+ })
+ }
+ }
+
+ // 节点编译入口
+ compileNode(node) {
+ let attrs = [...node.attributes];//获取标签属性
+ attrs.forEach(attr => {
+ if (this.isModelDirective(attr.name)) { //截取是绑定数据的情况
+ this.bindModel(node, attr); //绑定数据
+ } else if (this.isEventDirective(attr.name)) { //截取是绑定事件的情况
+ this.bindEventHander(node, attr); //触发事件
+ }
+ })
+ }
+
+ /bin /sbin双向绑定数据
+@param node 标签节点
+@param attr 标签节点的属性名
+ */
+ bindModel(node, attr) {
+ let key = attr.value;// 获取到传递过来的属性的key的值
+ node.value = this.vm.$data[key]; //给节点绑定值，对应的值就是vm实例里面data对应key的值
+ new Observer(this.vm, key, function (newVal) {
+ node.value = newVal
+ });
+ node.oninput = (e) => { //监听节点的input事件
+ this.vm.$data[key] = e.target.value //过去输入框中输入的value值，把这个值放入到vm的data实例中去
+ }
+ }
+
+ /bin /sbin *
+@param node
+@param attr
+ */
+ bindEventHander(node, attr) {
+ let eventType = attr.name.substr(5); //获取节点属性,从第五个下标开始截取后面的字符串作为：key(事件类型)
+ let methodName = attr.value; //获取节点的属性的value
+ node.addEventListener(eventType, this.vm.$methods[methodName]);//通过事件类型，来触发事件，事件就是vm实例中方法
+ }
+
+ //赛选出传入的node属性是v-model的情况
+ isModelDirective(attrName) {
+ return attrName === 'v-model'
+ }
+
+ //赛选出传入的node属性是 v-on的情况
+ isEventDirective(attrName) {
+ return attrName.indexOf('v-on') === 0
+ }
+ }
+
+ class mvvm {
+ constructor(opts) { //这里面的函数是实例化的时候执行的
+ this.init(opts);
+ observe(this.$data);
+ new Compile(this); //变异当前对象
+ }
+
+ init(opts) {
+ if (opts.el.nodeType === 1) {
+ this.$el = opts.el
+ } else {
+ this.$el = document.querySelector(opts.el)
+ }
+
+ this.$data = opts.data || {};
+ this.$methods = opts.methods || {};
+ //把$data 中的数据直接代理到当前 vm 对象
+ for (let key in this.$data) {
+ Object.defineProperty(this, key, {
+ enumerable: true,
+ configurable: true,
+ get: () => {
+ return this.$data[key]
+ },
+ set: newVal => {
+ this.$data[key] = newVal
+ }
+ })
+ }
+ //让 this.$methods 里面的函数中的 this，都指向当前的 this，也就是 vm对象实例
+ for (let key in this.$methods) {
+ this.$methods[key] = this.$methods[key].bind(this);
+ }
+ }
+ }
+
+
+ /bin /sbin实例化MVVM对象， 主入口
+@type {mvvm}
+ */
+ let vm = new mvvm({
+ el: '#app',
+ data: {
+ name: 'YanLe',
+ age: 3
+ },
+ methods: {
+ sayHi: function () {
+ alert(`hi ${this.name}`)
+ }
+ }
+ });
+
+ let clock = setInterval(function () {
+ vm.age++; //等同于 vm.$data.age
+
+ if (vm.age === 10) clearInterval(clock)
+ }, 1000)
+ </script>
+ </body>
+</html>
+```
+
+Vue3.0 通过使用 Composition API 中的 `reactive` 和 `ref` 函数来实现数据双向绑定。
+
+1. reactive 函数
+
+`reactive` 函数是 Vue3.0 中用来创建响应式对象的函数。将一个 JavaScript 对象传递给 `reactive` 函数，它会返回一个新的响应式对象。响应式对象是一个 Proxy 对象，可以在应用程序中使用它来自动追踪数据的变化。
+
+例如，我们可以这样使用 `reactive` 函数来创建一个响应式对象：
+
+```javascript
+import { reactive } from 'vue'
+
+const state = reactive({
+  message: 'Hello, world!'
+})
+```
+
+在上面的示例中，我们使用 `reactive` 函数创建了一个包含一个 `message` 属性的响应式对象。
+
+2. ref 函数
+
+`ref` 函数是 Vue3.0 中用来创建一个包含单个值的响应式对象的函数。将一个初始值传递给 `ref` 函数，它会返回一个新的响应式对象。响应式对象是一个普通对象，它有一个名为 `value` 的属性，该属性保存了当前值。当 `value` 属性的值发生改变时，Vue3.0 会自动更新应用程序的界面。
+
+例如，我们可以这样使用 `ref` 函数来创建一个响应式对象：
+
+```javascript
+import { ref } from 'vue'
+
+const count = ref(0)
+```
+
+在上面的示例中，我们使用 `ref` 函数创建了一个包含初始值为 0 的响应式对象。
+
+3. 双向绑定的实现
+
+Vue3.0 中的双向绑定可以通过在模板中使用 `v-model` 指令来实现。`v-model` 指令是 Vue3.0 中用来实现表单元素和组件的双向数据绑定的指令。例如，我们可以这样使用 `v-model` 指令来实现一个表单输入框的双向绑定：
+
+```html
+htmlCopy code<template>
+ <input v-model="message" />
+ <p>{{ message }}</p>
+</template>
+
+<script>
+ import { ref } from 'vue';
+
+ export default {
+ setup() {
+ const message = ref('');
+
+ return {
+ message
+ };
+ }
+ };
+</script>
+```
+
+在上面的示例中，我们在模板中使用 `v-model` 指令将输入框和 `message` 响应式对象进行双向绑定。当用户在输入框中输入文本时，`message` 响应式对象的值会自动更新，当 `message` 响应式对象的值发生改变时，界面上的文本也会自动更新。
+
+总之，Vue3.0 使用 `reactive` 和 `ref` 函数来实现数据双向绑定。使用 `reactive` 函数可以创建包含多个属性的响应式对象，使用 `ref` 函数可以创建包含单个值的响应式对象。通过在模板中使用 \`v-model
+
+指令可以实现表单元素和组件的双向数据绑定，将表单元素的值绑定到响应式对象的属性上，当响应式对象的属性值变化时，自动更新绑定的表单元素的值。
+
+除了使用 `v-model` 指令实现双向绑定，Vue3.0 也提供了 `watch` 函数和 `watchEffect` 函数来实现响应式数据的监听和副作用函数的执行。这些函数可以用来监听响应式数据的变化，从而执行特定的操作。下面是一个使用 `watch` 函数监听响应式数据变化的示例：
+
+```html
+htmlCopy code<template>
+ <div>{{ count }}</div>
+ <button @click="increment">Increment</button>
+</template>
+
+<script>
+ import { ref, watch } from 'vue';
+
+ export default {
+ setup() {
+ const count = ref(0);
+
+ watch(count, (newVal, oldVal) => {
+ console.log(`count changed from ${oldVal} to ${newVal}`);
+ });
+
+ const increment = () => {
+ count.value++;
+ };
+
+ return {
+ count,
+ increment
+ };
+ }
+ };
+</script>
+```
+
+在上面的示例中，我们使用 `watch` 函数监听 `count` 响应式对象的变化，当 `count` 响应式对象的值发生变化时，会自动调用回调函数，打印出 `count` 变化前和变化后的值。
+
+另外，Vue3.0 中还提供了 `computed` 函数用来计算一个响应式对象的值，`toRefs` 函数用来将一个响应式对象转换为普通的对象，并且在 TypeScript 中使用时可以使用 `defineComponent` 函数来定义组件的类型，从而提高代码的可读性和可维护性。
+
 Vue.js 的响应式原理主要是通过数据劫持（Object.defineProperty()）实现。当我们在Vue实例中定义了一个 data 属性时，Vue 会对这个属性进行劫持，即在getter和setter时做一些操作。
 
 具体实现流程如下：
@@ -467,6 +874,399 @@ Vue 在早期版本中使用了 `Object.defineProperty` 来实现响应式系统
 4. 更好的嵌套支持：`Proxy` 可以代理嵌套对象的属性，而 `Object.defineProperty` 只能对顶层对象的属性进行拦截。
 
 总的来说，`Proxy` 相对于 `Object.defineProperty` 在功能上更强大、使用更便捷、性能更优，并且在更复杂的场景下也能提供更好的支持。因此，Vue 在新版本中选择了使用 `Proxy` 来实现响应式系统。
+
+> 在目前的前端面试中，vue的双向数据绑定已经成为了一个非常容易考到的点，即使不能当场写出来，至少也要能说出原理。本篇文章中我将会仿照vue写一个双向数据绑定的实例，名字就叫myVue吧。结合注释，希望能让大家有所收获。
+
+ 1、原理
+
+Vue的双向数据绑定的原理相信大家也都十分了解了，主要是通过`Object对象的defineProperty属性，重写data的set和get函数来实现的`,这里对原理不做过多描述，主要还是来实现一个实例。为了使代码更加的清晰，这里只会实现最基本的内容，主要实现v-model，v-bind 和v-click三个命令，其他命令也可以自行补充。
+
+添加网上的一张图
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/4/10/162ad3d5be3e5105~tplv-t2oaga2asx-zoom-in-crop-mark:4536:0:0:0.image)
+
+ 2、实现
+
+页面结构很简单，如下
+
+```xml
+<div id="app">
+ <form>
+ <input type="text" v-model="number">
+ <button type="button" v-click="increment">增加</button>
+ </form>
+ <h3 v-bind="number"></h3>
+ </div>
+
+```
+
+包含：
+
+```css
+1. 一个input，使用v-model指令
+2. 一个button，使用v-click指令
+3. 一个h3，使用v-bind指令。
+
+```
+
+我们最后会通过类似于vue的方式来使用我们的双向数据绑定，结合我们的数据结构添加注释
+
+```php
+var app = new myVue({
+ el:'#app',
+ data: {
+ number: 0
+ },
+ methods: {
+ increment: function() {
+ this.number ++;
+ },
+ }
+ })
+
+```
+
+首先我们需要定义一个myVue构造函数：
+
+```javascript
+function myVue (options) {
+
+}
+```
+
+为了初始化这个构造函数，给它添加一 个\_init属性
+
+```kotlin
+function myVue(options) {
+ this._init(options);
+}
+myVue.prototype._init = function (options) {
+ this.$options = options; // options 为上面使用时传入的结构体，包括el,data,methods
+ this.$el = document.querySelector(options.el); // el是 #app, this.$el是id为app的Element元素
+ this.$data = options.data; // this.$data = {number: 0}
+ this.$methods = options.methods; // this.$methods = {increment: function(){}}
+ }
+
+```
+
+接下来实现\_obverse函数，对data进行处理，重写data的set和get函数
+
+并改造\_init函数
+
+```javascript
+myVue.prototype._obverse = function (obj) { // obj = {number: 0}
+  let value
+  for (key in obj) { // 遍历obj对象
+    if (obj.hasOwnProperty(key)) {
+      value = obj[key]
+      if (typeof value === 'object') { // 如果值还是对象，则遍历处理
+        this._obverse(value)
+      }
+      Object.defineProperty(this.$data, key, { // 关键
+        enumerable: true,
+        configurable: true,
+        get: function () {
+          console.log(`获取${value}`)
+          return value
+        },
+        set: function (newVal) {
+          console.log(`更新${newVal}`)
+          if (value !== newVal) {
+            value = newVal
+          }
+        }
+      })
+    }
+  }
+}
+
+myVue.prototype._init = function (options) {
+  this.$options = options
+  this.$el = document.querySelector(options.el)
+  this.$data = options.data
+  this.$methods = options.methods
+
+  this._obverse(this.$data)
+}
+```
+
+接下来我们写一个指令类Watcher，用来绑定更新函数，实现对DOM元素的更新
+
+```kotlin
+function Watcher(name, el, vm, exp, attr) {
+ this.name = name; //指令名称，例如文本节点，该值设为"text"
+ this.el = el; //指令对应的DOM元素
+ this.vm = vm; //指令所属myVue实例
+ this.exp = exp; //指令对应的值，本例如"number"
+ this.attr = attr; //绑定的属性值，本例为"innerHTML"
+
+ this.update();
+ }
+
+ Watcher.prototype.update = function () {
+ this.el[this.attr] = this.vm.$data[this.exp]; //比如 H3.innerHTML = this.data.number; 当number改变时，会触发这个update函数，保证对应的DOM内容进行了更新。
+ }
+
+```
+
+更新\_init函数以及\_obverse函数
+
+```javascript
+myVue.prototype._init = function (options) {
+ //...
+ this._binding = {}; //_binding保存着model与view的映射关系，也就是我们前面定义的Watcher的实例。当model改变时，我们会触发其中的指令类更新，保证view也能实时更新
+ //...
+ }
+
+ myVue.prototype._obverse = function (obj) {
+ //...
+ if (obj.hasOwnProperty(key)) {
+ this._binding[key] = { // 按照前面的数据，_binding = {number: _directives: []} 
+ _directives: []
+ };
+ //...
+ var binding = this._binding[key];
+ Object.defineProperty(this.$data, key, {
+ //...
+ set: function (newVal) {
+ console.log(`更新${newVal}`);
+ if (value !== newVal) {
+ value = newVal;
+ binding._directives.forEach(function (item) { // 当number改变时，触发_binding[number]._directives 中的绑定的Watcher类的更新
+ item.update();
+ })
+ }
+ }
+ })
+ }
+ }
+ }
+
+```
+
+那么如何将view与model进行绑定呢？接下来我们定义一个\_compile函数，用来解析我们的指令（v-bind,v-model,v-clickde）等，并在这个过程中对view与model进行绑定。
+
+```ini
+ myVue.prototype._init = function (options) {
+ //...
+ this._complie(this.$el);
+ }
+
+myVue.prototype._complie = function (root) { root 为 id为app的Element元素，也就是我们的根元素
+ var _this = this;
+ var nodes = root.children;
+ for (var i = 0; i < nodes.length; i++) {
+ var node = nodes[i];
+ if (node.children.length) { // 对所有元素进行遍历，并进行处理
+ this._complie(node);
+ }
+
+ if (node.hasAttribute('v-click')) { // 如果有v-click属性，我们监听它的onclick事件，触发increment事件，即number++
+ node.onclick = (function () {
+ var attrVal = nodes[i].getAttribute('v-click');
+ return _this.$methods[attrVal].bind(_this.$data); //bind是使data的作用域与method函数的作用域保持一致
+ })();
+ }
+
+ if (node.hasAttribute('v-model') && (node.tagName == 'INPUT' || node.tagName == 'TEXTAREA')) { // 如果有v-model属性，并且元素是INPUT或者TEXTAREA，我们监听它的input事件
+ node.addEventListener('input', (function(key) {
+ var attrVal = node.getAttribute('v-model');
+ //_this._binding['number']._directives = [一个Watcher实例]
+ // 其中Watcher.prototype.update = function () {
+ // node['vaule'] = _this.$data['number']; 这就将node的值保持与number一致
+ // }
+ _this._binding[attrVal]._directives.push(new Watcher(
+ 'input',
+ node,
+ _this,
+ attrVal,
+ 'value'
+ ))
+
+ return function() {
+ _this.$data[attrVal] = nodes[key].value; // 使number 的值与 node的value保持一致，已经实现了双向绑定
+ }
+ })(i));
+ }
+
+ if (node.hasAttribute('v-bind')) { // 如果有v-bind属性，我们只要使node的值及时更新为data中number的值即可
+ var attrVal = node.getAttribute('v-bind');
+ _this._binding[attrVal]._directives.push(new Watcher(
+ 'text',
+ node,
+ _this,
+ attrVal,
+ 'innerHTML'
+ ))
+ }
+ }
+ }
+
+```
+
+至此，我们已经实现了一个简单vue的双向绑定功能，包括v-bind, v-model, v-click三个指令。效果如下图
+
+![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/4/10/162ad3d5beb544b6~tplv-t2oaga2asx-zoom-in-crop-mark:4536:0:0:0.image)
+
+附上全部代码，不到150行
+
+```html
+<!DOCTYPE html>
+<head>
+ <title>myVue</title>
+</head>
+<style>
+ #app {
+ text-align: center;
+ }
+</style>
+<body>
+ <div id="app">
+ <form>
+ <input type="text" v-model="number">
+ <button type="button" v-click="increment">增加</button>
+ </form>
+ <h3 v-bind="number"></h3>
+ <form>
+ <input type="text" v-model="count">
+ <button type="button" v-click="incre">增加</button>
+ </form>
+ <h3 v-bind="count"></h3>
+ </div>
+</body>
+
+<script>
+
+ function myVue(options) {
+ this._init(options);
+ }
+
+ myVue.prototype._init = function (options) {
+ this.$options = options;
+ this.$el = document.querySelector(options.el);
+ this.$data = options.data;
+ this.$methods = options.methods;
+
+ this._binding = {};
+ this._obverse(this.$data);
+ this._complie(this.$el);
+ }
+
+ myVue.prototype._obverse = function (obj) {
+ var _this = this;
+ Object.keys(obj).forEach(function (key) {
+ if (obj.hasOwnProperty(key)) {
+ _this._binding[key] = {
+ _directives: []
+ };
+ console.log(_this._binding[key])
+ var value = obj[key];
+ if (typeof value === 'object') {
+ _this._obverse(value);
+ }
+ var binding = _this._binding[key];
+ Object.defineProperty(_this.$data, key, {
+ enumerable: true,
+ configurable: true,
+ get: function () {
+ console.log(`${key}获取${value}`);
+ return value;
+ },
+ set: function (newVal) {
+ console.log(`${key}更新${newVal}`);
+ if (value !== newVal) {
+ value = newVal;
+ binding._directives.forEach(function (item) {
+ item.update();
+ })
+ }
+ }
+ })
+ }
+ })
+ }
+
+ myVue.prototype._complie = function (root) {
+ var _this = this;
+ var nodes = root.children;
+ for (var i = 0; i < nodes.length; i++) {
+ var node = nodes[i];
+ if (node.children.length) {
+ this._complie(node);
+ }
+
+ if (node.hasAttribute('v-click')) {
+ node.onclick = (function () {
+ var attrVal = nodes[i].getAttribute('v-click');
+ return _this.$methods[attrVal].bind(_this.$data);
+ })();
+ }
+
+ if (node.hasAttribute('v-model') && (node.tagName = 'INPUT' || node.tagName == 'TEXTAREA')) {
+ node.addEventListener('input', (function(key) {
+ var attrVal = node.getAttribute('v-model');
+ _this._binding[attrVal]._directives.push(new Watcher(
+ 'input',
+ node,
+ _this,
+ attrVal,
+ 'value'
+ ))
+
+ return function() {
+ _this.$data[attrVal] = nodes[key].value;
+ }
+ })(i));
+ }
+
+ if (node.hasAttribute('v-bind')) {
+ var attrVal = node.getAttribute('v-bind');
+ _this._binding[attrVal]._directives.push(new Watcher(
+ 'text',
+ node,
+ _this,
+ attrVal,
+ 'innerHTML'
+ ))
+ }
+ }
+ }
+
+ function Watcher(name, el, vm, exp, attr) {
+ this.name = name; //指令名称，例如文本节点，该值设为"text"
+ this.el = el; //指令对应的DOM元素
+ this.vm = vm; //指令所属myVue实例
+ this.exp = exp; //指令对应的值，本例如"number"
+ this.attr = attr; //绑定的属性值，本例为"innerHTML"
+
+ this.update();
+ }
+
+ Watcher.prototype.update = function () {
+ this.el[this.attr] = this.vm.$data[this.exp];
+ }
+
+ window.onload = function() {
+ var app = new myVue({
+ el:'#app',
+ data: {
+ number: 0,
+ count: 0,
+ },
+ methods: {
+ increment: function() {
+ this.number ++;
+ },
+ incre: function() {
+ this.count ++;
+ }
+ }
+ })
+ }
+ </script>
+```
+
+如果喜欢请关注我的[Github](https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Flouzhedong%2Fblog "https://github.com/louzhedong/blog")，给个[Star](https://link.juejin.cn?target=https%3A%2F%2Fgithub.com%2Flouzhedong%2Fblog "https://github.com/louzhedong/blog")吧，我会定期分享一些JS中的知识，^\_^
 
 ## data  {#p1-data}
 
@@ -2122,7 +2922,17 @@ Vue 3 仍然使用虚拟 DOM（Virtual DOM）。
 
 * 例如，如果一个组件中有一个静态的点击事件监听器，Vue 3 会在编译时将这个事件监听器提取出来，在渲染时直接复用，而不是每次都重新绑定。
 
-## nextTick 作用是什么， 原理是什么 {#p2-vue-next-tick}
+## nextTick {#p2-nextTick}
+
+`$nextTick` 是 Vue.js 提供的一个实例方法，用于在 DOM 更新之后执行一些操作。具体来说，它会将回调函数推迟到下次 DOM 更新循环之后执行。
+
+在 Vue 中，数据变化时，Vue 会异步执行视图更新。例如，当一个数据变化时，Vue 会将这个变化包装成一个更新任务，并将其推入更新队列。Vue 会在下一个事件循环周期中遍历这个队列，并依次执行更新任务，最终将视图更新为最新状态。
+
+在某些情况下，我们需要在 DOM 更新之后执行一些操作，例如在 Vue 中更新 DOM 后获取更新后的元素尺寸、在 Vue 组件中调用子组件的方法等等。如果直接在数据变化后立即执行这些操作，可能会遇到一些问题，例如元素尺寸并未更新，子组件尚未完全挂载等等。这时候，就需要使用 `$nextTick` 方法。
+
+`$nextTick` 的实现原理是利用了 JavaScript 的事件循环机制。具体来说，当调用 `$nextTick` 方法时，Vue 会将回调函数推入一个回调队列中。在下一个事件循环周期中，Vue 会遍历这个回调队列，并依次执行其中的回调函数。由于在这个时候 DOM 已经完成了更新，因此可以安全地执行需要在 DOM 更新之后进行的操作。
+
+需要注意的是，`$nextTick` 是异步执行的，因此不能保证回调函数会立即执行。如果需要等待 `$nextTick` 的回调函数执行完毕后再继续执行某些操作，可以使用 Promise 或 async/await 来等待异步操作的完成。
 
 在 Vue 中，`nextTick`主要有以下作用和工作原理：
 
@@ -3877,3 +4687,813 @@ Redux和Vuex都是通过一些基本概念来实现状态管理：
 5. Mutation：类似于Redux的Reducer，但必须是同步的。用来更新状态。
 
 总之，Redux和Vuex都是优秀的状态管理库，通过它们可以有效地管理前端应用的状态，实现数据的单向流动和可预测性。同时，Redux和Vuex都遵循了Flux架构的设计思想，使得状态管理更加规范化和可控。
+
+## keepalive {#p0-keepalive}
+
+`<keep-alive>` 是 Vue.js 提供的一个抽象组件，它可以使被包含的组件保留在内存中，而不是每次重新渲染的时候销毁并重建，从而提高了应用的性能。
+
+具体来说，`<keep-alive>` 的实现原理如下：
+
+1. 当一个组件被包裹在 `<keep-alive>` 组件内时，它会被缓存起来，而不是被销毁。
+2. 如果这个组件被包裹的父组件从它的视图中移除，那么这个组件不会被销毁，而是被缓存起来。
+3. 如果这个组件再次被包裹的父组件添加回视图中，那么它会被重新激活，而不是重新创建。
+
+`<keep-alive>` 组件通过一个内部的缓存对象来缓存组件实例，这个缓存对象会在组件被包裹在 `<keep-alive>` 组件中时创建。当一个被缓存的组件需要被激活时，`<keep-alive>` 组件会从缓存中取出该组件的实例并将其挂载到视图上，从而实现了组件的复用。
+
+需要注意的是，被缓存的组件并不是一直存在于内存中，它们会在一定条件下被销毁，比如缓存的组件数量超过了一定的阈值，或者系统内存占用过高等。
+
+## MVVM {#p0-mvvm}
+
+```html
+<body>
+<div>
+ <input type="text" name="" id="txt-title"> <br>
+ <button id="btn-submit">submit</button>
+</div>
+<div>
+ <ul id="ul-list"></ul>
+</div>
+<script>
+ let $txtTitle = document.getElementById('txt-title');
+ let $buttonSubmit = document.getElementById('btn-submit');
+ let $ulList = document.getElementById('ul-list');
+ $buttonSubmit.addEventListener('click', function () {
+ let title = $txtTitle.value;
+ if(!title) return false;
+
+ let $li = document.createElement('li');
+ $li.innerText = title;
+
+ $ulList.appendChild($li);
+ $txtTitle.value = '';
+ })
+</script>
+</body>
+```
+
+ vue实现todo-list
+
+```html
+<body>
+<div id="app">
+ <div>
+ <input v-model="title"> <br>
+ <button id="btn-submit" v-on:click="add">submit</button>
+ </div>
+ <div>
+ <ul id="ul-list">
+ <li v-for="item in list">{{item}}</li>
+ </ul>
+ </div>
+</div>
+<script>
+ let vm = new window.Vue({
+ el: '#app',
+ data: {
+ title: '',
+ list: []
+ },
+ methods: {
+ add: function () {
+ this.list.push(this.title);
+ this.title = '';
+ }
+ }
+ })
+</script>
+</body>
+```
+
+ 两者之间的区别
+
+* 数据和视图分离(开放封闭原则： 扩展开放，修改封闭)
+
+* 数据驱动视图
+
+ 对mvvm的理解
+
+具体的理解自己再去整理
+
+MVVM框架的三大要素：
+响应式、模板引擎、渲染
+
+应式的实现
+
+修改data属性之后，立马就能监听到。
+data属性挂在到vm实例上面。
+
+有下面的一个问题，我们是如何监听属性的获取和属性的赋值的。
+
+```javascript
+const obj = {
+  name: 'yanle',
+  age: 25
+}
+console.log(obj.name)
+obj.age = 26
+```
+
+是通过**Object.defineProperty** 实现的, 下面的代码就可以实现一个完整的属性修改和获取的监听。
+
+```javascript
+const vm = {}
+const data = {
+  name: 'yanle',
+  age: 25
+}
+let key, value
+for (key in data) {
+  (function (key) {
+    Object.defineProperty(vm, key, {
+      get: function () {
+        console.log('get', data[key])
+        return data[key] // data的属性代理到vm 上
+      },
+      set: function (newValue) {
+        console.log('set', newValue)
+        data[key] = newValue
+      }
+    })
+  })(key)
+}
+```
+
+ue中的模板
+
+**模板**
+本质就是字符串；
+有逻辑： if for 等；
+跟html格式很像， 但是区别很大;
+最终要转为HTML来现实；
+模板需要用JS代码来实现， 因为有逻辑，只能用JS来实现；
+
+**render函数-with用法**：
+
+```javascript
+let obj = {
+ name: 'yanle',
+ age: 20,
+ getAddress: function () {
+ alert('重庆')
+ }
+};
+// 不用with 的情况
+// function fn() {
+// alert(obj.name);
+// alert(obj.age);
+// obj.getAddress();
+// }
+// fn();
+
+// 使用with的情况
+function fn1() {
+ with (obj) {
+ alert(name);
+ alert(age);
+ getAddress();
+ }
+}
+fn1();
+```
+
+这种with 的使用方法就如上所述。但是尽量不要用，因为《JavaScript语言精粹》中，作者说过，这种使用方式会给代码的调试带来非常大的困难。
+但是vue源码中的render 就是用的这个;
+
+**render函数**:
+
+<img width="274" alt="02-12-1" src="https://user-images.githubusercontent.com/22188674/224475416-9567c516-981f-4399-9128-4efcb70e8502.png"/>
+
+![02-12-2](https://user-images.githubusercontent.com/22188674/224475405-34baf640-f897-4a26-9817-109e8b4c1bde.png)
+
+模板中的所有信息都包含在了render 函数中。
+一个特别简单的示例:
+
+```javascript
+let vm = new Vue({
+ el: '#app',
+ data: {
+ price: 200
+ }
+ });
+
+ // 一下是手写的
+ function render() {
+ with (this) { // 就是vm
+ _c(
+ 'div',
+ {
+ attr: {'id': 'app'}
+ },
+ [
+ _c('p', [_v(_s(price))])
+ ]
+ )
+ }
+ }
+
+ function render1() {
+ return vm._c(
+ 'div',
+ {
+ attr: {'id': 'app'}
+ },
+ [
+ _c('p', [vm._v(vm._s(vm.price))]) // vm._v 是创建文本， _s 就是toString
+ ]
+ )
+ }
+```
+
+如果我们用一个复杂的例子来描述这个东西。在源码中， 搜索code.render, 然后在在此之前打印render 函数，就可以看看这个到底是什么东西了。
+
+```javascript
+const createCompiler = createCompilerCreator(function baseCompile (
+  template,
+  options
+) {
+  const ast = parse(template.trim(), options)
+  if (options.optimize !== false) {
+    optimize(ast, options)
+  }
+  const code = generate(ast, options)
+  console.log(code.render)
+  return {
+    ast,
+    render: code.render,
+    staticRenderFns: code.staticRenderFns
+  }
+})
+```
+
+然后运行， 就可以看到到底render 函数是什么东西了。 就可以截取源码出来看了。
+相对应的模板如下:
+
+```html
+<div id="app">
+ <div>
+ <input v-model="title"> <br>
+ <button id="btn-submit" v-on:click="add">submit</button>
+ </div>
+ <div>
+ <ul id="ul-list">
+ <li v-for="item in list">{{item}}</li>
+ </ul>
+ </div>
+</div>
+```
+
+截取的render函数如下：
+
+```javascript
+function codeRender() {
+ with (this) {
+ return _c('div',
+ {attrs: {"id": "app"}},
+ [
+ _c('div', [
+ _c('input', {
+ directives: [{
+ name: "model",
+ rawName: "v-model",
+ value: (title), // 渲染 指定数据
+ expression: "title"
+ }],
+ domProps: {"value": (title)}, // 渲染 指定数据
+ on: { // 通过input输入事件， 修改title
+ "input": function ($event) {
+ if ($event.target.composing) return;
+ title = $event.target.value
+ }
+ }
+ }),
+ _v(" "), // 文本节点
+ _c('br'),
+ _v(" "),
+ _c('button', { // dom 节点
+ attrs: {"id": "btn-submit"},
+ on: {"click": add} // methods 里面的东西也都挂在this上面去了
+ },
+ [_v("submit")])]),
+
+ _v(" "),
+
+ _c('div', [
+ _c('ul',
+ {attrs: {"id": "ul-list"}},
+ _l((list), function (item) { // 数组节点
+ return _c('li', [_v(_s(item))])
+ })
+ )
+ ])
+ ])
+ }
+}
+```
+
+从vue2.0开始支持预编译， 我们在开发环境下，写模板， 编译打包之后， 模板就变成了JS代码了。vue已经有工具支持这个过程。
+
+ue中的渲染
+
+vue的渲染是直接渲染为虚拟dom ,这一块儿的内容，其实是借鉴的snabbdom, 非常相似，可以去看看snabbdom 就可以一目了然了。
+vue中的具体渲染实现:
+![02-12-03](https://user-images.githubusercontent.com/22188674/224475434-c4e33700-d223-4472-8e96-5cc7b6c04d70.png)
+
+体流程的实现
+
+第一步： 解析模板形成render 函数
+
+* with 用法
+* 模板中的所有数据都被render 函数包含
+* 模板中data的属性，变成了JS变量
+* 模板中的v-model、v-for、v-on都变成了JS的逻辑
+* render函数返回vnode
+
+第二步： 响应式开始监听数据变化
+
+* Object.defineProperty 的使用
+* 讲data中的属性代理到vm 上
+
+第三步： 首次渲染，显示页面，而且绑定数据和依赖
+
+* 初次渲染， 执行updateComponent, 执行vm._render();
+* 执行render函数， 会访问到vm.list和vm.title等已经绑定好了的数据；
+* 会被详情是的get 方法监听到
+ 为何一定要监听get, 直接监听set 不行吗？ data中有很多的属性，有的被用到了，有的没有被用到。被用到的会走get, 不被用到的不会走get。
+ 没有被get监听的属性，set的时候也不会被坚挺。为的就是减少不必要的重复渲染，节省性能。
+* 执行updateComponent的时候，会执行vdom的patch方法
+* patch 讲vnode渲染为DOM， 初次渲染完成
+
+第四步： data属性变化，出发render
+
+* 修改属性值， 会被响应式的set监听到
+* set中会执行updateComponent， 重新执行vm.render()
+* 生成vnode和prevVnode, 通过patch进行对比
+* 渲染到html中
+
+## vdom-vue2 {#p0-vdom-v2}
+
+## 78 [vue]: vue2.x 虚拟 dom 是怎么实现的？
+
+* created_at: 2023-03-11T08:57:17Z
+* updated_at: 2023-03-11T09:00:32Z
+* labels: web框架
+* milestone: 资深
+
+vue2.0就是使用的snabbdom
+一个简单的使用实例：
+
+```javascript
+const snabbdom = require('snabbdom')
+const patch = snabbdom.init([ // Init patch function with chosen modules
+  require('snabbdom/modules/class').default, // makes it easy to toggle classes
+  require('snabbdom/modules/props').default, // for setting properties on DOM elements
+  require('snabbdom/modules/style').default, // handles styling on elements with support for animations
+  require('snabbdom/modules/eventlisteners').default // attaches event listeners
+])
+const h = require('snabbdom/h').default // helper function for creating vnodes
+
+const container = document.getElementById('container')
+
+const vnode = h('div#container.two.classes', { on: { click: someFn } }, [
+  h('span', { style: { fontWeight: 'bold' } }, 'This is bold'),
+  ' and this is just normal text',
+  h('a', { props: { href: '/foo' } }, 'I\'ll take you places!')
+])
+// Patch into empty DOM element – this modifies the DOM as a side effect
+patch(container, vnode)
+
+const newVnode = h('div#container.two.classes', { on: { click: anotherEventHandler } }, [
+  h('span', { style: { fontWeight: 'normal', fontStyle: 'italic' } }, 'This is now italic type'),
+  ' and this is still just normal text',
+  h('a', { props: { href: '/bar' } }, 'I\'ll take you places!')
+])
+// Second `patch` invocation
+patch(vnode, newVnode) // Snabbdom efficiently updates the old view to the new state
+```
+
+ snabbdom 核心api
+
+* snabbdom.init:
+ The core exposes only one single function snabbdom.init. This init takes a list of modules and returns a patch function that uses the specified set of modules.
+
+```javascript
+const patch = snabbdom.init([
+  require('snabbdom/modules/class').default,
+  require('snabbdom/modules/style').default
+])
+```
+
+* patch:
+
+```javascript
+patch(oldVnode, newVnode)
+```
+
+* snabbdom/h:
+ It is recommended that you use snabbdom/h to create vnodes. h accepts a tag/selector as a string, an optional data object and an optional string or array of children.
+
+```javascript
+const h = require('snabbdom/h').default
+const vnode = h('div', { style: { color: '#000' } }, [
+  h('h1', 'Headline'),
+  h('p', 'A paragraph')
+])
+```
+
+* snabbdom/tovnode:
+ Converts a DOM node into a virtual node. Especially good for patching over an pre-existing, server-side generated content.
+
+```javascript
+const snabbdom = require('snabbdom')
+const patch = snabbdom.init([ // Init patch function with chosen modules
+  require('snabbdom/modules/class').default, // makes it easy to toggle classes
+  require('snabbdom/modules/props').default, // for setting properties on DOM elements
+  require('snabbdom/modules/style').default, // handles styling on elements with support for animations
+  require('snabbdom/modules/eventlisteners').default // attaches event listeners
+])
+const h = require('snabbdom/h').default // helper function for creating vnodes
+const toVNode = require('snabbdom/tovnode').default
+
+const newVNode = h('div', { style: { color: '#000' } }, [
+  h('h1', 'Headline'),
+  h('p', 'A paragraph')
+])
+
+patch(toVNode(document.querySelector('.container')), newVNode)
+```
+
+ h函数 和 patch 的使用
+
+例如下面的一个dom 结构：
+
+```html
+<ul id="list">
+ <li class="item">item1</li>
+ <li class="item">item2</li>
+</ul>
+```
+
+用h函数来表示，就如下形式：
+
+```javascript
+const vnode = h('ul#list', {}, [
+  h('li.item', {}, 'item1'),
+  h('li.item', {}, 'item2')
+])
+```
+
+作用就是模拟的一个真实节点。
+
+patch的使用方式：
+第一种方式 patch('容器', vnode); // 这种使用方式是直接渲染dom
+第二种是用方式: patch(oldVnode, newVnode); // 这种方式会自动对比dom的差异性，然后只渲染我们需要dom;
+
+一个简单的使用实例：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <title>snabbdom</title>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/snabbdom.js"></script>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/snabbdom-class.js"></script>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/snabbdom-props.js"></script>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/snabbdom-style.js"></script>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/snabbdom-eventlisteners.js"></script>
+ <script src="https://cdn.bootcss.com/snabbdom/0.7.1/h.js"></script>
+</head>
+<body>
+<div id="container"></div><br>
+
+<button id="btn-change">change</button>
+
+
+<script>
+ let snabbdom = window.snabbdom;
+ let container = document.getElementById('container');
+ let buttonChange = document.getElementById('btn-change');
+
+ // 定义patch
+ let patch = snabbdom.init([
+ snabbdom_class,
+ snabbdom_props,
+ snabbdom_style,
+ snabbdom_eventlisteners
+ ]);
+
+ // 定义h
+ let h = snabbdom.h;
+
+ // 生成vnode
+ let vnode = h('ul#list', {}, [
+ h('li.item', {}, 'item1'),
+ h('li.item', {}, 'item2')
+ ]);
+ patch(container, vnode);
+
+ // 模拟一个修改的情况
+ buttonChange.addEventListener('click', function () {
+ let newVnode = h('ul#list', {}, [
+ h('li.item', {}, 'item1'),
+ h('li.item', {}, 'item B'),
+ h('li.item', {}, 'item 3')
+ ]);
+ patch(vnode, newVnode);
+ })
+</script>
+</body>
+</html>
+```
+
+ snabbdom 的使用实例
+
+```html
+<body>
+<div id="container"></div>
+<br>
+<button id="btn-change">change</button>
+<script>
+ let snabbdom = window.snabbdom;
+ let container = document.getElementById('container');
+ let buttonChange = document.getElementById('btn-change');
+
+ // 定义patch
+ let patch = snabbdom.init([
+ snabbdom_class,
+ snabbdom_props,
+ snabbdom_style,
+ snabbdom_eventlisteners
+ ]);
+
+ // 定义h
+ let h = snabbdom.h;
+ let data = [
+ {
+ name: 'yanle',
+ age: '20',
+ address: '重庆'
+ },
+ {
+ name: 'yanle2',
+ age: '25',
+ address: '成都'
+ },
+ {
+ name: 'yanle3',
+ age: '27',
+ address: '深圳'
+ }
+ ];
+
+ data.unshift({
+ name: '姓名',
+ age: '年龄',
+ address: '地址'
+ });
+
+ let vnode;
+ function render(data) {
+ let newVnode = h('table', {style: {'font-size': '16px'}}, data.map(function (item) {
+ let tds = [];
+ let i ;
+ for (i in item) {
+ if(item.hasOwnProperty(i)) {
+ tds.push(h('td', {}, h('a', {props: {href: '/foo'}}, item[i])))
+ }
+ }
+ return h('tr', {}, tds)
+ }));
+
+ if(vnode) {
+ patch(vnode, newVnode);
+ } else {
+ patch(container, newVnode);
+ }
+
+ vnode = newVnode;
+ }
+
+ // 初次渲染
+ render(data);
+ buttonChange.addEventListener('click', function () {
+ data[1].age=30;
+ data[1].address = '非洲';
+ render(data);
+ });
+</script>
+</body>
+```
+
+iff算法
+
+ 概念
+
+就是找出两个文件的不同
+
+diff 算法是非常复杂的，实现难度非常大， 源码两非常大。 所以需要去繁就简，明白流程，不关心细节。
+在vdom中，需要找出本次dom 必须更新的节点来更新，其他的不用更新。找出这个过程就是diff算法实现的。找出前后两个虚拟dom的差异。
+
+ diff实现的过程
+
+这里以snabbdom为例子：
+patch(container, vnode); patch(vnode, newVnode); 这两个方法里面就使用到了diff算法。 用patch方法来解析diff算法流程核心。
+
+**patch(container, vnode)**
+![02-11-1](https://user-images.githubusercontent.com/22188674/224475327-0b8f19b3-7a35-40ec-960b-6040852f1a7d.png)
+
+如果上面的数据， 我们怎么构建真正的dom 结构：
+
+```javascript
+const createElement = function (vnode) {
+  const tag = vnode.tag
+  const attrs = vnode.attrs || {}
+  const children = vnode.children || {}
+
+  if (!tag) return null
+
+  // 创建元素
+  const elem = document.createElement(tag)
+
+  // 属性
+  let attrName
+  for (attrName in attrs) {
+    // eslint-disable-next-line
+    if (attrs.hasOwnProperty(attrName)) {
+      elem.setAttribute(attrName, attrs[attrName])
+    }
+  }
+
+  // 子元素
+  children.forEach(function (childVnode) {
+    // 给 elem 添加元素
+    elem.appendChild(createElement(childVnode))
+  })
+
+  return elem
+}
+```
+
+**patch(vnode, newVnode)**
+![02-11-2](https://user-images.githubusercontent.com/22188674/224475289-d2f8b10a-1f02-4126-9f2e-b813b0387c84.png)
+![02-11-3](https://user-images.githubusercontent.com/22188674/224475309-45c68933-3aa8-402a-8353-d09b506e0d46.png)
+
+伪代码实现如下
+
+```javascript
+const createElement = function (vnode) {
+  const tag = vnode.tag
+  const attrs = vnode.attrs || {}
+  const children = vnode.children || {}
+
+  if (!tag) return null
+
+  // 创建元素
+  const elem = document.createElement(tag)
+
+  // 属性
+  let attrName
+  for (attrName in attrs) {
+    // eslint-disable-next-line
+    if (attrs.hasOwnProperty(attrName)) {
+      elem.setAttribute(attrName, attrs[attrName])
+    }
+  }
+
+  // 子元素
+  children.forEach(function (childVnode) {
+    // 给 elem 添加元素
+    elem.appendChild(createElement(childVnode))
+  })
+
+  return elem
+}
+```
+
+ diff算法的其他内容
+
+* 节点的新增和删除
+
+* 节点重新排序
+* 节点属性、样式、事件绑定
+* 如果极致压榨性能
+
+## vdom {#p0-vdom}
+
+dom 概念
+
+用JS模拟DOM结构。
+DOM变化的对比，放在JS层来做。
+提升重绘性能。
+
+比如有abc 三个dom， 如果我们要删除b dom, 以前浏览器的做法是 全部删除abc dom ， 然后 在添加b dom 。这样做的成本会非常高。
+
+JS模拟 dom
+
+例如下面的一个dom 结构：
+
+```html
+<ul id="list">
+ <li class="item">item1</li>
+ <li class="item">item2</li>
+</ul>
+```
+
+这样的dom 结构，可以模拟为下面的JS :
+
+```javascript
+const dom = {
+  tag: 'ul',
+  attrs: {
+    id: 'list'
+  },
+  children: [
+    {
+      tag: 'li',
+      attrs: { className: 'item' },
+      children: ['item1']
+    },
+    {
+      tag: 'li',
+      attrs: { className: 'item' },
+      children: ['item2']
+    }
+  ]
+}
+```
+
+浏览器操作dom 是花销非常大的。执行JS花销要小非常多，所以这就是为什么虚拟dom 出现的一个根本原因。
+
+query实现virtual-dom
+
+ 一个需求场景
+
+1、数据生成表格。 2、随便修改一个信息，表格也会跟着修改。
+
+```html
+<body>
+<div id="container"></div>
+<br>
+<button id="btn-change">change</button>
+<script>
+ let data = [
+ {
+ name: 'yanle',
+ age: '20',
+ address: '重庆'
+ },
+ {
+ name: 'yanle2',
+ age: '25',
+ address: '成都'
+ },
+ {
+ name: 'yanle3',
+ age: '27',
+ address: '深圳'
+ }
+ ];
+
+ // 渲染函数
+ function render(data) {
+ let $container = document.getElementById('container');
+ $container.innerHTML = '';
+
+ let $table = document.createElement('table');
+ $table.setAttribute('border', true);
+ $table.insertAdjacentHTML('beforeEnd', `<tr>
+ <td>name</td>
+ <td>age</td>
+ <td>address</td>
+ </tr>`);
+
+ data.forEach(function (item) {
+ $table.insertAdjacentHTML('beforeEnd',
+ `<tr>
+ <td>${item.name}</td>
+ <td>${item.age}</td>
+ <td>${item.address}</td>
+ </tr>`
+ )
+ });
+
+ $container.appendChild($table);
+ }
+
+ // 修改信息
+ let button = document.getElementById('btn-change');
+ button.addEventListener('click', function () {
+ data[1].name = '徐老毕';
+ data[1].age = 30;
+ data[1].address = '深圳';
+ render(data);
+ });
+ render(data);
+</script>
+</body>
+```
+
+实际上上面的这段代码也是不符合预期的，因为每次使用render 方法，都会全部渲染整个table, 但是并未没有只渲染我们想要的第二行。
+
+**遇到的问题**：
+DOM 操作是非常 "昂贵" 的， JS 运行效率高。虚拟dom 的核心就是diff算法，对比出不同的dom数据，定点渲染不同的数据。

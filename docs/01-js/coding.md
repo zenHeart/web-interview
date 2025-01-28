@@ -1,11 +1,1085 @@
 # 编码题
 
-## 防抖和节流的原理及实现
+## debounce {#p0-debounce}
+
+实现函数防抖
+
+参考文档：
+[https://blog.csdn.net/beijiyang999/article/details/79832604](https://blog.csdn.net/beijiyang999/article/details/79832604)
+
+数防抖是什么
+
+函数防抖是指对于在事件被触发n秒后再执行的回调，如果在这n秒内又重新被触发，则重新开始计时，是常见的优化，适用于
+
+* 表单组件输入内容验证
+* 防止多次点击导致表单多次提交
+等情况，防止函数过于频繁的不必要的调用。
+
+码实现
+
+ 思路
+
+用 setTimeout 实现计时，配合 clearTimeout 实现“重新开始计时”。
+即只要触发，就会清除上一个计时器，又注册新的一个计时器。直到停止触发 wait 时间后，才会执行回调函数。
+不断触发事件，就会不断重复这个过程，达到防止目标函数过于频繁的调用的目的。
+
+ 初步实现
+
+```javascript
+function debounce (func, wait) {
+  let timer
+  return function () {
+    clearTimeout(timer)
+    timer = setTimeout(func, wait) // 返回计时器 ID
+  }
+}
+container.onmousemove = debounce(doSomething, 1000)
+```
+
+ 注解：关于闭包
+
+每当事件被触发，执行的都是那个被返回的闭包函数。
+因为闭包带来的其作用域链中引用的上层函数变量声明周期延长的效果，
+debounce 函数的 settimeout计时器 ID timeout 变量可以在debounce 函数执行结束后依然留存在内存中，供闭包使用。
+
+ 优化：修复
+
+相比于未防抖时的
+
+```javascript
+container.onmousemove = doSomething
+```
+
+防抖优化后，指向 HTMLDivElement 的从 doSomething 函数的 this 变成了闭包匿名函数的 this ，前者变成了指向全局变量。
+同理，doSomething 函数参数也接收不到 MouseEvent 事件了。
+
+ 修复代码
+
+```javascript
+function debounce (func, wait) {
+  let timeout
+  return function () {
+    const context = this // 传给目标函数
+    clearTimeout(timeout)
+    timeout = setTimeout(
+      () => { func.apply(context, arguments) } // 修复
+      , wait)
+  }
+}
+```
+
+化：立即执行
+
+相比于 一个周期内最后一次触发后，等待一定时间再执行目标函数；
+我们有时候希望能实现 在一个周期内第一次触发，就立即执行一次，然后一定时间段内都不能再执行目标函数。
+这样，在限制函数频繁执行的同时，可以减少用户等待反馈的时间，提升用户体验。
+
+ 代码
+
+在原来基础上，添加一个是否立即执行的功能
+
+```javascript
+function debounce (func, wait, immediate) {
+  let time
+  const debounced = function () {
+    const context = this
+    if (time) clearTimeout(time)
+
+    if (immediate) {
+      const callNow = !time
+      if (callNow) func.apply(context, arguments)
+      time = setTimeout(
+        () => { time = null } // 见注解
+        , wait)
+    } else {
+      time = setTimeout(
+        () => { func.apply(context, arguments) }
+        , wait)
+    }
+  }
+  return debounced
+}
+```
+
+把保存计时器 ID 的 time 值设置为 null 有两个作用:
+
+* 作为开关变量，表明一个周期结束。使得 callNow 为 true，目标函数可以在新的周期里被触发时被执行
+* timeout 作为闭包引用的上层函数的变量，是不会自动回收的。手动将其设置为 null ，让它脱离执行环境，一边垃圾收集器下次运行是将其回收。
+
+化：取消立即执行
+
+添加一个取消立即执行的功能。
+函数也是对象，也可以为其添加属性。
+为了添加 “取消立即执行”功能，为 debounced 函数添加了个 cancel 属性，属性值是一个函数
+
+```javascript
+debounced.cancel = function () {
+  clearTimeout(time)
+  time = null
+}
+```
+
+示意：
+
+```javascript
+const setSomething = debounce(doSomething, 1000, true)
+container.onmousemove = setSomething
+document.getElementById('button').addEventListener('click', function () {
+  setSomething.cancel()
+})
+```
+
+整代码
+
+```javascript
+function debounce (func, wait, immediate) {
+  let time
+  const debounced = function () {
+    const context = this
+    if (time) clearTimeout(time)
+
+    if (immediate) {
+      const callNow = !time
+      if (callNow) func.apply(context, arguments)
+      time = setTimeout(
+        () => { time = null } // 见注解
+        , wait)
+    } else {
+      time = setTimeout(
+        () => { func.apply(context, arguments) }
+        , wait)
+    }
+  }
+
+  debounced.cancel = function () {
+    clearTimeout(time)
+    time = null
+  }
+  return debounced
+}
+```
+
+## throttle {#p0-throttle}
 
 * debounce 阻止函数的高频执行,只有当频率小于等于限定频率是才延迟触发
 * throttle 按照固定的频率触发函数,当函数执行频率高于设定频率是忽略执行
 
+[https://blog.csdn.net/beijiyang999/article/details/79836463](https://blog.csdn.net/beijiyang999/article/details/79836463)
+
+ 函数节流是什么
+
+**对于持续触发的事件，规定一个间隔时间（n秒），每隔一段只能执行一次。**
+函数防抖（debounce）与本篇说的函数节流（throttle）相似又不同。
+函数防抖一般是指对于**在事件被触发n秒后再执行的回调，如果在这n秒内又重新被触发，则重新开始计时。**
+二者都能防止函数过于频繁的调用。
+区别在于，当事件持续被触发，如果触发时间间隔短于规定的等待时间（n秒），那么
+
+* 函数防抖的情况下，函数将一直推迟执行，造成不会被执行的效果；
+* 函数节流的情况下，函数将每个 n 秒执行一次。
+
+ 函数节流的实现
+
+函数节流的实现有不同的思路，可以通过**时间戳实现**，也可以通过**定时器实现**。
+
+ 时间戳
+
+ 思路
+
+只要触发，就用 Date 获取现在的时间，与上一次的时间比较。
+如果时间差大于了规定的等待时间，就可以执行一次；
+目标函数执行以后，就更新 previous 值，确保它是“上一次”的时间。
+否则就等下一次触发时继续比较。
+
+ 代码如下
+
+```javascript
+function throttle (func, wait) {
+  let previous = 0
+  return function () {
+    const now = +new Date()
+    const context = this
+    if (now - previous >= wait) {
+      func.apply(context, arguments)
+      previous = now // 执行后更新 previous 值
+    }
+  }
+}
+container.onmousemove = throttle(doSomething, 1000)
+```
+
+ 定时器
+
+ 思路
+
+用定时器实现时间间隔。
+当定时器不存在，说明可以执行函数，于是定义一个定时器来向任务队列注册目标函数
+目标函数执行后设置保存定时器ID变量为空
+当定时器已经被定义，说明已经在等待过程中。则等待下次触发事件时再进行查看。
+
+ 代码
+
+```javascript
+function throttle (func, wait) {
+  let time, context
+  return function () {
+    context = this
+    if (!time) {
+      time = setTimeout(function () {
+        func.apply(context, arguments)
+        time = null
+      }, wait)
+    }
+  }
+}
+```
+
+ 效果差异
+
+一个周期内：
+时间戳实现的：先执行目标函数，后等待规定的时间段；
+计时器实现的：先等待够规定时间，再执行。 即停止触发后，若定时器已经在任务队列里注册了目标函数，它也会执行最后一次。
+
+ 优化：二者结合
+
+结合二者，实现一次触发，两次执行（先立即执行，结尾也有执行）
+
+```javascript
+function throttle (func, wait) {
+  let previous = 0
+  let context, args, time
+  return function () {
+    const now = +new Date()
+    context = this
+    args = arguments
+    if (now - previous >= wait) { // 当距上一次执行的间隔大于规定，可以直接执行
+      func.apply(context, args)
+      previous = now
+    } else { // 否则继续等待，结尾执行一次
+      if (time) clearTimeout(time)
+      time = setTimeout(
+        () => {
+          func.apply(context, args)
+          time = null
+        }
+        , wait)
+    }
+  }
+}
+```
+
+ 问题
+
+已经实现了一次触发，两次执行，有头有尾的效果。
+问题是，上一个周期的“尾”和下一个周期的“头”之间，失去了对时间间隔的控制。
+
+ 修复
+
+仔细查看，发现问题出在了 previous 的设置上。
+仅仅在“可直接执行”的情况下更新了 previous 值，在通过计时器注册入任务队列后执行的情况下，忽略了 previous 的更新。
+导致了 previous 的值不再是“上一次执行”时的时间，而是“上一次直接可执行情况下执行”的时间。
+同时，引入变量 remaining 表示还需要等待的时间，来让尾部那一次的执行也符合时间间隔。
+
+ 完善后代码
+
+```javascript
+function throttle (func, wait) {
+  let previous = 0
+  let context, args, time, remaining
+
+  return function () {
+    const now = +new Date()
+    context = this
+    args = arguments
+    remaining = wait - (now - previous) // 剩余的还需要等待的时间
+    if (remaining <= 0) {
+      func.apply(context, args)
+      previous = now // 重置“上一次执行”的时间
+    } else {
+      if (time) {
+        clearTimeout(time)
+      }
+      time = setTimeout(() => {
+        func.apply(context, args)
+        time = null
+        previous = +new Date() // 重置“上一次执行”的时间
+      }, remaining) // 等待还需等待的时间
+    }
+  }
+}
+```
+
+ 更进一步的优化
+
+参考 underscore 与 mqyqingfeng ，实现是否启用第一次 / 尾部最后一次计时回调的执行。
+设置 options 作为第三个参数，然后根据传的值判断到底哪种效果，约定:
+
+* leading：false 表示禁用第一次执行
+* trailing: false 表示禁用停止触发的回调
+
+```javascript
+function throttle (func, wait, options) {
+  let time, context, args, result
+  let previous = 0
+  if (!options) options = {}
+
+  const later = function () {
+    previous = options.leading === false ? 0 : new Date().getTime()
+    time = null
+    func.apply(context, args)
+    if (!time) context = args = null
+  }
+
+  const throttled = function () {
+    const now = new Date().getTime()
+    if (!previous && options.leading === false) previous = now
+    const remaining = wait - (now - previous)
+    context = this
+    args = arguments
+    if (remaining <= 0 || remaining > wait) {
+      if (time) {
+        clearTimeout(time)
+        time = null
+      }
+      previous = now
+      func.apply(context, args)
+      if (!time) context = args = null
+    } else if (!time && options.trailing !== false) {
+      time = setTimeout(later, remaining)
+    }
+  }
+  return throttled
+}
+```
+
+如果想添加一个取消功能：
+
+```javascript
+throttled.cancel = function () {
+  clearTimeout(time)
+  time = null
+  previous = 0
+}
+```
+
 ## 实现 call 或 apply 方法?
+
+[https://www.jianshu.com/p/6a1bc149b598](https://www.jianshu.com/p/6a1bc149b598)
+
+简单粗暴地来说，call，apply，bind是用于绑定this指向的。
+
+么是call和apply方法
+
+我们单独看看ECMAScript规范对apply的定义，看个大概就行：
+
+通过定义简单说一下call和apply方法，他们就是参数不同，作用基本相同。
+
+1、每个函数都包含两个非继承而来的方法：apply()和call()。
+2、他们的用途相同，都是在特定的作用域中调用函数。
+3、接收参数方面不同，apply()接收两个参数，一个是函数运行的作用域(this)，另一个是参数数组。
+4、call()方法第一个参数与apply()方法相同，但传递给函数的参数必须列举出来。
+
+一个简单的demo:
+
+```javascript
+const yanle = {
+  name: 'yanle',
+  sayHello: function (age) {
+    console.log(`hello, i am ${this.name} and ${age} years old`)
+  }
+}
+const lele = {
+  name: 'lele'
+}
+yanle.sayHello(26) // hello, i am yanle and 26 years old
+
+yanle.sayHello.call(lele, 20) // hello, i am lele and 20 years old
+yanle.sayHello.apply(lele, [21]) // hello, i am lele and 21 years old
+```
+
+结果都相同。从写法上我们就能看出二者之间的异同。
+相同之处在于，第一个参数都是要绑定的上下文，后面的参数是要传递给调用该方法的函数的。
+不同之处在于，call方法传递给调用函数的参数是逐个列出的，而apply则是要写在数组中。
+
+总结一句话介绍call和apply
+call()方法在使用一个指定的this值和若干个指定的参数值的前提下调用某个函数或方法。
+apply()方法在使用一个指定的this值和参数值必须是数组类型的前提下调用某个函数或方法
+
+析call和apply的原理
+
+上面代码，我们注意到了两点：
+1、call和apply改变了this的指向，指向到lulin
+2、sayHello函数执行了
+
+这里默认大家都对this有一个基本的了解，知道什么时候this该指向谁，
+我们结合这两句话来分析这个通用函数：f.apply(o),我们直接看一本书对其中原理的解读，
+具体什么书，我也不知道，参数我们先不管，先了解其中的大致原理。
+
+知道了这个基本原来我们再来看看刚才jawil.sayHello.call(lulin, 24)执行的过程：
+
+```javascript
+// 第一步
+lulin.fn = jawil.sayHello
+// 第二步
+lulin.fn()
+// 第三步
+delete lulin.fn
+```
+
+上面的说的是原理，可能你看的还有点抽象，下面我们用代码模拟实现apply一下。
+
+现aplly方法
+
+ 模拟实现第一步
+
+根据这个思路，我们可以尝试着去写第一版的 applyOne 函数：
+
+```js
+// eslint-disable-next-line
+Function.prototype.applyOne = function (context) {
+  context.fn = this
+  context.fn()
+  delete context.fn
+}
+const yanle = {
+  name: 'yanle',
+  sayHello: function (age) {
+    console.log(`hello, i am ${this.name} and ${age} years old`)
+  }
+}
+const lele = {
+  name: 'lele'
+}
+yanle.sayHello.applyOne(lele) // hello, i am lele and undefined years old
+```
+
+正好可以打印lulin而不是之前的jawil了。
+
+ 模拟实现第二步
+
+最一开始也讲了，apply函数还能给定参数执行函数。
+注意：传入的参数就是一个数组，很简单，我们可以从Arguments对象中取值，
+Arguments不知道是何物，赶紧补习，此文也不太适合初学者，第二个参数就是数组对象，
+但是执行的时候要把数组数值传递给函数当参数，然后执行，这就需要一点小技巧。
+
+参数问题其实很简单，我们先偷个懒，我们接着要把这个参数数组放到要执行的函数的参数里面去。
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.applyTwo = function (context) {
+  context.fn = this
+  const args = arguments[1]
+  context.fn(args.join(','))
+  delete context.fn
+}
+```
+
+很简单是不是，那你就错了，数组join方法返回的是啥？
+`typeof [1,2,3,4].join(',')//string`
+最后是一个 "1,2,3,4" 的字符串，其实就是一个参数，肯定不行啦。
+
+也许有人会想到用ES6的一些奇淫方法，不过apply是ES3的方法，
+我们为了模拟实现一个ES3的方法，要用到ES6的方法，反正面试官也没说不准这样。
+但是我们这次用eval方法拼成一个函数，类似于这样：
+`eval('context.fn(' + args +')')`
+
+先简单了解一下eval函数吧
+定义和用法:
+eval() 函数可计算某个字符串，并执行其中的的 JavaScript 代码。
+
+语法：`eval(string)`
+string必需。要计算的字符串，其中含有要计算的 JavaScript 表达式或要执行的语句。
+该方法只接受原始字符串作为参数，如果 string 参数不是原始字符串，那么该方法将不作任何改变地返回。
+因此请不要为 eval() 函数传递 String 对象来作为参数。
+
+简单来说吧，就是用JavaScript的解析引擎来解析这一堆字符串里面的内容，这么说吧，你可以这么理解，**你把eval看成是`<script>`标签**。
+
+`eval('function Test(a,b,c,d){console.log(a,b,c,d)};Test(1,2,3,4)')`就是相当于这样：
+
+```html
+<script>
+function Test(a,b,c,d){
+ console.log(a,b,c,d)
+};
+Test(1,2,3,4)
+</script>
+```
+
+第二版代码大致如下：
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.applyTwo = function (context) {
+  const args = arguments[1] // 获取传入的数组参数
+  context.fn = this // 假想context对象预先不存在名为fn的属性
+  let fnStr = 'context.fn('
+  for (let i = 0; i < args.length; i++) {
+    // eslint-disable-next-line
+    fnStr += i == args.length - 1 ? args[i] : args[i] + ','
+  }
+  fnStr += ')'// 得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+  // eslint-disable-next-line
+  eval(fnStr) // 还是eval强大
+  delete context.fn // 执行完毕之后删除这个属性
+}
+// 测试一下
+const jawil = {
+  name: 'jawil',
+  sayHello: function (age) {
+    console.log(this.name, age)
+  }
+}
+
+const lulin = {
+  name: 'lulin'
+}
+
+jawil.sayHello.applyTwo(lulin, [24])// lulin 24
+```
+
+好像就行了是不是，其实这只是最粗糙的版本，能用，但是不完善，完成了大约百分之六七十了。
+
+ 模拟实现第三步
+
+1.this参数可以传null或者不传，当为null的时候，视为指向window
+
+demo1:
+
+```javascript
+const name = 'jawil'
+function sayHello () {
+  console.log(this.name)
+}
+sayHello.apply(null) // 'jawil'
+```
+
+demo2:
+
+```javascript
+const name = 'jawil'
+function sayHello () {
+  console.log(this.name)
+}
+sayHello.apply() // 'jawil'
+```
+
+2.函数是可以有返回值的
+
+```javascript
+const obj = {
+  name: 'jawil'
+}
+
+function sayHello (age) {
+  return {
+    name: this.name,
+    age
+  }
+}
+
+console.log(sayHello.apply(obj, [24]))// {name: "jawil", age: 24}
+```
+
+这些都是小问题，想到了，就很好解决。我们来看看此时的第三版apply模拟方法。
+
+```javascript
+// 原生JavaScript封装apply方法，第三版
+// eslint-disable-next-line
+Function.prototype.applyThree = function (context) {
+  // eslint-disable-next-line
+  var context = context || window
+  const args = arguments[1] // 获取传入的数组参数
+  context.fn = this // 假想context对象预先不存在名为fn的属性
+  // eslint-disable-next-line
+  if (args === void 0) { // 没有传入参数直接执行
+    return context.fn()
+  }
+  let fnStr = 'context.fn('
+  for (let i = 0; i < args.length; i++) {
+    // 得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+    fnStr += i === args.length - 1 ? args[i] : args[i] + ','
+  }
+  fnStr += ')'
+  // eslint-disable-next-line
+  const returnValue = eval(fnStr) // 还是eval强大
+  delete context.fn // 执行完毕之后删除这个属性
+  return returnValue
+}
+```
+
+ 模拟实现第四步
+
+其实一开始就埋下了一个隐患，我们看看这段代码：
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.applyThree = function (context) {
+  // eslint-disable-next-line
+  var context = context || window
+  const args = arguments[1] // 获取传入的数组参数
+  context.fn = this // 假想context对象预先不存在名为fn的属性
+// ......
+}
+```
+
+就是这句话， `context.fn = this //假想context对象预先不存在名为fn的属性` ,这就是一开始的隐患,
+我们只是假设，但是并不能防止contenx对象一开始就没有这个属性，要想做到完美，就要保证这个context.fn中的fn的唯一性。
+
+于是我自然而然的想到了强大的ES6,这玩意还是好用啊，幸好早就了解并一直在使用ES6,还没有学习过ES6的童鞋赶紧学习一下，没有坏处的。
+
+重新复习下新知识：
+基本数据类型有6种：Undefined、Null、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。
+
+ES5对象属性名都是字符串容易造成属性名的冲突。
+
+```javascript
+const a = { name: 'jawil' }
+a.name = 'lulin'
+// 这样就会重写属性
+```
+
+ES6引入了一种新的原始数据类型Symbol，表示独一无二的值。
+注意，Symbol函数前不能使用new命令，否则会报错。这是因为生成的Symbol是一个原始类型的值，不是对象
+Symbol函数可以接受一个字符串作为参数，表示对Symbol实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。
+
+```javascript
+// 没有参数的情况
+// eslint-disable-next-line
+var s1 = Symbol()
+// eslint-disable-next-line
+var s2 = Symbol()
+s1 === s2 // false
+
+// 有参数的情况
+// eslint-disable-next-line
+var s1 = Symbol('foo')
+// eslint-disable-next-line
+var s2 = Symbol('foo')
+s1 === s2 // false
+```
+
+注意：Symbol值不能与其他类型的值进行运算。
+
+作为属性名的Symbol
+
+```js
+// eslint-disable-next-line
+const mySymbol = Symbol()
+
+// 第一种写法
+var a = {}
+a[mySymbol] = 'Hello!'
+
+// 第二种写法
+// eslint-disable-next-line
+var a = {
+  [mySymbol]: 'Hello!'
+}
+
+// 第三种写法
+// eslint-disable-next-line
+var a = {}
+Object.defineProperty(a, mySymbol, { value: 'Hello!' })
+
+// 以上写法都得到同样结果
+a[mySymbol] // "Hello!"
+```
+
+注意，Symbol值作为对象属性名时，不能用点运算符。
+
+继续看下面这个例子：
+
+```javascript
+const a = {}
+// eslint-disable-next-line
+const name = Symbol()
+a.name = 'jawil'
+a[name] = 'lulin'
+console.log(a.name, a[name]) // jawil,lulin
+```
+
+Symbol值作为属性名时，该属性还是公开属性，不是私有属性。
+这个有点类似于java中的protected属性
+（protected和private的区别：在类的外部都是不可以访问的，在类内的子类可以继承protected不可以继承private）
+但是这里的Symbol在类外部也是可以访问的，只是不会出现在for...in、for...of循环中，
+也不会被Object.keys()、Object.getOwnPropertyNames()返回。
+但有一个 `Object.getOwnPropertySymbols` 方法，可以获取指定对象的所有Symbol属性名。
+
+看看第四版的实现demo，想必大家了解上面知识已经猜得到怎么写了，很简单。
+直接加个var fn = Symbol()就行了
+
+```javascript
+// 原生JavaScript封装apply方法，第四版
+// eslint-disable-next-line
+Function.prototype.applyFour = function (context) {
+// eslint-disable-next-line
+  var context = context || window
+  const args = arguments[1] // 获取传入的数组参数
+  // eslint-disable-next-line
+  const fn = Symbol()
+  context[fn] = this // 假想context对象预先不存在名为fn的属性
+  // eslint-disable-next-line
+  if (args === void 0) { // 没有传入参数直接执行
+    return context[fn]()
+  }
+  let fnStr = 'context[fn]('
+  for (let i = 0; i < args.length; i++) {
+    // 得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+    fnStr += i === args.length - 1 ? args[i] : args[i] + ','
+  }
+  fnStr += ')'
+  // eslint-disable-next-line
+  const returnValue = eval(fnStr) // 还是eval强大
+  delete context[fn] // 执行完毕之后删除这个属性
+  return returnValue
+}
+```
+
+ 模拟实现第五步
+
+呃呃呃额额，慢着，ES3就出现的方法，你用ES6来实现，你好意思么？
+你可能会说，不管黑猫白猫，只要能抓住老鼠的猫就是好猫，面试官直说不准用call和apply方法但是没说不准用ES6语法啊。
+反正公说公有理婆说婆有理，这里还是不用Symbol方法实现一下，我们知道，ES6其实都是语法糖，ES6能写的，
+咋们ES5都能实现，这就导致了babel这类把ES6语法转化成ES5的代码了。
+至于babel把Symbol属性转换成啥代码了，我也没去看，有兴趣的可以看一下稍微研究一下，这里我说一下简单的模拟。
+ES5 没有 Sybmol，属性名称只可能是一个字符串，如果我们能做到这个字符串不可预料，
+那么就基本达到目标。要达到不可预期，一个随机数基本上就解决了。
+
+```javascript
+// 简单模拟Symbol属性
+function jawilSymbol (obj) {
+// eslint-disable-next-line
+  const unique_proper = '00' + Math.random()
+  // eslint-disable-next-line
+  if (obj.hasOwnProperty(unique_proper)) {
+    // eslint-disable-next-line
+    arguments.callee(obj)// 如果obj已经有了这个属性，递归调用，直到没有这个属性
+  } else {
+    // eslint-disable-next-line
+    return unique_proper
+  }
+}
+// 原生JavaScript封装apply方法，第五版
+// eslint-disable-next-line
+Function.prototype.applyFive = function (context) {
+// eslint-disable-next-line
+  var context = context || window
+  const args = arguments[1] // 获取传入的数组参数
+  const fn = jawilSymbol(context)
+  context[fn] = this // 假想context对象预先不存在名为fn的属性
+  // eslint-disable-next-line
+  if (args === void 0) { // 没有传入参数直接执行
+    return context[fn]()
+  }
+  let fnStr = 'context[fn]('
+  for (let i = 0; i < args.length; i++) {
+    // 得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+    fnStr += i === args.length - 1 ? args[i] : args[i] + ','
+  }
+  fnStr += ')'
+  // eslint-disable-next-line
+  const returnValue = eval(fnStr) // 还是eval强大
+  delete context[fn] // 执行完毕之后删除这个属性
+  return returnValue
+}
+const obj = {
+  name: 'jawil'
+}
+function sayHello (age) {
+  return {
+    name: this.name,
+    age
+  }
+}
+console.log(sayHello.applyFive(obj, [24]))// 完美输出{name: "jawil", age: 24}
+```
+
+现Call方法
+
+这个不需要讲了吧，道理都一样，就是参数一样，这里我给出我实现的一种方式，看不懂，自己写一个去。
+
+```javascript
+// 原生JavaScript封装call方法
+// eslint-disable-next-line
+Function.prototype.callOne = function (context) {
+  return this.applyFive(([].shift.applyFive(arguments), arguments))
+  // 巧妙地运用上面已经实现的applyFive函数
+}
+```
+
+看不太明白也不能怪我咯，我就不细讲了，看个demo证明一下，这个写法没问题。
+
+```js
+// eslint-disable-next-line
+Function.prototype.applyFive = function (context) { // 刚才写的一大串}
+  // eslint-disable-next-line
+  Function.prototype.callOne = function (context) {
+    return this.applyFive(([].shift.applyFive(arguments)), arguments)
+    // 巧妙地运用上面已经实现的applyFive函数
+  }
+  // 测试一下
+  const obj = {
+    name: 'jawil'
+  }
+
+  function sayHello (age) {
+    return {
+      name: this.name,
+      age
+    }
+  }
+
+  console.log(sayHello.callOne(obj, 24))
+}
+```
+
+什么是bind函数
+如果掌握了上面实现apply的方法，我想理解起来模拟实现bind方法也是轻而易举，原理都差不多，我们还是来看看bind方法的定义。
+我们还是简单的看下ECMAScript规范对bind方法的定义，暂时看不懂不要紧，获取几个关键信息就行。
+
+bind() 方法会创建一个新函数，当这个新函数被调用时，它的 this 值是传递给 bind() 的第一个参数,
+它的参数是 bind() 的其他参数和其原本的参数，
+bind返回的绑定函数也能使用new操作符创建对象：这种行为就像把原函数当成构造器。
+提供的this值被忽略，同时调用时的参数被提供给模拟函数。。
+
+语法是这样样子的： `fun.bind(thisArg[, arg1[, arg2[, ...]]])`
+
+是不是似曾相识，这不是call方法的语法一个样子么，，，但它们是一样的吗？
+
+bind方法传递给调用函数的参数可以逐个列出，也可以写在数组中。
+bind方法与call、apply最大的不同就是前者返回一个绑定上下文的函数，
+而后两者是直接执行了函数。由于这个原因，上面的代码也可以这样写:
+
+```javascript
+jawil.sayHello.bind(lulin)(24) // hello, i am lulin 24 years old
+jawil.sayHello.bind(lulin)([24]) // hello, i am lulin 24 years old
+```
+
+bind方法还可以这样写 fn.bind(obj, arg1)(arg2).
+
+**用一句话总结bind的用法：**
+该方法创建一个新函数，称为绑定函数，绑定函数会以创建它时传入bind方法的第一个参数作为this，
+传入bind方法的第二个以及以后的参数加上绑定函数运行时本身的参数按照顺序作为原函数的参数来调用原函数。
+
+以前解决这个问题的办法通常是缓存this，例如：
+
+```javascript
+function Person (name) {
+  this.nickname = name
+  this.distractedGreeting = function () {
+    const self = this // <-- 注意这一行!
+    setTimeout(function () {
+      console.log('Hello, my name is ' + self.nickname) // <-- 还有这一行!
+    }, 500)
+  }
+}
+
+const alice = new Person('jawil')
+alice.distractedGreeting()
+// after 500ms logs "Hello, my name is jawil"
+```
+
+但是现在有一个更好的办法！您可以使用bind。上面的例子中被更新为：
+
+```javascript
+function Person (name) {
+  this.nickname = name
+  this.distractedGreeting = function () {
+    setTimeout(function () {
+      console.log('Hello, my name is ' + this.nickname)
+    }.bind(this), 500) // <-- this line!
+  }
+}
+
+const alice = new Person('jawil')
+alice.distractedGreeting()
+// after 500ms logs "Hello, my name is jawil"
+```
+
+**用法总结：**
+bind() 最简单的用法是创建一个函数，使这个函数不论怎么调用都有同样的 this 值。
+JavaScript新手经常犯的一个错误是将一个方法从对象中拿出来，然后再调用，希望方法中的 this 是原来的对象。
+（比如在回调中传入这个方法。）如果不做特殊处理的话，一般会丢失原来的对象。
+从原来的函数和原来的对象创建一个绑定函数，则能很漂亮地解决这个问题：
+
+```javascript
+this.x = 9
+const module = {
+  x: 81,
+  getX: function () { return this.x }
+}
+
+module.getX() // 81
+
+const getX = module.getX
+getX() // 9, 因为在这个例子中，"this"指向全局对象
+
+// 创建一个'this'绑定到module的函数
+const boundGetX = getX.bind(module)
+boundGetX() // 81
+```
+
+备注：
+很不幸，Function.prototype.bind 在IE8及以下的版本中不被支持，
+所以如果你没有一个备用方案的话，可能在运行时会出现问题。
+bind 函数在 ECMA-262 第五版才被加入；它可能无法在所有浏览器上运行。
+你可以部份地在脚本开头加入以下代码，就能使它运作，让不支持的浏览器也能使用 bind() 功能。
+
+ 初级实现
+
+了解了以上内容，我们来实现一个初级的bind函数Polyfill:
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.bind = function (context) {
+  const me = this
+  const argsArray = Array.prototype.slice.callOne(arguments)
+  return function () {
+    return me.applyFive(context, argsArray.slice(1))
+  }
+}
+```
+
+简单解读：
+基本原理是使用apply进行模拟。函数体内的this，就是需要绑定this的实例函数，或者说是原函数。
+最后我们使用apply来进行参数（context）绑定，并返回。
+同时，将第一个参数（context）以外的其他参数，作为提供给原函数的预设参数，这也是基本的“颗粒化（curring）”基础。
+
+ 初级实现的加分项
+
+进行兼容处理，就是锦上添花了。
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.bind = Function.prototype.bind || function (context) {
+  // ...
+}
+```
+
+ 颗粒化（curring）实现
+
+对于函数的柯里化不太了解的童鞋，可以先尝试读读这篇文章：[前端基础进阶（八）：深入详解函数的柯里化](https://www.jianshu.com/p/5e1899fe7d6b)。
+上述的实现方式中，我们返回的参数列表里包含：atgsArray.slice(1)，他的问题在于存在预置参数功能丢失的现象。
+想象我们返回的绑定函数中，如果想实现预设传参（就像bind所实现的那样），就面临尴尬的局面。真正实现颗粒化的“完美方式”是：
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.bind = Function.prototype.bind || function (context) {
+  const me = this
+  const args = Array.prototype.slice.callOne(arguments, 1)
+  return function () {
+    const innerArgs = Array.prototype.slice.callOne(arguments)
+    const finalArgs = args.concat(innerArgs)
+    return me.applyFive(context, finalArgs)
+  }
+}
+```
+
+ 构造函数场景下的兼容
+
+```javascript
+// eslint-disable-next-line
+Function.prototype.bind = Function.prototype.bind || function (context) {
+  const me = this
+  const args = Array.prototype.slice.callOne(arguments, 1)
+  const F = function () {}
+  F.prototype = this.prototype
+  const bound = function () {
+    const innerArgs = Array.prototype.slice.callOne(arguments)
+    const finalArgs = args.concat(innerArgs)
+    return me.apply(this instanceof F ? this : context || this, finalArgs)
+  }
+  bound.prototype = new F()
+  return bound
+}
+```
+
+ 更严谨的做法
+
+我们需要调用bind方法的一定要是一个函数，所以可以在函数体内做一个判断：
+
+```javascript
+if (typeof this !== 'function') {
+  throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable')
+}
+```
+
+做到所有这一切，基本算是完成了。其实MDN上有个自己实现的polyfill，就是如此实现的。
+另外，《JavaScript Web Application》一书中对bind()的实现，也是如此。
+
+ 最终答案
+
+```javascript
+// 简单模拟Symbol属性
+function jawilSymbol (obj) {
+// eslint-disable-next-line
+  const unique_proper = '00' + Math.random()
+  // eslint-disable-next-line
+  if (obj.hasOwnProperty(unique_proper)) {
+    // eslint-disable-next-line
+    arguments.callee(obj)// 如果obj已经有了这个属性，递归调用，直到没有这个属性
+  } else {
+    // eslint-disable-next-line
+    return unique_proper
+  }
+}
+// 原生JavaScript封装apply方法，第五版
+// eslint-disable-next-line
+Function.prototype.applyFive = function (context) {
+// eslint-disable-next-line
+  var context = context || window
+  const args = arguments[1] // 获取传入的数组参数
+  const fn = jawilSymbol(context)
+  context[fn] = this // 假想context对象预先不存在名为fn的属性
+  // eslint-disable-next-line
+  if (args === void 0) { // 没有传入参数直接执行
+    return context[fn]()
+  }
+  let fnStr = 'context[fn]('
+  for (let i = 0; i < args.length; i++) {
+    // 得到"context.fn(arg1,arg2,arg3...)"这个字符串在，最后用eval执行
+    fnStr += i === args.length - 1 ? args[i] : args[i] + ','
+  }
+  fnStr += ')'
+  // eslint-disable-next-line
+  const returnValue = eval(fnStr) // 还是eval强大
+  delete context[fn] // 执行完毕之后删除这个属性
+  return returnValue
+}
+// 简单模拟call函数
+// eslint-disable-next-line
+Function.prototype.callOne = function (context) {
+  return this.applyFive(([].shift.applyFive(arguments)), arguments)
+  // 巧妙地运用上面已经实现的applyFive函数
+}
+
+// 简单模拟bind函数
+// eslint-disable-next-line
+Function.prototype.bind = Function.prototype.bind || function (context) {
+  const me = this
+  const args = Array.prototype.slice.callOne(arguments, 1)
+  const F = function () {}
+  F.prototype = this.prototype
+  const bound = function () {
+    const innerArgs = Array.prototype.slice.callOne(arguments)
+    const finalArgs = args.concat(innerArgs)
+    return me.applyFive(this instanceof F ? this : context || this, finalArgs)
+  }
+  bound.prototype = new F()
+  return bound
+}
+const obj = {
+  name: 'jawil'
+}
+
+function sayHello (age) {
+  return {
+    name: this.name,
+    age
+  }
+}
+
+console.log(sayHello.bind(obj, 24)())// 完美输出{name: "jawil", age: 24}
+```
 
 核心考点:
 
@@ -47,6 +1121,147 @@ function customBind (context, ...bindParams) {
    1. 采用递归实现拷贝
    2. 考试引用类型判断
    3. 考察 null 判断
+
+<!-- tocstop -->
+
+o.1 浅拷贝存在的问题
+
+```javascript
+const person = {
+  name: 'yanle',
+  age: 24,
+  address: {
+    home: 'home address',
+    office: 'office address'
+  },
+  schools: ['xiaoxue', 'daxue']
+}
+const programer = {
+  language: 'javascript'
+}
+function extend (p, c) {
+  var c = c || {}
+  for (const prop in p) {
+    c[prop] = p[prop]
+  }
+  return c
+}
+```
+
+extend(person,programer)
+programer.schools[0]='lelele'
+person.schools[0] //输出结果也是lelele，
+说明了不仅是父对象里面还有个对象这种情况，子对象发生改变影响父对象，如果父对象里面是一个数组，也是会影响的！
+请参考： 浅拷贝存在的问题
+
+o.2 普通的深拷贝
+
+```javascript
+const person = {
+  name: 'yanle',
+  age: 24,
+  address: {
+    home: 'home address',
+    office: 'office address'
+  },
+  schools: ['xiaoxue', 'daxue']
+}
+const programer = {
+  language: 'javascript'
+}
+
+function extendDeeply (p, c = {}) {
+  for (const prop in p) {
+    if (typeof p[prop] === 'object') {
+      c[prop] = (p[prop].constructor === Array) ? [] : {}
+      extendDeeply(p[prop], c[prop])
+    } else {
+      c[prop] = p[prop]
+    }
+  }
+  return c
+}
+
+extendDeeply(person, programer)
+console.log(programer)
+programer.name = 'lelelelele'
+console.log(programer)
+console.log(person)
+```
+
+这种情况无论是数组还是对象，子类发生改变都不会影响父类了
+原理：这里的c对象并不是直接就取的p对象里面的值，而是先赋予了一个空的对象或者数据，再拿空的对象或者数据去装填p对象的数据，这样就可以断开引用关系；
+请参考：普通的深拷贝
+
+o.3 数组对象深贝的简单实现
+
+如果对象是一个数组对象，那么可以用字符串方法来实现深拷贝（就是断开引用连接，赋予新的对象实例）
+`arr.slice(0)` 这样得到的数组对象就会指向自己心的引用了;
+
+o.4 利用对象实现深拷贝
+
+```javascript
+function Parent () {
+  this.name = 'abc'
+  this.address = { home: 'home' }
+}
+function Child () {
+  Parent.call(this)
+  this.language = 'java'
+}
+
+const parent = new Parent()
+const child = new Child()
+
+console.log(parent)
+console.log(child)
+
+console.log('=======================')
+
+child.name = '123'
+console.log(parent)
+console.log(child)
+```
+
+原理：返回的是不同对象的实例，所以不存在公用一个this指向的问题
+请参考：利用对象实现深拷贝
+
+o.5 利用class实现深拷贝
+
+```javascript
+class Person {
+  constructor (name, age) {
+    this.name = name
+    this.age = age
+  }
+
+  run () {
+    console.log('person can run')
+  }
+}
+
+class Child extends Person {
+  constructor (name, age, address) {
+    super(name, age)
+    this.address = address
+  }
+}
+
+const person = new Person('yanle', 25)
+const child = new Child('yanle', 25, 'chongqing')
+console.log(person)
+console.log(child)
+console.log('=========================')
+child.name = 'lelellelelele'
+console.log(person)
+console.log(child)
+```
+
+o.6 解决深拷贝终极奥义
+
+github有开源模块专门解决这个问题的： [https://github.com/unclechu/node-deep-extend](https://github.com/unclechu/node-deep-extend)
+其源码实例如下： [deep-extend.js](https://github.com/unclechu/node-deep-extend/blob/master/lib/deep-extend.js)
+也可以参考本地目录： deep-extend.js
 
 ## 实现 loadash get
 
@@ -2030,6 +3245,7 @@ const a = {
     return this.i++
   }
 }
+// eslint-disable-next-line
 if (a == 1 && a == 2 && a == 3) {
   console.log(1)
 }
@@ -2188,3 +3404,129 @@ csharpCopy codeevent: hello, world
 * `'3'`、`2`（表示解析为二进制）：解析后得到 `NaN`。
 
 所以结果为 `[1, NaN, NaN]`。
+
+## promise.allSettled
+
+`Promise.allSettled` 方法会接收一个 Promise 数组，并返回一个新的 Promise 对象。该新 Promise 对象会在所有输入的 Promise 都被 resolved 或 rejected 后变为 settled 状态，并且它的值是一个包含所有 Promise 状态的对象数组。
+
+以下是手写实现 `Promise.allSettled` 方法的代码：
+
+```javascript
+function allSettled (promises) {
+  return new Promise((resolve) => {
+    const results = []
+    let settledCount = 0
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise).then(
+        (value) => {
+          results[index] = { status: 'fulfilled', value }
+        },
+        (reason) => {
+          results[index] = { status: 'rejected', reason }
+        }
+      ).finally(() => {
+        settledCount++
+
+        if (settledCount === promises.length) {
+          resolve(results)
+        }
+      })
+    })
+  })
+}
+```
+
+上述代码中，我们首先创建一个新的 Promise 对象，并在其中执行了一个异步操作。然后我们遍历了传入的 Promise 数组，并为每个 Promise 添加了一个 `then` 方法的回调函数，以便在 Promise 状态发生变化时收集 Promise 的结果。对于每个 Promise，我们都使用 `Promise.resolve` 方法将其转换为 Promise 对象，以确保我们处理的是 Promise 对象。我们使用一个 `finally` 方法来在 Promise settled 时更新 settledCount，以确保在所有 Promise settled 后我们只会执行一次 `resolve` 方法。
+
+最终，我们将所有 Promise 的状态都收集到了 `results` 数组中，并将该数组作为 Promise 的值解析。这样，我们就实现了 `Promise.allSettled` 方法的功能。
+
+## 手写代码实现 promise.all
+
+下面是手写实现 `Promise.all()` 方法的代码：
+
+```javascript
+Promise.all = function (promises) {
+  return new Promise((resolve, reject) => {
+    const results = []
+    let count = 0
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise).then(
+        (result) => {
+          results[index] = result
+          count++
+          if (count === promises.length) {
+            resolve(results)
+          }
+        },
+        (reason) => {
+          reject(reason)
+        }
+      )
+    })
+  })
+}
+```
+
+实现原理：
+
+`Promise.all()` 方法接收一个包含多个 Promise 的数组作为参数，并返回一个新的 Promise。该 Promise 将会在数组中所有 Promise 状态均为 `fulfilled` 时被解决，并且以数组形式返回所有 Promise 的结果。
+
+我们可以通过创建一个新的 Promise，然后遍历 Promise 数组并将每个 Promise 包装在一个 `Promise.resolve()` 中，然后使用 `.then()` 方法将它们的解决值和拒绝原因分别传递给新的 Promise 的 `resolve()` 和 `reject()` 方法。我们还需要维护一个计数器和一个结果数组来跟踪所有 Promise 的状态。每当一个 Promise 被解决时，我们将其结果存储在结果数组中，然后将计数器增加 1。当计数器等于 Promise 数组的长度时，说明所有 Promise 均已被解决，此时我们可以使用 `resolve()` 方法并将结果数组作为参数传递给它。如果有任何一个 Promise 被拒绝，则使用 `reject()` 方法并将其拒绝原因作为参数传递给它。
+
+需要注意的是，如果 Promise 数组为空，则 `Promise.all()` 将立即被解决，并返回一个空数组。
+
+## 手写代码实现 promise.race
+
+下面是手写实现 `Promise.race()` 方法的代码：
+
+```javascript
+Promise.race = function (promises) {
+  return new Promise((resolve, reject) => {
+    promises.forEach((promise) => {
+      Promise.resolve(promise).then(resolve, reject)
+    })
+  })
+}
+```
+
+实现原理：
+
+`Promise.race()` 方法接收一个包含多个 Promise 的数组作为参数，并返回一个新的 Promise。该 Promise 将会在数组中的任意一个 Promise 状态变为 `fulfilled` 或 `rejected` 时被解决，且以第一个解决的 Promise 的结果作为其结果返回。
+
+我们可以通过创建一个新的 Promise，然后遍历 Promise 数组并将每个 Promise 包装在一个 `Promise.resolve()` 中，然后使用 `.then()` 方法将它们的解决值和拒绝原因分别传递给新的 Promise 的 `resolve()` 和 `reject()` 方法。由于 Promise 的状态只能改变一次，所以一旦第一个 Promise 被解决，新的 Promise 的状态也将被解决，并且以第一个解决的 Promise 的结果作为其结果返回。
+
+## setObjectValue(obj: object, keys: string[], value: any) 方法， 支持安全设置对象的值
+
+可以使用递归实现安全设置对象的值。以下是一个实现setObjectValue方法的例子：
+
+```ts
+function setObjectValue (obj: object, keys: string[], value: any) {
+  const key = keys.shift()
+  if (!key) {
+    return
+  }
+
+  if (keys.length === 0) {
+    obj[key] = value
+    return
+  }
+
+  if (!obj[key]) {
+    obj[key] = {}
+  }
+
+  setObjectValue(obj[key], keys, value)
+}
+```
+
+这个方法接受三个参数：要设置值的对象，一个字符串数组表示对象的键的路径，和要设置的值。例如，如果要设置对象`user`的`address`字段的`city`属性为`"New York"`，可以调用方法：
+
+```ts
+const user = {}
+setObjectValue(user, ['address', 'city'], 'New York')
+```
+
+在这个例子中，`keys`数组的第一个元素是`"address"`，所以我们检查`user`对象是否有一个名为`"address"`的属性。如果没有，我们创建一个新对象并将其分配给`user.address`属性。然后我们继续递归地调用`setObjectValue`方法，将新对象作为第一个参数传递，将`keys`数组的剩余部分作为第二个参数传递，将最终的值作为第三个参数传递。最终，我们将`"New York"`分配给`user.address.city`属性。
+
+这个方法确保在设置对象值时不会引发`TypeError`异常，即使对象的某些部分尚未定义。

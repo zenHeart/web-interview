@@ -777,6 +777,146 @@ rootFiber.firstEffect -----------> fiber -----------> fiber
 
 ## diff 算法 {#p0-diff}
 
+React 中的 Diff 算法，是用于比较新旧两个虚拟 DOM 树，找出需要更新的节点并进行更新的算法。React 的 Diff 算法实现基于以下假设：
+
+1. 两个不同类型的元素会产生不同的树形结构。
+2. 对于同一层级的一组子节点，它们可以通过唯一 id 匹配到相同的节点。
+3. 每个组件都有一个唯一标识符 key。
+
+基于以上假设，React 的 Diff 算法分为两个阶段：
+
+1. `O(n)` 的遍历，对比新旧两棵树的每一个节点，并记录节点的变更。在这个过程中，React 使用了双端队列（Double-ended queue）作为辅助数据结构，以保证遍历的高效性。
+2. `O(k)` 的反向遍历，根据记录的变更列表对 DOM 进行更新。
+
+在第一阶段中，React 的 Diff 算法会从两棵树的根节点开始，依次对比它们的子节点。如果某个节点在新旧两个树中都存在，那么就将其进行更新。如果新树中有新节点，那么就将其插入到旧树中对应的位置。如果旧树中有节点不存在于新树中，那么就将其从 DOM 树中移除。
+
+在第二阶段中，React 会根据记录的变更列表对 DOM 进行更新。这个过程中，React 会按照更新的优先级进行更新，优先更新需要移动的节点，其次更新需要删除的节点，最后再更新需要插入的节点。
+
+需要注意的是，React 的 Diff 算法并不保证一定找到最优解，但是它保证了在大多数情况下，找到的解都是比较优的。同时，React 的 Diff 算法也具有一定的限制，比如无法跨越组件边界进行优化，这也是 React 中尽量避免多层嵌套组件的原因之一。
+
+ 代码模拟实现
+
+React diff算法是一种优化算法，用于比较两个虚拟DOM树的差异，以最小化DOM操作的数量，从而提高渲染性能。
+以下是一个简单的实现React diff算法的代码：
+
+```js
+function diff (oldTree, newTree) {
+  const patches = {}
+  const index = 0
+  walk(oldTree, newTree, index, patches)
+  return patches
+}
+
+function walk (oldNode, newNode, index, patches) {
+  const currentPatch = []
+
+  if (!newNode) {
+    currentPatch.push({ type: 'REMOVE' })
+  } else if (typeof oldNode === 'string' && typeof newNode === 'string') {
+    if (oldNode !== newNode) {
+      currentPatch.push({ type: 'TEXT', content: newNode })
+    }
+  } else if (oldNode.type === newNode.type) {
+    const attrs = diffAttrs(oldNode.props, newNode.props)
+    if (Object.keys(attrs).length > 0) {
+      currentPatch.push({ type: 'ATTRS', attrs })
+    }
+    diffChildren(oldNode.children, newNode.children, index, patches, currentPatch)
+  } else {
+    currentPatch.push({ type: 'REPLACE', newNode })
+  }
+
+  if (currentPatch.length > 0) {
+    patches[index] = currentPatch
+  }
+}
+
+function diffAttrs (oldAttrs, newAttrs) {
+  const attrs = {}
+  for (const key in oldAttrs) {
+    if (oldAttrs[key] !== newAttrs[key]) {
+      attrs[key] = newAttrs[key]
+    }
+  }
+  for (const key in newAttrs) {
+    if (!oldAttrs.hasOwnProperty(key)) {
+      attrs[key] = newAttrs[key]
+    }
+  }
+  return attrs
+}
+
+function diffChildren (oldChildren, newChildren, index, patches, currentPatch) {
+  const diffs = listDiff(oldChildren, newChildren, 'key')
+  newChildren = diffs.children
+
+  if (diffs.moves.length > 0) {
+    const reorderPatch = { type: 'REORDER', moves: diffs.moves }
+    currentPatch.push(reorderPatch)
+  }
+
+  let lastIndex = index
+  oldChildren.forEach((child, i) => {
+    const newChild = newChildren[i]
+    index = lastIndex + 1
+    walk(child, newChild, index, patches)
+    lastIndex = index
+  })
+}
+
+function listDiff (oldList, newList, key) {
+  const oldMap = makeKeyIndexAndFree(oldList, key)
+  const newMap = makeKeyIndexAndFree(newList, key)
+
+  const newFree = newMap.free
+
+  const moves = []
+
+  const children = []
+  let i = 0
+  let item
+  let itemIndex
+  let freeIndex = 0
+
+  while (i < oldList.length) {
+    item = oldList[i]
+    itemIndex = oldMap.keyIndex[item[key]]
+    if (itemIndex === undefined) {
+      moves.push({ index: i, type: 'REMOVE' })
+    } else {
+      children.push(newList[itemIndex])
+      if (itemIndex >= freeIndex) {
+        freeIndex = itemIndex + 1
+      } else {
+        moves.push({ index: itemIndex, type: 'INSERT', item })
+      }
+    }
+    i++
+  }
+
+  const remaining = newFree.slice(freeIndex)
+  remaining.forEach(item => {
+    moves.push({ index: newList.indexOf(item), type: 'INSERT', item })
+  })
+
+  return { moves, children }
+}
+
+function makeKeyIndexAndFree (list, key) {
+  const keyIndex = {}
+  const free = []
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i]
+    if (item[key] !== undefined) {
+      keyIndex[item[key]] = i
+    } else {
+      free.push(item)
+    }
+  }
+  return { keyIndex, free }
+}
+```
+
 在 react 中：一个`DOM`节点在某一时刻最多会有4个节点和他相关。
 
 一个DOM节点在某一时刻最多会有4个节点和他相关。
@@ -874,6 +1014,14 @@ React 团队发现，在日常开发中，相较于新增和删除，更新组�
 **`newChildren`与`oldFiber`同时遍历完**
 
 那就是最理想的情况：只需在第一轮遍历进行组件更新
+
+在 React 中，当我们使用数组渲染节点列表时，通常需要给每个节点添加一个 `key` 属性，这是因为 React 需要通过 `key` 属性来判断是否需要更新某个节点，从而提高渲染性能。
+
+具体来说，React 在进行更新时，会根据 `key` 属性来判断哪些节点需要更新，哪些节点需要删除，哪些节点需要新增。如果两个节点的 `key` 值相同，则 React 认为它们是同一个节点，会尝试进行复用，否则会销毁旧节点并创建新节点。如果没有 `key` 属性，React 无法判断哪些节点是同一个节点，就需要进行全量更新，这会导致性能下降。
+
+另外，添加 `key` 属性还可以解决一些潜在的问题。例如，当我们通过 `map` 函数生成节点列表时，如果没有给节点添加 `key` 属性，当列表中的某个节点发生变化时，可能会导致其他节点的 `props` 或状态也被重置。如果给每个节点添加了唯一的 `key` 属性，就可以避免这种问题。
+
+因此，总的来说，为节点列表添加 `key` 属性可以提高渲染性能，并避免潜在的问题。
 
 > 源码如下： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L825)
 
@@ -1072,17 +1220,115 @@ function Counter() {
 
 ## React.Children.map 和 props.children 的区别 {#p3-react-children-map-props-children}
 
-## 类组件和函数组件的使用场景 {#p4-class-component-function-component}
+## 类组件和函数组件的使用场景 {#p2-class-component-function-component}
 
-## react 生命周期 {#p5-react-lifecycle}
+## react 生命周期 {#p2-react-lifecycle}
 
 ## 请求在哪个阶段发出，如何取消请求 {#p6-request-cancel}
 
-## shouldComponentUpdate 的作用 {#p7-should-component-update}
+## shouldComponentUpdate 的作用 {#p1-should-component-update}
 
-## state 和 props 区别 {#p8-state-props}
+## state 和 props 区别 {#p1-state-props}
 
-## 讲一下 setState 执行流程 {#p9-set-state-execution-flow}
+## setState  {#p0-set-state-execution-flow}
+
+在 React 中，`setState` 方法有时是异步的，有时是同步的，具体取决于使用方式和环境。
+
+当我们在 React 中调用 `setState` 方法时，React 会将新状态合并到组件的状态队列中，并在未来的某个时间更新组件的状态。这个更新过程是异步的，即不能保证在 `setState` 调用后立即更新状态，而是会将状态更新推迟到下一个渲染周期中。这种情况下，`setState` 方法会返回一个 `Promise` 对象，但该对象不包含任何有用的信息。
+
+然而，当 `setState` 方法被直接调用，而不是在事件处理函数、异步代码或生命周期函数中被调用时，更新过程是同步的。在这种情况下，React 会立即更新组件的状态，并在更新后立即执行一次重新渲染。这种情况下，`setState` 方法不会返回任何信息。
+
+需要注意的是，在 React 中异步更新状态的机制可以提高性能和优化页面渲染速度，因为它可以让 React 在适当的时候批量更新组件状态，从而避免过多的渲染和浏览器的性能问题。如果我们需要在更新状态后立即执行某些操作，可以使用 `setState` 方法的回调函数或生命周期函数 `componentDidUpdate` 来实现。例如：
+
+```js
+jsCopy codeclass MyComponent extends React.Component {
+ constructor(props) {
+ super(props);
+ this.state = { count: 0 };
+ }
+
+ handleClick() {
+ this.setState({ count: this.state.count + 1 }, () => {
+ console.log('New count:', this.state.count);
+ });
+ }
+
+ render() {
+ return (
+ <div>
+ <p>Count: {this.state.count}</p>
+ <button onClick={() => this.handleClick()}>Increment</button>
+ </div>
+ );
+ }
+}
+```
+
+这里的 `setState` 方法接受一个回调函数作为第二个参数，在状态更新完成后调用该函数并传递更新后的状态作为参数。在这个回调函数中可以执行任何需要在状态更新后立即执行的操作，例如输出调试信息、发送网络请求等。
+
+---------------------
+> 2023.04.19 更新
+
+如果**直接在setState后面获取state的值是获取不到的。**
+
+* 在React内部机制能检测到的地方， setState就是异步的；
+* 在React检测不到的地方，例如 原生事件`addEventListener`,`setInterval`,`setTimeout`，setState就是同步更新的
+
+setState并不是单纯的异步或同步，这其实与调用时的环境相关
+
+* 在合成事件 和 生命周期钩子(除componentDidUpdate) 中，setState是"异步"的；
+* 在 原生事件 和setTimeout 中，setState是同步的，可以马上获取更新后的值；
+
+**批量更新**
+多个顺序的setState不是同步地一个一个执行滴，会一个一个加入队列，然后最后一起执行。在 合成事件 和 生命周期钩子 中，setState更新队列时，存储的是 合并状态(Object.assign)。因此前面设置的 key 值会被后面所覆盖，最终只会执行一次更新。
+
+**异步现象原因**
+
+`setState 的“异步”并不是说内部由异步代码实现`，其实本身执行的过程和代码都是同步的，只是合成事件和生命钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，`当然可以通过第二个参数setState(partialState, callback)中的callback拿到更新后的结果。`
+
+`setState 并非真异步，只是看上去像异步。在源码中，通过 isBatchingUpdates 来判断`
+
+setState调用流程：
+
+1. 调用this.setState(newState)
+2. 将新状态newState存入pending队列
+3. 判断是否处于batch Update（isBatchingUpdates是否为true）
+
+* isBatchingUpdates=true，保存组件于dirtyComponents中，走异步更新流程，合并操作，延迟更新；
+* isBatchingUpdates=false，走同步过程。遍历所有的dirtyComponents，调用updateComponent，更新pending state or props
+
+![流程](https://foruda.gitee.com/images/1681866680280312338/0308d34b_7819612.png)
+
+**为什么直接修改this.state无效**
+
+setState本质是通过一个队列机制实现state更新的。 执行setState时，会将需要更新的state合并后放入状态队列，而不会立刻更新state，队列机制可以批量更新state。
+
+如果不通过setState而直接修改this.state，那么这个state不会放入状态队列中，下次调用setState时对状态队列进行合并时，会忽略之前直接被修改的state，这样我们就无法合并了，而且实际也没有把你想要的state更新上去
+
+参考文档：
+
+* [资料](https://juejin.cn/post/7204307381689532474#heading-5)
+
+在 React 18 中，`setState` 的行为仍然是异步的。React 团队并没有改变 `setState` 的默认行为，因为这会带来一些潜在的性能问题和不确定性。异步更新状态可以让 React 在适当的时候批量更新组件状态，从而避免过多的渲染和浏览器的性能问题。
+
+但是，React 18 引入了一个新的特性：批量更新（Batching）。当我们在事件处理函数、异步代码或生命周期函数中调用 `setState` 时，React 会将多个状态更新合并到同一个批次中，从而减少渲染的次数，提高应用的性能。这意味着，即使我们在多个地方调用 `setState` 方法，React 也会将这些调用合并到同一个更新队列中，并在下一个渲染周期中一次性更新所有状态。
+
+在 React 18 中，我们可以使用新的 `startTransition` API 来告诉 React，我们正在进行一次可中断的异步操作，并且希望在操作完成后批量更新组件状态。这个 API 的用法如下：
+
+```js
+import { startTransition } from 'react'
+
+function handleClick () {
+  startTransition(() => {
+    setState({ count: count + 1 })
+    // 执行其他异步操作
+  })
+}
+```
+
+在这个例子中，我们通过 `startTransition` API 包装 `setState` 和其他异步操作，告诉 React 我们正在进行一次可中断的异步操作，并且希望在操作完成后批量更新组件状态。这样做可以让我们的应用更加流畅和响应，并且可以提高用户体验。
+
+需要注意的是，`startTransition` API 并不是必须的，如果我们不使用这个 API，React 仍然会在适当的时候批量更新组件状态。这个 API 只是为了让我们更加精确地控制更新的时机，并在必要时进行优化。
 
 在 React 中，当调用`setState`时，会发生以下一系列事情：
 
@@ -1924,7 +2170,119 @@ Fiber 如何实现比较？双缓冲技术，在 diff 过程中创建新的 DOM 
 
 ## react 如何处理事件，Synthetic Event 的作用
 
-## react router
+在 React 中，绑定事件的原理是基于合成事件（SyntheticEvent）的机制。合成事件是一种由 React 自己实现的事件系统，它是对原生 DOM 事件的封装和优化，提供了一种统一的事件处理机制，可以跨浏览器保持一致的行为。
+
+当我们在 React 组件中使用 `onClick` 等事件处理函数时，实际上是在使用合成事件。React 使用一种称为“事件委托”的技术，在组件的最外层容器上注册事件监听器，然后根据事件的目标元素和事件类型来触发合适的事件处理函数。这种机制可以大大减少事件监听器的数量，提高事件处理的性能和效率。
+
+在使用合成事件时，React 会将事件处理函数包装成一个合成事件对象（SyntheticEvent），并将其传递给事件处理函数。合成事件对象包含了与原生 DOM 事件相同的属性和方法，例如 `target`、`currentTarget`、`preventDefault()` 等，但是它是由 React 实现的，并不是原生的 DOM 事件对象。因此，我们不能在合成事件对象上调用 `stopPropagation()` 或 `stopImmediatePropagation()` 等方法，而应该使用 `nativeEvent` 属性来访问原生 DOM 事件对象。
+
+绑定事件的实现原理也涉及到 React 的更新机制。当组件的状态或属性发生变化时，React 会对组件进行重新渲染，同时重新注册事件监听器。为了避免不必要的事件处理函数的创建和注册，React 会对事件处理函数进行缓存和复用，只有在事件处理函数发生变化时才会重新创建和注册新的事件处理函数。这种机制可以大大提高组件的性能和效率，尤其是在处理大量事件和频繁更新状态的情况下。
+
+在 React 中，合成事件是一种封装了浏览器原生事件对象的高级事件机制。它是由 React 提供的一种用于处理事件的抽象层，可以让开发者更方便地处理和管理事件。
+
+React 的合成事件机制提供了一些优秀的特性：
+
+1. 跨浏览器兼容性：React 的合成事件可以屏蔽浏览器的差异，保证在各种浏览器上运行一致。
+
+2. 性能优化：React 的合成事件可以对事件进行池化处理，重用事件对象，避免创建大量的事件对象，从而提高性能。
+
+3. 事件委托：React 的合成事件可以实现事件委托机制，将事件处理程序绑定在组件树的根节点上，统一管理和处理组件内部和外部的事件，从而避免多次绑定事件处理程序的问题。
+
+4. 支持自定义事件：React 的合成事件可以支持自定义事件，开发者可以自定义组件事件，提供更多的自定义能力。
+
+React 的合成事件机制通过事件冒泡和事件委托来实现。当在组件中触发事件时，React 会将该事件包装成一个合成事件对象，并在组件树中冒泡传递，直到根节点处。在组件树中，React 使用事件委托机制将事件处理程序绑定到根节点上，统一处理所有组件的事件。
+
+在处理合成事件时，React 提供了一些常用的事件处理函数，例如 `onClick`、`onMouseOver`、`onSubmit` 等，可以在组件中直接使用。此外，开发者还可以自定义事件处理函数，通过 `on` 前缀加上事件名称的方式来绑定自定义事件。例如，我们可以定义一个 `onCustomEvent` 方法来处理自定义事件：
+
+```jsx
+jsxCopy codeclass MyComponent extends React.Component {
+ handleCustomEvent() {
+ // 处理自定义事件
+ }
+
+ render() {
+ return (
+ <div>
+ <button onClick={this.handleCustomEvent}>触发自定义事件</button>
+ </div>
+ );
+ }
+}
+```
+
+在这个例子中，我们定义了一个名为 `handleCustomEvent` 的方法来处理自定义事件，然后在组件中通过 `onClick` 属性来绑定该方法。当用户点击按钮时，React 会将该事件包装成一个合成事件对象，并调用 `handleCustomEvent` 方法来处理事件。
+
+## router {#p0-router}
+
+React Router 是一个流行的第三方库，它允许在 React 应用程序中实现路由功能。React Router 支持两种路由方式：HashRouter 和 BrowserRouter。
+
+1. HashRouter
+
+HashRouter 使用 URL 中的 hash 部分（即 #）来实现路由。在 React 中，可以使用 `<HashRouter>` 组件来创建 HashRouter。例如：
+
+```jsx
+jsxCopy codeimport { HashRouter, Route, Link } from 'react-router-dom';
+
+function App() {
+ return (
+ <HashRouter>
+ <nav>
+ <ul>
+ <li>
+ <Link to="/">Home</Link>
+ </li>
+ <li>
+ <Link to="/about">About</Link>
+ </li>
+ </ul>
+ </nav>
+ <Route exact path="/" component={Home} />
+ <Route path="/about" component={About} />
+ </HashRouter>
+ );
+}
+```
+
+在使用 HashRouter 时，URL 中的路径看起来像这样：`http://example.com/#/about`。HashRouter 不会向服务器发送请求，因为 # 符号后面的内容被浏览器认为是 URL 的一部分，而不是服务器请求的一部分。这意味着在使用 HashRouter 时，React 应用程序可以在客户端上运行，而无需服务器支持。
+
+2. BrowserRouter
+
+BrowserRouter 使用 HTML5 的 history API 来实现路由。在 React 中，可以使用 `<BrowserRouter>` 组件来创建 BrowserRouter。例如：
+
+```jsx
+jsxCopy codeimport { BrowserRouter, Route, Link } from 'react-router-dom';
+
+function App() {
+ return (
+ <BrowserRouter>
+ <nav>
+ <ul>
+ <li>
+ <Link to="/">Home</Link>
+ </li>
+ <li>
+ <Link to="/about">About</Link>
+ </li>
+ </ul>
+ </nav>
+ <Route exact path="/" component={Home} />
+ <Route path="/about" component={About} />
+ </BrowserRouter>
+ );
+}
+```
+
+在使用 BrowserRouter 时，URL 中的路径看起来像这样：`http://example.com/about`。BrowserRouter 通过 history API 在客户端和服务器之间发送请求，因此需要服务器支持。
+
+3. 区别
+
+HashRouter 和 BrowserRouter 的主要区别在于它们如何处理 URL。HashRouter 使用 URL 中的 # 部分来实现路由，而 BrowserRouter 使用 HTML5 的 history API 来实现路由。HashRouter 不需要服务器支持，而 BrowserRouter 需要服务器支持。
+
+4. 原理
+
+HashRouter 的原理是通过监听 `window.location.hash` 的变化来实现路由。当用户点击链接时，React Router 会根据链接的路径渲染相应的组件，并将路径添加到 URL 中的 # 部分。当用户点击浏览器的“后退”按钮时，React Router 会根据上一个 URL 中的 # 部分来渲染相应的组件。
+
+BrowserRouter 的原理是通过 HTML5 的 history API 来实现路由。当用户点击链接时，React Router 会使用 history API 将路径添加到浏览器的历史记录中，并渲染相应的组件。当用户点击浏览器的“后退”
 
 React Router 和浏览器原生 history API 在路由管理上主要有以下几个区别：
 
@@ -2400,6 +2758,741 @@ Redux 的存储过程可以简单地分为以下几个步骤：
 Redux 的 reducer 是纯函数，它的作用是接收一个旧的状态和一个操作，返回一个新的状态，是一个纯粹的状态转换函数，因此在 reducer 中不能执行异步操作，否则会破坏 reducer 的纯函数特性。如果在 reducer 中执行异步操作，会导致 reducer 不可预测和不可重现，因为异步操作的结果是不确定的，而 reducer 必须保证在相同的输入条件下，产生相同的输出结果。同时，在 reducer 中执行异步操作可能会导致应用的状态不一致或者有延迟的问题。
 
 为了解决这个问题，Redux 提供了中间件的机制，比如 `redux-thunk`、`redux-saga` 等，可以在中间件中进行异步操作，然后再将异步操作的结果传递给 reducer 进行状态更新。这样就可以避免在 reducer 中执行异步操作，保证 reducer 的纯函数特性，同时也可以完成异步操作的需求。
+
+参考文章：[http://www.cnblogs.com/MuYunyun/p/6530715.html](http://www.cnblogs.com/MuYunyun/p/6530715.html)
+
+ 1.1、什么情况需要用redux？
+
+* 用户的使用方式复杂
+
+* 不同身份的用户有不同的使用方式（比如普通用户和管理员）
+* 多个用户之间可以协作
+* 与服务器大量交互，或者使用了WebSocket
+* View要从多个来源获取数据
+
+简单说，如果你的UI层非常简单，没有很多互动，Redux 就是不必要的，用了反而增加复杂性。多交互、多数据源场景就比较适合使用Redux。
+
+ 1.2、设计思想
+
+* Web 应用是一个状态机，视图与状态是一一对应的。
+
+* 所有的状态，保存在一个对象里面。
+
+ 1.3、Redux工作流程
+
+![react04-01](https://user-images.githubusercontent.com/22188674/224475588-53d35049-5ed3-4921-bd35-847a3859b23b.png)
+
+首先，用户发出 Action。
+`store.dispatch(action);`
+
+然后，Store 自动调用 Reducer，并且传入两个参数：当前 State 和收到的 Action。 Reducer 会返回新的 State 。
+`let nextState = todoApp(previousState, action);`
+
+State 一旦有变化，Store 就会调用监听函数。
+// 设置监听函数
+`store.subscribe(listener);`
+
+listener可以通过store.getState()得到当前状态。如果使用的是 React，这时可以触发重新渲染 View。
+
+```javascript
+function listerner () {
+  const newState = store.getState()
+  component.setState(newState)
+}
+```
+
+如果现在没理解以上流程，不要急，看完以下API就差不多能懂得Redux的核心机制了。
+
+Store 就是保存数据的地方，你可以把它看成一个容器。整个应用只能有一个 Store。
+
+Redux 提供createStore这个函数，用来生成 Store。
+下面代码中，createStore函数接受另一个函数作为参数，返回新生成的 Store 对象。
+
+```javascript
+import { createStore } from 'redux'
+const store = createStore(fn)
+```
+
+ State
+
+Store对象包含所有数据。如果想得到某个时点的数据，就要对 Store 生成快照。这种时点的数据集合，就叫做 State。
+当前时刻的 State，可以通过store.getState()拿到。
+
+```javascript
+import { createStore } from 'redux'
+const store = createStore(fn)
+
+const state = store.getState()
+```
+
+Redux 规定， 一个 State 对应一个 View。只要 State 相同，View 就相同。你知道 State，就知道 View 是什么样，反之亦然。
+
+ Action
+
+State 的变化，会导致 View 的变化。但是，用户接触不到 State，只能接触到 View。所以，State 的变化必须是 View 导致的。Action 就是 View 发出的通知，表示 State 应该要发生变化了。
+Action 是一个对象。其中的type属性是必须的，表示 Action 的名称。其他属性可以自由设置，社区有一个规范可以参考。
+
+```javascript
+const action = {
+  type: 'ADD_TODO',
+  payload: 'Learn Redux'
+}
+```
+
+上面代码中，Action 的名称是ADD_TODO，它携带的信息是字符串Learn Redux。
+可以这样理解，Action 描述当前发生的事情。改变 State 的唯一办法，就是使用 Action。它会运送数据到 Store。
+
+ Action Creator
+
+View 要发送多少种消息，就会有多少种 Action。如果都手写，会很麻烦。可以定义一个函数来生成 Action，这个函数就叫 Action Creator。
+
+```javascript
+const ADD_TODO = '添加 TODO'
+
+function addTodo (text) {
+  return {
+    type: ADD_TODO,
+    text
+  }
+}
+const action = addTodo('Learn Redux')
+```
+
+ store.dispatch()
+
+store.dispatch()是 View 发出 Action 的唯一方法。
+
+```javascript
+import { createStore } from 'redux'
+const store = createStore(fn)
+
+store.dispatch({
+  type: 'ADD_TODO',
+  payload: 'Learn Redux'
+})
+```
+
+上面代码中，store.dispatch接受一个 Action 对象作为参数，将它发送出去。
+结合 Action Creator，这段代码可以改写如下。
+
+```javascript
+store.dispatch(addTodo('Learn Redux'))
+```
+
+ Reducer
+
+Store 收到 Action 以后，必须给出一个新的 State，这样 View 才会发生变化。这种 State 的计算过程就叫做 Reducer。
+Reducer 是一个函数，它接受 Action 和当前 State 作为参数，返回一个新的 State。下面是一个实际的例子
+
+```javascript
+const defaultState = 0
+const reducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case 'ADD':
+      return state + action.payload
+    default:
+      return state
+  }
+}
+
+const state = reducer(1, {
+  type: 'ADD',
+  payload: 2
+})
+```
+
+上面代码中，reducer函数收到名为ADD的 Action 以后，就返回一个新的 State，作为加法的计算结果。
+其他运算的逻辑（比如减法），也可以根据 Action 的不同来实现。
+实际应用中，Reducer 函数不用像上面这样手动调用，store.dispatch方法会触发 Reducer 的自动执行。
+为此，Store 需要知道 Reducer 函数，做法就是在生成 Store 的时候，将 Reducer 传入createStore方法。
+
+```javascript
+import { createStore } from 'redux'
+const store = createStore(reducer)
+```
+
+上面代码中，createStore接受 Reducer 作为参数，生成一个新的 Store。
+以后每当store.dispatch发送过来一个新的 Action，就会自动调用 Reducer，得到新的 State。
+
+ store.subscribe()
+
+Store 允许使用store.subscribe方法设置监听函数，一旦 State 发生变化，就自动执行这个函数。
+
+```javascript
+import { createStore } from 'redux'
+const store = createStore(reducer)
+
+store.subscribe(listener)
+```
+
+显然，只要把 View 的更新函数（对于 React 项目，就是组件的render方法或setState方法）放入listen，就会实现 View 的自动渲染。
+store.subscribe方法返回一个函数，调用这个函数就可以解除监听。
+
+```javascript
+const unsubscribe = store.subscribe(() =>
+  console.log(store.getState())
+)
+unsubscribe()
+```
+
+<div id="03">3、中间件与异步操作</div>
+
+一个关键问题没有解决：异步操作怎么办？Action 发出以后，Reducer 立即算出 State，这叫做同步；Action 发出以后，过一段时间再执行 Reducer，这就是异步。
+怎么才能 Reducer 在异步操作结束后自动执行呢？这就要用到新的工具：中间件（middleware）。
+
+为了理解中间件，让我们站在框架作者的角度思考问题：如果要添加功能，你会在哪个环节添加？
+（1）Reducer：纯函数，只承担计算 State 的功能，不合适承担其他功能，也承担不了，因为理论上，纯函数不能进行读写操作。
+（2）View：与 State 一一对应，可以看作 State 的视觉层，也不合适承担其他功能。
+（3）Action：存放数据的对象，即消息的载体，只能被别人操作，自己不能进行任何操作。
+想来想去，只有发送 Action 的这个步骤，即store.dispatch()方法，可以添加功能。
+
+ 中间件的用法
+
+本文不涉及如何编写中间件，因为常用的中间件都有现成的，只要引用别人写好的模块即可。
+
+```javascript
+import { applyMiddleware, createStore } from 'redux'
+import createLogger from 'redux-logger'
+const logger = createLogger()
+
+const store = createStore(
+  reducer,
+  applyMiddleware(logger)
+)
+```
+
+上面代码中，redux-logger提供一个生成器createLogger，可以生成日志中间件logger。
+然后，将它放在applyMiddleware方法之中，传入createStore方法，就完成了store.dispatch()的功能增强。
+
+这里有两点需要注意：
+（1）createStore方法可以接受整个应用的初始状态作为参数，那样的话，applyMiddleware就是第三个参数了。
+
+```javascript
+const store = createStore(
+  reducer,
+  initial_state,
+  applyMiddleware(logger)
+)
+```
+
+（2）中间件的次序有讲究。
+
+```javascript
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk, promise, logger)
+)
+```
+
+上面代码中，applyMiddleware方法的三个参数，就是三个中间件。有的中间件有次序要求，使用前要查一下文档。比如，logger就一定要放在最后，否则输出结果会不正确。
+
+<div id="04">4、异步操作的基本思路</div>
+
+理解了中间件以后，就可以处理异步操作了。
+
+同步操作只要发出一种 Action 即可，异步操作的差别是它要发出三种 Action。
+
+* 操作发起时的 Action
+* 操作成功时的 Action
+* 操作失败时的 Action
+
+以向服务器取出数据为例，三种 Action 可以有两种不同的写法。
+
+```
+// 写法一：名称相同，参数不同
+{ type: 'FETCH_POSTS' }
+{ type: 'FETCH_POSTS', status: 'error', error: 'Oops' }
+{ type: 'FETCH_POSTS', status: 'success', response: { ... } }
+
+// 写法二：名称不同
+{ type: 'FETCH_POSTS_REQUEST' }
+{ type: 'FETCH_POSTS_FAILURE', error: 'Oops' }
+{ type: 'FETCH_POSTS_SUCCESS', response: { ... } }
+```
+
+除了 Action 种类不同，异步操作的 State 也要进行改造，反映不同的操作状态。下面是 State 的一个例子。
+
+```javascript
+const state = {
+  // ...
+  isFetching: true,
+  didInvalidate: true,
+  lastUpdated: 'xxxxxxx'
+}
+```
+
+上面代码中，State 的属性isFetching表示是否在抓取数据。didInvalidate表示数据是否过时，lastUpdated表示上一次更新时间。
+
+现在，整个异步操作的思路就很清楚了。
+
+* 操作开始时，送出一个 Action，触发 State 更新为"正在操作"状态，View 重新渲染
+* 操作结束后，再送出一个 Action，触发 State 更新为"操作结束"状态，View 再一次重新渲染
+
+ 总结
+
+在异步请求的时候，其实很多时候都是直接发出请求如果请求成功了之后，在存入reducers, 并不是不管成功与否，都存入reducers。
+
+ redux-thunk中间件
+
+异步操作至少要送出两个 Action：用户触发第一个 Action，这个跟同步操作一样，没有问题；如何才能在操作结束时，系统自动送出第二个 Action 呢？
+奥妙就在 Action Creator 之中。
+
+```javascript
+class AsyncApp extends Component {
+  componentDidMount () {
+    const { dispatch, selectedPost } = this.props
+    dispatch(getApplyList(selectedPost))
+  }
+}
+// ...
+```
+
+上面代码是一个异步组件的例子。加载成功后（componentDidMount方法），它送出了（dispatch方法）一个 Action，向服务器要求数据 fetchPosts(selectedSubreddit)。
+这里的fetchPosts就是 Action Creator。
+下面就是getApplyList的代码，关键之处就在里面， 这是我在公司的代码风格写法。
+
+```javascript
+export function getApplyList (query) {
+  return function (dispatch) {
+    dispatch(modalUpdate({
+      loadingTable: true
+    }))
+    fetch('apply', query)
+      .then(function (res) {
+        dispatch(updateApply(res.data)) // 这个是调用的action Mppper
+        dispatch(modalUpdate({
+          loadingTable: false
+        }))
+      }).catch(function (err) {
+        dispatch(modalUpdate({
+          pageWarn: err.message,
+          loadingTable: false
+        }))
+      })
+  }
+}
+
+// 对应的action Mapper
+export function updateApply (data) {
+  return {
+    type: UPDATE_APPLY,
+    data
+  }
+}
+```
+
+这里是博客文章的代码风格写法
+
+```javascript
+const fetchPosts = postTitle => (dispatch, getState) => {
+  dispatch(requestPosts(postTitle))
+  return fetch(`/some/API/${postTitle}.json`)
+    .then(response => response.json())
+    .then(json => dispatch(receivePosts(postTitle, json)))
+}
+
+// 使用方法一
+store.dispatch(fetchPosts('reactjs'))
+// 使用方法二
+store.dispatch(fetchPosts('reactjs')).then(() =>
+  console.log(store.getState())
+)
+```
+
+上面代码中，fetchPosts是一个Action Creator（动作生成器），返回一个函数。
+这个函数执行后，先发出一个Action（requestPosts(postTitle)），然后进行异步操作。
+拿到结果后，先将结果转成 JSON 格式，然后再发出一个 Action（ receivePosts(postTitle, json)）。
+
+上面代码中，有几个地方需要注意。
+
+* （1）fetchPosts返回了一个函数，而普通的 Action Creator 默认返回一个对象。
+* （2）返回的函数的参数是dispatch和getState这两个 Redux 方法，普通的 Action Creator 的参数是 Action 的内容。
+* （3）在返回的函数之中，先发出一个 Action（requestPosts(postTitle)），表示操作开始。
+* （4）异步操作结束之后，再发出一个 Action（receivePosts(postTitle, json)），表示操作结束。
+
+这样的处理，就解决了自动发送第二个 Action 的问题。但是，又带来了一个新的问题，Action 是由store.dispatch方法发送的。
+而store.dispatch方法正常情况下，参数只能是对象，不能是函数。
+这时，就要使用中间件**redux-thunk**。
+
+```javascript
+import { createStore, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+import reducer from './reducers'
+
+// Note: this API requires redux@>=3.1.0
+const store = createStore(
+  reducer,
+  applyMiddleware(thunk)
+)
+```
+
+上面代码使用redux-thunk中间件，改造store.dispatch，使得后者可以接受函数作为参数。
+因此，异步操作的第一种解决方案就是，写出一个返回函数的 Action Creator，然后使用redux-thunk中间件改造store.dispatch。
+
+<div id="05">5、React-Redux的用法</div>
+
+为了方便使用，Redux 的作者封装了一个 React 专用的库 React-Redux，本文主要介绍它。
+这个库是可以选用的。实际项目中，你应该权衡一下，是直接使用 Redux，还是使用 React-Redux。后者虽然提供了便利，但是需要掌握额外的 API，并且要遵守它的组件拆分规范。
+
+本人项目中使用的最多的就是 react-redux;
+
+React-Redux 将所有组件分成两大类：**UI 组件（presentational component）和容器组件（container component）**。
+
+ UI组件
+
+UI 组件有以下几个特征。
+
+* 只负责 UI 的呈现，不带有任何业务逻辑
+* 没有状态（即不使用this.state这个变量）
+* 所有数据都由参数（this.props）提供
+* 不使用任何 Redux 的 API
+
+下面就是一个 UI 组件的例子。
+
+```javascript
+const Title = value => <h1>{value}</h1>
+```
+
+因为不含有状态，UI 组件又称为"纯组件"，即它纯函数一样，纯粹由参数决定它的值。
+
+ 容器组件
+
+容器组件的特征恰恰相反。
+
+* 负责管理数据和业务逻辑，不负责 UI 的呈现
+* 带有内部状态
+* 使用 Redux 的 API
+
+总之，只要记住一句话就可以了：UI 组件负责 UI 的呈现，容器组件负责管理数据和逻辑。
+
+你可能会问，如果一个组件既有 UI 又有业务逻辑，那怎么办？回答是，将它拆分成下面的结构：外面是一个容器组件，里面包了一个UI 组件。前者负责与外部的通信，将数据传给后者，由后者渲染出视图。
+React-Redux 规定，所有的 UI 组件都由用户提供，容器组件则是由 React-Redux 自动生成。也就是说，用户负责视觉层，状态管理则是全部交给它。
+
+ connect()
+
+React-Redux 提供connect方法，用于从 UI 组件生成容器组件。connect的意思，就是将这两种组件连起来。
+connect方法的完整 API 如下。下面这个例子是我在项目中使用的一个完整结构示例
+
+```javascript
+/* eslint-disable react/jsx-no-target-blank */
+import React, { Component } from 'react'
+import { push } from 'react-router-redux'
+import { connect } from 'react-redux'
+import PropTypes from 'prop-types'
+import { Button, message } from 'antd'
+
+// mapStateToProps
+function propMap (state, ownProps) {
+  return {
+    modal: state.modal,
+    routing: ownProps
+  }
+}
+
+class InvoiceList extends Component {
+  constructor () {
+    super()
+    this.state = {
+      invoiceListData: {}
+    }
+    this.handleGetList = this.handleGetList.bind(this)
+  }
+
+  componentDidMount () {
+    // 每次刷新空拉数据一次
+    this.handleGetList()
+  }
+
+  render () {
+    const { routing, modal } = this.props
+    return (
+ <div className="app-reimbursement-invoice-list">
+ <ReimbursementHeaderNav current="invoice-list"/>
+ {/* ....... */}
+ </div>
+    )
+  }
+
+  // 点击查询数据
+  handleGetList (filters, type) {
+    console.log('点击查询数据')
+  }
+}
+InvoiceList.propTypes = {
+  routing: PropTypes.object.isRequired,
+  modal: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired
+}
+export default connect(propMap)(InvoiceList)
+```
+
+InvoiceList就是由 React-Redux 通过connect方法自动生成的容器组件。
+connect方法接受两个参数：mapStateToProps和mapDispatchToProps。
+它们定义了 UI 组件的业务逻辑。前者负责输入逻辑，即将state映射到 UI 组件的参数（props），后者负责输出逻辑，即将用户对 UI 组件的操作映射成 Action。
+通常我们只使用了第一个参数；
+
+ mapStateToProps
+
+mapStateToProps是一个函数。它的作用就是像它的名字那样，建立一个从（外部的）state对象到（UI 组件的）props对象的映射关系。
+作为函数，mapStateToProps执行后应该返回一个对象，里面的每一个键值对就是一个映射。
+
+```javascript
+const mapStateToProps = (state) => {
+  return {
+    todos: getVisibleTodos(state.todos, state.visibilityFilter)
+  }
+}
+```
+
+上面代码中，mapStateToProps是一个函数，它接受state作为参数，返回一个对象。这个对象有一个todos属性，代表 UI 组件的同名参数，
+后面的getVisibleTodos也是一个函数，可以从state算出 todos 的值。
+下面就是getVisibleTodos的一个例子，用来算出todos。
+
+```javascript
+const getVisibleTodos = (todos, filter) => {
+  switch (filter) {
+    case 'SHOW_ALL':
+      return todos
+    case 'SHOW_COMPLETED':
+      return todos.filter(t => t.completed)
+    case 'SHOW_ACTIVE':
+      return todos.filter(t => !t.completed)
+    default:
+      throw new Error('Unknown filter: ' + filter)
+  }
+}
+```
+
+mapStateToProps会订阅 Store，每当state更新的时候，就会自动执行，重新计算 UI 组件的参数，从而触发 UI 组件的重新渲染。
+mapStateToProps的第一个参数总是state对象，还可以使用第二个参数，代表容器组件的props对象
+
+```javascript
+const mapStateToProps = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
+  }
+}
+```
+
+使用ownProps作为参数后，如果容器组件的参数发生变化，也会引发 UI 组件重新渲染。
+connect方法可以省略mapStateToProps参数，那样的话，UI 组件就不会订阅Store，就是说 Store 的更新不会引起 UI 组件的更新。
+
+ mapDispatchToProps()
+
+mapDispatchToProps是connect函数的第二个参数，用来建立 UI 组件的参数到store.dispatch方法的映射。
+也就是说，它定义了哪些用户的操作应该当作 Action，传给 Store。它可以是一个函数，也可以是一个对象。
+
+如果mapDispatchToProps是一个函数，会得到dispatch和ownProps（容器组件的props对象）两个参数。
+
+```javascript
+const mapDispatchToProps = (
+  dispatch,
+  ownProps
+) => {
+  return {
+    onClick: () => {
+      dispatch({
+        type: 'SET_VISIBILITY_FILTER',
+        filter: ownProps.filter
+      })
+    }
+  }
+}
+```
+
+从上面代码可以看到，mapDispatchToProps作为函数，应该返回一个对象，该对象的每个键值对都是一个映射，定义了 UI 组件的参数怎样发出 Action。
+
+如果mapDispatchToProps是一个对象，它的每个键名也是对应 UI 组件的同名参数，键值应该是一个函数，会被当作 Action creator ，
+返回的 Action 会由 Redux 自动发出。举例来说，上面的mapDispatchToProps写成对象就是下面这样。
+
+```ecmascript 6
+const mapDispatchToProps = {
+ onClick: (filter) => {
+ type: 'SET_VISIBILITY_FILTER',
+ filter: filter
+ }
+}
+```
+
+总结，实际上项目开发过程中， 只用得上第一个参数，第二个参数一般来说是封装在reducers 层次里面的。不建议直接放置在组建成此调用。因为会导致使用和数据上的紊乱。
+
+ `<Provider>` 组件
+
+connect方法生成容器组件以后，需要让容器组件拿到state对象，才能生成 UI 组件的参数。React-Redux 提供Provider组件，可以让容器组件拿到state。
+
+```javascript
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
+import todoApp from './reducers'
+import App from './components/App'
+
+const store = createStore(todoApp)
+
+render(
+ <Provider store={store}>
+ <App />
+ </Provider>,
+ document.getElementById('root')
+)
+```
+
+上面代码中，Provider在根组件外面包了一层，这样一来，App的所有子组件就默认都可以拿到state了。
+
+ React-Router路由库
+
+使用React-Router的项目，与其他项目没有不同之处，也是使用Provider在Router外面包一层，毕竟Provider的唯一功能就是传入store对象。
+
+```javascript
+const Root = ({ store }) => (
+ <Provider store={store}>
+ <Router>
+ <Route path="/" component={App} />
+ </Router>
+ </Provider>
+)
+```
+
+## redux-thunk {#p0-redux-think}
+
+解redux和redux的中间件redux-thunk
+
+* [Action的认识](#Action的认识)
+* [Reducer的认识](#Reducer的认识)
+* [Store的认识](#Store的认识)
+* [上面三者的使用案例](#上面三者的使用案例)
+* [Action创建函数](#Action创建函数)
+* [redux-thunk中间件的认识](#redux-thunk中间件的认识)
+* [参考文章](#参考文章)
+
+ction的认识
+
+简单点说Action就是一个对象，一个必须带key为type的对象[value是自己定义的]，其他的key就根据用户自己喜好自己定义:
+以下都是action的定义
+
+```
+1、{type:”ADD”}
+2、{type:”ADD”,key1:”“,key2:”“}
+```
+
+educer的认识
+
+别主观意识就是类似数组中的reduce，也不是只能定义reducer，它仅仅是一个称呼，纯函数，
+函数名次自己随便定义都可以，但是函数的参数只能是**state与action**,
+可以简单的理解为一个工厂函数，传递一个旧的state通过加工后产出一个新的state：
+简单的代码如下：
+
+```js
+function count (state = 0, action) {
+  switch (action.type) {
+    case 'ADD':
+      return state + 1
+    case 'REDUCER':
+      return state - 1
+    default:
+      return state
+  }
+}
+```
+
+如果当state是对象的时候上面的代码是错误的:
+redux里面规定state是不能修改的。
+在javascript中对象是引用数据类型，当你修改了state的时候，变化前后的两个state将会指向同一个地址的，react-redux就会以为这两个相同的state，因为不会执行渲染
+解决办法，我们用Object.assign去处理，如有不清楚Object.assign，请参考Object.assign文档
+
+tore的认识
+
+store是一个全局对象，将action和reducer以及state联系在一起，主要职责:
+维护应用的state
+提供getState()方法获取state
+提供dispatch(action)方法更新state
+通过subscribe(方法)注册监听器
+
+面三者的使用案例
+
+```js
+'use strict'
+import { createStore } from 'redux'
+function count (state = 0, action) {
+  switch (action.type) {
+    case 'ADD':
+      return state + 1
+    case 'REDUCER':
+      return state - 1
+    default:
+      return state
+  }
+}
+
+const store = createStore(count)
+
+let currentValue = store.getState()
+console.log('当前的值:', currentValue)
+
+// 定义一个监听的方法
+const listener = () => {
+  const previosValue = currentValue
+  currentValue = store.getState()
+  console.log('上一个值:', previosValue, '当前值:', currentValue)
+}
+// 创建一个监听
+store.subscribe(listener)
+// 分发任务
+store.dispatch({ type: 'ADD' })
+store.dispatch({ type: 'ADD' })
+store.dispatch({ type: 'ADD' })
+store.dispatch({ type: 'REDUCER' })
+```
+
+ction创建函数
+
+上面我们说的action是一个对象，只是含有type的key的对象
+action创建函数的意思就是创建一个action的函数，函数返回一个对象
+
+```js
+function add () {
+  return {
+    type: 'ADD'
+  }
+}
+function reducer () {
+  return {
+    type: 'REDUCER'
+  }
+}
+```
+
+使用的时候直接store.dispatch(add());就可以
+
+action创建函数的意义:
+action创建函数表面是返回一个对象
+真正的意义在于逻辑的封装
+
+edux-thunk中间件的认识
+
+redux-thunk中间件可以让action创建函数先不返回一个action对象，而是返回一个函数，
+函数传递两个参数(dispatch,getState),在函数体内进行业务逻辑的封装
+
+```js
+function add () {
+  return {
+    type: 'ADD'
+  }
+}
+function addIfOdd () {
+  return (dispatch, getState) => {
+    const currentValue = getState()
+    if (currentValue % 2 == 0) {
+      return false
+    }
+    // 分发一个任务
+    dispatch(add())
+  }
+}
+```
+
+考文章
+
+* [理解redux和redux的中间件redux-thunk的认识](https://blog.csdn.net/kuangshp128/article/details/67632683)
 
 ## mobx
 
@@ -6781,3 +7874,37 @@ console.log('career',career);
 2. 虚拟DOM的优势在于节点进行改动的时候尽量减少开销
 3. React从来没说过虚拟DOM会比原生更快。
 4. 框架的本质是提升开发效率，让我们的注意力更集中于数据
+
+## lazy import
+
+React 的 `lazy` 函数可以实现代码分割，即将代码按需加载，以达到优化页面加载速度的目的。它的原理是基于 JavaScript 的动态 `import()` 方法实现的。
+
+当我们使用 `lazy` 函数加载一个组件时，React 会自动将该组件的代码单独打包成一个单独的 JavaScript 文件，并在需要时通过网络请求加载该文件。具体来说，`lazy` 函数返回的是一个特殊的组件，该组件在加载时会调用传入的函数并异步加载组件代码。一般来说，我们会将异步加载的组件通过 `import()` 方法引入，例如：
+
+```js
+jsCopy codeconst MyComponent = React.lazy(() => import('./MyComponent'));
+```
+
+这里的 `import()` 方法会返回一个 Promise，该 Promise 在组件代码加载完成后会 resolve，然后通过 React 渲染该组件。
+
+需要注意的是，由于异步加载组件的代码是在运行时执行的，而不是在构建时，因此需要使用符合 ECMAScript 标准的动态 `import()` 方法。此外，在使用 `lazy` 函数时还需要将组件包裹在 `Suspense` 组件中，以处理组件加载时的占位符或错误状态。例如：
+
+```js
+jsCopy codeimport React, { lazy, Suspense } from 'react';
+
+const MyComponent = lazy(() => import('./MyComponent'));
+
+function App() {
+ return (
+ <div>
+ <Suspense fallback={<div>Loading...</div>}>
+ <MyComponent />
+ </Suspense>
+ </div>
+ );
+}
+```
+
+这里的 `fallback` 属性指定了组件加载时的占位符，当组件加载完成后会自动替换成真正的组件。
+
+综上所述，React 的 `lazy` 函数通过使用动态 `import()` 方法实现了组件代码的按需加载，以达到优化页面加载速度的目的。

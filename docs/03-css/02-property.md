@@ -2,6 +2,198 @@
 
 ## flex {#p0-flex}
 
+flex 布局的学习
+
+* [Flex 布局教程：语法篇](http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html)
+* [Flex 布局教程：实例篇](http://www.ruanyifeng.com/blog/2015/07/flex-examples.html)
+* [Flex 布局教程：实例篇代码](https://github.com/JailBreakC/flex-box-demo)
+
+器属性
+
+以下6个属性设置在容器上。
+
+```
+flex-direction
+flex-wrap
+flex-flow
+justify-content
+align-items
+align-content
+```
+
+ flex-direction属性
+
+属性决定主轴的方向（即项目的排列方向）。
+
+```css
+.box {
+ flex-direction: row | row-reverse | column | column-reverse;
+}
+```
+
+* row（默认值）：主轴为水平方向，起点在左端。
+* row-reverse：主轴为水平方向，起点在右端。
+* column：主轴为垂直方向，起点在上沿。
+* column-reverse：主轴为垂直方向，起点在下沿。
+
+ flex-wrap属性
+
+默认情况下，项目都排在一条线（又称"轴线"）上。flex-wrap属性定义，如果一条轴线排不下，如何换行。
+
+```
+.box{
+ flex-wrap: nowrap | wrap | wrap-reverse;
+}
+```
+
+它可能取三个值。
+（1）nowrap（默认）：不换行。
+（2）wrap：换行，第一行在上方。
+（3）wrap-reverse：换行，第一行在下方。
+
+ flex-flow
+
+flex-flow属性是flex-direction属性和flex-wrap属性的简写形式，默认值为row nowrap。
+
+```css
+.box {
+ flex-flow: <flex-direction> || <flex-wrap>;
+}
+```
+
+ justify-content属性
+
+属性定义了项目在主轴上的对齐方式。
+
+```
+.box {
+ justify-content: flex-start | flex-end | center | space-between | space-around;
+}
+```
+
+它可能取5个值，具体对齐方式与轴的方向有关。下面假设主轴为从左到右。
+
+ flex-start（默认值）：左对齐
+ flex-end：右对齐
+ center： 居中
+ space-between：两端对齐，项目之间的间隔都相等。
+ space-around：每个项目两侧的间隔相等。所以，项目之间的间隔比项目与边框的间隔大一倍。
+
+ align-items属性
+
+定义项目在交叉轴上如何对齐。
+
+```
+.box {
+ align-items: flex-start | flex-end | center | baseline | stretch;
+}
+```
+
+它可能取5个值。具体的对齐方式与交叉轴的方向有关，下面假设交叉轴从上到下。
+
+ flex-start：交叉轴的起点对齐。
+ flex-end：交叉轴的终点对齐。
+ center：交叉轴的中点对齐。
+ baseline: 项目的第一行文字的基线对齐。
+ stretch（默认值）：如果项目未设置高度或设为auto，将占满整个容器的高度。
+
+ align-content属性
+
+定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。
+
+```
+.box {
+ align-content: flex-start | flex-end | center | space-between | space-around | stretch;
+}
+```
+
+ flex-start：与交叉轴的起点对齐。
+ flex-end：与交叉轴的终点对齐。
+ center：与交叉轴的中点对齐。
+ space-between：与交叉轴两端对齐，轴线之间的间隔平均分布。
+ space-around：每根轴线两侧的间隔都相等。所以，轴线之间的间隔比轴线与边框的间隔大一倍。
+ stretch（默认值）：轴线占满整个交叉轴。
+
+目的属性
+
+以下6个属性设置在项目上。
+
+ order
+ flex-grow
+ flex-shrink
+ flex-basis
+ flex
+ align-self
+
+ order属性
+
+定义项目的排列顺序。数值越小，排列越靠前，默认为0。
+
+```
+.item {
+ order: <integer>;
+}
+```
+
+ flex-grow
+
+定义项目的放大比例，默认为0，即如果存在剩余空间，也不放大。
+
+如果所有项目的flex-grow属性都为1，则它们将等分剩余空间（如果有的话）。
+如果一个项目的flex-grow属性为2，其他项目都为1，则前者占据的剩余空间将比其他项多一倍。
+
+ flex-shrink属性
+
+flex-shrink属性定义了项目的缩小比例，默认为1，即如果空间不足，该项目将缩小。
+
+如果所有项目的flex-shrink属性都为1，当空间不足时，都将等比例缩小。
+如果一个项目的flex-shrink属性为0，其他项目都为1，则空间不足时，前者不缩小。
+
+ flex-basis
+
+定义了在分配多余空间之前，项目占据的主轴空间（main size）。
+浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为auto，即项目的本来大小。
+
+```
+.item {
+ flex-basis: <length> | auto; // default auto */
+}
+```
+
+它可以设为跟width或height属性一样的值（比如350px），则项目将占据固定空间。
+
+ flex属性
+
+是flex-grow, flex-shrink 和 flex-basis的简写，默认值为0 1 auto。后两个属性可选。
+
+```
+.item {
+ flex: none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
+}
+```
+
+该属性有两个快捷值：`auto (1 1 auto) 和 none (0 0 auto)`。
+建议优先使用这个属性，而不是单独写三个分离的属性，因为浏览器会推算相关值。
+
+ align-self属性
+
+align-self属性允许单个项目有与其他项目不一样的对齐方式，可覆盖align-items属性。
+默认值为auto，表示继承父元素的align-items属性，如果没有父元素，则等同于stretch。
+
+```
+.item {
+ align-self: auto | flex-start | flex-end | center | baseline | stretch;
+}
+```
+
+该属性可能取6个值，除了auto，其他都与align-items属性完全一致。
+
+ 参考文章
+
+* [lex 布局中固定宽度不起作用，被压缩了](https://www.jianshu.com/p/4a8825a17181)
+
+* [Flex弹性布局（附超Q小demo）](https://juejin.im/post/5cba07005188251b960f56eb)
+
 Flex 布局（即 Flexible Box 布局）提供了一种更有效的方式来布置、对齐和分布容器内项目的空间，即使它们的大小是未知或者动态变化的。以下是 Flex 布局中一些常用属性及其作用的简介：
 
  容器属性（应用于 flex 容器）
@@ -137,8 +329,6 @@ Flex 布局（即 Flexible Box 布局）提供了一种更有效的方式来布�
 在这个例子中，`.child1`设置了`z-index: 999`，`.child2`设置了`z-index: 0`，并且它们都在一个具有`z-index: 1`的父元素中。由于父元素创建了一个堆叠上下文，`.child1`和`.child2`会在这个堆叠上下文中按照它们的`z-index`值进行堆叠，所以`.child1`会显示在`.child2`之上。
 
 但是，如果将父元素的`z-index`值设置为 0，或者去除父元素的定位属性，那么`.child1`和`.child2`的堆叠顺序可能会发生变化，具体取决于浏览器的默认行为和 HTML 结构的顺序。
-
-## margin 塌陷
 
 ## position 属性 {#p0-position}
 
@@ -318,6 +508,419 @@ if (window.Worker) {
 
 1. 采用 clear 属性清除塌陷
 2. 创建新的 BFC 清除浮动塌陷
+
+除浮动的解决方案 （以下提供了八种解决方式）
+
+ 1、利用div定义height
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red; /*解决代码*/
+ height: 200px;
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ margin-top: 10px
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：父级div手动定义height，就解决了父级div无法自动获取到高度的问题。
+
+优点：简单、代码少、容易掌握
+
+缺点：只适合高度固定的布局，要给出精确的高度，如果高度和父级div不一样时，会产生问题
+
+**建议：不推荐使用，只建议高度固定的布局时使用**
+
+ 2、结尾处加空div标签 clear:both
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ margin-top: 10px
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+
+ /*清除浮动代码*/
+ .clearfloat {
+ clear: both
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+ <div class="clearfloat"></div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：添加一个空div，利用css提高的clear:both清除浮动，让父级div能自动获取到高度
+
+优点：简单、代码少、浏览器支持好、不容易出现怪问题
+
+缺点：不少初学者不理解原理；如果页面浮动布局多，就要增加很多空div，让人感觉很不好
+
+**建议：不推荐使用，但此方法是以前主要使用的一种清除浮动方法**
+
+ 3、父级div定义 伪类:after 和 zoom
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red;
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ margin-top: 10px
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+
+ /*清除浮动代码*/
+ .clearfloat:after {
+ display: block;
+ clear: both;
+ content: "";
+ visibility: hidden;
+ height: 0
+ }
+
+ .clearfloat {
+ zoom: 1
+ }
+</style>
+<div class="div1 clearfloat">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：IE8以上和非IE浏览器才支持:after，原理和方法2有点类似，zoom(IE转有属性)可解决ie6,ie7浮动问题
+
+优点：浏览器支持好、不容易出现怪问题（目前：大型网站都有使用，如：腾迅，网易，新浪等等）
+
+缺点：代码多、不少初学者不理解原理，要两句代码结合使用才能让主流浏览器都支持。
+
+**建议：推荐使用，建议定义公共类，以减少CSS代码。**
+
+ 4、父级div定义 overflow:hidden
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red; /*解决代码*/
+ width: 98%;
+ overflow: hidden
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ margin-top: 10px;
+ width: 98%
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：必须定义width或zoom:1，同时不能定义height，使用overflow:hidden时，浏览器会自动检查浮动区域的高度
+
+优点：简单、代码少、浏览器支持好
+
+缺点：不能和position配合使用，因为超出的尺寸的会被隐藏。
+
+**建议：只推荐没有使用position或对overflow:hidden理解比较深的朋友使用。**
+
+ 5、父级div定义 overflow:auto
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red; /*解决代码*/
+ width: 98%;
+ overflow: auto
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ margin-top: 10px;
+ width: 98%
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：必须定义width或zoom:1，同时不能定义height，使用overflow:auto时，浏览器会自动检查浮动区域的高度
+
+优点：简单、代码少、浏览器支持好
+
+缺点：内部宽高超过父级div时，会出现滚动条。
+
+**建议：不推荐使用，如果你需要出现滚动条或者确保你的代码不会出现滚动条就使用吧。**
+
+ 6、父级div 也一起浮动
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red; /*解决代码*/
+ width: 98%;
+ margin-bottom: 10px;
+ float: left
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ width: 98%; /*解决代码*/
+ clear: both
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：所有代码一起浮动，就变成了一个整体
+
+优点：没有优点
+
+缺点：会产生新的浮动问题。
+
+**建议：不推荐使用，只作了解。**
+
+ 7、父级div定义 display:table
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red; /*解决代码*/
+ width: 98%;
+ display: table;
+ margin-bottom: 10px;
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px;
+ width: 98%;
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：将div属性变成表格
+
+优点：没有优点
+
+缺点：会产生新的未知问题。
+
+**建议：不推荐使用，只作了解。**
+
+ 8、结尾处加 br标签 clear:both
+
+```html
+<style type="text/css">
+ .div1 {
+ background: #000080;
+ border: 1px solid red;
+ margin-bottom: 10px;
+ zoom: 1
+ }
+
+ .div2 {
+ background: #800080;
+ border: 1px solid red;
+ height: 100px
+ }
+
+ .left {
+ float: left;
+ width: 20%;
+ height: 200px;
+ background: #DDD
+ }
+
+ .right {
+ float: right;
+ width: 30%;
+ height: 80px;
+ background: #DDD
+ }
+
+ .clearfloat {
+ clear: both
+ }
+</style>
+<div class="div1">
+ <div class="left">Left</div>
+ <div class="right">Right</div>
+ <br class="clearfloat"/>
+</div>
+<div class="div2">
+ div2
+</div>
+```
+
+原理：父级div定义zoom:1来解决IE浮动问题，结尾处加 br标签 clear:both
+
+**建议：不推荐使用，只作了解。**
 
 ## custom-property {#p2-custom-property}
 

@@ -1531,3 +1531,7 @@ User 接口为 {
 ```
 
 一般来说，如果不清楚什么时候用interface/type，能用 interface 实现，就用 interface , 如果不能就用 type 。
+
+## alias path?
+
+可以看这个文档： [资料](https://www.miganzi.com/tech/typescript-s-paths-config/)
