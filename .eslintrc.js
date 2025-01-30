@@ -24,10 +24,7 @@ module.exports = {
   overrides: [
     {
       files: ['**/*.md'],
-      processor: 'markdown/markdown',
-      rules: {
-        'no-self-compare': 'off'
-      }
+      processor: 'markdown/markdown'
     },
     {
       files: ['**/*.ts', '**/*.tsx'],

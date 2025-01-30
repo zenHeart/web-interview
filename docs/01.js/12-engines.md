@@ -1,0 +1,2064 @@
+# js 引擎原理
+
+## v8 {#p0-v8}
+
+染引擎与网页渲染
+
+编程语言分为 **编译型语言和解释型语** 言两类。
+编译型语言在执行之前要先进行完全编译，而 **解释型语言一边编译一边执行**，
+很明显解释型语言的执行速度是慢于编译型语言的，而JavaScript就是一种解释型脚本语言，
+支持动态类型、弱类型、基于原型的语言，内置支持类型。
+
+ 渲染引擎
+
+就是将HTML/CSS/JavaScript等文本或图片等信息转换成浏览器上可见的可视化图像结果的转换程序。
+WebKit，一个由苹果发起的一个开源项目，如今它在移动端占据着垄断地位，更有基于WebKit的web操作系统不断涌现(如：Chrome OS、Web OS)。
+
+WebKit内部结构大体如下
+![01](https://user-images.githubusercontent.com/22188674/224484181-6bb95a67-aae8-46bb-a3ce-7565bf891ed0.png)
+
+上图中实线框内模块是所有移植的共有部分，虚线框内不同的厂商可以自己实现。由上图可知，WebKit主要有操作系统、WebCore 、WebKit嵌入式接口和第三方库组成。
+
+**操作系统**: 是管理和控制计算机硬件与软件资源的计算机程序。
+**WebCore**: JavaScriptCore是WebKit的默认引擎，在谷歌系列产品中被替换为V8引擎。
+**WebKit嵌入式接口**: 该接口主要供浏览器调用，与移植密切相关，不同的移植有不同的接口规范。
+**第三方库**: 主要是诸如图形库、网络库、视频库、数据存储库等第三方库。
+
+ 网页渲染流程简析
+
+首先，系统将网页输入到HTML解析器，HTML解析器解析，然后构建DOM树，在这期间如果遇到JavaScript代码则交给JavaScript引擎处理；
+如果遇到CSS样式信息，则构建一个内部绘图模型。该模型由布局模块计算模型内部各个元素的位置和大小信息，最后由绘图模块完成从该模型到图像的绘制。
+
+对于网页的绘制过程，大体可以分为3个阶段：
+
+**1、从输入URL到生成DOM树**
+在这个阶段中，主要会经历一下几个步骤：
+地址栏输入URL，WebKit调用资源加载器加载相应资源；
+加载器依赖网络模块建立连接，发送请求并接收答复；
+WebKit接收各种网页或者资源数据，其中某些资源可能同步或异步获取；
+网页交给HTML解析器转变为词语；
+解释器根据词语构建节点，形成DOM树；
+如果节点是JavaScript代码，调用JavaScript引擎解释并执行；
+JavaScript代码可能会修改DOM树结构；
+如果节点依赖其他资源，如图片、视频等，调用资源加载器加载它们，但这些是异步加载的，不会阻碍当前DOM树继续创建；如果是JavaScript资源URL（没有标记异步方式），则需要停止当前DOM树创建，直到JavaScript加载并被JavaScript引擎执行后才继续DOM树的创建。
+
+**2、从DOM树到构建WebKit绘图上下文**
+CSS文件被CSS解释器解释成内部表示；
+CSS解释器完成工作后，在DOM树上附加样式信息，生成RenderObject树；
+RenderObject节点在创建的同时，WebKit会根据网页层次结构构建RenderLayer树，同时构建一个虚拟绘图上下文。
+
+**3、绘图上下文内容并呈现图像内容**
+绘图上下文是一个与平台无关的抽象类，它将每个绘图操作桥接到不同的具体实现类，也就是绘图具体实现类；
+绘图实现类也可能有简单的实现，也可能有复杂的实现，软件渲染、硬件渲染、合成渲染等；
+绘图实现类将2D图形库或者3D图形库绘制结果保存，交给浏览器界面进行展示。
+
+* `books/专题知识库/05、基础知识点专题/02_01、进阶知识部分1-10.md#no01-%E6%B8%B2%%9F%93%E6%9C%BA%E5%88%B6`
+
+avaScript引擎
+
+JavaScript这种解释性语言来讲，如何提高解析速度就是当务之急。JavaScript引擎和渲染引擎的关系如下图所示
+![02](https://user-images.githubusercontent.com/22188674/224484189-606623ef-308f-4b4e-a931-49cccf2f7b9a.png)
+
+为了提高性能，JavaScript引入了Java虚拟机和C++编译器中的众多技术。
+而一个完整JavaScript引擎的执行过程大致流程如下：**源代码-→抽象语法树-→字节码-→JIT-→本地代码**。一个典型的抽象语法树如下图所示：
+
+题外话 关于 JIT:
+JIT 编译 (JIT compilation)，运行时需要代码时。
+JIT具体的做法是这样的:当载入一个类型时,CLR为该类型创建一个内部数据结构和相应的函数,当函数第一被调用时,JIT将该函数编译成机器语言.当再次遇到该函数时则直接从cache中执行已编译好的机器语言.
+
+为了节约将抽象语法树通过JIT技术转换成本地代码的时间，V8放弃了生成字节码阶段的性能优化。而通过Profiler采集一些信息，来优化本地代码。
+在2017年4月底，v8 发布了5.9 版本，在此版本中新增了一个 Ignition 字节码解释器，并默认开启。
+做出这一改变的原因为：（主要动机）减轻机器码占用的内存空间，即牺牲时间换空间；
+提高代码的启动速度；对 v8 的代码进行重构，降低 v8 的代码复杂度（[详细介绍请查阅：JS 引擎与字节码的不解之缘](https://cnodejs.org/topic/59084a9cbbaf2f3f569be482)）
+
+8引擎
+
+前面，我们介绍了V8引擎的一些历史，下面我们重点来看看V8项目一些知识。首先，V8项目的结构如下：
+![03](https://user-images.githubusercontent.com/22188674/224484198-70bd0c01-6b45-43ba-acb5-69453aa11b80.png)
+
+ 数据解析
+
+JavaScript作为一种无类型的语言，在编译时并不能准确知道变量的类型，只可以在运行时确定。因而JavaScript运行效率比C++或Java低。
+而对于JavaScript 来说，并不能像C++那样在执行时已经知道变量的类型和地址，所以在代码解析过程中，会产生很多的临时变量，而变量的存取是非常普遍和频繁的。
+在JavaScript中，除boolean，number，string，null，undefined这个五个简单变量外，其他的数据都是对象，V8使用一种特殊的方式来表示它们，进而优化JavaScript的内部表示问题。
+
+JavaScript对象在V8中的实现包含三个部分：隐藏类指针，这是v8为JavaScript对象创建的隐藏类；属性值表指针，指向该对象包含的属性值；元素表指针，指向该对象包含的属性。
+
+在V8中，数据的内部表示由数据的实际内容和数据的句柄构成。数据的实际内容是变长的，类型也是不同的；句柄固定大小，包含指向数据的指针。
+这种设计可以方便V8进行垃圾回收和移动数据内容，如果直接使用指针的话就会出问题或者需要更大的开销，
+使用句柄的话，只需修改句柄中的指针即可，使用者使用的还是句柄，指针改动是对使用者透明的。
+
+除少数数据(如整型数据)由handle本身存储外，其他内容限于句柄大小和变长等原因，都存储在堆中。
+整数直接从value中取值，然后使用一个指针指向它，可以减少内存的占用并提高访问速度。
+一个句柄对象的大小是4字节(32位设备)或者8字节(64位设备)，而在JavaScriptCore中，使用的8个字节表示句柄。
+在堆中存放的对象都是4字节对齐的，所以它们指针的后两位是不需要的，V8用这两位表示数据的类型，00为整数，01为其他。
+
+ V8引擎渲染过程
+
+V8引擎在执行JavaScript的过程中，主要有两个阶段：编译和运行。
+在V8引擎中，源代码先被解析器转变为抽象语法树(AST)，然后使用JIT编译器的全代码生成器从AST直接生成本地可执行代码。
+但由于缺少了转换为字节码这一中间过程，也就减少了优化代码的机会。
+
+V8引擎编译本地代码时使用的主要类如下所示：
+**Script**：表示JavaScript代码，即包含源代码，又包含编译之后生成的本地代码，即是编译入口，又是运行入口；
+**Compiler**：编译器类，辅组Script类来编译生成代码，调用解释器(Parser)来生成AST和全代码生成器，将AST转变为本地代码；
+**AstNode**：抽象语法树节点类，是其他所有节点的基类，包含非常多的子类，后面会针对不同的子类生成不同的本地代码；
+**FullCodeGenerator**：AstVisitor类的子类，通过遍历AST来为JavaScript生成本地可执行代码。
+
+ JavaScript代码编译过程
+
+Script类调用Compiler类的Compile函数为其生成本地代码；
+Compile函数先使用Parser类生成AST，再使用FullCodeGenerator类来生成本地代码；
+本地代码与具体的硬件平台密切相关，FullCodeGenerator使用多个后端来生成与平台相匹配的本地汇编代码。
+
+大体的流程图如下所示：
+![04](https://user-images.githubusercontent.com/22188674/224484204-a4d766cc-3179-4d40-bb8a-9bd8e574886e.png)
+
+在执行编译之前，V8会构建众多全局对象并加载一些内置的库（如math库），来构建一个运行环境。
+但是，在JavaScript源代码中，并非所有的函数都被编译生成本地代码，而是采用在调用时才会编译的逻辑来动态编译。
+
+由于V8缺少了生成中间字节码这一环节，为了提升性能，V8会在生成本地代码后，使用数据分析器(profiler)采集一些信息，
+然后根据这些数据将本地代码进行优化，生成更高效的本地代码，这是一个逐步改进的过程。
+当发现优化后代码的性能还不如未优化的代码，V8将退回原来的代码，也就是优化回滚。
+
+在这一阶段涉及的类主要有：
+Script：表示JavaScript代码，即包含源代码，又包含编译之后生成的本地代码，即是编译入口，又是运行入口；
+Execution：运行代码的辅组类，包含一些重要函数，如Call函数，它辅组进入和执行Script代码；
+JSFunction：需要执行的JavaScript函数表示类；
+Runtime：运行这些本地代码的辅组类，主要提供运行时所需的辅组函数，如：属性访问、类型转换、编译、算术、位操作、比较、正则表达式等；
+Heap：运行本地代码需要使用的内存堆类；
+MarkCompactCollector：垃圾回收机制的主要实现类，用来标记、清除和整理等基本的垃圾回收过程；
+SweeperThread：负责垃圾回收的线程。
+
+在V8中，函数是一个基本单位，当某个JavaScript函数被调用时，V8会查找该函数是否已经生成本地代码，如果已经生成，则直接调用该函数。
+否则，V8引擎会生成属于该函数的本地代码。
+这样，对于那些不用的代码就可以减少执行时间。再次借助Runtime类中的辅组函数，将不用的空间进行标记清除和垃圾回收。
+
+ 优化回滚
+
+因为V8是基于AST直接生成本地代码，没有经过中间表示层的优化，所以本地代码尚未经过很好的优化。
+于是，在2010年，V8引入了新的编译器-Crankshaft，它主要针对热点函数进行优化，
+基于JavaScript源代码开始分析而非本地代码，同时构建Hydroger图并基于此来进行优化分析。
+
+Crankshaft编译器为了性能考虑，通常会做出比较乐观和大胆的预测—代码稳定且变量类型不变，所以可以生成高效的本地代码。
+但是，鉴于JavaScript的一个弱类型的语言，变量类型也可能在执行的过程中进行改变，鉴于这种情况，V8会将该编译器做的想当然的优化进行回滚，称为优化回滚。
+
+例如，下面的示例：
+
+```javascript
+let counter = 0
+function test (x, y) {
+  counter++
+  if (counter < 1000000) {
+    // do something
+    return 'jeri'
+  }
+  const unknown = new Date()
+  console.log(unknown)
+}
+```
+
+该函数被调用多次之后，V8引擎可能会触发Crankshaft编译器对其进行优化，而优化代码认为示例代码的类型信息都已经被确定。
+当程序执行到new Date()这个地方，并未获取unknown这个变量的类型，V8只得将该部分代码进行回滚。
+
+优化回滚是一个很耗时的操作，在写代码过程中，尽量不要触发优化该操作。在最近发布的 V8 5.9 版本中，新增了一个 Ignition 字节码解释器，
+TurboFan 和 Ignition 结合起来共同完成JavaScript的编译。
+这个版本中消除 Cranshaft 这个旧的编译器，并让新的 Turbofan 直接从字节码来优化代码，
+并当需要进行反优化的时候直接反优化到字节码，而不需要再考虑 JS 源代码。
+
+ 内存管理
+
+Node中通过JavaScript使用内存时就会发现只能使用部分内存（64位系统下约为1.4 GB，32位系统下约为0.7 GB），
+其深层原因是 V8 垃圾回收机制的限制所致（如果可使用内存太大，V8在进行垃圾回收时需耗费更多的资源和时间，严重影响JS的执行效率）。下面对内存管理进行介绍。
+
+内存的管理组要由分配和回收两个部分构成。V8的内存划分如下：
+**Zone**：管理小块内存。其先自己申请一块内存，然后管理和分配一些小内存，当一块小内存被分配之后，不能被Zone回收，
+只能一次性回收Zone分配的所有小内存。当一个过程需要很多内存，Zone将需要分配大量的内存，却又不能及时回收，会导致内存不足情况。
+**堆**：管理JavaScript使用的数据、生成的代码、哈希表等。为方便实现垃圾回收，堆被分为三个部分(这和Java等的堆不一样)：
+ **年轻分代**：为新创建的对象分配内存空间，经常需要进行垃圾回收。
+ 为方便年轻分代中的内容回收，可再将年轻分代分为两半，一半用来分配，另一半在回收时负责将之前还需要保留的对象复制过来。
+ **年老分代**：根据需要将年老的对象、指针、代码等数据保存起来，较少地进行垃圾回收。
+ **大对象**：为那些需要使用较多内存对象分配内存，当然同样可能包含数据和代码等分配的内存，一个页面只分配一个对象。
+
+用一张图可以表示如下：
+![05](https://user-images.githubusercontent.com/22188674/224484225-4b86d1f8-1b8f-4eda-8cbf-9b7dec04556b.png)
+
+ 垃圾回收
+
+V8 使用了分代和大数据的内存分配，在回收内存时使用精简整理的算法标记未引用的对象，然后消除没有标记的对象，最后整理和压缩那些还未保存的对象，即可完成垃圾回收。
+在V8中，使用较多的是年轻分代和年老分代。年轻分代中的对象垃圾回收主要通过 **Scavenge** 算法进行垃圾回收。在Scavenge的具体实现中，主要采用了 **Cheney** 算法。
+
+Cheney算法：通过复制的方式实现的垃圾回收算法。
+它将堆内存分为两个 semispace（半空间），一个处于使用中（From空间），另一个处于闲置状态（To空间）。
+当分配对象时，先是在From空间中进行分配。
+当开始进行垃圾回收时，会检查From空间中的存活对象，这些存活对象将被复制到To空间中，而非存活对象占用的空间将会被释放。
+完成复制后，From空间和To空间的角色发生对换。在垃圾回收的过程中，就是通过将存活对象在两个 semispace 空间之间进行复制。
+
+年轻分代中的对象有机会晋升为年老分代，条件主要有两个：一个是对象是否经历过Scavenge回收，一个是To空间的内存占用比超过限制。
+
+对于年老分代中的对象，由于存活对象占较大比重，再采用上面的方式会有两个问题：
+一个是存活对象较多，复制存活对象的效率将会很低；另一个问题依然是浪费一半空间的问题。
+为此，V8在年老分代中主要采用了**Mark-Sweep（标记清除）标记清除和Mark-Compact（标记整理）** 相结合的方式进行垃圾回收。
+
+ 快照
+
+在V8引擎启动时，需要构建JavaScript运行环境，需要加载很多内置对象，
+同时也需要建立内置的函数，如Array，String，Math等。为了使V8更加整洁，
+加载对象和建立函数等任务都是使用JavaScript文件来实现的，V8引擎负责提供机制来支持，就是在编译和执行JavaScript前先加载这些文件。
+
+V8引擎需要编译和执行这些内置的JavaScript代码，同时使用堆等来保存执行过程中创建的对象、代码等，这些都需要时间。
+为此，V8引入了快照机制，将这些内置的对象和函数加载之后的内存保存并序列化。经过快照机制的启动时间可以缩减几毫秒。
+
+8 VS JavaScriptCore
+
+JavaScriptCore引擎是WebKit中默认的JavaScript引擎，也是苹果开源的一个项目，应用较为广泛。
+最初，性能不是很好，从2008年开始了一系列的优化，重新实现了编译器和字节码解释器，使得引擎的性能有较大的提升。
+随后内嵌缓存、基于正则表达式的JIT、简单的JIT及字节码解释器等技术引入进来，JavaScriptCore引擎也在不断的迭代和发展。
+
+JavaScriptCore 的大致流程为：源代码-→抽象语法树-→字节码-→JIT-→本地代码。
+JavaScriptCore与V8有一些不同之处，其中最大的不同就是新增了字节码的中间表示，
+并加入了多层JIT编译器（如：简单JIT编译器、DFG JIT编译器、LLVM等）优化性能，不停的对本地代码进行优化(在V8 的 5.9 版本中，新增了一个 Ignition 字节码解释器)。
+
+能扩展
+
+JavaScript引擎的主要功能是解析和执行JavaScript代码，往往不能满足使用者多样化的需要，
+那么就可以增加扩展以提升它的能力。V8引擎有两种扩展机制：绑定和扩展。
+
+ 绑定
+
+使用IDL文件或接口文件生成绑定文件，将这些文件同V8引擎一起编译。
+WebKit中使用IDL来定义JavaScript，但又与IDL有所不同，有一些改变。定义一个新的接口的步骤大致如下：
+1.定义新的接口文件，可以在JavaScript代码进行调用，如mymodule.MyObj.myAttr：
+
+2.按照引擎定义的标准接口为基础实现接口类，生成JavaScript引擎所需的绑定文件。
+WebKit提供了工具帮助生成所需的绑定类，根据引擎不同和引擎开发语言的不同而有所差异。
+V8引擎会为上述示例代码生成 v8MyObj.h (MyObj类具体的实现代码)和 V8MyObj.cpp (桥接代码，辅组注册桥接的函数到V8引擎)两个绑定文件。
+
+JavaScript引擎绑定机制需要将扩展代码和JavaScript引擎一块编译和打包，
+不能根据需要在引擎启动后再动态注入这些本地代码。
+在实际WEB开发中，开发者都是基于现有浏览器的，根本不可能介入到JavaScript引擎的编译中，
+绑定机制有很大的局限性，但其非常高效，适用于对性能要求较高的场景。
+
+ Extension
+
+通过V8的基类Extension进行能力扩展，无需和V8引擎一起编译，可以动态为引擎增加功能特性，具有很强的灵活性。
+Extension机制的大致思路就是，V8提供一个基类Extension和一个全局注册函数，要想扩展JavaScript能力，需要经过以下步骤：
+
+```c++
+class MYExtension : public v8::Extension {
+ public:
+ MYExtension() : v8::Extension("v8/My", "native function my();") {}
+ virtual v8::Handle<v8::FunctionTemplate> GetNativeFunction (
+ v8::Handle<v8::String> name) {
+ // 可以根据name来返回不同的函数
+ return v8::FunctionTemplate::New(MYExtention::MY);
+ }
+ static v8::Handle<v8::Value> MY(const v8::Arguments& args) {
+ // Do sth here
+ return v8::Undefined();
+ }
+};
+MYExtension extension;
+RegisterExtension(&extension);
+```
+
+1.基于Extension基类构建一个它的子类，并实现它的虚函数—GetNativeFunction，根据参数name来决定返回实函数；
+2.创建一个该子类的对象，并通过注册函数将该对象注册到V8引擎，当JavaScript调用’my’函数时就可被调用到。
+Extension机制是调用V8的接口注入新函数，动态扩展非常方便，但没有绑定机制高效，适用于对性能要求不高的场景。
+
+结
+
+作为一个提高JavaScript渲染的高效引擎，学习V8引擎应该重点掌握以下几个概念：
+
+* 类型。
+ 对于函数，JavaScript是一种动态类型语言，JavaScriptCore和V8都使用隐藏类和内嵌缓存来提高性能，
+ 为了保证缓存命中率，一个函数应该使用较少的数据类型；
+ 对于数组，应尽量存放相同类型的数据，这样就可以通过偏移位置来访问。
+* 数据表示。
+ 简单类型数据（如整型）直接保存在句柄中，可以减少寻址时间和内存占用，
+ 如果可以使用整数表示的，尽量不要用浮点类型。
+* 内存。
+ 虽然JavaScript语言会自己进行垃圾回收，但我们也应尽量做到及时回收不用的内存，
+ 对不再使用的对象设置为null或使用delete方法来删除(使用delete方法删除会触发隐藏类新建，需要更多的额外操作)。
+* 优化回滚。
+ 在执行多次之后，不要出现修改对象类型的语句，尽量不要触发优化回滚，否则会大幅度降低代码的性能。
+* 新机制。
+ 使用JavaScript引擎或者渲染引擎提供的新机制和新接口提高性能。
+
+参考文章如下：
+[Google V8 引擎【翻】](https://blog.csdn.net/xiangzhihong8/article/details/74996757)
+
+## scope {#p0-scope}
+
+JavaScript 作用域链（Scope Chain）是指变量和函数的可访问性和查找规则。它是由多个执行上下文（Execution Context）的变量对象（Variable Object）按照它们被创建的顺序组成的链式结构。
+
+在 JavaScript 中，每个函数都会创建一个新的执行上下文，并将其添加到作用域链的最前端。当访问一个变量时，JavaScript 引擎会先从当前执行上下文的变量对象开始查找，如果找不到，则沿着作用域链依次向上查找，直到全局执行上下文的变量对象。
+
+作用域链的创建过程如下：
+
+1. 在函数定义时，会创建一个变量对象（VO）来存储函数的变量和函数声明。这个变量对象包含了当前函数的作用域中的变量和函数。
+2. 在函数执行时，会创建一个执行上下文（Execution Context），并将其添加到作用域链的最前端。执行上下文中的变量对象称为活动对象（Active Object）。
+3. 当访问一个变量时，JavaScript 引擎首先会在活动对象中查找，如果找不到，则沿着作用域链依次向上查找，直到全局执行上下文的变量对象。
+4. 如果在作用域链的任何一个环节找到了变量，则停止查找并返回变量的值；如果未找到，则抛出引用错误（ReferenceError）。
+
+作用域链的特点：
+
+1. 作用域链是一个静态的概念，它在函数定义时就确定了，不会随着函数的调用而改变。
+2. 作用域链是由多个执行上下文的变量对象按照它们被创建的顺序组成的。
+3. 作用域链的最后一个变量对象是全局执行上下文的变量对象，它是作用域链的终点。
+4. 内部函数可以访问外部函数的变量，因为内部函数的作用域链包含了外部函数的变量对象。
+
+ 有哪些应用场景
+
+作用域链在 JavaScript 中具有广泛的应用场景。下面列举了一些常见的应用场景：
+
+1. 变量查找：作用域链决定了变量的访问顺序，当访问一个变量时，会按照作用域链的顺序依次查找变量，直到找到匹配的变量或到达全局作用域。
+
+2. 闭包：闭包是指函数能够访问和操作它的外部函数中定义的变量。通过作用域链，内部函数可以访问外部函数的变量，实现了闭包的特性。闭包在许多场景中用于创建私有变量和实现函数封装。
+
+3. 垃圾回收：JavaScript 的垃圾回收机制通过作用域链来判断变量的生命周期。当变量不再被引用时，垃圾回收器可以回收它所占用的内存空间。
+
+4. 函数作为参数传递：在 JavaScript 中，可以将函数作为参数传递给其他函数。在传递过程中，作用域链决定了内部函数对外部函数变量的访问权限，实现了回调函数和高阶函数的功能。
+
+5. 面向对象编程：JavaScript 中的对象和原型链是基于作用域链实现的。通过原型链，对象可以访问和继承其原型对象的属性和方法。
+
+6. 模块化开发：作用域链可以用于实现模块化开发，通过定义私有变量和公共接口，控制模块内部变量的可访问性，避免变量冲突和全局污染。
+
+7. 作用域链的动态改变：在 JavaScript 中，可以通过闭包和动态作用域的特性来改变作用域链。例如，使用 eval() 函数或 with 语句可以改变当前的作用域链。
+
+总之，作用域链在 JavaScript 中扮演了重要的角色，涵盖了变量的访问、闭包、垃圾回收、模块化开发等多个方面。深入理解作用域链对于编写高质量的 JavaScript 代码和理解其底层工作原理非常重要。
+
+## 解释性语言和编译型语言的区别 {#p0-explain-compile}
+
+解释性语言和编译型语言是两种不同的编程语言类型，它们在代码的执行方式和运行过程中的一些特点上存在区别。
+
+1. 编译型语言：
+
+* 编译型语言的代码在运行之前需要经过编译器的处理，将源代码一次性地转换成机器语言的可执行文件（通常是二进制文件）。
+* 编译器将源代码转换为目标代码的过程包括词法分析、语法分析、语义分析、优化和代码生成等步骤。
+* 在运行时，编译型语言的可执行文件直接在计算机上执行，无需再次进行翻译或解释。
+* 典型的编译型语言包括 C、C++、Java（虚拟机字节码编译）、Go等。
+
+2. 解释性语言：
+
+* 解释性语言的代码在运行时逐行被解释器解释执行，无需预先编译为可执行文件。
+* 解释器逐行读取源代码，将其解析并直接执行，将源代码翻译为机器指令并逐行执行。
+* 解释性语言的执行过程通常边解释边执行，每次运行都需要经过解释器的处理。
+* 典型的解释性语言包括 JavaScript、Python、Ruby、PHP等。
+
+区别：
+
+* 编译型语言在运行之前需要将代码转换为可执行文件，而解释性语言在运行时逐行解释执行。
+* 编译型语言的执行速度通常较快，因为代码已经被预先编译成机器语言，无需再进行解释。解释性语言的执行速度较慢，因为每次运行都需要经过解释器的处理。
+* 编译型语言一般需要根据目标平台进行编译，可执行文件通常与特定的操作系统和硬件相关。解释性语言通常是跨平台的，只需要相应的解释器即可运行。
+* 编译型语言在代码运行之前会进行全面的语法和类型检查，可以在编译过程中发现一些潜在的错误。解释性语言在运行时进行解释，错误可能会在运行过程中被发现。
+
+需要注意的是，实际上很多语言不是严格的编译型语言或解释性语言，而是在两者之间存在折中的方式。例如，Java 语言将源代码编译为字节码（中间形式），然后在虚拟机中解释执行。因此，这些概念并不是绝对的，语言的执行方式可能有所不同。
+
+## 原型链？{#p0-prototype-chain}
+
+根据 [ECMAScript 规范对象原型链的描述](https://tc39.es/ecma262/#sec-objects)概念如下: 每一个通过构造器创建的对象都会有一个隐式索引,值指向构造器的 **prototype(原型)** 属性值。此外该原型可能包含一个值为非空的隐式索引指向它自己的原型,依次类推称为原型链。当查找某个对象属性时会顺着原型链检查,返回匹配的第一个相同属性值。
+
+基于上述概念原型链具有如下特性
+
+1. 在访问对象属性和方法时,js 引擎会遍历对象的自有属性和递归遍历内部  `__proto__` 索引指向的对象返回第一个查找到的值
+2. 采用构造函数初始化对象时,实例的 `__proto__` 属性指向构造函数的 `prototype`
+
+在JavaScript中，原型链的终点是 `null`。当访问一个对象的属性或方法时，如果当前对象没有该属性或方法，JavaScript引擎会沿着原型链向上查找，直到找到该属性或方法或者到达原型链的终点 `null`。
+
+每个对象都有一个原型（`prototype`）属性，指向它的原型对象。原型对象也是一个对象，也有自己的原型，形成了原型链。原型链是由一系列对象的连接构成的，每个对象都有一个指向其原型的引用，通过这个引用可以沿着原型链向上查找属性和方法。
+
+原型链的终点是 `null`，即最顶层的原型对象没有原型，它的 `[[Prototype]]` 指向 `null`。当查找属性或方法时，如果一直沿着原型链找到最顶层的原型对象仍然没有找到，则返回 `undefined`。
+
+示例：
+
+```javascript
+const obj = {}
+console.log(obj.toString()) // obj 没有定义 toString 方法，通过原型链找到 Object.prototype 上的 toString 方法
+
+const arr = []
+console.log(arr.join()) // arr 没有定义 join 方法，通过原型链找到 Array.prototype 上的 join 方法
+
+const str = 'Hello'
+console.log(str.toUpperCase()) // str 没有定义 toUpperCase 方法，通过原型链找到 String.prototype 上的 toUpperCase 方法
+
+const num = 42
+console.log(num.toFixed(2)) // num 没有定义 toFixed 方法，通过原型链找到 Number.prototype 上的 toFixed 方法
+
+// console.log(Object.prototype.__proto__) // 最顶层的原型对象 Object.prototype 的原型是 null
+```
+
+因此，原型链的终点是 `null`，表示在原型链的最顶层无法再继续向上查找。
+
+## JavaScript 如何做内存管理？ {#p0-memory}
+
+JavaScript中的内存管理是由垃圾收集器负责的。垃圾收集器会自动追踪不再使用的对象，并在适当的时候释放它们占用的内存。
+
+JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and sweep）的算法来确定哪些对象是不再需要的。该算法通过标记所有被引用的对象，然后清除未被标记的对象。
+
+以下是JavaScript中的一些内存管理的原则和技巧：
+
+1. 自动内存管理：JavaScript的垃圾收集器会自动管理内存，不需要手动释放内存。你只需确保不再使用的对象没有被引用，垃圾收集器会在适当的时候自动回收内存。
+
+2. 避免全局变量：全局变量会一直存在于内存中，直到页面关闭。尽量减少使用全局变量，而是使用函数作用域或模块化的方式来限制变量的作用范围。
+
+3. 及时释放引用：当你不再需要一个对象时，最好将对它的引用设置为null，这样可以使垃圾收集器更早地释放对象所占用的内存。
+
+4. 避免循环引用：如果对象之间存在循环引用，即使它们已经不再被使用，垃圾收集器也不会自动释放它们。确保及时断开循环引用，使垃圾收集器能够正确地回收内存。
+
+5. 避免大量对象的创建和销毁：频繁地创建和销毁大量对象会导致垃圾收集器频繁地执行，影响性能。如果可能的话，尽量重用对象，而不是频繁地创建和销毁它们。
+
+虽然JavaScript的垃圾收集器自动管理内存，但仍然需要开发人员编写高效的代码来避免内存泄漏和浪费，以确保JavaScript应用程序的性能和可靠性。
+
+## 必包 {#p0-js-closure}
+
+闭包在 JavaScript 中有很多实用的使用场景，以下是一些主要的场景：
+
+**一、数据隐藏和封装**
+
+1. 保护变量：
+
+* 闭包可以创建一个私有作用域，将变量封装在函数内部，防止外部直接访问和修改。只有通过特定的函数接口才能访问和操作这些变量。
+* 例如：
+
+ ```javascript
+ function createCounter () {
+   let count = 0
+   return {
+     increment () {
+       count++
+     },
+     getCount () {
+       return count
+     }
+   }
+ }
+
+ const counter = createCounter()
+ counter.increment()
+ console.log(counter.getCount()) // 1
+ ```
+
+* 在这个例子中，`count`变量被封装在`createCounter`函数内部，外部无法直接访问，只能通过返回的对象上的方法来操作`count`。
+
+2. 模拟私有方法：
+
+* 在面向对象编程中，可以使用闭包来模拟私有方法。私有方法只能在对象内部被访问，外部无法直接调用。
+* 例如：
+
+ ```javascript
+ const myObject = (function () {
+   let privateVariable = 0
+ 
+   function privateMethod () {
+     privateVariable++
+     console.log(privateVariable)
+   }
+
+   return {
+     publicMethod () {
+       privateMethod()
+     }
+   }
+ })()
+ 
+ myObject.publicMethod() // 1
+ ```
+
+* 在这个例子中，`privateMethod`和`privateVariable`只能在内部函数中被访问，外部通过调用`publicMethod`间接访问了私有方法。
+
+**二、函数柯里化（Currying）**
+
+1. 逐步参数化：
+
+* 闭包可以用于实现函数柯里化，将一个多参数的函数转换为一系列单参数的函数。每次调用只接受一部分参数，并返回一个新的函数，直到所有参数都被提供。
+* 例如：
+
+ ```javascript
+ function add (a) {
+   return function (b) {
+     return function (c) {
+       return a + b + c
+     }
+   }
+ }
+
+ const addFiveAndSixAndSeven = add(5)(6)(7)
+ console.log(addFiveAndSixAndSeven) // 18
+ ```
+
+* 在这个例子中，`add`函数通过闭包逐步接受参数，最后返回一个计算结果。
+
+2. 灵活的参数传递：
+
+* 函数柯里化可以使函数的参数传递更加灵活，特别是在需要部分应用参数或者延迟参数传递的情况下。
+* 例如，可以先创建一个部分应用参数的函数，然后在需要的时候再传递剩余的参数。
+
+**三、回调函数和事件处理**
+
+1. 保存外部环境：
+
+* 在异步编程或者事件处理中，闭包可以保存外部函数的变量和状态，使得回调函数能够访问这些信息。
+* 例如：
+
+ ```javascript
+ function setTimeoutWithMessage (message) {
+   setTimeout(function () {
+     console.log(message)
+   }, 1000)
+ }
+
+ setTimeoutWithMessage('Hello after 1 second!')
+ ```
+
+* 在这个例子中，回调函数内部的`message`变量是通过闭包从外部函数中获取的，即使外部函数已经执行完毕，回调函数仍然能够访问到这个变量。
+
+2. 事件处理程序：
+
+* 在 DOM 事件处理中，闭包可以用于保存与事件相关的状态和数据。
+* 例如：
+
+ ```html
+ <button id="myButton">Click me</button>
+ <script>
+ document.getElementById("myButton").addEventListener("click", function () {
+ const buttonText = this.textContent;
+ console.log(`Button clicked: ${buttonText}`);
+ });
+ </script>
+ ```
+
+* 在这个例子中，事件处理程序内部的`buttonText`变量是通过闭包从外部环境中获取的，每次点击按钮时，都能正确地打印出按钮的文本内容。
+
+**四、记忆化（Memoization）**
+
+1. 缓存计算结果：
+
+* 闭包可以用于实现记忆化，将函数的计算结果缓存起来，避免重复计算。如果相同的参数再次被传入，直接返回缓存的结果，而不是重新计算。
+* 例如：
+
+ ```javascript
+ function memoizedAdd () {
+   const cache = {}
+   return function (a, b) {
+     const key = `${a},${b}`
+     if (cache[key]) {
+       return cache[key]
+     } else {
+       const result = a + b
+       cache[key] = result
+       return result
+     }
+   }
+ }
+
+ const memoizedAddFunction = memoizedAdd()
+ console.log(memoizedAddFunction(2, 3)) // 5
+ console.log(memoizedAddFunction(2, 3)) // 5（直接从缓存中获取结果）
+ ```
+
+* 在这个例子中，`memoizedAdd`函数内部的`cache`对象用于缓存计算结果，通过闭包保存了这个缓存对象，使得每次调用函数时都能访问到它。
+
+2. 提高性能：
+
+* 对于计算复杂或者频繁调用的函数，记忆化可以显著提高性能，减少不必要的计算。
+
+ 1.1、什么是闭包
+
+闭包，官方对闭包的解释是：一个拥有许多变量和绑定了这些变量的环境的表达式（通常是一个函数），因而这些变量也是该表达式的一部分。闭包的特点：
+
+1. 作为一个函数变量的一个引用，当函数返回时，其处于激活状态。
+2. 一个闭包就是当一个函数返回时，一个没有释放资源的栈区。
+
+简单的说，Javascript允许使用内部函数---即函数定义和函数表达式位于另一个函数的函数体内。
+而且，这些内部函数可以访问它们所在的外部函数中声明的所有局部变量、参数和声明的其他内部函数。
+当其中一个这样的内部函数在包含它们的外部函数之外被调用时，就会形成闭包。
+
+ 1.2、闭包的几种写法和用法
+
+JavaScript中闭包的应用使用闭包需要注意的地方：闭包使得函数中的变量都保存在内存中，内训消耗大，IE中有可能导致内存泄漏在父函数外部改变父函数内部变量的值。
+
+第一种写法：
+
+```javascript
+// 第1种写法
+function Circle (r) {
+  this.r = r
+}
+Circle.PI = 3.14159
+Circle.prototype.area = function () {
+  return Circle.PIthis.rthis.r
+}
+
+const c = new Circle(1.0)
+alert(c.area())
+```
+
+**第二种写法：**
+
+```js
+// 第2种写法
+const Circle = function () {
+  // eslint-disable-next-line
+  const obj = new Object()
+  obj.PI = 3.14159
+
+  obj.area = function (r) {
+    return this.PIrr
+  }
+  return obj
+}
+
+const c = new Circle()
+alert(c.area(1.0))
+```
+
+第三种写法：
+
+```javascript
+// 第3种写法
+// eslint-disable-next-line
+const Circle = new Object()
+Circle.PI = 3.14159
+Circle.Area = function (r) {
+  return this.PIrr
+}
+
+alert(Circle.Area(1.0))
+```
+
+**第四种写法：**
+
+```javascript
+// 第4种写法
+const Circle = {
+  PI: 3.14159,
+  area: function (r) {
+    return this.PIrr
+  }
+}
+alert(Circle.area(1.0))
+```
+
+第五种写法：
+
+```js
+// 第5种写法
+// eslint-disable-next-line
+const Circle = new Function('this.PI = 3.14159;this.area = function( r ) {return r*r*this.PI;}')
+
+alert((new Circle()).area(1.0))
+```
+
+**基础用法：**
+示例1：解决作用域问题
+
+```javascript
+function f1 () {
+  let n = 1
+  // eslint-disable-next-line
+  test = function () {
+    n += 1
+  }
+  function f2 () {
+    console.log('f2():', n)
+  }
+  return f2
+}
+const res = f1() // 初始化f1()
+console.log(res()) // 相当于调用f2()，结果1和undefined
+// eslint-disable-next-line
+test() // 将n的值改变了
+console.log(res()) // 结果2和undefined
+```
+
+示例2：实现get 和 set
+
+```javascript
+let setValue, getValue;
+(function () {
+  let n = 0
+  getValue = function () {
+    return n
+  }
+  setValue = function (x) {
+    n = x
+  }
+})()
+
+// console.log(n); n is not defined
+console.log(getValue())
+setValue(567)
+console.log(getValue())
+```
+
+示例3：用闭包实现迭代器的效果
+
+```javascript
+// 迭代器中得应用
+function test (x) {
+  let i = 0
+  return function () {
+    return x[i++]
+  }
+}
+// eslint-disable-next-line
+const next = test(['a', 'b', 'c', 'd'])
+console.log(next())
+console.log(next())
+console.log(next())
+console.log(next()) // 每调用一次，都可以将数组指针向下移动一次
+```
+
+示例4：
+错误的示范：
+
+```javascript
+function f () {
+  const a = []
+  let i
+  for (i = 0; i < 3; i++) {
+    a[i] = function () {
+      return i
+    }
+  }
+  return a
+}
+const test = f()
+console.log(test[0]())
+console.log(test[1]())
+console.log(test[2]()) // 结果都是 3 3 3 这种写法是错误的
+```
+
+正确的示范：
+
+```javascript
+function f () {
+  const a = []
+  let i
+  for (i = 0; i < 3; i++) {
+    a[i] = (function (x) {
+      return function () {
+        return x
+      }
+    })(i)
+  }
+  return a
+}
+const test = f()
+console.log(test[0]())
+console.log(test[1]())
+console.log(test[2]())
+```
+
+示例5：对示例4的优化
+
+```javascript
+function f () {
+  function test (x) {
+    return function () {
+      return x
+    }
+  }
+  const a = []
+  let i
+  for (i = 0; i < 3; i++) {
+    a[i] = test(i)
+  }
+  return a
+}
+const res = f()
+alert(res[0]())
+alert(res[1]())
+alert(res[2]())
+```
+
+ 1.3、关于prototype的一些理解
+
+上面代码中出现了JS中常用的Prototype，那么Prototype有什么用呢？下面我们来看一下：
+
+```javascript
+const dom = function () {
+
+}
+
+dom.Show = function () {
+  alert('Show Message')
+}
+
+dom.prototype.Display = function () {
+  alert('Property Message')
+}
+
+dom.Display() // error
+dom.Show()
+// eslint-disable-next-line
+const d = new dom()
+d.Display()
+d.Show() // error
+```
+
+我们首先声明一个变量，将一个函数赋给他，因为在Javascript中每个函数都有一个Portotype属性，而对象没有。添加两个方法，分别直接添加和添加打破Prototype上面，来看下调用情况。分析结果如下：
+**1、不使用prototype属性定义的对象方法，是静态方法，只能直接用类名进行调用！另外，此静态方法中无法使用this变量来调用对象其他的属性！**
+**2、使用prototype属性定义的对象方法，是非静态方法，只有在实例化后才能使用！其方法内部可以this来引用对象自身中的其他属性！**
+
+下面我们再来看一段代码：
+
+```javascript
+const dom = function () {
+  const Name = 'Default'
+  this.Sex = 'Boy'
+  this.success = function () {
+    alert('Success')
+  }
+}
+
+alert(dom.Name)
+alert(dom.Sex)
+```
+
+大家先看看，会显示什么呢？ 答案是两个都显示Undefined,为什么呢？这是由于在Javascript中每个function都会形成一个作用域，而这些变量声明在函数中，
+所以就处于这个函数的作用域中，外部是无法访问的。要想访问变量，就必须new一个实例出来。
+
+```javascript
+const html = {
+  Name: 'Object',
+  Success: function () {
+    this.Say = function () {
+      alert('Hello,world')
+    }
+    alert('Obj Success')
+  }
+}
+```
+
+再来看看这种写法，其实这是Javascript的一个"语法糖"，这种写法相当于：
+
+```js
+// eslint-disable-next-line
+const html = new Object()
+html.Name = 'Object'
+html.Success = function () {
+  this.Say = function () {
+    alert('Hello,world')
+  }
+}
+alert('Obj Success')
+```
+
+变量html是一个对象，不是函数，所以没有Prototype属性，其方法也都是公有方法，html不能被实例化。
+但是他可以作为值赋给其它变量，如var o = html; 我们可以这样使用它：
+
+```javascript
+alert(html.Name)
+html.Success()
+```
+
+说到这里，完了吗？细心的人会问，怎么访问Success方法中的Say方法呢？是html.Success.Say()吗？
+当然不是，上面刚说过由于作用域的限制，是访问不到的。所以要用下面的方法访问：
+
+```js
+var s = new html.Success()
+s.Say()
+
+// 还可以写到外面
+html.Success.prototype.Show = function () {
+  alert('HaHa')
+}
+// eslint-disable-next-line
+var s = new html.Success()
+s.Show()
+```
+
+`<div id="class02">二、Javascript闭包的用途</div>`
+
+ 1、匿名自执行函数
+
+我们知道所有的变量，如果不加上var关键字，则默认的会添加到全局对象的属性上去，这样的临时变量加入全局对象有很多坏处，比如：别的函数可能误用这些变量；
+造成全局对象过于庞大，影响访问速度(因为变量的取值是需要从原型链上遍历的)。
+除了每次使用变量都是用var关键字外，我们在实际情况下经常遇到这样一种情况，即有的函数只需要执行一次，其内部变量无需维护，
+比如UI的初始化，那么我们可以使用闭包：
+
+```javascript
+const data = {
+  table: [],
+  tree: {}
+};
+
+(function (dm) {
+  for (let i = 0; i < dm.table.rows; i++) {
+    const row = dm.table.rows[i]
+    for (let j = 0; j < row.cells; i++) {
+      drawCell(i, j)
+    }
+  }
+
+})(data)
+```
+
+我们创建了一个匿名的函数，并立即执行它，由于外部无法引用它内部的变量，因此在函数执行完后会立刻释放资源，关键是不污染全局对象。
+
+ 2、结果缓存
+
+我们开发中会碰到很多情况，设想我们有一个处理过程很耗时的函数对象，每次调用都会花费很长时间，
+那么我们就需要将计算出来的值存储起来，当调用这个函数的时候，首先在缓存中查找，如果找不到，则进行计算，然后更新缓存并返回值，如果找到了，直接返回查找到的值即可。
+闭包正是可以做到这一点，因为它不会释放外部的引用，从而函数内部的值可以得以保留。
+
+```javascript
+const CachedSearchBox = (function () {
+  const cache = {}
+  const count = []
+  return {
+    attachSearchBox: function (dsid) {
+      if (dsid in cache) { // 如果结果在缓存中
+        return cache[dsid]// 直接返回缓存中的对象
+      }
+      const fsb = new uikit.webctrl.SearchBox(dsid)// 新建
+      cache[dsid] = fsb// 更新缓存
+      if (count.length > 100) { // 保正缓存的大小<=100
+        delete cache[count.shift()]
+      }
+      return fsb
+    },
+
+    clearSearchBox: function (dsid) {
+      if (dsid in cache) {
+        cache[dsid].clearSelection()
+      }
+    }
+  }
+})()
+
+CachedSearchBox.attachSearchBox('input')
+```
+
+这样我们在第二次调用的时候，就会从缓存中读取到该对象。
+
+ 3、封装
+
+```javascript
+const person = (function () {
+  // 变量作用域为函数内部，外部无法访问
+  let name = 'default'
+
+  return {
+    getName: function () {
+      return name
+    },
+    setName: function (newName) {
+      name = newName
+    }
+  }
+}())
+
+print(person.name)// 直接访问，结果为undefined
+print(person.getName())
+person.setName('abruzzi')
+print(person.getName())
+
+// 得到结果如下：
+
+// undefined
+// default
+// abruzzi
+```
+
+ 4、实现类和继承
+
+```javascript
+function Person () {
+  let name = 'default'
+
+  return {
+    getName: function () {
+      return name
+    },
+    setName: function (newName) {
+      name = newName
+    }
+  }
+}
+
+const p = new Person()
+p.setName('Tom')
+alert(p.getName())
+
+const Jack = function () {}
+// 继承自Person
+Jack.prototype = new Person()
+// 添加私有方法
+Jack.prototype.Say = function () {
+  alert('Hello,my name is Jack')
+}
+const j = new Jack()
+j.setName('Jack')
+j.Say()
+alert(j.getName())
+```
+
+我们定义了Person，它就像一个类，我们new一个Person对象，访问它的方法。
+下面我们定义了Jack，继承Person，并添加自己的方法。
+
+## Strict Mode?
+
+回答要点包括如下几个方面。
+
+1. **Strict Mode 定义** Strict Mode 是 ECMAScript 语言的变种，详见规范 [strict-variant-of-ecmascript](https://tc39.es/ecma262/#sec-strict-variant-of-ecmascript) 。 开启 Strict Mode  后，JS 引擎会基于 ECMAScript 规范中定义的严格模式约束，排除特定的语法或语义，改变特定语义的执行流程。
+2. **如何开启** 通过在代码或函数顶部声明 `'use strict'` 开启 Strict Mode 模式, 开启规则详见 [Use Strict Directive](https://tc39.es/ecma262/#sec-directive-prologues-and-the-use-strict-directive)。
+3. **Strict Mode 作用** 用户通过开启来解决一些不安全的语言特性带来的安全或者其他问题。开启后的限制，详见 [The Strict Mode of ECMAScript](https://tc39.es/ecma262/#sec-strict-mode-of-ecmascript)。
+4. **加分项** 理解为什么会有这个特性，为什么会设计成这样的语法。可以阅读 [JavaScript二十年 严格模式章节](https://cn.history.js.org/part-4.html#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F)
+
+`"use strict"` 是 JavaScript 中的一个编译指示（directive），用于启用严格模式（strict mode）。
+
+严格模式是 JavaScript 的一种执行模式，它增强了代码的健壮性、可维护性和安全性，并减少了一些常见的错误。启用严格模式后，JavaScript 引擎会执行更严格的语法检查，提供更好的错误检测和提示。
+
+使用 `"use strict"` 有以下几个特点和用途：
+
+1. 严格模式禁止使用一些不安全或不推荐的语法和行为，例如使用未声明的变量、删除变量或函数、对只读属性赋值等。它会抛出更多的错误，帮助开发者发现并修复潜在的问题。
+
+2. 严格模式禁止使用一些不严谨的语法解析和错误容忍行为，例如不允许在全局作用域中定义变量时省略 `var` 关键字。
+
+3. 严格模式对函数的处理更加严格，要求函数内部的 `this` 值为 `undefined`，而非在非严格模式下默认指向全局对象。
+
+4. 严格模式禁止使用一些具有歧义性的特性，例如禁止使用八进制字面量、重复的函数参数名。
+
+使用严格模式可以提高代码的质量和可靠性，并避免一些常见的错误。为了启用严格模式，只需在 JavaScript 文件或函数的顶部添加 `"use strict"` 即可。严格模式默认不启用，需要显式地指定。例如：
+
+```javascript
+'use strict'
+
+// 严格模式下的代码
+```
+
+需要注意的是，严格模式不兼容一些旧版本的 JavaScript 代码，可能会导致一些旧有的代码产生错误。因此，在使用严格模式之前，需要确保代码中不会出现与严格模式不兼容的语法和行为。
+
+## let var const 区别? ⭐️⭐️⭐️⭐️⭐️
+
+核心在于作用域.
+
+* let 作用域为最近的块结构
+* var 为最近的函数结构
+
+js 采用词法作用域,更详细的资料参见 [你不知道的 JavaScript（上卷） 第一章](https://book.douban.com/subject/26351021/)
+理解如下概念:
+
+1. 静态(词法)作用域和动态作用域
+2. 左查询和右查询
+
+## 什么是闭包,闭包的的使用场景？⭐️⭐️⭐️⭐️⭐️
+
+闭包就是在函数的词法作用域外访问函数内作用域的现象。
+
+> 闭包的原理是由于外部变量持有内层函数的引用导致函数及其变量未被释放仍就可用
+
+1. 闭包保留了内部函数所有的状态
+
+> 使用场景
+
+1. 私有变量
+2. 回调模式保存动画状态,相比全局变量每个动画可以维持自己的状态值。避免全局污染。
+
+## this
+
+this 是执行上下文中的一个属性，它指向最后一次调用这个方法的对象。在实际开发中，this 的指向可以通过四种调用模式来判断。
+
+* 第一种是`函数调用模式`，当一个函数不是一个对象的属性时，直接作为函数来调用时，this 指向全局对象。
+
+* 第二种是`方法调用模式`，如果一个函数作为一个对象的方法来调用时，this 指向这个对象。
+
+* 第三种是`构造器调用模式`，如果一个函数用 new 调用时，函数执行前会新创建一个对象，this 指向这个新创建的对象。
+
+* 第四种是 `apply 、 call 和 bind 调用模式`，这三个方法都可以显示的指定调用函数的 this 指向。其中 apply 方法接收两个参数：一个是 this 绑定的对象，一个是参数数组。call 方法接收的参数，第一个是 this 绑定的对象，后面的其余参数是传入函数执行的参数。也就是说，在使用 call() 方法时，传递给函数的参数必须逐个列举出来。bind 方法通过传入一个对象，返回一个 this 绑定了传入对象的新函数。这个函数的 this 指向除了使用 new 时会被改变，其他情况下都不会改变。
+
+这四种方式，使用构造器调用模式的优先级最高，然后是 apply、call 和 bind 调用模式，然后是方法调用模式，然后是函数调用模式。
+
+1. this 是一个关键字,它的值取决于当前的执行环境,而非申明环境
+2. this 值的判定方法,参考 [你不知道的 javascript 上卷-第二部分　 this 和对象原型](https://book.douban.com/subject/26351021/)
+    1. **默认绑定**,当为普通函数调用或处于全局环境时
+        1. 严格模式 this 为 undefined
+        2. 非严格模式为 window
+    2. **隐式绑定**,当未对象成员的函数调用时,this 为当前对象 > 此种情况最易出错,当对象成员函数经过赋值等其他操作时,会转变为**默认绑定**须严格区分
+    3. **显示绑定** 当采用如下方法调用函数时会改变 this 的值
+        1. **call** 修改运行时 this
+        2. **apply** 效果同上,传入参数维数组模式
+        3. **bind** 永久改变 this,返回新的函数 > 当 this 的值为 null,undefined 时会采用 **默认绑定**,若赋值为原始值则采用原始封装对象进行替换
+    4. **new** 当采用 new 运行函数时,this 指向新创建的对象
+    5. **箭头函数 this** 继承外层执行环境的 this 值
+
+> DOM 中的 this
+
+当在回调中绑定 this 时,this 值的机制,由于是用户代理触发回调执行,**this** 的值等于申明时绑定的 dom 环境。
+
+```ts
+const obj = {
+  name: 'yanle',
+  age: 20,
+  getName: () => {
+    const _getName = () => {
+      console.log('this.getName', this.name)
+    }
+    _getName()
+  },
+  getAge: function () {
+    const _getAge = () => {
+      console.log('this.getAge', this.age)
+    }
+    _getAge()
+  },
+  extend: {
+    name: 'le',
+    age: 20,
+    getName: function () {
+      console.log('name: ', this.name)
+    },
+    getAge: () => {
+      console.log('age: ', this.age)
+    }
+  }
+}
+
+obj.getName()
+obj.getAge()
+
+obj.extend.getName()
+obj.extend.getAge()
+
+obj.extend.getName.bind(obj)()
+obj.extend.getAge.bind(obj)()
+```
+
+**执行结果**
+
+```shell
+this.getName undefined
+this.getAge 20
+name: le
+age: undefined
+name: yanle
+age: undefined
+```
+
+解释如下：
+
+* `obj.getName()`：在箭头函数getName中，this指向的是全局对象（在浏览器中是window对象，Node.js 中是Global对象）。因此this.getName输出undefined。
+* `obj.getAge()`：在普通函数getAge中，this指向的是obj对象。因此this.getAge输出20。
+* `obj.extend.getName()`：在普通函数getName中，this指向的是obj.extend对象。因此this.name输出le。
+* `obj.extend.getAge()`：在箭头函数getAge中，this指向的是全局对象（在浏览器中是window对象，Node.js 中是Global对象）。因此this.age输出undefined。
+* `obj.extend.getName.bind(obj)()`：通过bind方法将getName函数绑定到obj对象上，并立即调用绑定后的函数。在绑定后调用时，this指向的是obj对象。因此this.name输出yanle。
+* `obj.extend.getAge.bind(obj)()`：在箭头函数 getAge 中，this 是在函数定义时绑定的，而不是在函数调用时绑定的。在这种情况下，箭头函数的 this 指向的是外层作用域的 this，即全局对象（在浏览器中是 window 对象，Node.js 中是 Global 对象）。因此，在 obj.extend.getAge.bind(obj)() 中，this.age 输出的是全局对象的 age，而全局对象中并没有定义 age 属性，所以结果是 undefined。
+
+JavaScript 中 this 指向混乱的原因主要有以下几个：
+
+1. 函数调用方式不同：JavaScript 中函数的调用方式决定了 this 的指向。常见的函数调用方式有函数调用、方法调用、构造函数调用和箭头函数调用。不同的调用方式会导致 this 指向不同的对象，容易引发混乱。
+
+2. 丢失绑定：当函数作为一个独立的变量传递时，或者作为回调函数传递给其他函数时，函数内部的 this 可能会丢失绑定。这意味着函数中的 this 不再指向原来的对象，而是指向全局对象（在浏览器环境中通常是 window 对象）或 undefined（在严格模式下）。
+
+3. 嵌套函数：当函数嵌套在其他函数内部时，嵌套函数中的 this 通常会与外部函数的 this 不同。这可能导致 this 的指向出现混乱，特别是在多层嵌套的情况下。
+
+4. 使用 apply、call 或 bind 方法：apply、call 和 bind 是 JavaScript 中用于显式指定函数的 this 的方法。如果不正确使用这些方法，比如传递了错误的上下文对象，就会导致 this 指向错误。
+
+5. 箭头函数：箭头函数具有词法作用域的 this 绑定，它会捕获其所在上下文的 this 值，而不是动态绑定 this。因此，在箭头函数中使用 this 时，它指向的是箭头函数声明时的上下文，而不是调用时的上下文。
+
+为了避免 this 指向混乱的问题，可以采取以下措施：
+
+* 使用箭头函数，确保 this 始终指向期望的上下文。
+* 在函数调用时，确保正确设置了函数的上下文对象，可以使用 bind、call 或 apply 方法。
+* 使用严格模式，避免函数内部的 this 默认绑定到全局对象。
+* 在嵌套函数中，使用箭头函数或者显式保存外部函数的 this 值，以避免内部函数的 this 指向错误。
+
+理解和正确处理 this 的指向是 JavaScript 开发中重要的一环，它能帮助我们避免许多常见的错误和混乱。
+
+关于 this 指针的研究
+
+础实例说明
+
+实例1：
+
+```html
+<script>
+ var name = "Kevin Yang";
+ function sayHi(){
+ console.log("你好，我的名字叫" + this.name);
+ }
+ sayHi()
+</script>
+```
+
+如果在html 端， 这个this.name 是可以调用全局对象name的， 这个this实际上是指向的window的， var 也是把变量挂在到window对象上面的。
+
+但是同样的这个实例如果放在node 端，就是一个undefined ,原因是node端没有window对象。
+
+实例2：
+
+```javascript
+const name = 'Kevin Yang'
+function sayHi () {
+  console.log('你好，我的名字叫' + this.name)
+}
+const person = {}
+person.sayHello = sayHi
+person.sayHello()
+```
+
+这一次打招呼的内容就有点无厘头了，我们发现this.name已经变成undefined了。这说明，在sayHello函数内部执行时已经找不着this.name对象了。,原因是这儿时候，this指向的person 对象，但是this对象上面是没有name属性的。
+如果改为这样 `var person = {name:"Marry"};` 就可以得到我们想要的内容了。
+
+别this指针的指导性原则
+
+**在Javascript里面，this指针代表的是执行当前代码的对象的所有者。**
+
+在上面的示例中我们可以看到，第一次，我们定义了一个全局函数对象sayHi并执行了这个函数，函数内部使用了this关键字，
+那么执行this这 行代码的对象是sayHi（一切皆对象的体现），sayHi是被定义在全局作用域中。其实在Javascript中所谓的全局对象，
+无非是定义在 window这个根对象下的一个属性而已。因此，sayHi的所有者是window对象。也就是说，在全局作用域下，
+你可以通过直接使用name去引用这 个对象，你也可以通过window.name去引用同一个对象。因而**this.name就可以翻译为window.name了**。
+
+再来看第二个this的示例。第一次，person里面没有name属性，因此弹 出的对话框就是this.name引用的就是undefined对象
+（Javascript中所有只声明而没有定义的变量全都指向undefined对象）；
+而第二次我们在定义person的时候加了name属性了，那么this.name指向的自然就是我们定义的字符串了。
+
+理解了上面所说的之后，我们将上面最后一段示例改造成面向对象式的代码。
+
+```javascript
+const name = 'Kevin Yang'
+function sayHi () {
+  console.log('你好，我的名字叫' + this.name)
+}
+function Person (name) {
+  this.name = name
+}
+Person.prototype.sayHello = sayHi
+const marry = new Person('Marry')
+marry.sayHello()
+const kevin = new Person('Kevin')
+kevin.sayHello()
+```
+
+易误用的情况
+
+ 示例1——内联式绑定Dom元素的事件处理函数
+
+```html
+<body>
+<input id="btnTest" type="button" value="点击我" onclick="sayHi()">
+<script type="text/javascript"> 
+ function sayHi(){ 
+  alert("当前点击的元素是" + this.tagName); 
+ } 
+</script> 
+</body>
+```
+
+在此例代码中，我们绑定了button的点击事件，期望在弹出的对话框中打印出点击元素的标签名。但运行结果却是： 当前点击的元素是 undefined
+
+也就是this指针并不是指向input元素。这是因为当使用内联式绑定Dom元素的事件处理函数时，实际上相当于执行了以下代码：
+
+在这种情况下sayHi函数对象的所有权并没有发生转移，**还是属于window所有**。用上面的指导原则一套我们就很好理解为什么this.tagName是undefined了。
+
+那么如果我们要引用元素本身怎么办呢？
+我们知道，onclick函数是属于btnTest元素的，那么在此函数内部，this指针正是指向此Dom对象，于是我们只需要把this作为参数传入sayHi即可。
+
+```html
+<input id="btnTest" type="button" value="点击我" onclick="sayHi(this)">
+<script type="text/javascript"> 
+ function sayHi(el){ 
+  alert("当前点击的元素是" + el.tagName); } 
+</script> 
+```
+
+等价代码如下：
+
+```html
+<script type="text/javascript"> 
+ document.getElementById("btnTest").onclick = function(){ sayHi(this); } 
+</script>
+```
+
+ 示例2——临时变量导致的this指针丢失
+
+```html
+<script type="text/javascript"> 
+ var Utility = { 
+  decode:function(str){ return unescape(str); }, 
+  getCookie:function(key){ 
+   // ... 省略提取cookie字符串的代码 
+   var value = "i%27m%20a%20cookie"; 
+   return this.decode(value); 
+  } 
+ }; 
+ console.log(Utility.getCookie("identity")) 
+</script>
+```
+
+一般都会自己封装一个Utility的类，然后将一些常用的函数作为Utility类的属性，如客户端经常会 用到的getCookie函数和解码函数。
+如果每个函数都是彼此独立的，那么还好办，问题是，函数之间有时候会相互引用。例如上面的getCookie函 数，
+会对从document.cookie中提取到的字符串进行decode之后再返回。如果我们通过Utility.getCookie去调用的话，那 么没有问题，
+我们知道，getCookie内部的this指针指向的还是Utility对象，而Utility对象时包含decode属性的。代码可以成 功执行。
+
+但是有个人不小心这样使用Utility对象呢？
+
+```html
+<script type="text/javascript"> 
+ function showUserIdentity(){ 
+  // 保存getCookie函数到一个局部变量，因为下面会经常用到 
+  var getCookie = Utility.getCookie; 
+  alert(getCookie("identity")); 
+ } 
+ showUserIdentity(); 
+</script>
+```
+
+这个时候运行代码会抛出异常“this.decode is not a function”。
+运用上面我们讲到的指导原则，很好理解，因为此时Utility.getCookie对象被赋给了临时变量getCookie，
+而临 时变量是属于window对象的——只不过外界不能直接引用，只对Javascript引擎可见——于是在getCookie函数内部的this指针指向 的就是window对象了，
+而window对象没有定义一个decode的函数对象，因此就会抛出这样的异常来。
+
+这个问题是由于引入了临时变量导致的this指针的转移。解决此问题的办法有几个：
+不引入临时变量，每次使用均使用Utility.getCookie进行调用
+getCookie函数内部使用Utility.decode显式引用decode对象而不通过this指针隐式引用（如果Utility是一个实例化的对象，也即是通过new生成的，那么此法不可用）
+**使用Funtion.apply或者Function.call函数指定this指针**
+
+第三种使用apply 和 call 修正的办法实例如下：
+
+```html
+<script type="text/javascript"> 
+ function showUserIdentity(){ 
+  // 保存getCookie函数到一个局部变量，因为下面会经常用到 
+  var getCookie = Utility.getCookie; 
+  alert(getCookie.call(Utility,"identity")); 
+  alert(getCookie.apply(Utility,["identity"])); 
+ } 
+ showUserIdentity(); 
+</script>
+```
+
+ 示例3——函数传参时导致的this指针丢失
+
+```html
+<script type="text/javascript"> 
+ var person = { 
+  name:"Kevin Yang", 
+  sayHi:function(){ 
+   alert("你好，我是"+this.name); 
+  } 
+ } 
+ setTimeout(person.sayHi,5000); 
+</script>
+```
+
+这段代码期望在访客进入页面5秒钟之后向访客打声招呼。setTimeout函数接收一个函数作为参数，并在指定的触发时刻执行这个函数。
+可是，当我们等了5秒钟之后，弹出的对话框显示的this.name却是undefined。
+
+其实这个问题和上一个示例中的问题是类似的，都是因为临时变量而导致的问题。
+当我们执行函数的时候，如果函数带有参数，那么这个时候Javascript引擎会创建一个临时变量，
+并将传入的参数复制（注意，Javascript里面都是值传递的，没有引用传递的概念）给此临时变量。
+也就是说，整个过程就跟上面我们定义了一个getCookie的临时变量，再将Utility.getCookie赋值给这个临时变量一样。只不过在这个示例中，容易忽视临时变量导致的bug。
+
+数对象传参
+
+Prototype的解决方案——传参之前使用bind方法将函数封装起来，并返回封装后的对象
+
+```html
+<script type="text/javascript"> 
+ var person = { 
+  name:"Kevin Yang", 
+  sayHi:function(){ 
+   alert("你好，我是"+this.name); 
+  } 
+ } 
+ var boundFunc = person.sayHi.bind(person,person.sayHi); 
+ setTimeout(boundFunc,5000); 
+</script>
+```
+
+bind方法的实现其实是用到了Javascript又一个高级特性——**闭包**。我们来看一下源代码：
+
+```javascript
+function bind () {
+  if (arguments.length < 2 && arguments[0] === undefined) { return this }
+  const __method = this; const args = $A(arguments); const object = args.shift()
+  return function () { return __method.apply(object, args.concat($A(arguments))) }
+}
+```
+
+首先将this指针存入函数内部临时变量，然后在返回的函数对象中引用此临时变量从而形成闭包。
+
+化的this
+
+在JavaScript中，this通常 指向的是我们正在执行的函数本身，或者是指向该函数所属的对象（运行时）。
+当我们在页面中定义了函数 doSomething()的时候，它的owner是页面，或者是JavaScript中的window对象（或 global对象）。
+对于一个onclick属性，它为它所属的HTML元素所拥有，this应该指向该HTML元素。
+
+在几种常见场景中this的变化
+
+ ```javascript
+function doSomething () {
+   alert(this.navigator) // appCodeName
+   this.value = 'I am from the Object constructor'
+   this.style.backgroundColor = '# 000000'
+ }
+```
+
+* 作为普通函数直接调用时，this指向window对象.
+* 作为控件事件触发时
+* inline event registration 内联事件注册 .将事件直接写在HTML代码中`(<element onclick=”doSomething()”>)`, 此时this指向 window对象 。
+* Traditional event registration 传统事件注册 （DHTML方式）. 形如 element.onclick = doSomething; 此时this指向 element对象
+* `<element onclick=”doSomething(this)”>` 作为参数传递可以指向element
+* 作为对象使用时this指向当前对象。形如：new doSomething();
+* 使用apply 或者call方法时，this指向所传递的对象。 形如：var obj={}; doSomething.apply(obj,new Array(”nothing”));
+
+下来文章中我们将要讨论的问题是：在函数doSomething()中this所指的是什么？
+
+```javascript
+function doSomething () {
+  this.style.color = '#cc0000'
+}
+```
+
+在 JavaScript中，this通常指向的是我们正在执行的函数本身（译者注：用owner代表this所指向的内容），或者是，指向该函数所属的对 象。
+当我们在页面中定义了函数doSomething()的时候，它的owner是页面，或者是JavaScript中的window对象（或 global对象）。
+对于一个onclick属性，它为它所属的HTML元素所拥有，this应该指向该HTML元素。
+这种“所有权”就是JavaScript中面向对象的一种方式。在Objects as associative arrays中可以查看一些更多的信息。
+![11_02](https://user-images.githubusercontent.com/22188674/224062543-ec8a9e13-6a90-400b-a54d-16dfc33c64fc.gif)
+
+怎样在一个代码环境中快速的找到this所指的对象呢？
+
+* 1、 要清楚的知道对于函数的每一步操作是拷贝还是引用（调用）
+* 2、 要清楚的知道函数的拥有者（owner）是什么
+* 3、 对于一个function，我们要搞清楚我们是把它当作函数使用还是在当作类使用
+
+## 变量提升
+
+参考 [我知道你懂 hoisting，可是你了解到多深？](https://blog.techbridge.cc/2018/11/10/javascript-hoisting/)
+
+变量提升是 js 语言的一种机制确保在变量或函数定义后,无需考虑调用位置对变量或函数进行引用。
+
+它具有如下机制:
+
+1. 变量或函数声明语句会在代码执行前,完成对变量或函数的初始化
+2. 同名函数和变量申明,变量申明提升在前
+3. 重复申明的函数提升会按照声明顺序后面覆盖前面
+4. let 提升会出现 TDZ 现象
+
+## 解释下原型、构造函数、示例、原型链之间的关系
+
+## 内存管理
+
+js 语言有内置的垃圾回收机制。
+内存分配的申明周期如下
+
+1. 分配内存 (申明语句会触发内存分配操作)
+2. 使用内存 (函数调用,局域执行触发内存读写)
+3. 内存释放 (gc 自动完成)
+
+node 采用标记清除算法。
+
+## V8 里面的 JIT 是什么？ {#jit}
+
+在计算机科学中，JIT 是“Just-In-Time”（即时编译）的缩写，它是一种提高代码执行性能的技术。具体来说，在 V8 引擎（Google Chrome 浏览器和 Node.js 的 JavaScript 引擎）中，JIT 编译器在 JavaScript 代码运行时，将其编译成机器语言，以提高执行速度。
+
+这里简要解释下 JIT 编译器的工作原理：
+
+1. **解释执行**：V8 首先通过一个解释器（如 Ignition）来执行 JavaScript 代码。这个过程中，代码不会编译成机器语言，而是逐行解释执行。这样做的优点是启动快，但执行速度较慢。
+
+2. **即时编译**：当代码被多次执行时，V8 会认为这部分代码是“热点代码”（Hot Spot），此时 JIT 编译器（如 TurboFan）会介入，将这部分热点代码编译成机器语言。机器语言运行在 CPU 上比解释执行要快得多。
+
+3. **优化与去优化**：JIT 编译器会对热点代码进行优化，但有时候它会基于错误的假设做出优化（例如认为某个变量总是某种类型）。如果后来的执行发现这些假设不成立，编译器需要去掉优化（Deoptimize），重新编译。
+
+JIT 编译器的一个关键优点是它能够在不牺牲启动速度的情况下，提供接近于或同等于编译语言的运行速度。这使得像 JavaScript 这样原本被认为执行效率较低的语言能够用于复杂的计算任务和高性能的应用场景。
+
+随着 V8 和其他现代 JavaScript 引擎的不断进步，JIT 编译技术也在持续优化，以提供更快的执行速度和更高的性能。
+
+## 隐藏类是什么概念？ {#p0-hidden-class}
+
+**关键词**：JavaScript隐藏类
+
+隐藏类是JavaScript引擎中的一种优化技术，用于提高对象访问的性能。隐藏类是一种数据结构，用于跟踪对象的属性和方法的布局和类型，以便在代码运行时能够快速访问它们。
+
+当JavaScript引擎在执行代码时，会动态地创建对象的隐藏类。隐藏类会跟踪对象的属性和方法，并为它们分配固定的内存偏移量。每当对象的属性和方法发生变化时，隐藏类会根据变化的情况进行更新。
+
+使用隐藏类可以提高代码的执行速度，因为JavaScript引擎可以根据隐藏类的信息来直接定位和访问对象的属性和方法，而不需要进行动态查找或解析。这种优化技术可以减少对象访问的开销，提高代码的性能。
+
+需要注意的是，隐藏类是在运行时动态创建的，因此代码中创建对象的顺序和属性的添加顺序都会影响隐藏类的生成。如果对象的属性添加顺序不一致，可能会导致隐藏类的生成不一致，从而降低代码的性能。
+
+隐藏类是现代JavaScript引擎（如V8、SpiderMonkey等）中的一项重要优化技术，可以显著提高JavaScript代码的执行速度。
+
+下面是一个使用隐藏类的简单示例：
+
+```javascript
+function MyClass (a, b) {
+  this.prop1 = a
+  this.prop2 = b
+}
+
+MyClass.prototype.method1 = function () {
+  console.log('Method 1')
+}
+
+MyClass.prototype.method2 = function () {
+  console.log('Method 2')
+}
+
+const obj1 = new MyClass(10, 20)
+const obj2 = new MyClass(30, 40)
+
+obj1.method1() // 输出 "Method 1"
+obj2.method2() // 输出 "Method 2"
+```
+
+在上面的示例中，我们创建了一个名为`MyClass`的类，它有两个属性`prop1`和`prop2`，以及两个方法`method1`和`method2`。我们用`new`关键字创建了两个实例`obj1`和`obj2`。
+
+当我们使用隐藏类优化的JavaScript引擎运行这段代码时，它会动态地创建隐藏类来跟踪`MyClass`的属性和方法。每个实例都会有一个关联的隐藏类，它包含了实例的属性和方法的布局和类型信息。
+
+在调用`obj1.method1()`和`obj2.method2()`时，JavaScript引擎会使用隐藏类的信息来直接定位并执行相应的方法，而不需要进行动态查找和解析，从而提高了代码的执行速度。
+
+需要注意的是，这只是一个简单的示例，实际上隐藏类的优化是更复杂和细致的。不同的引擎可能会有不同的隐藏类实现方式，并且隐藏类的生成和优化过程会受到许多因素的影响，如代码的结构、对象的属性访问模式等。
+
+## JS 执行上下文的生命周期阶段有哪些 {#p0-execute-context}
+
+在JavaScript中，执行上下文的生命周期可以分为三个阶段：创建阶段（Creation phase）、执行阶段（Execution phase）和回收阶段（Cleanup phase）。
+
+1. 创建阶段（Creation phase）：
+
+* 在创建阶段，JavaScript引擎会做以下工作：
+* 创建变量对象（Variable
+ object）：变量对象是执行上下文中的一个重要部分，用于存储变量和函数声明。在该阶段，JavaScript引擎会扫描当前上下文中的代码，并创建变量对象。变量对象包括函数的参数、函数声明和变量声明。对于全局上下文，变量对象是全局对象（如`window`
+ 对象）。
+* 建立作用域链（Scope chain）：作用域链用于解析变量的访问权限。JavaScript引擎会根据当前执行上下文的词法环境和作用域嵌套关系来建立作用域链。
+* 确定this值：在创建阶段，JavaScript引擎会确定`this`关键字的值，这取决于函数的调用方式（如函数调用、方法调用、构造函数调用等）。
+
+2. 执行阶段（Execution phase）：
+
+* 在执行阶段，JavaScript引擎会按照代码的顺序执行语句，执行以下操作：
+* 变量赋值：根据代码中的赋值操作，给变量分配内存并赋予相应的值。
+* 函数引用：根据代码中的函数调用，将函数的引用添加到变量对象中。
+* 代码执行：按照代码的顺序执行语句，包括表达式计算、条件判断、循环等操作。
+* 创建局部变量：当函数内部存在局部变量时，在执行到相应代码行时，会为局部变量分配内存空间。
+
+3. 回收阶段（Cleanup phase）：
+
+* 在回收阶段，JavaScript引擎会进行垃圾回收和释放内存等清理工作。当执行上下文不再被引用或执行完毕后，会触发回收阶段，进行以下操作：
+* 解除引用：将执行上下文中的变量和函数从变量对象中移除，解除对它们的引用。
+* 内存回收：对不再被引用的变量和对象进行垃圾回收，释放占用的内存空间。
+
+这三个阶段共同构成了执行上下文的生命周期。创建阶段主要用于初始化执行上下文的变量和函数，建立作用域链和确定`this`值。执行阶段是实际执行代码的阶段，按照代码顺序执行语句。回收阶段主要用于清理执行上下文，释放内存空间。这个生
+
+命周期的循环会在代码的执行过程中反复进行，直到所有的代码都执行完毕并且没有引用指向该执行上下文时，执行上下文将被彻底回收。
+
+在JavaScript中，执行上下文栈（Execution Context Stack）是用于跟踪和管理函数执行的机制。每当JavaScript代码执行到一个函数时，就会创建一个执行上下文（Execution Context）并被推入执行上下文栈的顶部。当函数执行完毕后，执行上下文将从栈中弹出，控制权将返回给调用该函数的上下文。
+
+执行上下文栈遵循"先进后出"（Last-In-First-Out）的原则。也就是说，最后一个推入栈的执行上下文会被最先弹出。
+
+每个执行上下文都包含了以下三个重要的组成部分：
+
+1. 变量对象（Variable Object）：变量对象存储了函数的形参、函数声明、变量声明和作用域链等信息。
+
+2. 作用域链（Scope Chain）：作用域链是一个由当前执行上下文的变量对象和所有父级执行上下文的变量对象组成的链表结构。它用于变量查找的过程。
+
+3. this 值：this 值指定了当前执行上下文中的 this 关键字的指向。
+
+通过执行上下文栈，JavaScript引擎能够追踪到代码的执行位置，并根据当前执行上下文的环境来解析变量和执行函数。这种栈结构的管理方式使得JavaScript能够实现函数的嵌套调用和正确的变量作用域处理。
+
+## JS 中的数组和函数在内存中是如何存储的？{#p0-object-model}
+
+在JavaScript中，数组和函数在内存中的存储方式有一些不同。
+
+1. 数组（Array）的存储：
+
+* 数组是一种线性数据结构，它可以存储多个值，并且这些值可以是不同类型的。在内存中，数组的存储通常是连续的。当创建一个数组时，JavaScript引擎会为其分配一段连续的内存空间来存储数组的元素。数组的每个元素都会被存储在这段内存空间中的相应位置。数组的长度可以动态改变，当向数组添加或删除元素时，JavaScript引擎会重新分配内存空间并移动元素的位置。
+
+2. 函数（Function）的存储：
+
+* 函数在JavaScript中被视为一种特殊的对象。函数的定义实际上是创建一个函数对象，并将其存储在内存中。函数对象本身包含了函数的代码以及其他相关信息，例如函数的名称、参数和闭包等。函数对象的代码部分通常是一段可执行的JavaScript代码，它被存储在内存中的某个位置。当调用函数时，JavaScript引擎会查找该函数对象的存储位置，并执行其中的代码。
+
+需要注意的是，数组和函数的存储方式是由JavaScript引擎决定的，不同的引擎可能会有一些微小的差异。此外，JavaScript引擎还会使用一些优化技术，如垃圾回收和内存管理，来优化内存的使用和回收。
+
+在JavaScript中，变量的存储方式是基于所存储值的数据类型。JavaScript有7种内置数据类型：undefined、null、boolean、number、string、symbol和object。
+
+对于基础数据类型（除了object），变量值会直接存储在内存中。具体来说，这些数据类型的变量在内存中的存储形式如下：
+
+* undefined和null：这两个数据类型都只有一个值，每个值有一个特殊的内存地址。存储它们的变量会被赋予对应的内存地址。
+* boolean：这个数据类型的值只需要存储一个比特位（0或1），它们通常被存储在栈中，而不是堆中。
+* number：根据规范，数字类型在内存中占用8个字节的空间（64位），它们通常被存储在栈中，而不是堆中。
+* string：字符串实际上是一组字符数组，它们通常被存储在堆中，并通过引用地址存储在栈中。
+* symbol：每个symbol对应于唯一的标识符。它们通常被存储在堆中，并通过引用地址存储在栈中。
+
+而对于对象类型（包括对象、数组等），变量存储了一个指向存储对象的内存地址的指针。JavaScript采用引用计数内存管理，因此它会对每个对象进行引用计数，当一个对象不再被引用时，JavaScript会自动回收这个对象的内存空间。
+
+总的来说，在JavaScript中，变量的存储方式基于值类型的数据类型，对于对象型变量，存储指向对象的内存地址的指针以及对象的值，而对于基础类型的变量，直接存储变量的值。
+
+在JavaScript中，对象是一种无序的键值对集合，可以保存和传递信息。对象是一种非常重要的数据类型，在JavaScript中，几乎所有东西都是对象。
+
+在底层，JavaScript对象的数据结构是哈希表（Hash Table），也可以称为散列表。哈希表是一种使用哈希函数将键值映射到数据中的位置的数据结构。它允许效率高且快速地插入、查找和删除数据，这些操作在算法的平均情况下都需要常数时间。哈希表的主要思想是将键值对转换为索引的方式在常数时间内获取值，因此哈希表非常适合用于大量的键值对数据存储。
+
+在JavaScript中，对象的键值对存储使用了类似哈希表的技术。JavaScript引擎使用一个称为哈希表种子的随机数字来计算键的哈希值，然后使用头插法（链表或树）将键和值存储在桶中，以实现高效的插入和查询操作。因此，JavaScript对象在实现上使用了哈希表来存储和访问键值对，从而提供了非常高效的数据存储和查找操作，使之成为了编写JavaScript代码的强大工具。
+
+## for 循环的性能远远高于 forEach 的性能？{#p1-for-foreach}
+
+ 首先问题说"for循环优于forEach"并不完全正确
+
+循环次数不够多的时候， forEach 性能优于 for
+
+```js
+// 循环十万次
+const arrs = new Array(100000)
+
+console.time('for')
+// eslint-disable-next-line
+for (let i = 0; i < arrs.length; i++) {}
+console.timeEnd('for') // for: 2.36474609375 ms
+
+console.time('forEach')
+arrs.forEach((arr) => {})
+console.timeEnd('forEach') // forEach: 0.825927734375 ms
+```
+
+循环次数越大， for 的性能优势越明显
+
+```js
+// 循环 1 亿次
+const arrs = new Array(100000000)
+
+console.time('for')
+// eslint-disable-next-line
+for (let i = 0; i < arrs.length; i++) {}
+console.timeEnd('for') // for: 72.7099609375 ms
+
+console.time('forEach')
+arrs.forEach((arr) => {})
+console.timeEnd('forEach') // forEach: 923.77392578125 ms
+```
+
+ 先做一下对比
+
+|对比类型|for|forEach|
+|:---|:---|:---|
+|遍历|for循环按顺序遍历|forEach 使用 iterator 迭代器遍历|
+|数据结构|for循环是随机访问元素|forEach 是顺序链表访问元素|
+|性能上|对于arraylist，是顺序表，使用for循环可以顺序访问，速度较快；使用foreach会比for循环稍慢一些|对于linkedlist，是单链表，使用for循环每次都要从第一个元素读取next域来读取，速度非常慢；使用foreach可以直接读取当前结点，数据较快|
+
+ 结论
+
+for 性能优于 forEach ， 主要原因如下：
+
+1. foreach相对于for循环，代码减少了，但是foreach依赖IEnumerable。在运行的时候效率低于for循环。
+2. for循环没有额外的函数调用栈和上下文，所以它的实现最为简单。forEach：对于forEach来说，它的函数签名中包含了参数和上下文，所以性能会低于 for 循环。
+
+ 参考文档
+
+* [资料](https://zhuanlan.zhihu.com/p/461523927)
+
+* [javascript 中 for 的性能比 forEach 的性能要好，为何还要使用 forEach？ - 李十三的回答 - 知乎](https://www.zhihu.com/question/556786869/answer/2706658837)
+* [资料](https://juejin.cn/post/6844904159938887687)
+
+## 尾调优化
+
+[es6 javascript 尾调用](https://blog.csdn.net/qq_30100043/article/details/53406001)
+[深入理解JavaScript中的尾调用(Tail Call)](https://www.jb51.net/article/104875.htm)
+
+ 1、什么是尾调用
+
+尾调用是函数式编程里比较重要的一个概念，尾调用的概念非常简单，
+一句话就能说清楚，它的意思是在函数的执行过程中，如果最后一个动作是一个函数的调用，
+即这个调用的返回值被当前函数直接返回，则称为尾调用。
+
+```javascript
+function f (x) {
+  return g(x)
+}
+```
+
+上面代码中，函数 f 的最后一步是调用函数 g ，这就叫尾调用。**以下三种情况，都不属于尾调用。**
+
+```javascript
+// 情况一
+function f (x) {
+  const y = g(x)
+  return y
+}
+// 情况二
+
+function f1 (x) {
+  return g(x) + 1
+}
+// 情况三
+function f2 (x) {
+  g(x)
+}
+```
+
+上面代码中，情况一是调用函数 g 之后，还有赋值操作，所以不属于尾调用，即使语义完全一样。情况二也属于调用后还有操作，即使写在一行内。情况三等同于下面的代码。
+
+```javascript
+function f (x) {
+  g(x)
+  return undefined
+}
+```
+
+尾调用不一定出现在函数尾部，只要是最后一步操作即可。
+
+```javascript
+function f (x) {
+  if (x > 0) {
+    return m(x)
+  }
+  return n(x)
+}
+```
+
+上面代码中，函数 m 和 n 都属于尾调用，因为它们都是函数 f 的最后一步操作。
+
+ 2、尾调用优化
+
+尾调用之所以与其他调用不同，就在于它的特殊的调用位置。
+
+我们知道，函数调用会在内存形成一个 “ 调用记录 ” ，又称 “ 调用帧 ” （ call frame ），保存调用位置和内部变量等信息。
+如果在函数 A 的内部调用函数 B ，那么在 A 的调用帧上方，还会形成一个 B 的调用帧。
+等到 B 运行结束，将结果返回到 A ， B 的调用帧才会消失。
+如果函数 B 内部还调用函数 C ，那就还有一个 C 的调用帧，以此类推。
+所有的调用帧，就形成一个 “ 调用栈 ” （ call stack ）。
+
+尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，
+因为调用位置、内部变量等信息都不会再用到了，只要直接用内层函数的调用帧，取代外层函数的调用帧就可以了。
+
+```javascript
+function f () {
+  const m = 1
+  const n = 2
+  return g(m + n)
+}
+f()
+// 等同于
+function f1 () {
+  return g(3)
+}
+f()
+// 等同于
+g(3)
+```
+
+上面代码中，如果函数 g 不是尾调用，函数 f 就需要保存内部变量 m 和 n 的值、 g 的调用位置等信息。
+但由于调用 g 之后，函数 f 就结束了，所以执行到最后一步，完全可以删除 f(x) 的调用帧，只保留 g(3) 的调用帧。
+
+这就叫做 “ 尾调用优化 ” （ Tail call optimization ），即只保留内层函数的调用帧。
+如果所有函数都是尾调用，那么完全可以做到每次执行时，调用帧只有一项，这将大大节省内存。这就是 “ 尾调用优化 ” 的意义。
+
+注意，只有不再用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行 “ 尾调用优化 ” 。
+
+```javascript
+function addOne (a) {
+  const one = 1
+  function inner (b) {
+    return b + one
+  }
+  return inner(a)
+}
+```
+
+上面的函数不会进行尾调用优化，因为内层函数inner用到了外层函数addOne的内部变量one。
+
+ 3、尾递归
+
+函数调用自身，称为递归。如果尾调用自身，就称为尾递归。
+递归非常耗费内存，因为需要同时保存成千上百个调用帧，很容易发生 “ 栈溢出 ” 错误（ stack overflow ）。
+但对于尾递归来说，由于只存在一个调用帧，所以永远不会发生 “ 栈溢出 ” 错误。
+
+```javascript
+function factorial (n) {
+  if (n === 1) return 1
+  return nfactorial(n - 1)
+}
+factorial(5) // 120
+```
+
+上面代码是一个阶乘函数，计算 n 的阶乘，最多需要保存 n 个调用记录，复杂度 O(n) 。
+
+如果改写成尾递归，只保留一个调用记录，复杂度 O(1) 。
+
+```javascript
+function factorial (n, total) {
+  if (n === 1) return total
+  return factorial(n - 1, ntotal)
+}
+factorial(5, 1) // 120
+```
+
+还有一个比较著名的例子，就是计算 fibonacci（斐波那契） 数列，也能充分说明尾递归优化的重要性
+如果是非尾递归的 fibonacci 递归方法
+
+```javascript
+function Fibonacci (n) {
+  if (n <= 1) { return 1 }
+  return Fibonacci(n - 1) + Fibonacci(n - 2)
+}
+Fibonacci(10) // 89
+// Fibonacci(100)
+// Fibonacci(500)
+// 堆栈溢出了
+```
+
+如果我们使用尾递归优化过的 fibonacci 递归算法
+
+```javascript
+function Fibonacci2 (n, ac1 = 1, ac2 = 1) {
+  if (n <= 1) { return ac2 }
+  return Fibonacci2(n - 1, ac2, ac1 + ac2)
+}
+Fibonacci2(100) // 573147844013817200000
+Fibonacci2(1000) // 7.0330367711422765e+208
+Fibonacci2(10000) // Infinity
+```
+
+由此可见， “ 尾调用优化 ” 对递归操作意义重大，所以一些函数式编程语言将其写入了语言规格。
+ES6 也是如此，第一次明确规定，所有 ECMAScript 的实现，都必须部署 “ 尾调用优化 ” 。这就是说，在 ES6 中，只要使用尾递归，就不会发生栈溢出，相对节省内存。
+
+ 4、递归函数的改写
+
+尾递归的实现，往往需要改写递归函数，确保最后一步只调用自身。做到这一点的方法，就是把所有用到的内部变量改写成函数的参数。
+比如上面的例子，阶乘函数 factorial 需要用到一个中间变量 total ，那就把这个中间变量改写成函数的参数。
+这样做的缺点就是不太直观，第一眼很难看出来，为什么计算 5 的阶乘，需要传入两个参数 5 和 1 ？
+
+两个方法可以解决这个问题。
+**方法一是在尾递归函数之外，再提供一个正常形式的函数。**
+
+```javascript
+function tailFactorial (n, total) {
+  if (n === 1) return total
+  return tailFactorial(n - 1, ntotal)
+}
+function factorial (n) {
+  return tailFactorial(n, 1)
+}
+factorial(5) // 120
+```
+
+上面代码通过一个正常形式的阶乘函数 factorial ，调用尾递归函数 tailFactorial ，看起来就正常多了。
+
+函数式编程有一个概念，**叫做柯里化（ currying ）**，意思是将多参数的函数转换成单参数的形式。这里也可以使用柯里化。
+
+```javascript
+function currying (fn, n) {
+  return function (m) {
+    return fn.call(this, m, n)
+  }
+}
+function tailFactorial (n, total) {
+  if (n === 1) return total
+  return tailFactorial(n - 1, ntotal)
+}
+const factorial = currying(tailFactorial, 1)
+factorial(5) // 120
+```
+
+上面代码通过柯里化，将尾递归函数 tailFactorial 变为只接受 1 个参数的 factorial 。
+
+**第二种方法就简单多了，就是采用 ES6 的函数默认值。**
+
+```javascript
+function factorial (n, total = 1) {
+  if (n === 1) return total
+  return factorial(n - 1, ntotal)
+}
+factorial(5) // 120
+```
+
+上面代码中，参数 total 有默认值 1 ，所以调用时不用提供这个值。
+
+总结一下，递归本质上是一种循环操作。纯粹的函数式编程语言没有循环操作命令，所有的循环都用递归实现，这就是为什么尾递归对这些语言极其重要。
+对于其他支持 “ 尾调用优化 ” 的语言（比如 Lua ， ES6 ），只需要知道循环可以用递归代替，而一旦使用递归，就最好使用尾递归。
+
+ 5、严格模式
+
+ES6 的尾调用优化只在严格模式下开启，正常模式是无效的。
+这是因为在正常模式下，函数内部有两个变量，可以跟踪函数的调用栈。
+func.arguments：返回调用时函数的参数。
+func.caller：返回调用当前函数的那个函数。
+尾调用优化发生时，函数的调用栈会改写，因此上面两个变量就会失真。严格模式禁用这两个变量，所以尾调用模式仅在严格模式下生效。
+
+```javascript
+function restricted () {
+  'use strict'
+  restricted.caller // 报错
+  restricted.arguments // 报错
+}
+restricted()
+```
+
+ 6、尾递归优化的实现
+
+尾递归优化只在严格模式下生效，那么正常模式下，或者那些不支持该功能的环境中，有没有办法也使用尾递归优化呢？回答是可以的，就是自己实现尾递归优化。
+它的原理非常简单。尾递归之所以需要优化，原因是调用栈太多，造成溢出，那么只要减少调用栈，就不会溢出。
+怎么做可以减少调用栈呢？就是采用 “ 循环 ” 换掉 “ 递归 ” 。
+
+下面是一个正常的递归函数。
+
+```javascript
+function sum (x, y) {
+  if (y > 0) {
+    return sum(x + 1, y - 1)
+  } else {
+    return x
+  }
+}
+sum(1, 100000)
+// Uncaught RangeError: Maximum call stack size exceeded(…)
+```
+
+上面代码中，sum是一个递归函数，参数x是需要累加的值，参数y控制递归次数。
+一旦指定sum递归 100000 次，就会报错，提示超出调用栈的最大次数。
+**蹦床函数(trampoline)** 可以将递归执行转为循环执行。
+
+```javascript
+function trampoline (f) {
+  while (f && f instanceof Function) {
+    f = f()
+  }
+  return f
+}
+```
+
+上面就是蹦床函数的一个实现，它接受一个函数f作为参数。只要f执行后返回一个函数，就继续执行。
+注意，这里是返回一个函数，然后执行该函数，而不是函数里面调用函数，这样就避免了递归执行，从而就消除了调用栈过大的问题。
+
+然后，要做的就是将原来的递归函数，改写为每一步返回另一个函数。
+
+```javascript
+function sum (x, y) {
+  if (y > 0) {
+    return sum.bind(null, x + 1, y - 1)
+  } else {
+    return x
+  }
+}
+```
+
+上面代码中，sum函数的每次执行，都会返回自身的另一个版本。
+现在，使用蹦床函数执行sum，就不会发生调用栈溢出。
+
+```js
+// eslint-disable-next-line
+trampoline(sum(1, 100000))
+// 100001
+// 蹦床函数并不是真正的尾递归优化，下面的实现才是。
+function tco (f) {
+  let value
+  let active = false
+  const accumulated = []
+  return function accumulator () {
+    accumulated.push(arguments)
+    if (!active) {
+      active = true
+      while (accumulated.length) {
+        value = f.apply(this, accumulated.shift())
+      }
+      active = false
+      return value
+    }
+  }
+}
+var sum = tco(function (x, y) {
+  if (y > 0) {
+    return sum(x + 1, y - 1)
+  } else {
+    return x
+  }
+})
+sum(1, 100000)
+// 100001
+```
+
+上面代码中，tco函数是尾递归优化的实现，它的奥妙就在于状态变量active。
+默认情况下，这个变量是不激活的。一旦进入尾递归优化的过程，这个变量就激活了。
+然后，每一轮递归sum返回的都是undefined，所以就避免了递归执行；
+而accumulated数组存放每一轮sum执行的参数，总是有值的，这就保证了accumulator函数内部的while循环总是会执行。
+这样就很巧妙地将 “ 递归 ” 改成了 “ 循环 ” ，而后一轮的参数会取代前一轮的参数，保证了调用栈只有一层。
+
+## 解释一下 原型、构造函、实例、原型链 之间的关系 {#p0-prototype}
+
+创建对象有哪几种方式？
+
+```js
+// 面向字面量
+const o1 = { name: '01' }
+// eslint-disable-next-line
+const o11 = new Object({ name: 'o11' })
+
+// 使用显示的构造函数：
+const M = function () { this.name = '02' }
+const o2 = new M()
+
+// 通过Object.create()创建
+const P = { name: 'o3' }
+const o3 = Object.create(P)
+```
+
+解释一下 原型、构造函、实例、原型链 之间的关系？
+
+![01_01](https://user-images.githubusercontent.com/22188674/221917767-022a2d09-3539-4e54-a462-34299be8eb0b.png)
+
+**1、基础**
+
+构造函数可以通过new来生成一个实例、构造函数也是函数；
+函数都有一个prototype属性，这个就是原型对象；
+原型对象可以通过构造器constructor来指向它的构造函数；
+实例的__proto__属性，指向的是其构造函数的原型对象；
+
+**原型链**：从一个实例对象，向上找构造这个实例相关联的对象，相关联的对象又向上找，找到创造它的一个实例对象，
+一直到Object.prototype截止。原型链是通过prototype和__proto__向上找的。构造函数通过prototype创建了很多方法，
+被其所有实例所公用，存放在原型对象上；
+
+例子：
+
+```javascript
+const M = function (name) { this.name = name }
+const o3 = new M('o3')
+```
+
+当我们需要扩展实例的时候，我们可以对构造函数添加方法，但是这样会创建每一个实例都拷贝一份它自己的添加的方法，
+占用内存，而且也没有必要，这个时候就可以新添加的方法写进原型里面去，添加到原型链中去，
+在实例的原型链中我们可以在原型对象上找到添加的方法；
+
+```javascript
+const M = function (name) { this.name = name }
+const o3 = new M('o3')
+M.prototype.say = function () {
+  Console.log('say hi')
+}
+const o5 = new M('o5')
+```
+
+通过这种方式o3和o5都有say方法；原型链的优势是原型对象的方法是被所有实例共有的；
+
+当访问一个实例方法的时候，首先在实例本身找这个方法，如果没有找到就会到其构建函数的原型对象去找，如果还是没有找到，
+那么它会继续通过原型链在原型对象的更上一级查找，一直到object.prototype;
+
+一定要记住只有函数才有proptotype,对象是没有的；
+
+只有实例对象又__proto__ , 因为函数也是对象，所以函数也有__proto__ , 但是和实例对象的__proto__是有区别的，函数的__proto__是function这个对象的构造实例；
+
+**2、instanceof 原理**
+
+实例对象上面有一个__proto__ ，这个是引用的它构造函数的原型对象；
+
+instanceof是用来判断实例是不是由某个构造函数实例化出来的对象，其原理是判断实例对象是否指向构造函数的原型；
+只要是在原型链上的函数，都会被instanceof看做是实例对象的一个构造函数，所以都会返回true;
+
+```
+m1.__proto__===m1.prototype;返回true
+m1.prototype.__proto===Object.prototype;返回true
+
+o3.__proto__.constructor===Object;//返回false
+所以我们判断一个实例对象的构造函数，用constructor;
+```
+
+**3、new 运算符**
+
+后面跟着的是一个构造函数
+
+一个新对象被创建。它继承自 foo.prototype->
+构造函数foo会被执行，执行的时候，相应的传参会被传入，同时上下文（this）会被指定为这个新实例。 new foo等同于new foo(),只能在不传递任何参数的情况->
+如果构造函数返回了一个‘对象’，那么这个对象会取代整个new 出来的结果。如果构造函数没有返回值， 那么new出来的结果为步骤1创建的对象
+
+**4、Object.create()**
+
+创建的实例对象是指向的对象原型，实例对象本身是不具备创建对象的属性和方法的，是通过原型链来链接的。

@@ -1,0 +1,2799 @@
+# 原理
+
+## react 和 react-dom 是什么关系？{#react-dom}
+
+`react` 和 `react-dom` 是两个与 React 生态系统密切相关的 npm 包，它们在使用 React 构建用户界面时扮演不同的角色：
+
+ `react`
+
+* `react` 包含了构建 React 组件所必需的核心功能，例如创建组件类（如 `React.Component`），创建元素（如使用 `React.createElement`），还有新的 React 16+ 特性中的 Hooks（如 `useState` 和 `useEffect`）。
+* 它提供了组件生命周期管理、组件状态管理以及 React 元素（用于描述 UI 长相的对象）的创建。
+* `react` 实现了 React 的核心算法，包括对组件状态的更新以及虚拟 DOM 的概念。
+* 简而言之，`react` 包对于任何使用 React 的应用程序都是一个必需的依赖，无论该应用程序是运行在浏览器还是其他环境中。
+
+ `react-dom`
+
+* `react-dom` 提供了一些让 React 能够与 DOM 互动的方法。在浏览器中，它把 React 组件渲染到真实的 DOM 节点上，并且处理用户的交互（如点击、输入等事件）。
+* 主要的方法是 `ReactDOM.render()`，它将 React 组件或者元素渲染到指定的 DOM 容器中。在 React 18+ 中，这个角色由 `ReactDOM.createRoot().render()` 接手。
+* 如果你在使用服务端渲染（Server-Side Rendering, SSR），那么你会使用 `react-dom/server` 中的方法，如 `ReactDOMServer.renderToString()` 或 `ReactDOMServer.renderToStaticMarkup()`。这些方法允许你把 React 组件渲染成初始的 HTML 字符串。
+* 当 React 组件需要被集成到现有的非 React 应用中，或者需要执行如测试和服务端渲染等操作时，通常需要使用 `react-dom` 包。
+
+ 它们之间的关系
+
+React 使用了所谓的“适配器模式”（Adapter Pattern），`react` 包提供平台独立的解决方案，而像 `react-dom` 这样的包则提供针对特定平台的方法。这允许 React 的核心能够被跨平台使用，例如在浏览器（通过 `react-dom`）、移动设备（通过 React Native 的 `react-native`）、VR 设备（通过 `react-vr`）等。
+
+当你在浏览器中构建 React 应用程序时，你通常会同时安装并使用这两个包。在引导你的应用程序时，你将使用 `react` 包来定义你的组件，然后用 `react-dom` 包将你的顶层组件渲染到页面中的 DOM 元素上。这样的分离也为服务器端渲染或在其他渲染目标上使用 React 打下了基础。
+
+## React 与 Vue 的主要区别
+
+* 设计理念: React 推崇函数式编程，Vue 推崇声明式编程
+* 数据流: React 单向数据流，Vue 支持双向绑定
+* 状态管理: React 使用 setState/Hooks，Vue 使用响应式系统
+* 模板语法: React 使用 JSX，Vue 使用模板语法
+* 生态系统: React 社区更大，第三方库更丰富
+
+## 是如何进行渲染的？ {#p0-render}
+
+在 React 中，JSX 最终被转换为真实的 DOM 经历了以下步骤：
+
+ 1. 解析 JSX：在编译阶段，React 会使用 Babel 等工具将 JSX 转换为 JavaScript 对象
+
+在编译阶段，React 使用 Babel 等工具将 JSX 转换为 JavaScript 对象的过程可以使用以下代码示例来说明：
+
+原始的 JSX 代码：
+
+```jsx
+const element = <h1>Hello, world!</h1>;
+```
+
+经过编译后，会被转换为类似的 JavaScript 对象：
+
+```javascript
+const element = React.createElement('h1', null, 'Hello, world!')
+```
+
+上述代码中，`React.createElement` 是一个由 React 提供的方法，它接收三个参数：元素的类型、元素的属性（可以是一个对象或 null）、元素的子元素。这样，通过调用 `React.createElement`，JSX 元素就被转换成了一个 JavaScript 对象。
+
+在 React 项目中，Babel 是一个常用的工具，用于将 JSX 代码转换为 JavaScript 代码。Babel 实际上是一个 JavaScript 编译器，可以根据配置和插件，将代码从一种语法转换为另一种语法。
+
+当 Babel 遇到 JSX 代码时，它会使用一个名为 `@babel/preset-react` 的 preset（预设）来进行转换。这个 preset 包含了一系列的插件，用于处理 JSX 语法。
+
+**具体的工作流程如下**：
+
+1. Babel 解析代码：Babel 会将代码解析成抽象语法树（AST），以便于之后的处理。
+
+2. JSX 转换：Babel 使用 `@babel/preset-react` 预设来处理 JSX 代码。这个预设包含了一个插件 `@babel/plugin-transform-react-jsx`，用于将 JSX 转换为函数调用。
+
+ 例如，将 `<h1>Hello, world!</h1>` 转换成 `React.createElement("h1", null, "Hello, world!")`。
+
+3. 生成 JavaScript 代码：Babel 使用转换后的 AST，将其重新生成为 JavaScript 代码。
+
+ 例如，将 `React.createElement("h1", null, "Hello, world!")` 转换成实际的 JavaScript 代码。
+
+总结起来，Babel 的作用就是将 JSX 代码转换为 JavaScript 代码，使其能够在浏览器中执行。这样，React 就可以理解和处理 JSX 语法，并通过转换后的 JavaScript 代码来创建虚拟 DOM 和进行后续的更新操作。
+
+ 2. 创建虚拟 DOM：React 使用解析后的 JSX 对象来创建虚拟 DOM（Virtual DOM）。虚拟 DOM 是一个轻量级的、以 JavaScript 对象表示的 DOM 树的副本
+
+**createElement 创建虚拟dom**
+
+在 React 中，`React.createElement` 函数用于创建虚拟 DOM 元素。它接受三个参数：元素类型、属性对象以及子元素。
+
+```javascript
+const element = React.createElement(type, props, children)
+```
+
+`React.createElement` 函数会返回一个描述虚拟 DOM 元素的 JavaScript 对象。这个对象包含了元素的类型、属性和子元素等信息。例如，对于 `<div className="container">Hello, React!</div>` 这个 JSX 语法，它被转换为以下形式：
+
+```javascript
+React.createElement('div', { className: 'container' }, 'Hello, React!')
+```
+
+这样就创建了一个描述 `<div>` 元素的虚拟 DOM 对象。虚拟 DOM 对象可以通过 `ReactDOM.render` 方法渲染到实际的 DOM 中。当虚拟 DOM 发生变化时，React 会通过比较新旧虚拟 DOM，找出差异并进行局部更新，从而最小化对实际 DOM 的操作。
+
+**createElement 原理**
+
+以下是 React 源码中 `React.createElement` 函数的简化版本：
+
+```javascript
+function createElement (type, props, ...children) {
+  const element = {
+    type,
+    props: {
+      ...props,
+      children: children.map(child =>
+        typeof child === 'object' ? child : createTextElement(child)
+      )
+    }
+  }
+
+  return element
+}
+
+function createTextElement (text) {
+  return {
+    type: 'TEXT_ELEMENT',
+    props: {
+      nodeValue: text,
+      children: []
+    }
+  }
+}
+```
+
+在上面的源码中，`createElement` 函数接收一个 `type` 参数（元素类型）、一个 `props` 参数（元素的属性对象）以及可选的 `children` 参数（子元素）。
+
+首先，通过创建一个名为 `element` 的对象，我们存储了虚拟 DOM 元素的信息。`element` 对象中的 `type` 属性保存了元素的类型，而 `props` 属性则是一个对象，用来存储元素的属性和子元素。我们使用了 ES6 中的扩展运算符将 `props` 参数中的属性分配给 `element.props`，同时也将 `children` 参数中的子元素映射为虚拟 DOM 对象。
+
+对于 `children` 参数的处理，通过 `children.map` 方法遍历 `children` 数组，并对每个子元素执行以下操作：
+
+* 如果子元素是对象类型，即已经是一个虚拟 DOM 对象，直接将其添加到 `element.props.children` 中。
+* 如果子元素是字符串或数字类型，即文本节点，那么我们调用 `createTextElement` 函数来创建一个描述该文本节点的虚拟 DOM 对象，并将其添加到 `element.props.children` 中。
+
+`createTextElement` 函数用于创建文本节点的虚拟 DOM 对象。它返回一个包含 `type` 为 `'TEXT_ELEMENT'` 的对象，且 `props` 对象中的 `nodeValue` 属性保存了文本节点的内容，`children` 属性为空数组。
+
+最后，我们将 `element` 对象作为结果返回，这样就创建了一个描述虚拟 DOM 元素的 JavaScript 对象。
+
+总结起来，`createElement` 函数通过创建一个对象来描述虚拟 DOM 元素，其中包含了元素的类型、属性和子元素等信息。对于子元素，会根据其类型进行判断，如果是对象类型，则直接添加到 `props.children` 中；如果是文本类型，则通过 `createTextElement` 函数创建对应的虚拟 DOM 对象。这样就生成了一个虚拟 DOM 元素，可以用于进行后续的渲染和更新操作。
+
+ 3. Diff 算法比较变化：在每次组件更新时，React 使用 Diff 算法对比前后两个虚拟 DOM 树的差异。Diff 算法能够高效地找出需要进行更新的部分
+
+React中通过diff算法来比较两个虚拟DOM树的差异，以确定需要更新的最小操作集合。
+
+首先，React会比较两个根节点的类型，如果不同，它们代表不同的组件，React会将原来的组件树完全替换为新的组件树。
+
+如果类型相同，React会比较两个根节点的属性，检查它们是否有任何更改。如果有更改，React会更新已有的DOM元素的属性。
+
+接下来，React会递归地比较和更新子节点。React会通过遍历子节点的方式找到相同位置上的子节点，并进行递归比较。
+
+对于子节点，React使用一种称为"key"的特殊属性来判断它们是否是相同的元素。如果两个子节点的key相同，React会认为它们是相同的元素，并只更新它们的属性和子节点。如果key不同，React会将旧的子节点完全替换为新的子节点。
+
+最后，React会将所有需要更新的操作记录下来，并将其发送到浏览器的渲染引擎中执行。这些操作可能包括添加、移动或删除DOM节点。
+
+通过使用diff算法，React可以最小化对真实DOM的操作，提高性能和效率。同时，React还会使用一些启发式策略和优化算法，如批处理和异步更新，来进一步提升性能。
+
+ 4. 生成 DOM 更新操作：根据 Diff 算法的比较结果，React 会生成一系列的 DOM 更新操作，包括添加、移除和修改节点等。这些操作被存储在更新队列中
+
+在React中，生成DOM更新操作的过程可以概括为以下几个步骤：
+
+* 通过diff算法比较新旧虚拟DOM树的差异，得到需要更新的最小操作集合。
+
+* 对于每个需要更新的操作，React会将其转化为一个待执行的DOM更新任务。
+
+* React将这些待执行的DOM更新任务放入一个队列中，等待执行。
+
+* 当React准备执行DOM更新时，会将队列中的任务按照特定的顺序进行执行。这个顺序通常是根据DOM节点的层级和位置来确定的，以保证DOM更新的正确性。
+
+* 执行DOM更新时，React会根据操作的类型，比如添加、移动或删除DOM节点，调用浏览器提供的DOM API来执行相应的操作。
+
+* 在执行DOM更新的过程中，React会尽量优化操作，避免一些不必要的DOM操作。例如，将多个连续的DOM插入操作合并为一次操作，或者将多个DOM删除操作合并为一次操作。
+
+* 执行完所有的DOM更新任务后，React会通知浏览器进行重新渲染，将更新后的DOM树呈现给用户。
+
+总的来说，React通过将虚拟DOM树转化为真实DOM树，并通过diff算法生成DOM更新操作，然后按照特定顺序执行这些操作，最终完成DOM的更新和渲染。这样的设计可以提高性能，减少不必要的DOM操作，并保证DOM的一致性。
+
+ 5. 批量进行 DOM 更新：React 会将更新队列中的 DOM 更新操作批量进行，以减少浏览器的重绘和回流操作。React 会通过批量更新来优化性能
+
+React通过批量更新的方式来优化DOM操作，以减少不必要的性能开销。
+
+在React中，当需要更新组件状态或属性时，不会立即执行DOM更新操作，而是将更新请求加入到一个待处理的队列中。React会在适当的时机，比如在事件处理函数执行完毕或在生命周期方法结束时，对队列中的更新请求进行批量处理。
+
+具体的批量更新过程如下：
+
+* 在React中，每个组件都有一个内部的pending state队列，用于存储待处理的更新请求。
+
+* 当需要更新组件的状态或属性时，React会将更新请求添加到该组件的pending state队列中。
+
+* 在React的更新过程中，会遍历组件的pending state队列，将其中的所有更新请求合并为一个批量更新。
+
+* React会根据合并后的批量更新，生成最小化的DOM操作集合。
+
+* 最后，React会通过执行这个批量更新的DOM操作集合，将更新应用到真实的DOM树中。
+
+通过批量更新的方式，React可以减少不必要的DOM操作次数，提高性能。同时，React也提供了一些API，让开发者可以手动控制更新的时机，比如使用`setState`的回调函数、使用`ReactDom.unstable_batchedUpdates`方法等。
+
+需要注意的是，React并不保证所有的更新都会批量处理。在一些特殊情况下，比如在事件处理函数中手动调用`setState`，或者使用`ReactDOM.unstable_batchedUpdates`方法，可以强制进行批量更新。但在某些情况下，React可能会选择立即更新，以保证更新的时机和结果的一致性。
+
+ 6. 应用 DOM 更新：最后，React 将批量的 DOM 更新操作应用到实际的浏览器 DOM 中，从而更新用户界面。这个过程中，React 会尽量最小化对真实 DOM 的操作，以提高性能
+
+原理同上， 只是进行了重复操作；
+
+ 总结
+
+一图带千言
+
+![image](https://github.com/pro-collection/interview-question/assets/22188674/f24dad99-66fe-4206-9d05-6f7194dcc5b5)
+
+render阶段开始于`performSyncWorkOnRoot`或`performConcurrentWorkOnRoot`方法的调用。这取决于本次更新是同步更新还是异步更新。
+
+```js
+// performSyncWorkOnRoot会调用该方法
+function workLoopSync () {
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress)
+  }
+}
+
+// performConcurrentWorkOnRoot会调用该方法
+function workLoopConcurrent () {
+  while (workInProgress !== null && !shouldYield()) {
+    performUnitOfWork(workInProgress)
+  }
+}
+```
+
+可以看到，他们唯一的区别是是否调用shouldYield。如果当前浏览器帧没有剩余时间，shouldYield会中止循环，直到浏览器有空闲时间后再继续遍历。
+
+workInProgress代表当前已创建的workInProgress fiber。
+
+performUnitOfWork方法会创建下一个Fiber节点并赋值给workInProgress，并将workInProgress与已创建的Fiber节点连接起来构成Fiber树。
+
+通过遍历的方式实现可中断的递归，所以performUnitOfWork的工作可以分为两部分：“递”和“归”。
+
+ 创建节点
+
+首先从rootFiber开始向下深度优先遍历。为遍历到的每个Fiber节点调用`beginWork`方法 (opens new window)。
+
+该方法会根据传入的Fiber节点创建子Fiber节点，并将这两个Fiber节点连接起来。
+
+当遍历到叶子节点（即没有子组件的组件）时就会进入“归”阶段。
+
+在“归”阶段会调用`completeWork` (opens new window)处理Fiber节点。
+
+当某个Fiber节点执行完completeWork，如果其存在兄弟Fiber节点（即fiber.sibling !== null），会进入其兄弟Fiber的“递”阶段。
+
+如果不存在兄弟Fiber，会进入父级Fiber的“归”阶段。
+
+“递”和“归”阶段会交错执行直到“归”到rootFiber。至此，render阶段的工作就结束了。
+
+**举例**
+
+代码如下：
+
+```js
+function App () {
+  return (
+ <div>
+ i am
+ <span>KaSong</span>
+ </div>
+  )
+}
+
+ReactDOM.render(<App/>, document.getElementById('root'))
+```
+
+对应的 fiber 树结构如下
+![image](https://user-images.githubusercontent.com/22188674/235359287-0f448fa3-657d-40b4-8cff-92327ef5414c.png)
+
+render 阶段会依次执行
+
+```
+1. rootFiber beginWork
+2. App Fiber beginWork
+3. div Fiber beginWork
+4. "i am" Fiber beginWork
+5. "i am" Fiber completeWork
+6. span Fiber beginWork
+7. span Fiber completeWork
+8. div Fiber completeWork
+9. App Fiber completeWork
+10. rootFiber completeWork
+```
+
+ beginWork
+
+源码链接： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberBeginWork.new.js#L3075)
+
+工作流程图：
+![image](https://user-images.githubusercontent.com/22188674/235361451-6440499a-09dc-4478-81e4-e0585e815f0b.png)
+
+beginWork的工作是传入当前Fiber节点，创建子Fiber节点，我们从传参来看看具体是如何做的。
+
+**传参**
+
+```ts
+function beginWork (
+  current: Fiber | null, // 当前组件对应的Fiber节点在上一次更新时的Fiber节点，即workInProgress.alternate
+  workInProgress: Fiber, // 当前组件对应的Fiber节点
+  renderLanes: Lanes // 优先级相关，在讲解Scheduler时再讲解
+): Fiber | null {
+  // ...省略函数体
+}
+```
+
+beginWork的工作可以分为两部分:
+
+* `update`时：如果current存在，在满足一定条件时可以复用current节点，这样就能克隆current.child作为workInProgress.child，而不需要新建workInProgress.child。
+* `mount`时：除fiberRootNode以外，current === null。会根据fiber.tag不同，创建不同类型的子Fiber节点
+
+```ts
+function beginWork (
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes
+): Fiber | null {
+
+  // update时：如果current存在可能存在优化路径，可以复用current（即上一次更新的Fiber节点）
+  if (current !== null) {
+    // ...省略
+
+    // 复用current
+    return bailoutOnAlreadyFinishedWork(
+      current,
+      workInProgress,
+      renderLanes
+    )
+  } else {
+    didReceiveUpdate = false
+  }
+
+  // mount时：根据tag不同，创建不同的子Fiber节点
+  switch (workInProgress.tag) {
+    // case IndeterminateComponent:
+    //   // ...省略
+    // case LazyComponent:
+    //   // ...省略
+    // case FunctionComponent:
+    //   // ...省略
+    // case ClassComponent:
+    //   // ...省略
+    // case HostRoot:
+    //   // ...省略
+    // case HostComponent:
+    //   // ...省略
+    // case HostText:
+    // ...省略
+    // ...省略其他类型
+    default: // ..
+  }
+}
+```
+
+ update时
+
+满足如下情况时didReceiveUpdate === false（即可以直接复用前一次更新的子Fiber，不需要新建子Fiber）
+
+```ts
+if (current !== null) {
+  const oldProps = current.memoizedProps
+  const newProps = workInProgress.pendingProps
+
+  if (
+    oldProps !== newProps ||
+ hasLegacyContextChanged() ||
+ (__DEV__ ? workInProgress.type !== current.type : false)
+  ) {
+    didReceiveUpdate = true
+  } else if (!includesSomeLane(renderLanes, updateLanes)) {
+    didReceiveUpdate = false
+    // switch (workInProgress.tag) {
+    //   // console.log('..')
+    //   // 省略处理
+    // }
+    return bailoutOnAlreadyFinishedWork(
+      current,
+      workInProgress,
+      renderLanes
+    )
+  } else {
+    didReceiveUpdate = false
+  }
+} else {
+  didReceiveUpdate = false
+}
+```
+
+1. `oldProps === newProps && workInProgress.type === current.type`，即props与fiber.type不变
+2. `!includesSomeLane(renderLanes, updateLanes)`，即当前Fiber节点优先级不够，会在讲解Scheduler时介绍
+
+ mount
+
+当不满足优化路径时，我们就进入第二部分，新建子Fiber。
+
+```ts
+// mount时：根据tag不同，创建不同的Fiber节点
+switch (workInProgress.tag) {
+  // case IndeterminateComponent:
+  //   // ...省略
+  // case LazyComponent:
+  //   // ...省略
+  // case FunctionComponent:
+  //   // ...省略
+  // case ClassComponent:
+  //   // ...省略
+  // case HostRoot:
+  //   // ...省略
+  // case HostComponent:
+  //   // ...省略
+  // case HostText:
+  // ...省略
+  // ...省略其他类型
+  default: // ..
+}
+```
+
+我们可以看到，根据fiber.tag不同，进入不同类型Fiber的创建逻辑。
+
+对于我们常见的组件类型，如`（FunctionComponent/ClassComponent/HostComponent）`，最终会进入`reconcileChildren` (opens new window)方法。
+
+ reconcileChildren
+
+* 对于mount的组件，他会创建新的子Fiber节点
+* 对于update的组件，他会将当前组件与该组件在上次更新时对应的Fiber节点比较（也就是俗称的Diff算法），将比较的结果生成新Fiber节点
+
+```ts
+export function reconcileChildren (
+  current: Fiber | null,
+  workInProgress: Fiber,
+  nextChildren: any,
+  renderLanes: Lanes
+) {
+  if (current === null) {
+    // 对于mount的组件
+    workInProgress.child = mountChildFibers(
+      workInProgress,
+      null,
+      nextChildren,
+      renderLanes
+    )
+  } else {
+    // 对于update的组件
+    workInProgress.child = reconcileChildFibers(
+      workInProgress,
+      current.child,
+      nextChildren,
+      renderLanes
+    )
+  }
+}
+```
+
+从代码可以看出，和beginWork一样，他也是通过current === null ?区分mount与update。
+
+不论走哪个逻辑，最终他会生成新的子Fiber节点并赋值给workInProgress.child，作为本次beginWork返回值 (opens new window)
+，并作为下次performUnitOfWork执行时workInProgress的传参
+
+ effectTag
+
+我们知道，render阶段的工作是在内存中进行，当工作结束后会通知Renderer需要执行的DOM操作。要执行DOM操作的具体类型就保存在fiber.effectTag中。
+
+```ts
+// DOM需要插入到页面中
+// export const Placement = // */ 0b00000000000010;
+// DOM需要更新
+// export const Update = // */ 0b00000000000100;
+// DOM需要插入到页面中并更新
+// export const PlacementAndUpdate = // */ 0b00000000000110;
+// // DOM需要删除
+// export const Deletion = // */ 0b00000000001000;
+```
+
+通过二进制表示effectTag，可以方便的使用位操作为fiber.effectTag赋值多个effect。
+
+那么，如果要通知Renderer将Fiber节点对应的DOM节点插入页面中，需要满足两个条件：
+
+1. `fiber.stateNode`存在，即Fiber节点中保存了对应的DOM节点
+
+2. `(fiber.effectTag & Placement) !== 0`，即 `Fiber节点存在Placement effectTag`
+
+我们知道，mount时，fiber.stateNode === null，且在reconcileChildren中调用的mountChildFibers不会为Fiber节点赋值effectTag。那么首屏渲染如何完成呢？
+
+针对第一个问题，`fiber.stateNode`会在`completeWork`中创建，我们会在下一节介绍。
+
+第二个问题的答案十分巧妙：假设`mountChildFibers`也会赋值effectTag，那么可以预见mount时整棵Fiber树所有节点都会有Placement
+effectTag。那么commit阶段在执行DOM操作时每个节点都会执行一次插入操作，这样大量的DOM操作是极低效的。
+
+为了解决这个问题，**在mount时只有rootFiber会赋值Placement effectTag**，在commit阶段只会执行一次插入操作。
+
+ completeWork
+
+流程图：
+![image](https://user-images.githubusercontent.com/22188674/235362048-ce278ddf-b944-4ed6-a6af-e3b1502fb6c7.png)
+
+类似beginWork，completeWork也是针对不同fiber.tag调用不同的处理逻辑。
+
+```ts
+function completeWork (
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes
+): Fiber | null {
+  const newProps = workInProgress.pendingProps
+
+  switch (workInProgress.tag) {
+    case IndeterminateComponent:
+    case LazyComponent:
+    case SimpleMemoComponent:
+    case FunctionComponent:
+    case ForwardRef:
+    case Fragment:
+    case Mode:
+    case Profiler:
+    case ContextConsumer:
+    case MemoComponent:
+      return null
+    case ClassComponent: {
+      // ...省略
+      return null
+    }
+    case HostRoot: {
+      // ...省略
+      updateHostContainer(workInProgress)
+      return null
+    }
+    case HostComponent: {
+      // ...省略
+      return null
+    }
+ // ...省略
+  }
+  // ...省略
+}
+```
+
+我们重点关注页面渲染所必须的 `HostComponent`（即原生DOM组件对应的Fiber节点），其他类型Fiber的处理留在具体功能实现时讲解。
+
+ 处理 HostComponent
+
+和`beginWork`一样，我们根据 `current === null` ?判断是mount还是`update`。
+
+同时针对 `HostComponent`，判断 `update` 时我们还需要考虑 `workInProgress.stateNode != null` ?（即该Fiber节点是否存在对应的DOM节点）
+
+```ts
+{
+  popHostContext(workInProgress)
+  const rootContainerInstance = getRootHostContainer()
+  const type = workInProgress.type
+
+  if (current !== null && workInProgress.stateNode != null) {
+    // update的情况
+    // ...省略
+  } else {
+    // mount的情况
+    // ...省略
+  }
+  return null
+}
+```
+
+ update 时
+
+当update时，Fiber节点已经存在对应DOM节点，所以不需要生成DOM节点。需要做的主要是处理props，比如：
+
+* `onClick、onChange` 等回调函数的注册
+* 处理 `style prop`
+* 处理 `DANGEROUSLY_SET_INNER_HTML prop`
+* 处理 `children prop`
+
+我们去掉一些当前不需要关注的功能（比如ref）。可以看到最主要的逻辑是调用updateHostComponent方法。
+
+```ts
+if (current !== null && workInProgress.stateNode != null) {
+  // update的情况
+  updateHostComponent(
+    current,
+    workInProgress,
+    type,
+    newProps,
+    rootContainerInstance
+  )
+}
+```
+
+在updateHostComponent内部，被处理完的props会被赋值给workInProgress.updateQueue，并最终会在commit阶段被渲染在页面上。
+
+`workInProgress.updateQueue = (updatePayload: any);`
+
+其中updatePayload为数组形式，他的偶数索引的值为变化的prop key，奇数索引的值为变化的prop value。
+
+ mount 时
+
+同样，我们省略了不相关的逻辑。可以看到，mount时的主要逻辑包括三个：
+
+* 为Fiber节点生成对应的DOM节点
+* 将子孙DOM节点插入刚生成的DOM节点中
+* 与update逻辑中的updateHostComponent类似的处理props的过程
+
+```ts
+// mount的情况
+
+// ...省略服务端渲染相关逻辑
+
+const currentHostContext = getHostContext()
+// 为fiber创建对应DOM节点
+const instance = createInstance(
+  type,
+  newProps,
+  rootContainerInstance,
+  currentHostContext,
+  workInProgress
+)
+// 将子孙DOM节点插入刚生成的DOM节点中
+appendAllChildren(instance, workInProgress, false, false)
+// DOM节点赋值给fiber.stateNode
+workInProgress.stateNode = instance
+
+// 与update逻辑中的updateHostComponent类似的处理props的过程
+if (
+  finalizeInitialChildren(
+    instance,
+    type,
+    newProps,
+    rootContainerInstance,
+    currentHostContext
+  )
+) {
+  markUpdate(workInProgress)
+}
+```
+
+mount时只会在rootFiber存在Placement effectTag。那么commit阶段是如何通过一次插入DOM操作（对应一个Placement effectTag）将整棵DOM树插入页面的呢？
+
+原因就在于 `completeWork中的appendAllChildren` 方法。
+
+由于`completeWork`属于“归”阶段调用的函数，每次调用`appendAllChildren`时都会将已生成的子孙DOM节点插入当前生成的DOM节点下。那么当“归”到rootFiber时，我们已经有一个构建好的离屏DOM树。
+
+ effectList
+
+至此render阶段的绝大部分工作就完成了。
+
+还有一个问题：作为DOM操作的依据，commit阶段需要找到所有有effectTag的Fiber节点并依次执行effectTag对应操作。难道需要在commit阶段再遍历一次Fiber树寻找effectTag !== null的Fiber节点么？
+
+这显然是很低效的。
+
+为了解决这个问题，在completeWork的上层函数completeUnitOfWork中，每个执行完completeWork且存在effectTag的Fiber节点会被保存在一条被称为effectList的单向链表中。
+
+effectList中第一个Fiber节点保存在fiber.firstEffect，最后一个元素保存在fiber.lastEffect。
+
+类似appendAllChildren，在“归”阶段，所有有effectTag的Fiber节点都会被追加在effectList中，最终形成一条以rootFiber.firstEffect为起点的单向链表。
+
+```
+ nextEffect nextEffect
+rootFiber.firstEffect -----------> fiber -----------> fiber
+```
+
+这样，在commit阶段只需要遍历`effectList`就能执行所有`effect`了。
+
+ 流程结尾
+
+至此，render阶段全部工作完成。在performSyncWorkOnRoot函数中fiberRootNode被传递给commitRoot方法，开启commit阶段工作流程。
+
+`commitRoot(root);`
+
+## 虚拟DOM 一定会比直接操作 真实 DOM 快吗 {#p0-vdom}
+
+大家惯有的思维模式下，我们普遍的认为，虚拟DOM一定会比原生DOM要快的多。
+
+但实际上并不是这样。
+
+**仅从React的角度来说 : React的官网可从来都没有说过虚拟DOM会比原生操作DOM更快。**
+
+虚拟DOM和原生操作DOM谁更快这个问题。如果要我来回答的话，**一定是原生DOM比虚拟DOM更快性能更好。**
+
+值得注意的是，**虚拟DOM并不是比原生DOM快，更确切的来说，虚拟DOM是比操作不当的原生DOM快**。实际上，如果对原生DOM的操作得当的话，原生DOM的性能一定优于虚拟DOM。
+
+我们来剖析一下。
+
+ 虚拟DOM为什么而存在
+
+**其最核心的思想是提升开发效率而非提升性能**
+
+使用 React/Vue 这些框架的时候，我们不需要去考虑对DOM的操作，只需要关心数据的改变。我们以前还在使用JQ的时候，数据改变之后我们需要调用`$("#id").append(node)`等操作去手动追加DOM。而在使用React/Vue之后，我们只需要关心数据的改变。至于对DOM的一系列动作，在我们的数据改变之后，React/Vue会为我们代劳。这极大程度的提升了我们的开发效率。也是React/Vue的核心思想和初衷。
+
+至于很多人都说，虚拟DOM会比操作原生DOM更快，这个说法并不全面。比如，**首次渲染或者所有节点都需要进行更新的时候。这个时候采用虚拟DOM会比直接操作原生DOM多一重构建虚拟DOM树的操作。这会更大的占用内存和延长渲染时间。**
+
+ 举个例子
+
+**首次渲染👇不采用虚拟DOM的步骤**
+
+1. 浏览器接受绘制指令
+2. 创建所有节点
+
+**首次渲染👇采用虚拟DOM的步骤**
+
+1. 浏览器接受绘制指令
+2. 创建虚拟DOM
+3. 创建所有节点
+
+不难发现，在首次渲染的时候，采用虚拟DOM会比不采用虚拟DOM要多一个**创建虚拟DOM**的步骤。
+
+> 注意:虚拟DOM的存在，并不是免费的，比对新旧虚拟DOM树的差异会带来一定的性能开销。
+
+**虚拟DOM的优势在于我们更新节点时候。它会检查哪些节点需要更新。尽量复用已有DOM，减少DOM的删除和重新创建。并且这些操作我们是可以通过自己手动操作javascript底层api实现的。只是我们手动操作会非常耗费我们的时间和精力。这个工作由虚拟DOM代劳，会让我们开发更快速便捷。**
+
+ 举个例子👇
+
+在采用虚拟DOM的前提下
+
+假设我们有节点A，下辖两个子节点B/C.
+
+然后我们删除了节点C
+
+这个时候会有两棵虚拟DOM树，
+
+一颗是修改前的，A->B/C。
+
+另一颗是修改后的A->B。
+
+`diff算法会去比对两颗树的差异`，然后发现A->B没有更改，那么A->B节点保留，C节点执行删除动作。
+
+那么，A->B两个节点的删除和创建渲染操作就被省略了。
+
+如果不采用虚拟DOM的话。使用JQ那时候的模板.
+
+我们可能会把A->B/C三个节点全部删除.
+
+再全都重新创建。而A->B是完全没有改动的。
+
+他们的删除和创建则完全不必要。
+
+ 框架的意义
+
+我们需要知道:不论是React还是Vue或者是Angular。这些框架本身，都是基于原生的基础上创造的。它们，底层依赖的还是javascript，并不是一门新的语言。在他们的底层逻辑下。我们使用框架所做出的一切行为，都会被框架转化为对原生DOM的操作。**框架，只是一个转化语法的工具。**
+
+既然原生DOM可以创造出这些框架。当然我们使用原生DOM自然是可以写出比这些框架更好的性能。
+
+但是:为什么对原生DOM进行操作的性能明明可以比使用框架更好。为什么大家都在使用框架，而没有人去直接对原生DOM进行操作。
+
+这背后涉及`成本`和`普适性`。
+
+如果我们直接去操作真实DOM,当然，我们可以做到在性能上比虚拟DOM更快。但问题是，技术水准能做到这个地步的人，又有多少人呢。不说比虚拟DOM快。即使是做到和虚拟DOM不分上下的性能，拥有这种水平的前端玩家，也是寥寥无几。**基于这样的客观情况下，框架的出现解决了这个问题。**
+
+框架存在的意义 : 在为我们提供只需要关注数据的前提下。框架本身已经做好了底层原理上的性能优化（包括但不限于,对DOM的调用,算法上的优化）已经是高度封装。这样就可以让我们使用一些简单的较为容易理解的技术去做我们原本做不到的事情。 这其实就像调用网上的第三方包，某一个功能，自己写是写不出来，写出来性能也不会很好。但是同样的功能，我们去网上引入其他大神已经封装完成的第三方包。我们就会用，功能就可以实现并且性能上也过得去。
+
+如果让大家直接对DOM进行操作完成比框架更优秀的性能。这绝不是大多数人可以做到的。让大多数可以接受，框架需要做的，就是让大多数人使用尽量使用简单的技术，完成相对困难的操作。这是`普适性`。
+
+并且，如果完成同一个性能效果，需要我们去*精通原生javascript*和*学习框架上的一些简单的API和结构*。明显后者的学习成本更低。如果说使用框架我们所能完成的某一阶段的性能所需要的学习成本是2个月的话。 那么学习javascript完成同一阶段的性能可能需要一年。
+
+框架的初衷就是让用户使用尽量简单的技术，完成相对复杂的工作并提升一定的性能 *（这其中包括但不限于:可维护性，可复用性，渲染效率等）* 。这样，即使我们的水平不是很高，使用框架以后。项目在性能上也能过得去。
+
+总结
+
+1. 虚拟DOM不一定会比操作原生DOM更快。
+2. 虚拟DOM的优势在于节点进行改动的时候尽量减少开销
+3. React从来没说过虚拟DOM会比原生更快。
+4. 框架的本质是提升开发效率，让我们的注意力更集中于数据
+
+## diff 算法 {#p0-diff}
+
+React 中的 Diff 算法，是用于比较新旧两个虚拟 DOM 树，找出需要更新的节点并进行更新的算法。React 的 Diff 算法实现基于以下假设：
+
+1. 两个不同类型的元素会产生不同的树形结构。
+2. 对于同一层级的一组子节点，它们可以通过唯一 id 匹配到相同的节点。
+3. 每个组件都有一个唯一标识符 key。
+
+基于以上假设，React 的 Diff 算法分为两个阶段：
+
+1. `O(n)` 的遍历，对比新旧两棵树的每一个节点，并记录节点的变更。在这个过程中，React 使用了双端队列（Double-ended queue）作为辅助数据结构，以保证遍历的高效性。
+2. `O(k)` 的反向遍历，根据记录的变更列表对 DOM 进行更新。
+
+在第一阶段中，React 的 Diff 算法会从两棵树的根节点开始，依次对比它们的子节点。如果某个节点在新旧两个树中都存在，那么就将其进行更新。如果新树中有新节点，那么就将其插入到旧树中对应的位置。如果旧树中有节点不存在于新树中，那么就将其从 DOM 树中移除。
+
+在第二阶段中，React 会根据记录的变更列表对 DOM 进行更新。这个过程中，React 会按照更新的优先级进行更新，优先更新需要移动的节点，其次更新需要删除的节点，最后再更新需要插入的节点。
+
+需要注意的是，React 的 Diff 算法并不保证一定找到最优解，但是它保证了在大多数情况下，找到的解都是比较优的。同时，React 的 Diff 算法也具有一定的限制，比如无法跨越组件边界进行优化，这也是 React 中尽量避免多层嵌套组件的原因之一。
+
+ 代码模拟实现
+
+React diff算法是一种优化算法，用于比较两个虚拟DOM树的差异，以最小化DOM操作的数量，从而提高渲染性能。
+以下是一个简单的实现React diff算法的代码：
+
+```js
+function diff (oldTree, newTree) {
+  const patches = {}
+  const index = 0
+  walk(oldTree, newTree, index, patches)
+  return patches
+}
+
+function walk (oldNode, newNode, index, patches) {
+  const currentPatch = []
+
+  if (!newNode) {
+    currentPatch.push({ type: 'REMOVE' })
+  } else if (typeof oldNode === 'string' && typeof newNode === 'string') {
+    if (oldNode !== newNode) {
+      currentPatch.push({ type: 'TEXT', content: newNode })
+    }
+  } else if (oldNode.type === newNode.type) {
+    const attrs = diffAttrs(oldNode.props, newNode.props)
+    if (Object.keys(attrs).length > 0) {
+      currentPatch.push({ type: 'ATTRS', attrs })
+    }
+    diffChildren(oldNode.children, newNode.children, index, patches, currentPatch)
+  } else {
+    currentPatch.push({ type: 'REPLACE', newNode })
+  }
+
+  if (currentPatch.length > 0) {
+    patches[index] = currentPatch
+  }
+}
+
+function diffAttrs (oldAttrs, newAttrs) {
+  const attrs = {}
+  for (const key in oldAttrs) {
+    if (oldAttrs[key] !== newAttrs[key]) {
+      attrs[key] = newAttrs[key]
+    }
+  }
+  for (const key in newAttrs) {
+    if (!oldAttrs.hasOwnProperty(key)) {
+      attrs[key] = newAttrs[key]
+    }
+  }
+  return attrs
+}
+
+function diffChildren (oldChildren, newChildren, index, patches, currentPatch) {
+  const diffs = listDiff(oldChildren, newChildren, 'key')
+  newChildren = diffs.children
+
+  if (diffs.moves.length > 0) {
+    const reorderPatch = { type: 'REORDER', moves: diffs.moves }
+    currentPatch.push(reorderPatch)
+  }
+
+  let lastIndex = index
+  oldChildren.forEach((child, i) => {
+    const newChild = newChildren[i]
+    index = lastIndex + 1
+    walk(child, newChild, index, patches)
+    lastIndex = index
+  })
+}
+
+function listDiff (oldList, newList, key) {
+  const oldMap = makeKeyIndexAndFree(oldList, key)
+  const newMap = makeKeyIndexAndFree(newList, key)
+
+  const newFree = newMap.free
+
+  const moves = []
+
+  const children = []
+  let i = 0
+  let item
+  let itemIndex
+  let freeIndex = 0
+
+  while (i < oldList.length) {
+    item = oldList[i]
+    itemIndex = oldMap.keyIndex[item[key]]
+    if (itemIndex === undefined) {
+      moves.push({ index: i, type: 'REMOVE' })
+    } else {
+      children.push(newList[itemIndex])
+      if (itemIndex >= freeIndex) {
+        freeIndex = itemIndex + 1
+      } else {
+        moves.push({ index: itemIndex, type: 'INSERT', item })
+      }
+    }
+    i++
+  }
+
+  const remaining = newFree.slice(freeIndex)
+  remaining.forEach(item => {
+    moves.push({ index: newList.indexOf(item), type: 'INSERT', item })
+  })
+
+  return { moves, children }
+}
+
+function makeKeyIndexAndFree (list, key) {
+  const keyIndex = {}
+  const free = []
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i]
+    if (item[key] !== undefined) {
+      keyIndex[item[key]] = i
+    } else {
+      free.push(item)
+    }
+  }
+  return { keyIndex, free }
+}
+```
+
+在 react 中：一个`DOM`节点在某一时刻最多会有4个节点和他相关。
+
+一个DOM节点在某一时刻最多会有4个节点和他相关。
+
+1. `JSX对象`。即ClassComponent的render方法的返回结果，或FunctionComponent的调用结果。JSX对象中包含描述DOM节点的信息。
+
+2. `workInProgress Fiber`。如果该DOM节点将在本次更新中渲染到页面中，workInProgress Fiber代表该DOM节点对应的Fiber节点。
+
+3. `current Fiber`。如果该DOM节点已在页面中，current Fiber代表该DOM节点对应的Fiber节点。
+
+4. `DOM节点本身`。
+
+**Diff算法的本质是对比1和2，生成3。**
+
+ 概览
+
+ Diff的瓶颈以及React如何应对
+
+由于Diff操作本身也会带来性能损耗， 即使在最前沿的算法中，将前后两棵树完全比对的算法的复杂程度为 O(n 3 )，其中n是树中元素的数量。
+
+如果在React中使用了该算法，那么展示1000个元素所需要执行的计算量将在十亿的量级范围
+
+为了降低算法复杂度，**React的diff会预设三个限制**：
+
+1. 只对同级元素进行Diff。如果一个DOM节点在前后两次更新中跨越了层级，那么React不会尝试复用他。
+
+2. 两个不同类型的元素会产生出不同的树。如果元素由div变为p，React会销毁div及其子孙节点，并新建p及其子孙节点。
+
+3. 开发者可以通过 key prop来暗示哪些子元素在不同的渲染下能保持稳定。
+
+ Diff是如何实现的
+
+我们从Diff的入口函数reconcileChildFibers出发，该函数会根据newChild（即JSX对象）类型调用不同的处理函数。
+
+从同级的节点数量将Diff分为两类：
+
+1. 当newChild类型为object、number、string，代表同级只有一个节点
+
+2. 当newChild类型为Array，同级有多个节点
+
+ 单节点 diff
+
+路程图：
+![image](https://user-images.githubusercontent.com/22188674/235393691-d5355bfb-da2a-4ffd-9961-04a3927ebd11.png)
+
+React通过先判断key是否相同，如果key相同则判断type是否相同，只有都相同时一个DOM节点才能复用。
+
+ 多节点 diff
+
+主要分为以下几种情况
+
+* 节点更新
+* 节点属性变化
+* 节点类型更新
+* 节点新增或减少
+* 节点位置变化
+
+ diff 思路
+
+React 团队发现，在日常开发中，相较于新增和删除，更新组件发生的频率更高。所以Diff会优先判断当前节点是否属于更新。
+
+本质上是进行了两轮遍历：
+
+* 第一轮遍历：处理更新的节点。
+* 第二轮遍历：处理剩下的不属于更新的节点。
+
+**为何不用双向指针的方式**？
+
+虽然本次更新的JSX对象 newChildren为数组形式，但是和newChildren中每个组件进行比较的是current fiber，同级的Fiber节点是由sibling指针链接形成的单链表，即不支持双指针遍历。
+
+即 newChildren[0]与fiber比较，newChildren[1]与fiber.sibling比较。
+
+所以无法使用双指针优化。
+
+ 第一次遍历
+
+第一轮遍历步骤如下：
+
+1. `let i = 0`，遍历`newChildren`，将`newChildren[i]`与`oldFiber`比较，判断DOM节点是否可复用。
+
+2. 如果可复用，`i++`，继续比较`newChildren[i]`与`oldFiber.sibling`，可以复用则继续遍历。
+
+3. 如果不可复用，分两种情况：
+
+* key不同导致不可复用，立即跳出整个遍历，第一轮遍历结束。
+
+* key相同type不同导致不可复用，会将`oldFiber`标记为`DELETION`，并继续遍历
+
+4. 如果`newChildren`遍历完（即`i === newChildren.length - 1`）或者`oldFiber`遍历完（即`oldFiber.sibling === null`），跳出遍历，第一轮遍历结束。
+
+源码如下： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L818)
+
+ 第二轮遍历
+
+**`newChildren`与`oldFiber`同时遍历完**
+
+那就是最理想的情况：只需在第一轮遍历进行组件更新
+
+在 React 中，当我们使用数组渲染节点列表时，通常需要给每个节点添加一个 `key` 属性，这是因为 React 需要通过 `key` 属性来判断是否需要更新某个节点，从而提高渲染性能。
+
+具体来说，React 在进行更新时，会根据 `key` 属性来判断哪些节点需要更新，哪些节点需要删除，哪些节点需要新增。如果两个节点的 `key` 值相同，则 React 认为它们是同一个节点，会尝试进行复用，否则会销毁旧节点并创建新节点。如果没有 `key` 属性，React 无法判断哪些节点是同一个节点，就需要进行全量更新，这会导致性能下降。
+
+另外，添加 `key` 属性还可以解决一些潜在的问题。例如，当我们通过 `map` 函数生成节点列表时，如果没有给节点添加 `key` 属性，当列表中的某个节点发生变化时，可能会导致其他节点的 `props` 或状态也被重置。如果给每个节点添加了唯一的 `key` 属性，就可以避免这种问题。
+
+因此，总的来说，为节点列表添加 `key` 属性可以提高渲染性能，并避免潜在的问题。
+
+> 源码如下： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L825)
+
+**`newChildren`没遍历完，`oldFiber`遍历完**
+
+已有的DOM节点都复用了，这时还有新加入的节点，意味着本次更新有新节点插入，我们只需要遍历剩下的`newChildren`为生成的`workInProgress fiber`依次标记`Placement`。
+
+> 源码如下： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L869)
+
+**`newChildren`遍历完，`oldFiber`没遍历完**
+
+意味着本次更新比之前的节点数量少，有节点被删除了。所以需要遍历剩下的`oldFiber`，依次标记`Deletion`。
+
+> [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L863)
+
+**`newChildren`与`oldFiber`都没遍历完**
+
+这意味着有节点在这次更新中改变了位置。
+
+这是Diff算法最精髓也是最难懂的部分。我们接下来会重点讲解。
+
+> 源码： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L893)
+
+ 处理移动的节点
+
+由于有节点改变了位置，所以不能再用位置索引i对比前后的节点，那么如何才能将同一个节点在两次更新中对应上呢？
+
+我们需要使用key。
+
+为了快速的找到key对应的`oldFiber`，我们将所有还未处理的`oldFiber`存入以key为key，`oldFiber`为`value`的`Map`中。
+
+`const existingChildren = mapRemainingChildren(returnFiber, oldFiber);`
+
+> 源码： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactChildFiber.new.js#L890)
+
+接下来遍历剩余的`newChildren`，通过`newChildren[i].key`就能在`existingChildren`中找到`key`相同的`oldFiber`。
+
+ 标记节点是否移动
+
+既然我们的目标是寻找移动的节点，那么我们需要明确：节点是否移动是以什么为参照物？
+
+我们的参照物是：最后一个可复用的节点在`oldFiber`中的位置索引（用变量`lastPlacedIndex`表示）。
+
+由于本次更新中节点是按`newChildren`的顺序排列。在遍历`newChildren`过程中，每个遍历到的可复用节点一定是当前遍历到的所有可复用节点中最靠右的那个，即一定在`lastPlacedIndex`对应的可复用的节点在本次更新中位置的后面。
+
+那么我们只需要比较遍历到的可复用节点在上次更新时是否也在`lastPlacedIndex`对应的`oldFiber`后面，就能知道两次更新中这两个节点的相对位置改变没有。
+
+我们用变量`oldIndex`表示遍历到的可复用节点在`oldFiber`中的位置索引。如果`oldIndex < lastPlacedIndex`，代表本次更新该节点需要向右移动。
+
+`lastPlacedIndex`初始为0，每遍历一个可复用的节点，如果`oldIndex >= lastPlacedIndex`，则`lastPlacedIndex = oldIndex`。
+
+ 参考文档
+
+* [资料](https://react.iamkasong.com/diff/prepare.html)
+
+## 为什么不能在循环、条件或嵌套函数中调用 Hooks？{#p0-call-in-statement}
+
+如果在条件语句中使用hooks，React会抛出 error。
+
+这与React Hooks的底层设计的数据结构相关，先抛出结论：**react用链表来严格保证hooks的顺序**。
+
+一个典型的useState使用场景：
+
+```js
+const [name, setName] = useState('leo')
+
+setName('Lily')
+```
+
+那么hooks在这两条语句分别作了什么？
+
+![](https://pic.rmb.bdstatic.com/bjh/89d2fa7124b06495bbbfd4b5758bd6e5.png)
+
+上图是 `useState` 首次渲染的路径，其中，跟我们问题相关的是 `mountState` 这个过程，简而言之，这个过程初始化了一个hooks，并且将其追加到链表结尾。
+
+```tsx
+// 进入 mounState 逻辑
+
+function mountState(initialState) {
+
+ // 将新的 hook 对象追加进链表尾部
+ var hook = mountWorkInProgressHook();
+
+ // initialState 可以是一个回调，若是回调，则取回调执行后的值
+
+ if (typeof initialState === 'function') {
+
+ // $FlowFixMe: Flow doesn't like mixed types
+
+ initialState = initialState();
+ }
+
+ // 创建当前 hook 对象的更新队列，这一步主要是为了能够依序保留 dispatch
+
+ const queue = hook.queue = {
+
+ last: null,
+
+ dispatch: null,
+
+ lastRenderedReducer: basicStateReducer,
+
+ lastRenderedState: (initialState: any),
+
+ };
+
+ // 将 initialState 作为一个“记忆值”存下来
+
+ hook.memoizedState = hook.baseState = initialState;
+
+ // dispatch 是由上下文中一个叫 dispatchAction 的方法创建的，这里不必纠结这个方法具体做了什么
+
+ var dispatch = queue.dispatch = dispatchAction.bind(null, currentlyRenderingFiber$1, queue);
+
+ // 返回目标数组，dispatch 其实就是示例中常常见到的 setXXX 这个函数，想不到吧？哈哈
+
+ return [hook.memoizedState, dispatch];
+}
+```
+
+从这段源码中我们可以看出，mounState 的主要工作是初始化 Hooks。在整段源码中，最需要关注的是 `mountWorkInProgressHook` 方法，它为我们道出了 Hooks 背后的数据结构组织形式。以下是 `mountWorkInProgressHook` 方法的源码：
+
+```js
+function mountWorkInProgressHook () {
+
+  // 注意，单个 hook 是以对象的形式存在的
+  const hook = {
+
+    memoizedState: null,
+
+    baseState: null,
+
+    baseQueue: null,
+
+    queue: null,
+
+    next: null
+
+  }
+
+  if (workInProgressHook === null) {
+    // 这行代码每个 React 版本不太一样，但做的都是同一件事：将 hook 作为链表的头节点处理
+    firstWorkInProgressHook = workInProgressHook = hook
+  } else {
+    // 若链表不为空，则将 hook 追加到链表尾部
+    workInProgressHook = workInProgressHook.next = hook
+  }
+  // 返回当前的 hook
+  return workInProgressHook
+}
+```
+
+到这里可以看出，hook 相关的所有信息收敛在一个 hook 对象里，而 hook 对象之间以单向链表的形式相互串联。
+
+接着，我们来看更新过程
+
+![](https://pic.rmb.bdstatic.com/bjh/1cc5bd4c72e4f22d1aa828df3c831f2d.png)
+
+上图中，需要注意的是updateState的过程：按顺序去遍历之前构建好的链表，取出对应的数据信息进行渲染。
+
+我们把 mountState 和 updateState 做的事情放在一起来看：mountState（首次渲染）构建链表并渲染；updateState 依次遍历链表并渲染。
+
+hooks 的渲染是通过“依次遍历”来定位每个 hooks 内容的。如果前后两次读到的链表在顺序上出现差异，那么渲染的结果自然是不可控的。
+
+这个现象有点像我们构建了一个长度确定的数组，数组中的每个坑位都对应着一块确切的信息，后续每次从数组里取值的时候，只能够通过索引（也就是位置）来定位数据。也正因为如此，在许多文章里，都会直截了当地下这样的定义：Hooks 的本质就是数组。但读完这一课时的内容你就会知道，Hooks 的本质其实是链表。
+
+我们举个例子：
+
+```tsx
+ let mounted = false;
+
+if(!mounted){
+ // eslint-disable-next-line
+ const [name,setName] = useState('leo');
+ const [age,setAge] = useState(18);
+ mounted = true;
+}
+const [career,setCareer] = useState('码农');
+console.log('career',career);
+
+......
+
+<div onClick={()=>setName('Lily')}>
+ 点我点我点我
+<div>
+```
+
+点击div后，我们期望的输出是 "码农"，然而事实上(尽管会error，但是打印还是执行)打印的为 "Lily"
+
+原因是，三个useState在初始化的时候已经构建好了一个三个节点的链表结构，依次为： `name('leo') --> age(18) --> career('码农')`
+
+每个节点都已经派发了一个与之对应的update操作，因此执行setName时候，三个节点就修改为了 `name('Lily') --> age(18) --> career('码农')`
+
+然后执行update渲染操作，从链表依次取出值，此时，条件语句的不再执行，第一个取值操作会从链表的第一个，也就是name对应的hooks对象进行取值：此时取到的为 `name:Lily`
+
+必须按照顺序调用从根本上来说是因为 useState 这个钩子在设计层面并没有“状态命名”这个动作，也就是说你每生成一个新的状态，React 并不知道这个状态名字叫啥，所以需要通过顺序来索引到对应的状态值
+
+## lazy import
+
+React 的 `lazy` 函数可以实现代码分割，即将代码按需加载，以达到优化页面加载速度的目的。它的原理是基于 JavaScript 的动态 `import()` 方法实现的。
+
+当我们使用 `lazy` 函数加载一个组件时，React 会自动将该组件的代码单独打包成一个单独的 JavaScript 文件，并在需要时通过网络请求加载该文件。具体来说，`lazy` 函数返回的是一个特殊的组件，该组件在加载时会调用传入的函数并异步加载组件代码。一般来说，我们会将异步加载的组件通过 `import()` 方法引入，例如：
+
+```js
+jsCopy codeconst MyComponent = React.lazy(() => import('./MyComponent'));
+```
+
+这里的 `import()` 方法会返回一个 Promise，该 Promise 在组件代码加载完成后会 resolve，然后通过 React 渲染该组件。
+
+需要注意的是，由于异步加载组件的代码是在运行时执行的，而不是在构建时，因此需要使用符合 ECMAScript 标准的动态 `import()` 方法。此外，在使用 `lazy` 函数时还需要将组件包裹在 `Suspense` 组件中，以处理组件加载时的占位符或错误状态。例如：
+
+```js
+jsCopy codeimport React, { lazy, Suspense } from 'react';
+
+const MyComponent = lazy(() => import('./MyComponent'));
+
+function App() {
+ return (
+ <div>
+ <Suspense fallback={<div>Loading...</div>}>
+ <MyComponent />
+ </Suspense>
+ </div>
+ );
+}
+```
+
+这里的 `fallback` 属性指定了组件加载时的占位符，当组件加载完成后会自动替换成真正的组件。
+
+综上所述，React 的 `lazy` 函数通过使用动态 `import()` 方法实现了组件代码的按需加载，以达到优化页面加载速度的目的。
+
+## setState  {#p0-set-state-execution-flow}
+
+在 React 中，`setState` 方法有时是异步的，有时是同步的，具体取决于使用方式和环境。
+
+当我们在 React 中调用 `setState` 方法时，React 会将新状态合并到组件的状态队列中，并在未来的某个时间更新组件的状态。这个更新过程是异步的，即不能保证在 `setState` 调用后立即更新状态，而是会将状态更新推迟到下一个渲染周期中。这种情况下，`setState` 方法会返回一个 `Promise` 对象，但该对象不包含任何有用的信息。
+
+然而，当 `setState` 方法被直接调用，而不是在事件处理函数、异步代码或生命周期函数中被调用时，更新过程是同步的。在这种情况下，React 会立即更新组件的状态，并在更新后立即执行一次重新渲染。这种情况下，`setState` 方法不会返回任何信息。
+
+需要注意的是，在 React 中异步更新状态的机制可以提高性能和优化页面渲染速度，因为它可以让 React 在适当的时候批量更新组件状态，从而避免过多的渲染和浏览器的性能问题。如果我们需要在更新状态后立即执行某些操作，可以使用 `setState` 方法的回调函数或生命周期函数 `componentDidUpdate` 来实现。例如：
+
+```js
+jsCopy codeclass MyComponent extends React.Component {
+ constructor(props) {
+ super(props);
+ this.state = { count: 0 };
+ }
+
+ handleClick() {
+ this.setState({ count: this.state.count + 1 }, () => {
+ console.log('New count:', this.state.count);
+ });
+ }
+
+ render() {
+ return (
+ <div>
+ <p>Count: {this.state.count}</p>
+ <button onClick={() => this.handleClick()}>Increment</button>
+ </div>
+ );
+ }
+}
+```
+
+这里的 `setState` 方法接受一个回调函数作为第二个参数，在状态更新完成后调用该函数并传递更新后的状态作为参数。在这个回调函数中可以执行任何需要在状态更新后立即执行的操作，例如输出调试信息、发送网络请求等。
+
+---------------------
+> 2023.04.19 更新
+
+如果**直接在setState后面获取state的值是获取不到的。**
+
+* 在React内部机制能检测到的地方， setState就是异步的；
+* 在React检测不到的地方，例如 原生事件`addEventListener`,`setInterval`,`setTimeout`，setState就是同步更新的
+
+setState并不是单纯的异步或同步，这其实与调用时的环境相关
+
+* 在合成事件 和 生命周期钩子(除componentDidUpdate) 中，setState是"异步"的；
+* 在 原生事件 和setTimeout 中，setState是同步的，可以马上获取更新后的值；
+
+**批量更新**
+多个顺序的setState不是同步地一个一个执行滴，会一个一个加入队列，然后最后一起执行。在 合成事件 和 生命周期钩子 中，setState更新队列时，存储的是 合并状态(Object.assign)。因此前面设置的 key 值会被后面所覆盖，最终只会执行一次更新。
+
+**异步现象原因**
+
+`setState 的“异步”并不是说内部由异步代码实现`，其实本身执行的过程和代码都是同步的，只是合成事件和生命钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形成了所谓的“异步”，`当然可以通过第二个参数setState(partialState, callback)中的callback拿到更新后的结果。`
+
+`setState 并非真异步，只是看上去像异步。在源码中，通过 isBatchingUpdates 来判断`
+
+setState调用流程：
+
+1. 调用this.setState(newState)
+2. 将新状态newState存入pending队列
+3. 判断是否处于batch Update（isBatchingUpdates是否为true）
+
+* isBatchingUpdates=true，保存组件于dirtyComponents中，走异步更新流程，合并操作，延迟更新；
+* isBatchingUpdates=false，走同步过程。遍历所有的dirtyComponents，调用updateComponent，更新pending state or props
+
+![流程](https://foruda.gitee.com/images/1681866680280312338/0308d34b_7819612.png)
+
+**为什么直接修改this.state无效**
+
+setState本质是通过一个队列机制实现state更新的。 执行setState时，会将需要更新的state合并后放入状态队列，而不会立刻更新state，队列机制可以批量更新state。
+
+如果不通过setState而直接修改this.state，那么这个state不会放入状态队列中，下次调用setState时对状态队列进行合并时，会忽略之前直接被修改的state，这样我们就无法合并了，而且实际也没有把你想要的state更新上去
+
+参考文档：
+
+* [资料](https://juejin.cn/post/7204307381689532474#heading-5)
+
+在 React 18 中，`setState` 的行为仍然是异步的。React 团队并没有改变 `setState` 的默认行为，因为这会带来一些潜在的性能问题和不确定性。异步更新状态可以让 React 在适当的时候批量更新组件状态，从而避免过多的渲染和浏览器的性能问题。
+
+但是，React 18 引入了一个新的特性：批量更新（Batching）。当我们在事件处理函数、异步代码或生命周期函数中调用 `setState` 时，React 会将多个状态更新合并到同一个批次中，从而减少渲染的次数，提高应用的性能。这意味着，即使我们在多个地方调用 `setState` 方法，React 也会将这些调用合并到同一个更新队列中，并在下一个渲染周期中一次性更新所有状态。
+
+在 React 18 中，我们可以使用新的 `startTransition` API 来告诉 React，我们正在进行一次可中断的异步操作，并且希望在操作完成后批量更新组件状态。这个 API 的用法如下：
+
+```js
+import { startTransition } from 'react'
+
+function handleClick () {
+  startTransition(() => {
+    setState({ count: count + 1 })
+    // 执行其他异步操作
+  })
+}
+```
+
+在这个例子中，我们通过 `startTransition` API 包装 `setState` 和其他异步操作，告诉 React 我们正在进行一次可中断的异步操作，并且希望在操作完成后批量更新组件状态。这样做可以让我们的应用更加流畅和响应，并且可以提高用户体验。
+
+需要注意的是，`startTransition` API 并不是必须的，如果我们不使用这个 API，React 仍然会在适当的时候批量更新组件状态。这个 API 只是为了让我们更加精确地控制更新的时机，并在必要时进行优化。
+
+在 React 中，当调用`setState`时，会发生以下一系列事情：
+
+**一、触发状态更新**
+
+1. **调用 setState 方法**：
+
+* 当在 React 组件中调用`setState`方法时，React 会将这个状态更新请求排队。这意味着 React 不会立即更新组件的状态，而是将这个更新请求添加到一个队列中，等待合适的时机进行处理。
+* 例如：
+
+ ```javascript
+ this.setState({ count: this.state.count + 1 })
+ ```
+
+* 在这个例子中，调用`setState`方法来增加`count`状态的值。
+
+**二、合并状态**
+
+1. **状态合并**：
+
+* 如果多次调用`setState`方法，React 会将这些状态更新请求合并在一起。这意味着 React 不会立即应用每个状态更新请求，而是会将它们合并成一个单一的状态更新。
+* 例如，如果在一个事件处理函数中多次调用`setState`方法：
+
+ ```js
+function handleClick () {
+   this.setState({ count: this.state.count + 1 })
+   this.setState({ count: this.state.count + 1 })
+ }
+ ```
+
+* React 不会立即将`count`的值增加两次，而是会将这两个状态更新请求合并成一个，最终只将`count`的值增加一次。
+
+2. **浅合并对象状态**：
+
+* 如果`setState`方法的参数是一个对象，React 会进行浅合并。这意味着如果状态是一个对象，并且只更新了其中的一部分属性，React 会将新的属性值合并到旧的状态对象中，而不会替换整个状态对象。
+* 例如：
+
+ ```javascript
+ this.setState({ user: { name: 'New Name' } })
+ ```
+
+* 如果原来的状态是`{ user: { name: 'Old Name', age: 30 } }`，那么调用`setState`方法后，新的状态将是`{ user: { name: 'New Name', age: 30 } }`。React 只会更新`user`对象的`name`属性，而不会影响`age`属性。
+
+**三、触发重新渲染**
+
+1. **协调阶段**：
+
+* 在合适的时机，React 会开始处理状态更新请求队列。React 会进入一个称为协调阶段的过程，在这个阶段，React 会比较组件的当前状态和新的状态，确定哪些组件需要重新渲染。
+* React 会使用一种称为虚拟 DOM 的技术来比较新旧状态，并确定最小化的更新操作，以提高性能。
+
+2. **重新渲染组件**：
+
+* 如果 React 确定某个组件的状态发生了变化，并且需要重新渲染，它会调用该组件的`render`方法来生成新的虚拟 DOM。然后，React 会将新的虚拟 DOM 与旧的虚拟 DOM 进行比较，确定需要进行哪些实际的 DOM 操作来更新页面。
+* 例如，如果一个组件的状态发生了变化，React 会调用该组件的`render`方法，生成新的虚拟 DOM，并将其与旧的虚拟 DOM 进行比较。如果有差异，React 会更新实际的 DOM，以反映新的状态。
+
+**四、异步执行**
+
+1. **异步更新状态**：
+
+* 在 React 中，`setState`方法通常是异步执行的。这意味着在调用`setState`方法后，不能立即依赖新的状态值。
+* 例如：
+
+ ```javascript
+ this.setState({ count: this.state.count + 1 })
+ console.log(this.state.count)
+ ```
+
+* 在这个例子中，`console.log`语句可能不会输出更新后的`count`值，因为`setState`方法是异步执行的，状态更新可能还没有完成。
+
+2. **使用回调函数**：
+
+* 如果需要在状态更新完成后执行一些操作，可以在`setState`方法中传递一个回调函数作为第二个参数。这个回调函数将在状态更新完成后被调用。
+* 例如：
+
+ ```javascript
+ this.setState({ count: this.state.count + 1 }, () => {
+   console.log(this.state.count)
+ })
+ ```
+
+* 在这个例子中，回调函数将在状态更新完成后被调用，此时可以确保`count`的值已经更新。
+
+在 React 中，调用`setState`方法会触发一系列的操作，包括排队状态更新请求、合并状态、触发重新渲染等。
+
+在 React 类组件中，状态（state）是组件的局部状态，你可以通过调用 `setState` 方法来异步更新组件的状态。有几个重要原因解释了为什么在 React 类组件中应该使用 `setState` 而不是直接修改 `this.state`：
+
+ 1. **保证状态的不可变性（Immutability）**
+
+React 强烈建议开发人员保持状态（state）的不可变性。这意味着状态不应被直接修改，而应该通过创建一个新的状态对象来更新。直接修改 `this.state` 不遵循不可变性原则，这可能会导致未定义的行为和性能问题。
+
+ 2. **状态更新是异步的**
+
+React 可能会将多个 `setState` 调用批量处理为一个更新，以优化性能。因为 `setState` 是异步的，所以这意呀着在调用 `setState` 之后立即读取 `this.state` 可能不会返回预期的值。如果直接修改 `this.state`，则无法利用 React 的异步更新和批量处理机制。
+
+ 3. **组件重新渲染**
+
+`setState` 方法不仅更新状态，而且还告诉 React 该组件及其子组件需要重新渲染，以反映状态的变化。直接修改 `this.state` 不会触发组件的重新渲染，因此即使状态发生了变化，用户界面也不会更新。
+
+ 4. **可预测的状态变更**
+
+使用 `setState` 方法可以确保所有状态更新都有一个清晰、可预测的流程。这使得调试和理解组件的行为变得更加容易。同时，`setState` 还提供了一个回调函数，只有在状态更新和组件重新渲染完成后，这个回调函数才会被执行，这样就可以安全地操作更新后的状态。
+
+ 5. **合并状态更新**
+
+当你调用 `setState`，React 会将你提供的对象合并到当前状态中。这是一种浅合并（shallow merge），意味着只合并顶层属性，而不会影响到嵌套的状态。这种行为让状态更新变得简单而直接。如果直接修改 `this.state`，则需要手动处理这种合并逻辑。
+
+因为以上原因，建议遵循 React 的最佳实践，即通过 `setState` 方法而不是直接修改 `this.state` 来更新组件的状态。这样可以保证应用的性能、可维护性和可预测性。
+
+在 React 的类组件中，`setState` 方法主要做了以下几件事情：
+
+1. 触发组件的重新渲染：当调用 `setState` 时，React 会标记该组件为“脏”状态，在下一个渲染周期中重新渲染组件。
+
+2. 合并状态更新：`setState` 接受一个对象或函数作为参数。如果是对象，它会与当前组件的状态进行合并。如果是函数，该函数会接收当前的状态作为参数，并返回一个新的状态对象，然后与当前状态合并。
+
+3. 异步更新：在大多数情况下，`setState` 是异步执行的，这是为了优化性能，避免不必要的频繁渲染。但在某些特殊情况下，如在事件处理函数中，可以通过给 `setState` 传递一个函数作为第二个参数来在状态更新完成后执行一些操作。
+
+例如：
+
+```javascript
+class MyComponent extends React.Component {
+  constructor (props) {
+    super(props)
+    this.state = { count: 0 }
+  }
+
+  handleClick () {
+    // 方式一：对象形式
+    this.setState({ count: this.state.count + 1 })
+    // 方式二：函数形式
+    this.setState((prevState) => ({ count: prevState.count + 1 }))
+  }
+}
+```
+
+## useRef 是如何实现的 {#useref}
+
+该问题也是非常复杂， 需要深入源码， 可以看下面文章解析：
+
+[资料](https://juejin.cn/post/7341757372188065792)
+
+> 以下是题库作者对上面文档的一些提炼总结
+
+* 什么是数据共享层
+* hooks
+* 如何确定 fiber 对应的 hook 上下文？
+* hook 是如何存在的？保存在什么地方？
+* 多个 hook 如何处理？
+* useRef
+* 实现原理
+* 标记 Ref​
+* 执行 Ref​ 操作
+* mount 该如何操作
+* update 的时候该如何操作
+* 整体执行流程
+* 标记
+* 执行
+
+在 React 中，`ref` 是一种用于访问 DOM 元素或组件实例的方法，`useRef` 和 `forwardRef` 是 `ref` 的两个相关 Hook 和高阶组件。
+
+1. `ref`：`ref` 是 React 中用于访问 DOM 元素或组件实例的方法。在函数组件中，可以使用 `useRef` Hook 来创建一个 `ref` 对象，然后将其传递给需要引用的元素或组件。在类组件中，可以直接在类中定义 `ref` 属性，并将其设置为元素或组件的实例。
+
+2. `useRef`：`useRef` 是 React 中的 Hook，用于创建一个 `ref` 对象，并在组件生命周期内保持其不变。`useRef` 可以用于访问 DOM 元素或组件实例，并且在每次渲染时都会返回同一个 `ref` 对象。通常情况下，`useRef` 更适合用于存储不需要触发重新渲染的值，例如定时器的 ID 或者其他副作用。
+
+3. `forwardRef`：`forwardRef` 是一个高阶组件，用于将 `ref` 属性转发给其子组件。通常情况下，如果一个组件本身并不需要使用 `ref` 属性，但是其子组件需要使用 `ref` 属性，那么可以使用 `forwardRef` 来传递 `ref` 属性。`forwardRef` 接受一个函数作为参数，并将 `ref` 对象作为第二个参数传递给该函数，然后返回一个新的组件，该组件接受 `ref` 属性并将其传递给子组件。
+
+简而言之，`ref` 是 React 中访问 DOM 元素或组件实例的方法，`useRef` 是一个 Hook，用于创建并保持一个不变的 `ref` 对象，`forwardRef` 是一个高阶组件，用于传递 `ref` 属性给子组件。
+
+## react 虚拟 dom 如何对比，diff 算法 {#p0-react-virtual-dom-diff}
+
+考虑到 DOM 节点很少跨层级移动，React 采用同层比较的方式：
+单节点 Diff：比较 elementType 和 key 是否相同，都相同可复用，否则标记旧的 DELETION、新的 PLACEMENT
+多节点 Diff：需要两轮遍历，分别处理更新的节点，处理剩下的不属于更新的节点
+第一轮：逐个对比 key 是否相同（无 key 则认为相同）。相同则对比 elementType，若类型不同则标记 oldFiber 为 DELETION，相同则复用；若 key 不同则跳出循环。记录此次循环位置为 lastPlacedIndex
+第一轮循环结束后（跳出也是结束），若仅 oldFiber 剩余则均标记为 DELETION，仅 newFiber 剩余则均标记为 PLACEMENT；两者都剩余则进入第二轮循环
+
+* [react 揭秘](https://react.iamkasong.com/diff/prepare.html)
+
+## react hooks 原理
+
+`useState` 是 React 库中的一个 Hook，它允许你在函数组件中添加 React 状态。使用 `useState`，你可以给组件添加内部状态，并且能够通过调用这个 Hook 来更新状态，从而触发组件的重新渲染。
+
+ 原理简述
+
+`useState` 的工作原理基于 React 的渲染机制和 Fiber 架构。以下是 `useState` 工作流程的简要概述：
+
+1. **初始化状态**：当你在函数组件中调用 `useState` 时，React 会为该组件创建一个状态变量。如果提供了初始值，状态将被初始化为该值。
+
+2. **返回更新函数**：`useState` 返回一个数组，包含当前的状态值和一个更新该状态的函数（通常命名为 `setState`）。
+
+3. **调用更新函数**：当你调用这个更新函数并传入一个新的状态值时，React 会将这个新的状态值与当前状态合并，并计划重新渲染组件。
+
+4. **重新渲染**：在下一次的渲染周期中，React 会使用新的状态值重新渲染组件。
+
+5. **状态持久化**：React 通过内部机制确保状态在组件的多次渲染之间保持不变。
+
+ 执行过程
+
+以下是 `useState` 在 React 内部可能的执行过程：
+
+1. **调用 useState**：在函数组件中调用 `useState(initialState)`。
+
+2. **创建状态对象**：React 创建一个状态对象，存储状态值和与之关联的更新函数。
+
+3. **渲染组件**：使用当前的状态值渲染组件。
+
+4. **更新状态**：当组件需要更新状态时，调用由 `useState` 返回的更新函数，例如 `setState(newState)`。
+
+5. **调度更新**：React 将更新调度到下一个渲染周期，并标记组件为需要重新渲染。
+
+6. **批量处理**：React 可能会将多个状态更新批处理在一起，以避免不必要的多次渲染。
+
+7. **重新渲染组件**：在下一个渲染周期，React 使用新的状态值重新渲染组件。
+
+8. **状态持久化**：React 的状态持久化机制确保即使在组件卸载和重新挂载后，状态也能被正确地恢复。
+
+ 代码示例
+
+```javascript
+import React, { useState } from 'react'
+
+function Counter () {
+  const [count, setCount] = useState(0) // 初始化状态为 0
+
+  return (
+ <div>
+ <p>Count: {count}</p>
+ <button onClick={() => setCount(count + 1)}>Increment</button>
+ </div>
+  )
+}
+```
+
+在这个例子中，`useState` 被用来初始化 `count` 状态，并提供了一个 `setCount` 函数来更新它。每次点击按钮时，`setCount` 被调用，React 计划重新渲染组件，并在下一次渲染周期中使用新的状态值。
+
+## fiber {#p0-fiber}
+
+ 双缓存Fiber树
+
+如果当前帧画面计算量比较大，导致清除上一帧画面到绘制当前帧画面之间有较长间隙，就会出现白屏。
+
+为了解决这个问题， 就有了图像处理中的**双缓存技术**。
+
+双缓存是一种技术，用于在图像处理中减少闪烁和图像模糊等视觉问题。在使用双缓存时，图像处理器会将图像绘制到一个“后台缓存”中，而不是直接绘制到屏幕上。一旦绘制完成，新的图像将与当前显示的图像交换，使得新图像无缝地显示在屏幕上，避免了闪烁和模糊的问题。因此，双缓存有助于提高图像处理的质量和可靠性，特别是在高速显示和实时处理应用中。
+
+React使用“双缓存”来完成Fiber树的构建与替换——对应着DOM树的创建与更新。
+
+在React中最多会同时存在两棵Fiber树。当前屏幕上显示内容对应的Fiber树称为current Fiber树，正在内存中构建的Fiber树称为workInProgress Fiber树。
+
+React Fiber 的双缓存机制是一种优化技术，用于在 UI 更新过程中避免视觉问题，如闪烁、撕裂和卡顿等。React Double Buffer 在 React Fiber 内部实现了两个缓存区域：当前显示的缓存（Current Buffer）和等待显示的缓存（Work Buffer）。
+
+```js
+currentFiber.alternate === workInProgressFiber
+workInProgressFiber.alternate === currentFiber
+```
+
+当应用程序状态发生更改，并需要更新 UI 时，React Fiber 首先在 Work Buffer 中执行所有渲染操作，以避免将中间状态呈现在屏幕上。一旦 Work Buffer 中的所有渲染操作完成，React Fiber 将当前缓存与工作缓存进行切换，即将 Work Buffer 设置为当前缓存，以此来更新屏幕上的 UI。
+
+这样一来，React Fiber 就可以确保在任何时候，所有呈现在屏幕上的内容都是完整和稳定的。
+
+ mount与update 场景
+
+当组件第一次被挂载时：
+
+```jsx
+class MyComponent extends React.Component {
+
+ constructor(props) {
+ super(props);
+ this.state = {
+ count: 0,
+ };
+ }
+
+ handleClick = () => {
+ this.setState((prevState) => ({
+ count: prevState.count + 1,
+ }));
+ }
+
+ render() {
+ return (
+ <div onClick={this.handleClick}>
+ Click me: {this.state.count}
+ </div>
+ );
+ }
+}
+
+ReactDOM.render(<MyComponent />, document.getElementById('root'));
+```
+
+当我们将 `<MyComponent />` 挂载到页面上时，React Fiber 首先会在内存中创建一个空的 Fiber 树，然后根据组件的定义，为组件创建一个初始的“工作单元”（Work In Progress）。
+
+在这个工作单元内部，React Fiber 会为状态和 props 建立初始的 Fiber 对象，并在之后的更新过程中使用这些 Fiber 对象来跟踪组件的状态和变化。这样可以确保任何时候都可以根据状态和 props 的变化来更新 UI，而不会出现任何问题。
+
+接下来，React Fiber 开始在工作单元中执行所有的渲染操作，生成一棵虚拟 DOM 树，并将其添加到 Work Buffer 中。然后，React Fiber 会检查 Work Buffer 是否有更改，如果有更改，就将 Work Buffer 与 Current Buffer 进行对比，以查找差异并更新到 DOM 上。
+
+这个初次渲染的过程不太会涉及到双缓存树，因为当前缓存是空的，所有的操作都是在 Work Buffer 中进行的。但是，一旦初次渲染完成，并且组件状态发生变化时，双缓存树就开始发挥作用了。
+
+当我们通过点击按钮更新组件状态时，React Fiber 将启动一个新的渲染周期，并为更新创建一个新的工作单元。React Fiber 会在新的工作单元中更新状态、生成新的虚拟 DOM 树，并将其添加到 Work Buffer 中。
+
+然后，React Fiber 会将 Work Buffer 与 Current Buffer 进行对比，找出差异并将其更新到 DOM 上。但是，由于双缓存树的存在，React Fiber 不会立即将 Work Buffer 切换到 Current Buffer，以避免将中间状态显示在屏幕上。
+
+ 执行流程
+
+好的，下面是 React Fiber 在页面初次更新时的工作过程的流程图：
+
+1. 应用程序启动，ReactDOM 调用 `ReactDOM.render()` 方法，并将组件渲染到 DOM 中，React Fiber 创建一个空的 Fiber 树。
+2. React Fiber 为组件创建初始的“工作单元”，并在其中创建状态和 props 的 Fiber 对象。
+3. React Fiber 执行组件的 `render()` 方法，生成虚拟 DOM 树并添加到工作单元中。
+4. React Fiber 将工作单元中的虚拟 DOM 树添加到 Work Buffer 中。
+5. React Fiber 检查 Work Buffer 是否有更改，如果有更改，则将其与 Current Buffer 进行对比，并将差异更新到 DOM 上。
+6. 由于这是初次渲染，Current Buffer 为空，所有更新操作都在 Work Buffer 中完成，然后将 Work Buffer 设置为 Current Buffer。
+7. React Fiber 在内存中保留 Fiber 树的副本，并用于后续的更新操作。此时，组件初次渲染流程结束。
+
+1. 作为架构来说，之前React15的Reconciler采用递归的方式执行，数据保存在递归调用栈中，所以被称为stack Reconciler。React16的Reconciler基于Fiber节点实现，被称为Fiber Reconciler。
+
+2. 作为静态的数据结构来说，每个Fiber节点对应一个React element，保存了该组件的类型（函数组件/类组件/原生组件...）、对应的DOM节点等信息。
+
+3. 作为动态的工作单元来说，每个Fiber节点保存了本次更新中该组件改变的状态、要执行的工作（需要被删除/被插入页面中/被更新...）。
+
+ Fiber的结构
+
+总的属性如下：
+
+```ts
+function FiberNode (
+  tag: WorkTag,
+  pendingProps: mixed,
+  key: null | string,
+  mode: TypeOfMode
+) {
+  // 作为静态数据结构的属性
+  this.tag = tag
+  this.key = key
+  this.elementType = null
+  this.type = null
+  this.stateNode = null
+
+  // 用于连接其他Fiber节点形成Fiber树
+  this.return = null
+  this.child = null
+  this.sibling = null
+  this.index = 0
+
+  this.ref = null
+
+  // 作为动态的工作单元的属性
+  this.pendingProps = pendingProps
+  this.memoizedProps = null
+  this.updateQueue = null
+  this.memoizedState = null
+  this.dependencies = null
+
+  this.mode = mode
+
+  this.effectTag = NoEffect
+  this.nextEffect = null
+
+  this.firstEffect = null
+  this.lastEffect = null
+
+  // 调度优先级相关
+  this.lanes = NoLanes
+  this.childLanes = NoLanes
+
+  // 指向该fiber在另一次更新时对应的fiber
+  this.alternate = null
+}
+```
+
+可以按三层含义将他们分类来看
+
+ 作为架构
+
+每个Fiber节点有个对应的React element，多个Fiber节点是如何连接形成树呢？靠如下三个属性：
+
+```js
+// 指向父级Fiber节点
+this.return = null
+// 指向子Fiber节点
+this.child = null
+// 指向右边第一个兄弟Fiber节点
+this.sibling = null
+```
+
+举个例子，如下的组件结构：
+
+```js
+function App () {
+  return (
+ <div>
+ i am
+ <span>KaSong</span>
+ </div>
+  )
+}
+```
+
+对应的Fiber树结构：
+![image](https://user-images.githubusercontent.com/22188674/235214339-4efeccaf-95fd-420f-8ac2-7a9b89c301c0.png)
+
+ 作为静态的数据结构
+
+作为一种静态的数据结构，保存了组件相关的信息：
+
+```js
+// Fiber对应组件的类型 Function/Class/Host...
+this.tag = tag
+// key属性
+this.key = key
+// 大部分情况同type，某些情况不同，比如FunctionComponent使用React.memo包裹
+this.elementType = null
+// 对于 FunctionComponent，指函数本身，对于ClassComponent，指class，对于HostComponent，指DOM节点tagName
+this.type = null
+// Fiber对应的真实DOM节点
+this.stateNode = null
+```
+
+ 作为动态的工作单元
+
+作为动态的工作单元，Fiber中如下参数保存了本次更新相关的信息，我们会在后续的更新流程中使用到具体属性时再详细介绍
+
+```js
+// 保存本次更新造成的状态改变相关信息
+this.pendingProps = pendingProps
+this.memoizedProps = null
+this.updateQueue = null
+this.memoizedState = null
+this.dependencies = null
+
+this.mode = mode
+
+// 保存本次更新会造成的DOM操作
+this.effectTag = NoEffect
+this.nextEffect = null
+
+this.firstEffect = null
+this.lastEffect = null
+
+// 调度优先级相关
+this.lanes = NoLanes
+this.childLanes = NoLanes
+```
+
+本质上来说就是将渲染任务拆分成多个小任务，以便提高应用程序的响应性和性能。React Fiber 实现时间切片主要依赖于两个核心功能：**任务分割和任务优先级**。
+
+任务分割是指将一个大的渲染任务切割成多个小任务，每个小任务只负责一小部分 DOM 更新。React Fiber 使用 Fiber 节点之间的父子关系，将一个组件树分割成多个”片段“，每个“片段”内部是一颗 Fiber 子树，多个“片段”之间可以交错执行，实现时间切片。
+
+任务优先级是指 React Fiber 提供了一套基于优先级的算法来决定哪些任务应该先执行，哪些任务可以放到后面执行。React Fiber 将任务分成多个优先级级别，较高优先级的任务在进行渲染时会优先进行，从而确保应用程序的响应性和性能。
+
+React Fiber 实现时间切片的基本原理如下：
+
+1. React Fiber 会将渲染任务划分成多个小任务，每个小任务一般只负责一小部分 DOM 更新。
+2. React Fiber 将这些小任务保存到任务队列中，并按照优先级进行排序和调度。
+3. 当浏览器处于空闲状态时，React Fiber 会从任务队列中取出一个高优先级的任务并执行，直到任务完成或者时间片用完。
+4. 如果任务完成，则将结果提交到 DOM 树上并开始下一个任务。如果时间片用完，则将任务挂起，并将未完成的工作保存到 Fiber 树中，返回控制权给浏览器。
+5. 当浏览器再次处于空闲状态时，React Fiber 会再次从任务队列中取出未完成的任务并继续执行，直到所有任务完成。
+
+通过使用任务分割和任务优先级算法，React Fiber 实现了时间切片功能，保证了应用程序的响应性和性能，提高了用户的使用体验。
+
+ 是如何实现任务分割的？伪代码实现一下
+
+React Fiber 实现任务分割的过程十分复杂，需要涉及到 Fiber 数据结构、调度器、DOM 操作等多个部分。以下是一个简单的示例代码，演示了 React Fiber 任务分割的基本工作原理。
+
+```jsx
+const workInProgressFiber = {};
+
+const performUnitOfWork = () => {
+ // 执行当前 Fiber 对应的组件
+ const isFunctionComponent = workInProgressFiber.type instanceof Function; 
+ if (isFunctionComponent) {
+ updateFunctionComponent(workInProgressFiber);
+ } else {
+ updateHostComponent(workInProgressFiber);
+ }
+
+ // 返回下一个待处理的 Fiber 节点
+ if (workInProgressFiber.child) {
+ return workInProgressFiber.child;
+ }
+
+ let nextFiber = workInProgressFiber;
+ while (nextFiber) {
+ if (nextFiber.sibling) {
+ return nextFiber.sibling;
+ }
+ nextFiber = nextFiber.parent;
+ }
+
+ return null;
+};
+
+const render = (element, container) => {
+ const rootFiber = {
+ dom: container,
+ props: {
+ children: [element],
+ },
+ };
+
+ workInProgressFiber = rootFiber;
+ nextUnitOfWork = rootFiber;
+
+ requestIdleCallback(workLoop);
+};
+
+const workLoop = (deadline) => {
+ while (nextUnitOfWork && deadline.timeRemaining() > 0) {
+ nextUnitOfWork = performUnitOfWork(nextUnitOfWork);
+ }
+
+ if (nextUnitOfWork) {
+ requestIdleCallback(workLoop);
+ }
+};
+
+const updateFunctionComponent = (fiber) => {
+ const children = [fiber.type(fiber.props)];
+ reconcileChildren(fiber, children);
+};
+
+const updateHostComponent = (fiber) => {
+ if (!fiber.dom) {
+ fiber.dom = createDom(fiber);
+ }
+
+ reconcileChildren(fiber, fiber.props.children);
+};
+
+const reconcileChildren = (fiber, children) => {
+ let index = 0;
+ let oldFiber = fiber.alternate ? fiber.alternate.child : null;
+ let prevSibling = null;
+
+ while (index < children.length || oldFiber) {
+ const child = children[index];
+ let newFiber = null;
+ const sameType = oldFiber && child && child.type === oldFiber.type;
+
+ if (sameType) {
+ newFiber = {
+ type: oldFiber.type,
+ props: child.props,
+ dom: oldFiber.dom,
+ parent: fiber,
+ alternate: oldFiber,
+ effectTag: 'UPDATE',
+ };
+ }
+
+ if (child && !sameType) {
+ newFiber = {
+ type: child.type,
+ props: child.props,
+ dom: null,
+ parent: fiber,
+ alternate: null,
+ effectTag: 'PLACEMENT',
+ };
+ }
+
+ if (oldFiber && !sameType) {
+ oldFiber.effectTag = 'DELETION';
+ deletions.push(oldFiber);
+ }
+
+ if (oldFiber) {
+ oldFiber = oldFiber.sibling;
+ }
+
+ if (index === 0) {
+ fiber.child = newFiber;
+ } else if (child) {
+ prevSibling.sibling = newFiber;
+ }
+
+ prevSibling = newFiber;
+
+ index++;
+ }
+};
+```
+
+在这个示例中，我们定义了一个名为 `performUnitOfWork` 的函数，用于执行一个 Fiber 节点上的任务。这个函数会根据 Fiber 节点的类型，执行不同的操作，并返回下一个待处理的 Fiber 节点。
+
+在 `updateFunctionComponent` 和 `updateHostComponent` 函数中，我们分别根据 Fiber 节点的类型执行函数组件和普通组件的更新操作。通过 `reconcileChildren` 函数，我们可以将一个组件的子节点拆分成多个 Fiber 节点，并在 `performUnitOfWork` 函数中进行遍历和处理。
+
+React Fiber 实现任务分割的核心思想是将一个大的渲染任务切割成多个小任务，每个小任务只负责一小部分 DOM 更新。通过在 Fiber 树上进行遍历和操作，我们可以实现任务分割，提高应用程序的响应性和性能。
+
+ react fiber 是如何实现任务优先级的？用代码简单示范一下
+
+React Fiber 的任务优先级是通过创建多个优先级队列，并使用一个时间片策略来调度任务的。以下是一个简单的示例代码，用于演示 React Fiber 的优先级队列和任务优先级机制。
+
+```jsx
+const MAX_PRIORITY_LEVEL = 5;
+
+const NoWork = 0;
+const Sync = 1;
+const DefaultPriority = 3;
+const IdlePriority = 4;
+const AnimationPriority = 5;
+
+const initialScheduler = {
+ didTimeout: false,
+ enqueuedTasks: [],
+ scheduledCallback: null,
+ scheduledCallbackTimeout: null,
+ taskQueue: [],
+ currentTime: 0,
+};
+
+let currentScheduler = initialScheduler;
+
+const enableScheduler = () => {
+ // ...初始化 scheduler 的代码...
+};
+
+const requestCallback = (callback, options) => {
+ const currentTime = getCurrentTime();
+ const timeout = options != null && options.timeout != null ? options.timeout : -1;
+ const expirationTime =
+ timeout > 0 ? currentTime + timeout : currentTime + 51000;
+ const newTask = {
+ callback,
+ priorityLevel: DefaultPriority,
+ startTime: currentTime,
+ expirationTime,
+ };
+
+ currentScheduler.taskQueue.push(newTask);
+ ensureHostCallbackIsScheduled();
+};
+
+const ensureHostCallbackIsScheduled = () => {
+ if (currentScheduler.scheduledCallback === null) {
+ currentScheduler.scheduledCallback = performSchedulerWork;
+ currentScheduler.scheduledCallbackTimeout = setTimeout(() => {
+ performSchedulerWork(currentTime);
+ }, 0);
+ }
+};
+
+const performSchedulerWork = (currentTime) => {
+ performConcurrentWorkOnRoots();
+
+ if (currentScheduler.taskQueue.length > 0) {
+ const firstTask = currentScheduler.taskQueue[0];
+ if (firstTask.startTime <= currentTime) {
+ currentScheduler.taskQueue.shift();
+ firstTask.callback({ didTimeout: false });
+ return;
+ }
+ }
+};
+
+const performConcurrentWorkOnRoots = () => {
+ const priorityLevel = AnimationPriority;
+ const deadline = {
+ timeRemaining() {
+ return Infinity;
+ },
+ };
+ while (currentScheduler.taskQueue.length > 0) {
+ const task = findHighestPriorityTask();
+ if (task.priorityLevel > priorityLevel || task.expirationTime <= currentScheduler.currentTime) {
+ break;
+ }
+ const root = task.callback(deadline);
+
+ if (root !== null) {
+ // ...执行任务更新...
+ }
+ }
+};
+
+const findHighestPriorityTask = () => {
+ let highestPriorityTask = null;
+ let highestPriorityLevel = NoWork;
+
+ for (let i = 0; i < currentScheduler.taskQueue.length; i++) {
+ const task = currentScheduler.taskQueue[i];
+ const priorityLevel = task.priorityLevel;
+ if (priorityLevel > highestPriorityLevel) {
+ highestPriorityLevel = priorityLevel;
+ highestPriorityTask = task;
+ }
+ }
+
+ return highestPriorityTask;
+};
+```
+
+在这个示例中，我们定义了多个优先级常量和优先级队列，以及与之相关的一些变量和函数。我们通过 `requestCallback` 函数，将任务以优先级的方式插入到任务队列中。在 `performConcurrentWorkOnRoots` 函数中，我们按照优先级顺序遍历任务队列，并将任务的回调函数传递给 `callback` 函数执行更新操作。
+
+通过在任务队列和调度器中使用优先级的方式来调度和执行任务，我们可以在保证页面响应性的同时，最大化利用浏览器的空闲时间，提高应用程序整体的性能和用户体验。
+
+之前 React 的更新过程是同步的，所有更新逻辑会在一帧之内完成，如果组件过于复杂则会导致更新时间超过一帧，其他事务包括用户输入都会被延迟响应，从而引发卡顿。有了分片之后，更新过程的调用栈如下图所示，中间每一个波谷代表深入某个分片的执行过程，每个波峰就是一个分片执行结束交还控制权的时机。
+为c？原架构有何不足？原架构采用递归遍历方式来更新 DOM 树，一旦开始，即占用主线程，无法中断，这在页面上会引起问题，如 input 输入后页面卡顿等
+Fiber 如何解决该问题？时间分片和暂停
+Fiber如何实现？使用链表结构，将递归遍历更改为循环遍历，实现任务拆分、中断和恢复
+Fiber 如何实现比较？双缓冲技术，在 diff 过程中创建新的 DOM Tree，diff 完成之后生成 EffectList，即需要更新的地方，之后进入 commit 阶段，该阶段不允许中断
+
+## commit 阶段的执行过程 {#p0-commit}
+
+commitRoot方法是commit阶段工作的起点。fiberRootNode会作为传参。 `commitRoot(root);`
+
+如何走到 commit 阶段的， 可以参考这个文档：[资料](https://github.com/pro-collection/interview-question/issues/324)
+
+在rootFiber.firstEffect上保存了一条需要执行副作用的Fiber节点的单向链表effectList，这些Fiber节点的updateQueue中保存了变化的props。
+
+这些副作用对应的DOM操作在commit阶段执行。
+
+除此之外，一些生命周期钩子（比如componentDidXXX）、hook（比如useEffect）需要在commit阶段执行。
+
+commit阶段的主要工作（即Renderer的工作流程）分为三部分：
+
+before mutation阶段（执行DOM操作前）
+
+mutation阶段（执行DOM操作）
+
+layout阶段（执行DOM操作后）
+
+你可以从这里看到commit阶段的完整代码： [资料](https://github.com/facebook/react/blob/1fb18e22ae66fdb1dc127347e169e73948778e5a/packages/react-reconciler/src/ReactFiberWorkLoop.new.js#L2001)
+
+在before mutation阶段之前和layout阶段之后还有一些额外工作，涉及到比如useEffect的触发、优先级相关的重置、ref的绑定/解绑。
+
+ before mutation之前
+
+`commitRootImpl`方法中直到第一句`if (firstEffect !== null)`之前属于`before mutation之前`。
+
+我们大体看下他做的工作，现在你还不需要理解他们：
+
+```ts
+do {
+  // 触发useEffect回调与其他同步任务。由于这些任务可能触发新的渲染，所以这里要一直遍历执行直到没有任务
+  flushPassiveEffects()
+} while (rootWithPendingPassiveEffects !== null)
+
+// root指 fiberRootNode
+// root.finishedWork指当前应用的rootFiber
+const finishedWork = root.finishedWork
+
+// 凡是变量名带lane的都是优先级相关
+const lanes = root.finishedLanes
+if (finishedWork === null) {
+  return null
+}
+root.finishedWork = null
+root.finishedLanes = NoLanes
+
+// 重置Scheduler绑定的回调函数
+root.callbackNode = null
+root.callbackId = NoLanes
+
+const remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes)
+// 重置优先级相关变量
+markRootFinished(root, remainingLanes)
+
+// 清除已完成的discrete updates，例如：用户鼠标点击触发的更新。
+if (rootsWithPendingDiscreteUpdates !== null) {
+  if (
+    !hasDiscreteLanes(remainingLanes) &&
+ rootsWithPendingDiscreteUpdates.has(root)
+  ) {
+    rootsWithPendingDiscreteUpdates.delete(root)
+  }
+}
+
+// 重置全局变量
+if (root === workInProgressRoot) {
+  workInProgressRoot = null
+  workInProgress = null
+  workInProgressRootRenderLanes = NoLanes
+} else {
+  // ..
+}
+
+// 将effectList赋值给firstEffect
+// 由于每个fiber的effectList只包含他的子孙节点
+// 所以根节点如果有effectTag则不会被包含进来
+// 所以这里将有effectTag的根节点插入到effectList尾部
+// 这样才能保证有effect的fiber都在effectList中
+let firstEffect
+if (finishedWork.effectTag > PerformedWork) {
+  if (finishedWork.lastEffect !== null) {
+    finishedWork.lastEffect.nextEffect = finishedWork
+    firstEffect = finishedWork.firstEffect
+  } else {
+    firstEffect = finishedWork
+  }
+} else {
+  // 根节点没有effectTag
+  firstEffect = finishedWork.firstEffect
+}
+```
+
+可以看到，before mutation之前主要做一些变量赋值，状态重置的工作。
+
+这一长串代码我们只需要关注最后赋值的firstEffect，在commit的三个子阶段都会用到他。
+
+ layout之后
+
+接下来让我们简单看下layout阶段执行完后的代码，现在你还不需要理解他们：
+
+```ts
+const rootDidHavePassiveEffects = rootDoesHavePassiveEffects
+
+// useEffect相关
+if (rootDoesHavePassiveEffects) {
+  rootDoesHavePassiveEffects = false
+  rootWithPendingPassiveEffects = root
+  pendingPassiveEffectsLanes = lanes
+  pendingPassiveEffectsRenderPriority = renderPriorityLevel
+} else {}
+
+// 性能优化相关
+if (remainingLanes !== NoLanes) {
+  if (enableSchedulerTracing) {
+    // ...
+  }
+} else {
+  // ...
+}
+
+// 性能优化相关
+if (enableSchedulerTracing) {
+  if (!rootDidHavePassiveEffects) {
+    // ...
+  }
+}
+
+// ...检测无限循环的同步任务
+if (remainingLanes === SyncLane) {
+  // ...
+}
+
+// 在离开commitRoot函数前调用，触发一次新的调度，确保任何附加的任务被调度
+ensureRootIsScheduled(root, now())
+
+// ...处理未捕获错误及老版本遗留的边界问题
+
+// 执行同步任务，这样同步任务不需要等到下次事件循环再执行
+// 比如在 componentDidMount 中执行 setState 创建的更新会在这里被同步执行
+// 或useLayoutEffect
+flushSyncCallbackQueue()
+
+return null
+```
+
+主要包括三点内容：
+
+1. useEffect相关的处理。
+
+2. 性能追踪相关。
+源码里有很多和interaction相关的变量。他们都和追踪React渲染时间、性能相关，在Profiler API 和DevTools 中使用。
+
+1. 在commit阶段会触发一些生命周期钩子（如 componentDidXXX）和hook（如useLayoutEffect、useEffect）。
+
+ before mutation 阶段
+
+Renderer工作的阶段被称为commit阶段。commit阶段可以分为三个子阶段：
+
+before mutation阶段（执行DOM操作前）
+
+mutation阶段（执行DOM操作）
+
+layout阶段（执行DOM操作后）
+
+本节我们看看before mutation阶段（执行DOM操作前）都做了什么。
+
+ 概览
+
+before mutation阶段的代码很短，整个过程就是遍历effectList并调用commitBeforeMutationEffects函数处理。
+
+```ts
+// 保存之前的优先级，以同步优先级执行，执行完毕后恢复之前优先级
+const previousLanePriority = getCurrentUpdateLanePriority()
+setCurrentUpdateLanePriority(SyncLanePriority)
+
+// 将当前上下文标记为CommitContext，作为commit阶段的标志
+const prevExecutionContext = executionContext
+executionContext |= CommitContext
+
+// 处理focus状态
+focusedInstanceHandle = prepareForCommit(root.containerInfo)
+shouldFireAfterActiveInstanceBlur = false
+
+// beforeMutation阶段的主函数
+commitBeforeMutationEffects(finishedWork)
+
+focusedInstanceHandle = null
+```
+
+我们重点关注beforeMutation阶段的主函数commitBeforeMutationEffects做了什么。
+
+ commitBeforeMutationEffects
+
+```ts
+function commitBeforeMutationEffects () {
+  while (nextEffect !== null) {
+    const current = nextEffect.alternate
+
+    if (!shouldFireAfterActiveInstanceBlur && focusedInstanceHandle !== null) {
+      // ...focus blur相关
+    }
+
+    const effectTag = nextEffect.effectTag
+
+    // 调用getSnapshotBeforeUpdate
+    if ((effectTag & Snapshot) !== NoEffect) {
+      commitBeforeMutationEffectOnFiber(current, nextEffect)
+    }
+
+    // 调度useEffect
+    if ((effectTag & Passive) !== NoEffect) {
+      if (!rootDoesHavePassiveEffects) {
+        rootDoesHavePassiveEffects = true
+        scheduleCallback(NormalSchedulerPriority, () => {
+          flushPassiveEffects()
+          return null
+        })
+      }
+    }
+    nextEffect = nextEffect.nextEffect
+  }
+}
+```
+
+整体可以分为三部分：
+
+* 处理DOM节点渲染/删除后的 autoFocus、blur 逻辑。
+
+* 调用getSnapshotBeforeUpdate生命周期钩子。
+
+* 调度useEffect。
+
+ 调用 getSnapshotBeforeUpdate
+
+commitBeforeMutationEffectOnFiber是commitBeforeMutationLifeCycles的别名。
+
+在该方法内会调用getSnapshotBeforeUpdate。
+
+从Reactv16开始，componentWillXXX钩子前增加了UNSAFE_前缀。
+
+究其原因，是因为Stack Reconciler重构为Fiber Reconciler后，render阶段的任务可能中断/重新开始，对应的组件在render阶段的生命周期钩子（即componentWillXXX）可能触发多次。
+
+这种行为和Reactv15不一致，所以标记为UNSAFE_。
+
+更详细的解释参照这里(opens new window)
+
+为此，React提供了替代的生命周期钩子getSnapshotBeforeUpdate。
+
+我们可以看见，getSnapshotBeforeUpdate是在commit阶段内的before mutation阶段调用的，由于commit阶段是同步的，所以不会遇到多次调用的问题。
+
+ 调度useEffect
+
+在这几行代码内，scheduleCallback方法由Scheduler模块提供，用于以某个优先级异步调度一个回调函数。
+
+```ts
+// 调度useEffect
+if ((effectTag & Passive) !== NoEffect) {
+  if (!rootDoesHavePassiveEffects) {
+    rootDoesHavePassiveEffects = true
+    scheduleCallback(NormalSchedulerPriority, () => {
+      // 触发useEffect
+      flushPassiveEffects()
+      return null
+    })
+  }
+}
+```
+
+在此处，被异步调度的回调函数就是触发useEffect的方法flushPassiveEffects。
+
+我们接下来讨论useEffect如何被异步调度，以及为什么要异步（而不是同步）调度。
+
+ 如何异步调度
+
+在flushPassiveEffects方法内部会从全局变量rootWithPendingPassiveEffects获取effectList。
+
+关于flushPassiveEffects的具体讲解参照useEffect与useLayoutEffect一节
+
+在completeWork一节我们讲到，effectList中保存了需要执行副作用的Fiber节点。其中副作用包括
+
+* 插入DOM节点（Placement）
+* 更新DOM节点（Update）
+* 删除DOM节点（Deletion）
+
+除此外，当一个FunctionComponent含有useEffect或useLayoutEffect，他对应的Fiber节点也会被赋值effectTag。
+
+在flushPassiveEffects方法内部会遍历rootWithPendingPassiveEffects（即effectList）执行effect回调函数。
+
+如果在此时直接执行，rootWithPendingPassiveEffects === null。
+
+那么rootWithPendingPassiveEffects会在何时赋值呢？
+
+在上一节layout之后的代码片段中会根据rootDoesHavePassiveEffects === true?决定是否赋值rootWithPendingPassiveEffects。
+
+```ts
+const rootDidHavePassiveEffects = rootDoesHavePassiveEffects
+if (rootDoesHavePassiveEffects) {
+  rootDoesHavePassiveEffects = false
+  rootWithPendingPassiveEffects = root
+  pendingPassiveEffectsLanes = lanes
+  pendingPassiveEffectsRenderPriority = renderPriorityLevel
+}
+```
+
+**所以整个useEffect异步调用分为三步**：
+
+* `before mutation`阶段在`scheduleCallback`中调度`flushPassiveEffects`
+* `layout阶段`之后将`effectList`赋值给`rootWithPendingPassiveEffects`
+* `scheduleCallback`触发`flushPassiveEffects`，`flushPassiveEffects`内部遍历`rootWithPendingPassiveEffects`
+
+ 为什么需要异步调用
+
+与 componentDidMount、componentDidUpdate 不同的是，在浏览器完成布局与绘制之后，传给 useEffect 的函数会延迟调用。这使得它适用于许多常见的副作用场景，比如设置订阅和事件处理等情况，因此不应在函数中执行阻塞浏览器更新屏幕的操作。
+
+可见，useEffect异步执行的原因主要是防止同步执行时阻塞浏览器渲染。
+
+ mutation阶段
+
+终于到了执行DOM操作的mutation阶段。
+
+ 概览
+
+类似before mutation阶段，mutation阶段也是遍历effectList，执行函数。这里执行的是commitMutationEffects。
+
+```ts
+nextEffect = firstEffect
+do {
+  try {
+    commitMutationEffects(root, renderPriorityLevel)
+  } catch (error) {
+    invariant(nextEffect !== null, 'Should be working on an effect.')
+    captureCommitPhaseError(nextEffect, error)
+    nextEffect = nextEffect.nextEffect
+  }
+} while (nextEffect !== null)
+```
+
+ commitMutationEffects
+
+代码如下：
+
+```ts
+function commitMutationEffects (root: FiberRoot, renderPriorityLevel) {
+  // 遍历effectList
+  while (nextEffect !== null) {
+
+    const effectTag = nextEffect.effectTag
+
+    // 根据 ContentReset effectTag重置文字节点
+    if (effectTag & ContentReset) {
+      commitResetTextContent(nextEffect)
+    }
+
+    // 更新ref
+    if (effectTag & Ref) {
+      const current = nextEffect.alternate
+      if (current !== null) {
+        commitDetachRef(current)
+      }
+    }
+
+    // 根据 effectTag 分别处理
+    const primaryEffectTag =
+ effectTag & (Placement | Update | Deletion | Hydrating)
+    switch (primaryEffectTag) {
+      // 插入DOM
+      case Placement: {
+        commitPlacement(nextEffect)
+        nextEffect.effectTag &= ~Placement
+        break
+      }
+      // 插入DOM 并 更新DOM
+      case PlacementAndUpdate: {
+        // 插入
+        commitPlacement(nextEffect)
+
+        nextEffect.effectTag &= ~Placement
+
+        // 更新
+        const current = nextEffect.alternate
+        commitWork(current, nextEffect)
+        break
+      }
+      // SSR
+      case Hydrating: {
+        nextEffect.effectTag &= ~Hydrating
+        break
+      }
+      // SSR
+      case HydratingAndUpdate: {
+        nextEffect.effectTag &= ~Hydrating
+
+        const current = nextEffect.alternate
+        commitWork(current, nextEffect)
+        break
+      }
+      // 更新DOM
+      case Update: {
+        const current = nextEffect.alternate
+        commitWork(current, nextEffect)
+        break
+      }
+      // 删除DOM
+      case Deletion: {
+        commitDeletion(root, nextEffect, renderPriorityLevel)
+        break
+      }
+    }
+
+    nextEffect = nextEffect.nextEffect
+  }
+}
+```
+
+commitMutationEffects会遍历effectList，对每个Fiber节点执行如下三个操作：
+
+* 根据ContentReset effectTag重置文字节点
+* 更新ref
+* 根据effectTag分别处理，其中effectTag包括(Placement | Update | Deletion | Hydrating)
+
+我们关注步骤三中的`Placement | Update | Deletion`。Hydrating作为服务端渲染相关，我们先不关注。
+
+ Placement effect
+
+当Fiber节点含有Placement effectTag，意味着该Fiber节点对应的DOM节点需要插入到页面中。
+
+调用的方法为commitPlacement。
+
+该方法所做的工作分为三步：
+
+1. 获取父级DOM节点。其中finishedWork为传入的Fiber节点。
+
+```ts
+const parentFiber = getHostParentFiber(finishedWork)
+// 父级DOM节点
+const parentStateNode = parentFiber.stateNode
+```
+
+2. 获取Fiber节点的DOM兄弟节点
+
+```ts
+获取Fiber节点的DOM兄弟节点
+```
+
+3. 根据DOM兄弟节点是否存在决定调用parentNode.insertBefore或parentNode.appendChild执行DOM插入操作。
+
+```ts
+// parentStateNode是否是rootFiber
+if (isContainer) {
+  insertOrAppendPlacementNodeIntoContainer(finishedWork, before, parent)
+} else {
+  insertOrAppendPlacementNode(finishedWork, before, parent)
+}
+```
+
+值得注意的是，getHostSibling（获取兄弟DOM节点）的执行很耗时，当在同一个父Fiber节点下依次执行多个插入操作，getHostSibling算法的复杂度为指数级。
+
+这是由于Fiber节点不只包括HostComponent，所以Fiber树和渲染的DOM树节点并不是一一对应的。要从Fiber节点找到DOM节点很可能跨层级遍历。
+
+```tsx
+function Item() {
+ return <li><li>;
+}
+
+function App() {
+ return (
+ <div>
+ <Item/>
+ </div>
+ )
+}
+
+ReactDOM.render(<App/>, document.getElementById('root'));
+```
+
+对应的Fiber树和DOM树结构为：
+
+```
+// Fiber树
+ child child child child
+rootFiber -----> App -----> div -----> Item -----> li
+
+// DOM树
+#root ---> div ---> li
+```
+
+当在div的子节点Item前插入一个新节点p，即App变为：
+
+```tsx
+function App () {
+  return (
+ <div>
+ <p></p>
+ <Item/>
+ </div>
+  )
+}
+```
+
+对应的Fiber树和DOM树结构为：
+
+```
+// Fiber树
+ child child child
+rootFiber -----> App -----> div -----> p 
+ | sibling child
+ | -------> Item -----> li 
+// DOM树
+#root ---> div ---> p
+ |
+ ---> li
+```
+
+此时DOM节点 p的兄弟节点为li，而Fiber节点 p对应的兄弟DOM节点为： `fiberP.sibling.child`
+
+即fiber p的兄弟fiber Item的子fiber li
+
+ Update effect
+
+当Fiber节点含有Update effectTag，意味着该Fiber节点需要更新。调用的方法为commitWork，他会根据Fiber.tag分别处理。
+
+这里我们主要关注FunctionComponent和HostComponent。
+
+ FunctionComponent mutation
+
+当fiber.tag为FunctionComponent，会调用commitHookEffectListUnmount。该方法会遍历effectList，执行所有useLayoutEffect hook的销毁函数。
+
+所谓“销毁函数”，见如下例子
+
+```ts
+useLayoutEffect(() => {
+  // ...一些副作用逻辑
+
+  return () => {
+    // ...这就是销毁函数
+  }
+})
+```
+
+你不需要很了解useLayoutEffect，我们会在下一节详细介绍。你只需要知道在mutation阶段会执行useLayoutEffect的销毁函数。
+
+ HostComponent mutation
+
+当fiber.tag为HostComponent，会调用commitUpdate。
+
+最终会在updateDOMProperties (opens new window)中将render阶段 completeWork (opens new window)中为Fiber节点赋值的updateQueue对应的内容渲染在页面上。
+
+```ts
+for (let i = 0; i < updatePayload.length; i += 2) {
+  const propKey = updatePayload[i]
+  const propValue = updatePayload[i + 1]
+
+  // 处理 style
+  if (propKey === STYLE) {
+    setValueForStyles(domElement, propValue)
+    // 处理 DANGEROUSLY_SET_INNER_HTML
+  } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+    setInnerHTML(domElement, propValue)
+    // 处理 children
+  } else if (propKey === CHILDREN) {
+    setTextContent(domElement, propValue)
+  } else {
+    // 处理剩余 props
+    setValueForProperty(domElement, propKey, propValue, isCustomComponentTag)
+  }
+}
+```
+
+ Deletion effect
+
+当Fiber节点含有Deletion effectTag，意味着该Fiber节点对应的DOM节点需要从页面中删除。调用的方法为commitDeletion。
+
+该方法会执行如下操作：
+
+* 递归调用Fiber节点及其子孙Fiber节点中fiber.tag为ClassComponent的componentWillUnmount (opens new window)生命周期钩子，从页面移除Fiber节点对应DOM节点
+* 解绑ref
+* 调度useEffect的销毁函数
+
+ layout阶段
+
+该阶段之所以称为layout，因为该阶段的代码都是在DOM渲染完成（mutation阶段完成）后执行的。
+
+该阶段触发的生命周期钩子和hook可以直接访问到已经改变后的DOM，即该阶段是可以参与DOM layout的阶段。
+
+与前两个阶段类似，layout阶段也是遍历effectList，执行函数。
+
+具体执行的函数是commitLayoutEffects。
+
+ commitLayoutEffects
+
+commitLayoutEffects一共做了两件事：
+
+1. commitLayoutEffectOnFiber（调用生命周期钩子和hook相关操作）
+
+2. commitAttachRef（赋值 ref）
+
+ commitLayoutEffectOnFiber
+
+commitLayoutEffectOnFiber方法会根据fiber.tag对不同类型的节点分别处理。
+
+* 对于ClassComponent，他会通过current === null?区分是mount还是update，调用componentDidMount (opens new window)或componentDidUpdate
+
+触发状态更新的this.setState如果赋值了第二个参数回调函数，也会在此时调用。
+
+* 对于FunctionComponent及相关类型，他会调用useLayoutEffect hook的回调函数，调度useEffect的销毁与回调函数
+
+相关类型指特殊处理后的FunctionComponent，比如ForwardRef、React.memo包裹的FunctionComponent
+
+mutation阶段会执行useLayoutEffect hook的销毁函数。
+
+结合这里我们可以发现，useLayoutEffect hook从上一次更新的销毁函数调用到本次更新的回调函数调用是同步执行的。
+
+而useEffect则需要先调度，在Layout阶段完成后再异步执行。
+
+这就是useLayoutEffect与useEffect的区别。
+
+* 对于HostRoot，即rootFiber，如果赋值了第三个参数回调函数，也会在此时调用。
+
+ commitAttachRef
+
+commitLayoutEffects会做的第二件事是commitAttachRef。
+
+代码逻辑很简单：获取DOM实例，更新ref。
+
+ current Fiber树切换
+
+至此，整个layout阶段就结束了。
+
+## 事件绑定原理 {#p0-event-bind}
+
+ 绑定原理与过程
+
+在 React 中，事件绑定不同于传统的直接在 HTML 元素添加事件监听器的方式。React 的事件绑定是建立在自定义组件上的，因此需要对 React 组件的生命周期进行理解。
+
+React 事件绑定的原理可以概括为三个步骤：
+
+1. 创建 React 元素
+
+在 React 中，事件的绑定是通过在 JSX 中创建元素时给元素添加一个事件属性实现的。例如：
+
+```
+<button onClick={this.handleClick}>点我</button>
+```
+
+这里使用 onClick 属性将组件的 handleClick 方法传递给一个按钮组件，这个按钮组件在点击之后会调用 handleClick 方法。
+
+2. 挂载事件处理函数
+
+当 React 元素插入文档中之后，React 会在元素宿主节点上挂载事件处理函数。这个过程是在 React 元素生成之后、组件挂载之前完成的。React 在执行组件挂载生命周期函数之前，会将所有元素上声明的事件处理函数统一挂载到 DOM 上。
+
+3. 移除事件处理函数
+
+当 React 元素被移除文档时，React 会自动移除对应的事件处理函数。这个过程是在组件卸载之后、元素从 DOM 中移除之前执行的。
+
+React 的事件绑定表现为组件的方法，所以在事件处理函数中，可以通过 this 关键字来访问组件的状态和属性。
+
+需要注意的是，React 组件中不能使用原生事件绑定方式，比如使用 `element.addEventListener('click', function(){})`，因为这样做会导致 React 无法正确地跟踪组件状态的变化，从而可能导致一些潜在问题。
+
+ React 组件中为何不能使用原生事件绑定方式
+
+React 组件中不能使用原生事件绑定方式是因为，React 使用的是 Virtual DOM 技术，而不是直接操作 DOM。React 的 Virtual DOM 能够自动监测组件（即数据）状态的变化和更新，从而根据更新后的状态重新渲染视图，并在必要的时候更新真实 DOM。
+
+如果使用原生事件绑定方式，比如使用 `element.addEventListener('click', function(){})`，那么这些绑定的事件处理函数是直接绑定在真实的 DOM 元素上的，并不参与 Virtual DOM 中的数据流程，这样就会导致以下两个问题：
+
+1. 事件绑定后，如果组件状态变化并且重新渲染，那么重新渲染后的组件实例会重新创建一个新的 DOM 元素，而旧的 DOM 元素会被销毁，导致原来的事件处理函数被绑定在了一个不存在的元素上，导致事件失效。
+
+2. 使用原生事件绑定方式，无法在事件处理函数中直接访问组件实例的状态和属性。例如，在事件处理函数中想要访问一个组件的状态或者属性，就必须使用组件实例的引用（即 this 指针），但是这个 this 指针指向的并不是组件实例本身，而是真实的 DOM 元素，这样就无法直接访问组件状态和属性。
+
+因此，在 React 中，我们必须使用 `onClick` 等钩子函数来绑定事件处理函数，这样 React 就能够在其 Virtual DOM 中正确地跟踪组件状态变化，并保证事件处理函数的正确性。当然，在一些极端的情况下，React 也提供了访问真实 DOM 元素的机制，比如 `ref` 属性，这个可以在某些场景下使用。
+
+## 为什么要自定义合成事件 {#p1-custom-event}
+
+React 选择自定义合成事件系统主要是为了提供一个统一的事件处理接口，解决浏览器原生事件的兼容性问题，并优化性能。以下是自定义合成事件系统的几个关键原因：
+
+1. **跨浏览器一致性**：
+ 不同的浏览器对事件的实现存在差异，这可能导致在不同浏览器上运行的代码行为不一致。React 的合成事件系统提供了一个统一的 API，使得开发者可以编写一次代码，而无需担心浏览器兼容性问题。
+
+1. **性能优化**：
+ React 的合成事件系统允许事件处理在事件冒泡阶段进行，而不是在捕获阶段。这样可以减少不必要的事件处理调用，因为事件在冒泡阶段到达目标元素时，通常意味着用户与页面的交互已经完成。此外，React 还可以将多个事件合并处理，减少对 DOM 的操作次数，从而提高性能。
+
+1. **简化事件处理**：
+ 在原生事件中，事件处理函数需要处理事件的捕获和冒泡阶段，这可能会导致代码复杂且难以维护。React 的合成事件系统抽象了这些细节，开发者只需要关注事件的冒泡阶段，简化了事件处理逻辑。
+
+1. **事件池**：
+ React 的合成事件对象是池化的，这意味着在事件处理函数执行完毕后，事件对象会被重用，以减少垃圾回收的压力。这有助于提高应用的性能。
+
+1. **安全性和可控性**：
+ React 的合成事件系统提供了一个安全的环境，可以防止一些常见的安全问题，如跨站脚本攻击（XSS）。同时，它也使得开发者可以更容易地控制事件的行为。
+
+1. **与 React 的生命周期集成**：
+ React 的合成事件系统与组件的生命周期紧密集成，例如，事件处理函数可以在组件卸载时自动清理，避免内存泄漏。
+
+1. **与 React 的其他特性集成**：
+ 合成事件系统与 React 的其他特性（如虚拟 DOM、组件状态管理等）紧密集成，提供了一致的开发体验。
+
+1. **便于调试和开发工具**：
+ React 的合成事件系统使得开发者可以更容易地调试事件处理代码，因为事件对象具有一致的结构和属性。
+
+综上所述，React 的自定义合成事件系统是为了提供一个更加一致、高效和安全的事件处理机制，使得开发者可以更容易地构建高性能的用户界面。
+
+在React中，合成事件和原生事件的触发顺序是先合成事件，然后是原生事件。
+
+React使用了一种称为"合成事件"的机制来处理事件。当你在组件中使用事件属性（例如onClick）时，React会在底层创建合成事件，并将其附加到相应的DOM元素上。合成事件是React自己实现的一套事件系统，它通过事件委托和其他技术来提供更好的性能和一致的事件处理方式。
+
+当触发一个合成事件时，React会首先执行事件的处理函数，然后会调用合成事件的`stopPropagation()`方法来阻止事件冒泡。如果处理函数调用了`stopPropagation()`，则合成事件会终止，不再触发原生事件。
+
+如果合成事件没有被终止，并且对应的DOM元素上还有原生事件监听器，React会触发相应的原生事件。原生事件是由浏览器提供的，React并没有对其进行改变或拦截。
+
+因此，合成事件和原生事件的触发顺序是**先合成事件，然后是原生事件**。这意味着在事件处理函数中，你可以放心地使用合成事件对象，而不需要担心原生事件的影响。
+
+**为何有一些文章是说， 原生事件先执行？**
+
+原生事件先执行的说法是因为在React早期的版本中，React使用事件委托的方式来处理事件。事件委托是指将事件处理函数绑定在父元素上，然后利用事件冒泡机制，通过父元素捕获并处理子元素的事件。这种方式会导致在事件冒泡阶段，父元素的事件处理函数会先于子元素的事件处理函数执行。
+
+在这种情况下，如果一个组件有一个合成事件和一个原生事件绑定在同一个元素上，原生事件的处理函数会在合成事件的处理函数之前执行。这就造成了一些文章中提到的原生事件先执行的观察结果。
+
+然而，从React v16开始，React改变了事件处理的方式，不再使用事件委托，而是直接将事件处理函数绑定在目标元素上。这样做的好处是提高了性能，并且保证了事件处理函数的执行顺序与绑定顺序一致。
+
+因此，根据React的最新版本，合成事件会先于原生事件执行。如果你发现有一些旧的文章提到原生事件先执行，那可能是因为这些文章对React的早期版本进行了描述，不适用于目前的React版本。
+
+## scheduler 调度机制原理 {#scheduler}
+
+1. scheduler 概念
+2. 时间片与优先级 概念
+3. 优先级切分
+4. 任务队列
+5. scheduleCallback
+6. requestHostCallback
+7. MessageChannel
+8. performWorkUntilDeadline
+
+* 任务的中断和恢复
+* 判断任务的完成状态
+* 取消任务
+
+React 在性能优化方面的一个关键组件是调度器（Scheduler），它负责在渲染的过程中合理安排工作，以减少用户的等待时间以及避免单个任务占用过多的主线程时间，从而提高渲染性能。React 在 18.0 版本后引入了新的调度器机制，提供了更好的性能体验。
+
+那么，为什么 React 不直接使用 `requestIdleCallback` 而要自己实现调度器呢？
+
+1. **控制精细度：** React 需要比 `requestIdleCallback` 更高的控制精细度。`requestIdleCallback` 是基于浏览器的空闲时间进行调度的，而 React 调度器可以根据组件优先级、更新的紧急程度等信息，更精确地安排渲染的工作。
+
+2. **跨浏览器兼容性：** `requestIdleCallback` 直到 2018 年才是浏览器中较普遍支持的 API。React 需要一个能够跨各个版本或框架的解决方案，以实现一致的性能体验。
+
+3. **时间切片：** React 使用一种称为“时间切片”（time slicing）的技术，允许组件分布在多个帧中渲染以维持流畅的 UI。这依赖于 React 自己对任务和帧的精确控制，而不是依赖浏览器的 `requestIdleCallback`。
+
+4. **更丰富的特性：** React 调度器提供了比 `requestIdleCallback` 更丰富的特性和更加详细的调度策略，这包括：
+
+* `Immediate` 模式，用于同步渲染，当它是必需的时候。
+* `User-blocking` 模式，用于任务需要尽快完成，但能够容忍一定延迟，比如交互动画。
+* `Normal` 和 `Low` 模式，用于不同优先级的更新。
+
+5. **复杂功能的实现：** React 使用调度器实现某些特定的特性，比如：
+
+* Fiber 架构，允许 React 在类组件上实现 Concurrent 特性。
+* 在客户端渲染和服务器端渲染之间实现一致性。
+
+6. **优化生态工具：** 对于 React 生态中的其他工具和实现（如 react-native、fast-refresh 等），它们可能需要特定或不同的调度策略。
+
+7. **未来兼容性：** React 团队可以更好地在自己控制的调度器中实现未来的优化和特性，而不受浏览器 API 变更的影响。
+
+最后，调度器是 React 架构中的一个重要部分，它让 React 能够实现更丰富和灵活的用户界面渲染逻辑。尽管 `requestIdleCallback` 可以被用来实现一些调度器的特性，但是完全使用它将限制 React 进一步优化的可能性，并迫使 React 依赖于浏览器的调度行为，这可能不符合 React 的长期发展和技术策略。

@@ -1,9 +1,29 @@
 import { themes as prismThemes } from 'prism-react-renderer'
 import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
-import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
+import type { Options as DocsOptions, NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 import extractQuestionsPlugin from './src/plugins/extractQuestions/index'
 import devProxy from './src/plugins/devProxy/index'
+
+const numberPrefixPattern =
+  /^(?<numberPrefix>\d+(\.\d+)?)\s*[-_.]+\s*(?<suffix>[^-_.\s].*)$/
+
+const DefaultNumberPrefixParser: NumberPrefixParser = (
+  filename: string
+) => {
+  const match = numberPrefixPattern.exec(filename)
+  if (!match) {
+    return { filename, numberPrefix: undefined }
+  }
+  const numberPrefix = match.groups!.numberPrefix!.split('.').map(Number)
+
+  const res = {
+    filename: match.groups!.suffix!,
+    numberPrefix: numberPrefix.length === 1 ? numberPrefix[0] : parseFloat(numberPrefix.join('.'))
+  }
+  console.log(match.groups!.numberPrefix, res)
+  return res
+}
 
 const config: Config = {
   customFields: {
@@ -68,6 +88,7 @@ const config: Config = {
         docs: {
           path: 'docs',
           sidebarPath: './sidebars.ts',
+          numberPrefixParser: DefaultNumberPrefixParser,
           exclude: [
             '**/*.test.{js,jsx,ts,tsx}', // 排除测试文件
             '**/questions/**', // 排除所有 questions 目录
