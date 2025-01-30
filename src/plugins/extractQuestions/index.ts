@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import type { Plugin, LoadContext } from '@docusaurus/types'
 import fastGlob from 'fast-glob'
+import type { NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 
 export interface Question {
   domain: string;
@@ -19,6 +20,25 @@ export interface GroupedQuestion {
 
 interface PluginOptions {
   exclude?: string[];
+}
+const numberPrefixPattern =
+  /^(?<numberPrefix>\d+(\.\d+)?)\s*[-_.]+\s*(?<suffix>[^-_.\s].*)$/
+
+export const numberPrefixParser: NumberPrefixParser = (
+  filename: string
+) => {
+  const match = numberPrefixPattern.exec(filename)
+  if (!match) {
+    return { filename, numberPrefix: undefined }
+  }
+  const numberPrefix = match.groups!.numberPrefix!.split('.').map(Number)
+
+  const res = {
+    filename: match.groups!.suffix!,
+    numberPrefix: numberPrefix.length === 1 ? numberPrefix[0] : parseFloat(numberPrefix.join('.'))
+  }
+  console.log(match.groups!.numberPrefix, res)
+  return res
 }
 
 export default function extractQuestionsPlugin (
@@ -50,8 +70,8 @@ export default function extractQuestionsPlugin (
           files.map(async (filePath) => {
             const content = await fs.promises.readFile(filePath, 'utf-8')
             const matches = content.match(/^## (.+)$/gm) || []
-            const domain = path.basename(path.dirname(filePath)).replace(/^\d+-/, '') // 获取一级目录名并移除前缀数字
-            const topic = path.basename(path.basename(filePath, path.extname(filePath))).replace(/^\d+-/, '') // 获取文件名作为 topic，并移除前缀数字
+            const domain = numberPrefixParser(path.basename(path.dirname(filePath))).filename // 获取一级目录名并移除前缀数字
+            const topic = numberPrefixParser(path.basename(path.basename(filePath, path.extname(filePath)))).filename // 获取文件名作为 topic，并移除前缀数字
 
             return matches.map(match => {
               const titleWithAnchor = match.slice(3).trim()

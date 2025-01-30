@@ -114,7 +114,6 @@ class vue extends EventTarget {
     childArr.forEach(node => {
       if (node.nodeType === 3) {
         const text = node.textContent
-        const reg = /\{\{\s*([^\s\{\}]+)\s*\}\}/g
         if (reg.test(text)) {
           const $1 = RegExp.$1
           this._data[$1] && (node.textContent = text.replace(reg, this._data[$1]))
@@ -126,6 +125,7 @@ class vue extends EventTarget {
       } else if (node.nodeType === 1) { // 如果是元素节点
         const attr = node.attributes
         // 判断属性中是否含有v-model
+        // eslint-disable-next-line
         if (attr.hasOwnProperty('v-model')) {
           const keyName = attr['v-model'].nodeValue
           node.value = this._data[keyName]

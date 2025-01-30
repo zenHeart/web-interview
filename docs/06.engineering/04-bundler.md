@@ -4068,7 +4068,7 @@ fetch(API_URL + '/users')
 
 Webpack 在编译时会将这些变量替换成对应的值，例如：
 
-```javascript
+```js
 if ('production' === 'production') {
   console.log('当前为生产环境')
 }

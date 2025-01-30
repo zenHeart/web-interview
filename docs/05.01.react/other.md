@@ -1,4 +1,4 @@
-# react
+# 杂项
 
 ## 是如何实现页面的快速响应？ {#p1-how-wrol}
 
@@ -331,158 +331,6 @@ Renderer根据Reconciler为虚拟DOM打的标记，同步执行对应的DOM操�
 
 * [资料](https://react.iamkasong.com/preparation/newConstructure.html#react16%E6%9E%B6%E6%9E%84)
 
-```js
-``
-
-## 320 [React] React Reconciler 为何要采用 fiber 架构？【热度: 1,794】
-
-* created_at: 2023-04-27T15:37:45Z
-* updated_at: 2023-04-27T15:37:45Z
-* labels: web框架
-* milestone: 资深
-
-**关键词**：react16 架构、react Reconciler、react fiber、react 协调器
-
- 代数效应的实践
-
-React中做的就是践行代数效应（Algebraic Effects）。
-
-简单点儿来说就是： **用于将副作用从函数调用中分离。**
-
-举例子：
-比如我们要获取用户的姓名做展示：
-
-```js
-const resource = fetchProfileData()
-
-function ProfileDetails () {
-  // Try to read user info, although it might not have loaded yet
-  const user = resource.user.read()
-  return <h1>{user.name}</h1>
-}
-```
-
-代码如上， 但是 resource 是通过异步获取的。 这个时候代码就要改为下面这种形式
-
-```js
-const resource = fetchProfileData()
-
-async function ProfileDetails () {
-  // Try to read user info, although it might not have loaded yet
-  const user = await resource.user.read()
-  return <h1>{user.name}</h1>
-}
-```
-
-但是 async/await 是具有传染性的。 这个穿践行就是副作用， 我们不希望有这样的副作用， 尽管里面有异步调用， 不希望这样的副作用传递给外部的函数， 只希望外部的函数是一个纯函数。
-
- 代数效应在React中的应用
-
-在 react 代码中， 每一个函数式组件， 其实都是一个纯函数， 但是内部里面可能会有各种各样的副作用。 这些副作用就是我们使用的 hooks;
-
-对于类似useState、useReducer、useRef这样的Hook，我们不需要关注FunctionComponent的state在Hook中是如何保存的，React会为我们处理。
-
-我们只需要假设useState返回的是我们想要的state，并编写业务逻辑就行。
-
-可以看官方的 Suspense demo, 可以是通过 Suspense 让内部直接可以同步的方式调用异步代码；
-代码链接： [资料](https://codesandbox.io/s/frosty-hermann-bztrp?file=/src/index.js:152-160)
-
-```jsx
-import React, { Suspense } from "react";
-import ReactDOM from "react-dom";
-
-import "./styles.css";
-import { fetchProfileData } from "./fakeApi";
-
-const resource = fetchProfileData();
-
-function ProfilePage() {
- return (
- <Suspense
- fallback={<h1>Loading profile...</h1>}
- >
- <ProfileDetails />
- <Suspense
- fallback={<h1>Loading posts...</h1>}
- >
- <ProfileTimeline />
- </Suspense>
- </Suspense>
- );
-}
-
-function ProfileDetails() {
- // Try to read user info, although it might not have loaded yet
- const user = resource.user.read();
- return <h1>{user.name}</h1>;
-}
-
-function ProfileTimeline() {
- // Try to read posts, although they might not have loaded yet
- const posts = resource.posts.read();
- return (
- <ul>
- {posts.map(post => (
- <li key={post.id}>{post.text}</li>
- ))}
- </ul>
- );
-}
-
-const rootElement = document.getElementById(
- "root"
-);
-ReactDOM.createRoot(rootElement).render(
- <ProfilePage />
-);
-```
-
- Generator 架构
-
-从React15到React16，协调器（Reconciler）重构的一大目的是：将老的同步更新的架构变为异步可中断更新。
-
-异步可中断更新可以理解为：更新在执行过程中可能会被打断（浏览器时间分片用尽或有更高优任务插队），当可以继续执行时恢复之前执行的中间状态。
-
-其实，浏览器原生就支持类似的实现，这就是Generator。
-
-但是Generator的一些缺陷使React团队放弃了他：
-
-* 类似async，Generator也是传染性的，使用了Generator则上下文的其他函数也需要作出改变。这样心智负担比较重。
-* Generator执行的中间状态是上下文关联的。
-
-例如这样的例子：
-
-```js
-function * doWork (A, B, C) {
-  const x = doExpensiveWorkA(A)
-  yield
-  const y = x + doExpensiveWorkB(B)
-  yield
-  const z = y + doExpensiveWorkC(C)
-  return z
-}
-```
-
-但是当我们考虑“高优先级任务插队”的情况，如果此时已经完成doExpensiveWorkA与doExpensiveWorkB计算出x与y。
-
-此时B组件接收到一个高优更新，由于Generator执行的中间状态是上下文关联的，所以计算y时无法复用之前已经计算出的x，需要重新计算。
-
-如果通过全局变量保存之前执行的中间状态，又会引入新的复杂度。
-
- fiber 架构
-
-他的中文翻译叫做纤程，与进程（Process）、线程（Thread）、协程（Coroutine）同为程序执行过程。
-
-在很多文章中将纤程理解为协程的一种实现。在JS中，协程的实现便是Generator。
-
-所以，我们可以将纤程(Fiber)、协程(Generator)理解为代数效应思想在JS中的体现。
-
-React Fiber可以理解为：
-
-React内部实现的一套状态更新机制。支持任务不同优先级，可中断与恢复，并且恢复后可以复用之前的中间状态。
-
-其中每个任务更新单元为React Element对应的Fiber节点。
-
 ## React 18 的新特性有哪些 {#react-18}
 
 批量处理是指 React 将多个状态更新分组到一个重新渲染中，以获得更好的性能。如果没有自动批量处理，我们只对 React 事件处理程序中的更新进行批量处理。默认情况下，React 不会对
@@ -543,7 +391,7 @@ startTransition(() => {
 
 如果组件树的某一部分还没有准备好被显示，Suspense 可以让你声明式地指定加载状态：
 
-```typescript jsx
+```tsx
 <Suspense fallback={<Spinner />}>
  <Comments />
 </Suspense>
@@ -772,59 +620,59 @@ React 18 通过在默认情况下执行批处理来实现了开箱即用的性�
 
 下面的代码就会批量处理，只会渲染一次页面
 
-```typescript jsx
-import React, { useState } from 'react';
+```tsx
+import React, { useState } from 'react'
 
 // React 18 之前
 const App: React.FC = () => {
- console.log('App组件渲染了！');
- const [count1, setCount1] = useState(0);
- const [count2, setCount2] = useState(0);
- return (
+  console.log('App组件渲染了！')
+  const [count1, setCount1] = useState(0)
+  const [count2, setCount2] = useState(0)
+  return (
  <button
  onClick={() => {
- setCount1(count => count + 1);
- setCount2(count => count + 1);
+   setCount1(count => count + 1)
+   setCount2(count => count + 1)
  // 在React事件中被批处理
  }}
  >
  {`count1 is ${count1}, count2 is ${count2}`}
  </button>
- );
-};
+  )
+}
 
-export default App;
+export default App
 ```
 
 **情况二：setTimeout**
 
 如果我们把状态的更新放在`promise`或者`setTimeout`里面， 组件都会渲染两次，不会进行批量更新。
 
-```typescript jsx
-import React, { useState } from 'react';
+```tsx
+import React, { useState } from 'react'
 
 // React 18 之前
 const App: React.FC = () => {
- console.log('App组件渲染了！');
- const [count1, setCount1] = useState(0);
- const [count2, setCount2] = useState(0);
- return (
+  console.log('App组件渲染了！')
+  const [count1, setCount1] = useState(0)
+  const [count2, setCount2] = useState(0)
+  return (
  <div
  onClick={() => {
- setTimeout(() => {
- setCount1(count => count + 1);
- setCount2(count => count + 1);
- });
+   setTimeout(() => {
+     setCount1(count => count + 1)
+     setCount2(count => count + 1)
+   })
  // 在 setTimeout 中不会进行批处理
  }}
  >
  <div>count1： {count1}</div>
  <div>count2： {count2}</div>
  </div>
- );
-};
+  )
+}
 
-export default App;
+export default App
 ```
 
 **情况三：原生js事件**
