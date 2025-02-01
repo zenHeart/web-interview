@@ -1,0 +1,191 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-engineering/security" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>安全 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/engineering/security><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="安全 | web-interview"><meta data-rh=true name=description content="常见 web 安全问题"><meta data-rh=true property=og:description content="常见 web 安全问题"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/engineering/security><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/engineering/security hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/engineering/security hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/engineering/concept>engineering</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/concept>概念</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/engineering/security>安全</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/bundler>打包工具</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/performance>性能</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/git>git</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/CI-CD>部署集成</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/system-desing>系统设计</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/test>测试</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/typescript>typescript</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/architecture>架构</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/debug>调试能力</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/coding>编码</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/engineering/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>engineering</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>安全</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>安全</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-security>常见 web 安全问题<a href=#p0-security class=hash-link aria-label="常见 web 安全问题的直接链接" title="常见 web 安全问题的直接链接">​</a></h2>
+<p>以下是一些常见的 web 前端网络攻击类型：</p>
+<ol>
+<li>
+<p>跨站脚本攻击（Cross-Site Scripting, XSS）：XSS攻击利用了 Web 应用程序对用户输入的不当处理，以将恶意代码注入到 Web 页面中。当用户访问包含恶意代码的页面时，攻击者可以利用这些代码窃取用户的敏感信息、劫持用户会话等。</p>
+</li>
+<li>
+<p>跨站请求伪造（Cross-Site Request Forgery, CSRF）：CSRF攻击利用了用户已经登录了受信任网站的身份，通过在受害者的浏览器中执行恶意代码，将伪造的请求发送到受信任网站上，从而执行某些操作或者获取某些信息。</p>
+</li>
+<li>
+<p>点击劫持（Clickjacking）：点击劫持是一种利用透明 iframe 层来覆盖网页上的其他内容，欺骗用户点击不可见的按钮或链接，以执行攻击者所需的操作。</p>
+</li>
+<li>
+<p>HTML 注入攻击：HTML 注入攻击利用了 Web 应用程序对用户输入的不当处理，以将恶意的 HTML 代码插入到 Web 页面中。这种攻击通常被用来修改页面内容、欺骗用户或者实施其他恶意行为。</p>
+</li>
+<li>
+<p>敏感数据泄露（Sensitive Data Leakage）：敏感数据泄露可能会发生在 Web 应用程序中，其中攻击者可以通过暴力破解、SQL 注入等攻击方式，获取存储在数据库中的敏感数据（如用户名、密码、信用卡信息等）。</p>
+</li>
+<li>
+<p>带宽滥用（Bandwidth Abuse）：带宽滥用是指攻击者利用 Web 应用程序或服务器的漏洞来消耗服务器的资源和带宽，从而使服务器变得缓慢或无法正常工作。</p>
+</li>
+<li>
+<p>HTTP 请求欺骗（HTTP Request Spoofing）：HTTP 请求欺骗是一种利用 Web 应用程序对输入的不当处理，以篡改 HTTP 请求的攻击方式。攻击者可以通过伪造 HTTP 请求头信息、修改 HTTP 请求方法等方式，欺骗 Web 应用程序执行攻击者所需的操作。</p>
+</li>
+</ol>
+<p>需要注意的是，这些攻击类型通常会结合使用，攻击者会利用多种攻击方式，以更好地实现攻击目标。</p>
+<p><strong>关键词</strong>：XSS攻击、CSRF攻击、点击劫持共计、URL跳转漏洞、SQL注入攻击、OS命令注入攻击</p>
+<p>参考文档：</p>
+<ul>
+<li><a href=https://github.com/ljianshu/Blog/issues/56 target=_blank rel="noopener noreferrer">资料</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=po-same-origin>同源策略<a href=#po-same-origin class=hash-link aria-label=同源策略的直接链接 title=同源策略的直接链接>​</a></h2>
+<p>同源策略是一种安全机制，它是浏览器对 JavaScript 实施的一种安全限制。所谓“同源”是指域名、协议、端口号均相同。同源策略限制了一个页面中的脚本只能与同源页面的脚本进行交互，而不能与不同源页面的脚本进行交互。这是为了防止恶意脚本窃取数据、进行 XSS 攻击等安全问题。</p>
+<p>同源策略限制的资源包括：</p>
+<ul>
+<li>Cookie、LocalStorage 和 IndexDB 等存储性资源</li>
+<li>AJAX、WebSocket 等发送 HTTP 请求的方法</li>
+<li>DOM 节点</li>
+<li>其他通过脚本或插件执行的跨域请求</li>
+</ul>
+<p>这些资源只能与同源页面进行交互，不能与不同源的页面进行交互。</p>
+<p>同源策略（Same-Origin Policy）是一种浏览器安全机制，用于限制不同源（域名、协议、端口）之间的交互。它是一种重要的安全措施，用于保护用户的隐私和安全，防止恶意网站通过跨域请求获取用户的敏感信息或进行恶意操作。</p>
+<p>同源策略要求网页资源（如JavaScript、CSS、图片等）只能与来源相同的资源进行交互，即只能与相同域名、相同协议和相同端口的资源进行通信。例如，一个网页加载自<code>https://www.example.com</code>域名下的资源，就只能与同一域名下的其他资源进行交互，无法直接访问其他域名的资源。</p>
+<p>同源策略主要限制了以下几种行为：</p>
+<ol>
+<li>
+<p>DOM访问限制：不同源的页面无法通过JavaScript等方式直接访问对方的DOM元素，即无法获取或修改对方页面的内容。</p>
+</li>
+<li>
+<p>Cookie、LocalStorage和IndexDB限制：不同源的页面无法读取对方设置的Cookie、LocalStorage和IndexDB存储。</p>
+</li>
+<li>
+<p>AJAX请求限制：XMLHttpRequest、Fetch等网络请求在跨域时受到限制，通常无法发送跨域请求。</p>
+</li>
+</ol>
+<p>同源策略的存在有效地防止了跨站脚本攻击（XSS）和跨站请求伪造（CSRF）等安全威胁。如果需要在不同源之间进行数据交互，可以通过服务器端的代理或使用CORS（跨源资源共享）等技术来实现。</p>
+<p><strong>需要注意的是，同源策略只是浏览器的安全策略之一，而并非所有的网络请求都受到同源策略的限制。例如，通过<code>&lt;script></code>标签引入的外部JavaScript文件、通过<code>&lt;img></code>标签加载的图片等资源是不受同源策略限制的。此外，一些特定的标记，如<code>&lt;a></code>标签的<code>href</code>属性和<code>&lt;form></code>标签的<code>action</code>属性，也存在一些允许跨域的规则</strong>。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=cors>CORS<a href=#cors class=hash-link aria-label=CORS的直接链接 title=CORS的直接链接>​</a></h2>
+<p><strong>JSONP</strong>
+JSONP是通过动态创建script标签的方式，利用script标签可以跨域请求资源的特性来实现的，本质是利用了script标签没有跨域限制的特性，可以在请求的url后加一个callback参数，后端接收到请求后，将需要传递的数据作为参数传递到callback函数中，前端定义该函数来接收数据，从而实现跨域通信。
+<a href=https://github.com/yanlele/interview-question/issues/27 target=_blank rel="noopener noreferrer">#27</a></p>
+<p><strong>CORS</strong>
+CORS是一种现代浏览器支持的跨域解决方案，CORS全称为跨域资源共享（Cross-Origin Resource Sharing），其本质是在服务端设置允许跨域访问的响应头，浏览器通过判断响应头中是否允许跨域访问来决定是否允许跨域访问。
+<a href=https://github.com/yanlele/interview-question/issues/28 target=_blank rel="noopener noreferrer">#28</a></p>
+<p><strong>postMessage</strong>
+postMessage是HTML5引入的一种新的跨域通信方式，主要是用于在不同窗口之间进行通信，包括不同域名、协议、端口等情况，通过调用window.postMessage()方法，在两个窗口之间发送消息，接收方通过监听message事件来接收消息，从而实现跨域通信。
+<a href=https://github.com/yanlele/interview-question/issues/29 target=_blank rel="noopener noreferrer">#29</a></p>
+<p><strong>WebSocket</strong>
+WebSocket是一种新的网络协议，可以实现客户端和服务器之间的实时双向通信，同时也可以跨域通信，WebSocket协议建立在TCP协议之上，通过HTTP协议发起握手请求，握手成功后，客户端和服务器就可以通过WebSocket协议进行实时通信了。
+<a href=https://github.com/yanlele/interview-question/issues/20 target=_blank rel="noopener noreferrer">#30</a></p>
+<p><strong>代理转发</strong>
+代理转发是一种常用的跨域通信方式，主要是通过在同一域名下设置代理服务器，在代理服务器上实现跨域访问，再将结果返回给前端页面，从而实现跨域通信。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=跨域手段有哪些>跨域手段有哪些<a href=#跨域手段有哪些 class=hash-link aria-label=跨域手段有哪些的直接链接 title=跨域手段有哪些的直接链接>​</a></h2>
+<ol>
+<li>cors</li>
+<li>postMessage</li>
+<li>JSONP</li>
+<li>websocket</li>
+<li>proxy 转发</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-csrf>csrf<a href=#p0-csrf class=hash-link aria-label=csrf的直接链接 title=csrf的直接链接>​</a></h2>
+<p>跨站请求伪造（Cross-Site Request Forgery, CSRF）是一种常见的网络攻击方式，攻击者可以利用已登录的用户身份，通过伪造用户的请求，对服务器上的资源进行非法操作。下面是一种常见的 CSRF 攻击方式：</p>
+<ol>
+<li>
+<p>用户在浏览器中登录了某个网站，并获取了该网站的 Cookie。</p>
+</li>
+<li>
+<p>攻击者诱导用户访问一个恶意网站，并在该网站上放置了一段恶意代码，用于发起 CSRF 攻击。</p>
+</li>
+<li>
+<p>当用户在恶意网站上执行某个操作时，比如点击某个按钮或链接，恶意代码会自动向目标网站发送一个 HTTP 请求，请求中包含攻击者想要执行的操作和参数，同时也会携带用户的 Cookie。</p>
+</li>
+<li>
+<p>目标网站接收到请求后，会认为这是一个合法的请求，因为它携带了用户的 Cookie。于是服务器会执行攻击者想要的操作，比如删除用户的数据、修改用户的密码等。</p>
+</li>
+</ol>
+<p>为了防止 CSRF 攻击，开发人员可以采取以下措施：</p>
+<ol>
+<li>
+<p>随机化 Token：为每个请求生成一个随机化的 Token，将 Token 放入表单中，并在服务器端进行验证。这可以防止攻击者伪造合法的请求。</p>
+</li>
+<li>
+<p>使用 Referer 验证：在服务器端进行 Referer 验证，只允许来自合法来源的请求。这可以防止攻击者在自己的网站上放置恶意代码，进行 CSRF 攻击。</p>
+</li>
+<li>
+<p>使用验证码：在某些敏感操作上，比如修改密码、删除数据等，可以要求用户输入验证码。这可以降低攻击者的成功率，因为攻击者很难获取验证码。</p>
+</li>
+</ol>
+<p>需要注意的是，以上措施并不能完全防止 CSRF 攻击，因为攻击者总是可以通过一些复杂的方法来规避这些防御措施。因此，开发人员需要综合考虑多种防范措施，以提高网站的安全性。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=xsrf>xsrf<a href=#xsrf class=hash-link aria-label=xsrf的直接链接 title=xsrf的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=xss>xss<a href=#xss class=hash-link aria-label=xss的直接链接 title=xss的直接链接>​</a></h2>
+<p>以下是一些防范跨站脚本攻击的常见方法：</p>
+<ol>
+<li>
+<p>输入过滤：对于所有输入的数据（如表单数据、URL 参数等），应该进行过滤和验证。特别是对于敏感数据（如密码、信用卡信息等），应该进行严格的验证，防止恶意的脚本注入。可以使用一些开源的输入验证工具，如OWASP ESAPI来过滤恶意输入。</p>
+</li>
+<li>
+<p>对特殊字符进行转义：对于所有输出到页面上的数据，应该对特殊字符进行转义，比如将 <code>&lt;</code> 转义为 <code>&lt;</code>、将 <code>></code> 转义为 <code>></code> 等。这可以防止攻击者通过在页面上注入恶意的脚本。</p>
+</li>
+<li>
+<p>CSP（Content Security Policy）：CSP是一种浏览器安全机制，可以限制 Web 页面可以加载哪些资源。通过设置合适的 CSP，可以防止恶意脚本的注入。</p>
+</li>
+<li>
+<p>HttpOnly Cookie：通过设置 HttpOnly 标志，可以防止脚本访问 Cookie。这可以防止攻击者窃取用户的身份验证信息。</p>
+</li>
+<li>
+<p>随机化 Session ID：在用户登录后，应该为其分配一个随机化的 Session ID，防止攻击者通过猜测 Session ID 来劫持用户会话。</p>
+</li>
+<li>
+<p>使用安全的编程语言和框架：使用安全的编程语言和框架可以降低跨站脚本攻击的风险。比如使用最新的版本的编程语言和框架，以获得更好的安全性。</p>
+</li>
+</ol>
+<p>需要注意的是，防范跨站脚本攻击需要综合多种方法，单一的措施并不能完全防止攻击。此外，开发人员应该始终关注最新的安全漏洞和攻击技术，及时采取相应的防范措施。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=网页验证码是干嘛的是为了解决什么安全问题>网页验证码是干嘛的，是为了解决什么安全问题？<a href=#网页验证码是干嘛的是为了解决什么安全问题 class=hash-link aria-label=网页验证码是干嘛的，是为了解决什么安全问题？的直接链接 title=网页验证码是干嘛的，是为了解决什么安全问题？的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=加密基础概念>加密基础概念<a href=#加密基础概念 class=hash-link aria-label=加密基础概念的直接链接 title=加密基础概念的直接链接>​</a></h2>
+<ol>
+<li>对称加密<!-- -->
+<ul>
+<li>同一密钥加解密</li>
+<li>速度快</li>
+<li>如：AES、DES</li>
+</ul>
+</li>
+<li>非对称加密<!-- -->
+<ul>
+<li>公钥加密，私钥解密</li>
+<li>速度慢</li>
+<li>如：RSA、ECC</li>
+</ul>
+</li>
+<li>哈希算法<!-- -->
+<ul>
+<li>单向加密</li>
+<li>如：MD5、SHA</li>
+</ul>
+</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=中间人攻击>中间人攻击?<a href=#中间人攻击 class=hash-link aria-label=中间人攻击?的直接链接 title=中间人攻击?的直接链接>​</a></h2>
+<p>中间人攻击（Man-in-the-Middle Attack, MITM），也称中间攻击，是指黑客通过拦截通信过程中的数据，然后在两个通信的用户之间进行欺骗和篡改的攻击方式。在 HTTPS 中，如果黑客能够截获用户和服务器之间的通信，那么他就可以使用类似于伪造证书、中断连接、插入恶意代码等方式，对数据进行篡改或窃取用户敏感信息。</p>
+<p>为了防止中间人攻击，在 HTTPS 中通常采用数字证书认证机制，即服务器会向可信的第三方机构申请数字证书，证明其身份的真实性。当用户访问该服务器时，服务器会把自己的数字证书发送给用户，用户的浏览器会验证该证书是否由可信的第三方机构签发，是否过期等，如果验证通过，则可以建立安全的 HTTPS 连接。如果数字证书无效，则会弹出警告页面，提示用户存在安全风险。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-forbid-cors>前端如何防止加载外域脚本？<a href=#p0-forbid-cors class=hash-link aria-label=前端如何防止加载外域脚本？的直接链接 title=前端如何防止加载外域脚本？的直接链接>​</a></h2>
+<p>前端可以通过以下方式防止加载外域脚本：</p>
+<ol>
+<li>
+<p>使用 Content Security Policy (CSP)：CSP 是一个 HTTP 头，可以限制页面可以从哪些源加载资源。通过 CSP，可以禁止加载外域脚本，从而防止 XSS 攻击等安全问题。</p>
+</li>
+<li>
+<p>使用 Subresource Integrity (SRI)：SRI 是一个浏览器功能，可以确保在加载外部资源时，它们的内容没有被篡改过。通过在 script 标签中添加 integrity 属性，可以指定资源的校验和，浏览器会校验资源是否与 integrity 值匹配，从而确保资源没有被篡改过。</p>
+</li>
+<li>
+<p>避免使用动态脚本加载：使用 document.createElement('script') 创建 script 元素，并手动设置其 src 属性，可以避免使用 eval() 动态执行脚本。动态加载脚本的方式可能会受到中间人攻击，从而加载恶意脚本。</p>
+</li>
+<li>
+<p>避免使用不安全的协议加载资源：使用 HTTPS 加载资源可以确保资源在传输过程中不会被篡改。避免使用 HTTP 或者 file 协议加载资源，这些协议容易受到中间人攻击。</p>
+</li>
+</ol>
+<p>综上，前端可以通过以上方式防止加载外域脚本，提高应用程序的安全性。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=中间人攻击是什么>中间人攻击是什么？<a href=#中间人攻击是什么 class=hash-link aria-label=中间人攻击是什么？的直接链接 title=中间人攻击是什么？的直接链接>​</a></h2>
+<ul>
+<li>created_at: 2023-03-26T09:29:08Z</li>
+<li>updated_at: 2023-03-26T09:29:09Z</li>
+<li>labels: 网络</li>
+<li>milestone: 高</li>
+</ul>
+<p>中间人攻击（Man-in-the-Middle Attack, MITM），也称中间攻击，是指黑客通过拦截通信过程中的数据，然后在两个通信的用户之间进行欺骗和篡改的攻击方式。在 HTTPS 中，如果黑客能够截获用户和服务器之间的通信，那么他就可以使用类似于伪造证书、中断连接、插入恶意代码等方式，对数据进行篡改或窃取用户敏感信息。</p>
+<p>为了防止中间人攻击，在 HTTPS 中通常采用数字证书认证机制，即服务器会向可信的第三方机构申请数字证书，证明其身份的真实性。当用户访问该服务器时，服务器会把自己的数字证书发送给用户，用户的浏览器会验证该证书是否由可信的第三方机构签发，是否过期等，如果验证通过，则可以建立安全的 HTTPS 连接。如果数字证书无效，则会弹出警告页面，提示用户存在安全风险。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=参考资料>参考资料<a href=#参考资料 class=hash-link aria-label=参考资料的直接链接 title=参考资料的直接链接>​</a></h2>
+<ul>
+<li><a href=https://book.douban.com/subject/10546925// target=_blank rel="noopener noreferrer">白帽子将 web 安全</a></li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/engineering/concept><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>概念</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/engineering/bundler><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>打包工具</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-security class="table-of-contents__link toc-highlight">常见 web 安全问题</a><li><a href=#po-same-origin class="table-of-contents__link toc-highlight">同源策略</a><li><a href=#cors class="table-of-contents__link toc-highlight">CORS</a><li><a href=#跨域手段有哪些 class="table-of-contents__link toc-highlight">跨域手段有哪些</a><li><a href=#p0-csrf class="table-of-contents__link toc-highlight">csrf</a><li><a href=#xsrf class="table-of-contents__link toc-highlight">xsrf</a><li><a href=#xss class="table-of-contents__link toc-highlight">xss</a><li><a href=#网页验证码是干嘛的是为了解决什么安全问题 class="table-of-contents__link toc-highlight">网页验证码是干嘛的，是为了解决什么安全问题？</a><li><a href=#加密基础概念 class="table-of-contents__link toc-highlight">加密基础概念</a><li><a href=#中间人攻击 class="table-of-contents__link toc-highlight">中间人攻击?</a><li><a href=#p0-forbid-cors class="table-of-contents__link toc-highlight">前端如何防止加载外域脚本？</a><li><a href=#中间人攻击是什么 class="table-of-contents__link toc-highlight">中间人攻击是什么？</a><li><a href=#参考资料 class="table-of-contents__link toc-highlight">参考资料</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

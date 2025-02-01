@@ -1,0 +1,192 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-html/event" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>事件 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/html/event><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="事件 | web-interview"><meta data-rh=true name=description content=事件冒泡?><meta data-rh=true property=og:description content=事件冒泡?><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/html/event><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/html/event hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/html/event hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/html/attributes>html</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/attributes>属性</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/tag>标签</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/html/event>事件</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/webapi>web api</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/dom>DOM</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/browser>浏览器原理</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/coding>编程题</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/worker>web worker</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>html</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>事件</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>事件</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-event-bubble>事件冒泡?<a href=#p0-event-bubble class=hash-link aria-label=事件冒泡?的直接链接 title=事件冒泡?的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-event-delegate>事件委托的作用和意义？<a href=#p1-event-delegate class=hash-link aria-label=事件委托的作用和意义？的直接链接 title=事件委托的作用和意义？的直接链接>​</a></h2>
+<ol>
+<li>实现原理</li>
+<li>通过 target 事件对象获取事件目标元素</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-event-load-ready-domcontentloaded>说明 load,ready,DOMContentLoaded 的区别<a href=#p1-event-load-ready-domcontentloaded class=hash-link aria-label="说明 load,ready,DOMContentLoaded 的区别的直接链接" title="说明 load,ready,DOMContentLoaded 的区别的直接链接">​</a></h2>
+<details open class="details_PyUD alert alert--info details_mhg0" data-collapsed=false><summary><strong>答案</strong></summary><div><div class=collapsibleContent_JSiM><p><code>DOMContentLoaded</code>事件和<code>load</code>事件主要有以下区别：<p><strong>一、触发时机</strong><ol>
+<li><code>DOMContentLoaded</code>事件：</li>
+</ol><ul>
+<li>触发时机是在文档的 DOM（文档对象模型）完全加载和解析完成后，不等待样式表、图片和子框架等外部资源的加载完成。这意味着当 HTML 结构被完全解析，并且可以通过 JavaScript 访问和操作 DOM 元素时，该事件就会触发。</li>
+<li>例如，当打开一个网页时，浏览器首先下载 HTML 文档并进行解析。一旦 HTML 文档的解析完成，<code>DOMContentLoaded</code>事件就会触发，此时可以立即执行一些与 DOM 操作相关的 JavaScript 代码，而不必等待页面上的所有图像和其他资源加载完毕。</li>
+</ul><ol start=2>
+<li><code>load</code>事件：</li>
+</ol><ul>
+<li>触发时机是在整个网页（包括所有的资源如样式表、图片、脚本等）完全加载完成后。这意味着不仅 HTML 文档的 DOM 结构要被加载和解析，而且所有的外部资源（如图片、CSS 文件、JavaScript 文件等）也必须完全下载并加载到浏览器中，该事件才会触发。</li>
+<li>例如，在一个包含大量图片和复杂样式表的网页中，<code>load</code>事件可能会在所有这些资源都加载完成后才触发，这可能需要相对较长的时间，具体取决于网络速度和资源的大小。</li>
+</ul><p><strong>二、用途</strong><ol>
+<li><code>DOMContentLoaded</code>事件：</li>
+</ol><ul>
+<li>通常用于在 DOM 准备好后尽快执行一些关键的 JavaScript 代码，这些代码可能需要操作 DOM 元素或设置事件监听器，但不需要等待所有外部资源的加载。这样可以提高页面的交互性和响应速度，因为用户可以在页面的主要内容加载完成后就开始与页面进行交互，而不必等待所有资源加载完毕。</li>
+<li>例如，可以在<code>DOMContentLoaded</code>事件的回调函数中初始化页面的布局、设置表单验证规则或显示一些初始的动画效果。</li>
+</ul><ol start=2>
+<li><code>load</code>事件：</li>
+</ol><ul>
+<li>主要用于在确保整个页面的所有资源都加载完成后执行一些特定的操作，这些操作可能依赖于所有的资源都可用。例如，在一个需要确保所有图片都加载完成后才能正确显示的画廊页面中，可以使用<code>load</code>事件来触发图片的展示动画或调整页面布局以适应所有图片的尺寸。</li>
+<li>另外，<code>load</code>事件也可以用于在页面完全加载后进行一些性能监测或统计工作，例如记录页面的加载时间或检查所有资源是否正确加载。</li>
+</ul><p><strong>三、性能影响</strong><ol>
+<li><code>DOMContentLoaded</code>事件：</li>
+</ol><ul>
+<li>由于它在 DOM 加载和解析完成后就触发，不等待外部资源的加载，所以可以更快地执行相关的 JavaScript 代码，减少用户等待的时间。这对于提高页面的性能和用户体验非常重要，特别是在网络速度较慢或页面包含大量资源的情况下。</li>
+<li>例如，如果一个页面有很多大尺寸的图片，使用<code>DOMContentLoaded</code>事件可以让用户在图片还在加载的过程中就开始与页面进行交互，而不必等待所有图片都加载完成。</li>
+</ul><ol start=2>
+<li><code>load</code>事件：</li>
+</ol><ul>
+<li>
+<p>因为它需要等待所有资源的加载完成，所以可能会导致页面的加载时间较长，特别是在网络状况不佳或资源较多的情况下。然而，在某些情况下，确保所有资源都加载完成是必要的，所以<code>load</code>事件仍然有其特定的用途。</p>
+</li>
+<li>
+<p>例如，如果一个页面的布局或功能依赖于所有的样式表和图片都加载完成，那么使用<code>load</code>事件可以确保在执行相关代码时所有资源都可用，避免出现布局错误或功能不正常的情况。</p>
+</li>
+<li>
+<p>ready  为 jqury 事件,为 domcontentLoad 触发 完成了 html 文档的解析就会触发,样式等元素还未加载</p>
+</li>
+<li>
+<p>window loaded 在页面完全加载成功后触发包括图片脚本等</p>
+</li>
+</ul><ol>
+<li>发送请求</li>
+<li>接收字节流</li>
+<li>解析字节流 tokenizer</li>
+<li>解析完成触发 DOMContentLoaded 事件</li>
+<li>图片等资源完成加载</li>
+<li>页面加载完毕。// window.onload</li>
+</ol><blockquote>
+<p>事件变化触发 onreadytstatechange ,该状态由 <code>document.readyState</code> 控制</p>
+</blockquote><p>参看 <a href=https://zhuanlan.zhihu.com/p/30283138 target=_blank rel="noopener noreferrer">资源加载和页面事件load, ready, DOMContentLoaded...
+</a></div></div></details>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=事件冒泡机制>事件冒泡机制?<a href=#事件冒泡机制 class=hash-link aria-label=事件冒泡机制?的直接链接 title=事件冒泡机制?的直接链接>​</a></h2>
+<p>参考 <a href=https://www.w3.org/TR/uievents/#dom-event-architecture target=_blank rel="noopener noreferrer">w3c ui event</a>
+冒泡机制是为了解决在如何在 DOM 树上广播事件。整个广播流程参考下图:</p>
+<p><img decoding=async loading=lazy src=https://www.w3.org/TR/uievents/images/eventflow.svg alt="" class=img_GoKf></p>
+<p>整个事件从创建到完成的流程如下</p>
+<ol>
+<li>事件产生,用户点击等操作,此时会创建一个 <code>event target</code> 对象包含出发事件时的相关信息<!-- -->
+<ul>
+<li><code>target</code> 指向触发事件的元素</li>
+<li><code>currentTarget</code> 只读属性指向事件分发过程中的当前对象</li>
+<li>在回调函数中 <code>this</code> 指向 currentTarget.</li>
+</ul>
+</li>
+<li>根据当前触发元素确定传播路径</li>
+<li>事件分发,此时时间会在 DOM 树上进行广播,广播分为三个阶段<!-- -->
+<ol>
+<li><strong>捕获阶段</strong> 从传播路径的根元素向目标元素传播,从 window 开始</li>
+<li><strong>目标阶段</strong> 当传播到达事件目标时</li>
+<li><strong>冒泡阶段</strong> 当从事件目标对象向父元素广播时从 window 结束。</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>事件广播过程会修改 <code>event target</code> 相关状态,此外可以利用 <code>stopPropagation</code> 对事件传播进行截断。</p>
+</blockquote>
+<ol start=4>
+<li>事件处理阶段,在事件分发过程中若传播路径有元素绑定了回调事件,<code>event target</code> 对象作为传入参数触发执行。</li>
+</ol>
+<p>参考 <a href=https://www.w3.org/TR/uievents/images/eventflow.svg target=_blank rel="noopener noreferrer">w3c ui event 说明</a></p>
+<p><img decoding=async loading=lazy src=https://www.w3.org/TR/uievents/images/eventflow.svg alt="" class=img_GoKf></p>
+<p>但目标元素触发事件时,事件的分发分为三个阶段:</p>
+<ol>
+<li><strong>捕获阶段(capture phase)</strong> 从根元素逐级向目标元素传递</li>
+<li><strong>目标阶段(target phase)</strong> 传递到目标元素的阶段</li>
+<li><strong>冒泡阶段(bubbling phase)</strong> 从目标元素重新传递到根元素的阶段</li>
+</ol>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=stopimmediatepropagation-和-stoppropagation-区别>stopImmediatePropagation 和 stopPropagation 区别<a href=#stopimmediatepropagation-和-stoppropagation-区别 class=hash-link aria-label="stopImmediatePropagation 和 stopPropagation 区别的直接链接" title="stopImmediatePropagation 和 stopPropagation 区别的直接链接">​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=addeventlistener-和-attribute-onclick>addEventListener 和 attribute onclick<a href=#addeventlistener-和-attribute-onclick class=hash-link aria-label="addEventListener 和 attribute onclick的直接链接" title="addEventListener 和 attribute onclick的直接链接">​</a></h2>
+<p>为什么 <code>{capture:true}</code> 不是先触发
+参见此回答 <a href=https://stackoverflow.com/questions/11841330/event-listeners-registered-for-capturing-phase-not-triggered-before-bubbling-w target=_blank rel="noopener noreferrer">Event listeners registered for capturing phase not triggered before bubbling - why?</a></p>
+<ul>
+<li><a href=https://JavaScript.info/bubbling-and-capturing target=_blank rel="noopener noreferrer">冒泡和捕获</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-event-delegate>什么是事件委托<a href=#p1-event-delegate class=hash-link aria-label=什么是事件委托的直接链接 title=什么是事件委托的直接链接>​</a></h2>
+<details open class="details_PyUD alert alert--info details_mhg0" data-collapsed=false><summary><strong>答案</strong></summary><div><div class=collapsibleContent_JSiM><p>事件委托是指在父节点集中处理子节点事件<p>参考 <a href=https://johnresig.com/apps/workshop/adv-talk/#19 target=_blank rel="noopener noreferrer">adv-talk</a> 定义。
+事件委托一种机制,将原应在多个子节点上绑定的事件回调,统一在父节点上进行绑定。<ul class="contains-task-list containsTaskList_XNe2">
+<li>
+<p>并非所有事件都会冒泡 blur，focus，load 和 unload 事件不冒泡像其他事件</p>
+</li>
+<li>
+<p>管理某些鼠标事件时需要谨慎。如果您的代码正在处理 mousemove 事件，那么您将面临创建性能瓶颈的严重风险，因为 mousemove 事件经常被触发。该 mouseout 事件具有奇怪的行为，难以通过事件委派来管理。</p>
+</li>
+<li>
+<p><a href=https://lists.evolt.org/archive/Week-of-Mon-20090209/127331.html target=_blank rel="noopener noreferrer">Javascript: Closures vs Event Delegation</a></p>
+</li>
+<li>
+<p><a href=https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html target=_blank rel="noopener noreferrer">delegating_the</a></p>
+</li>
+<li>
+<p><a href=https://humanwhocodes.com/blog/2009/06/30/event-delegation-in-JavaScript/ target=_blank rel="noopener noreferrer">event delegation</a></p>
+</li>
+<li>
+<p><a href=https://stackoverflow.com/questions/1687296/what-is-dom-event-delegation target=_blank rel="noopener noreferrer">stackoverflow event delegation</a></p>
+</li>
+<li class=task-list-item>
+<p><input type=checkbox disabled> <a href=https://zh.JavaScript.info/event-delegation target=_blank rel="noopener noreferrer">事件委托模式</a></p>
+</li>
+<li class=task-list-item>
+<p><input type=checkbox disabled> <a href=https://api.jquery.com/delegate/ target=_blank rel="noopener noreferrer">jquery delegate</a></p>
+</li>
+<li class=task-list-item>
+<p><input type=checkbox disabled> <a href=https://api.jquery.com/on/#direct-and-delegated-events target=_blank rel="noopener noreferrer">jquery on</a></p>
+</li>
+<li class=task-list-item>
+<p><input type=checkbox disabled> <a href=https://github.com/dgraham/delegated-events#readme target=_blank rel="noopener noreferrer">github delegate 源码</a></p>
+</li>
+<li>
+<p>created_at: 2024-10-26T07:48:24Z</p>
+</li>
+<li>
+<p>updated_at: 2024-10-26T07:48:24Z</p>
+</li>
+<li>
+<p>labels: JavaScript</p>
+</li>
+<li>
+<p>milestone: 初</p>
+</li>
+</ul><p><strong>关键词</strong>：事件委托概念<p>事件委托（Event Delegation）是一种利用事件冒泡机制，将事件处理程序添加到父元素上，通过判断事件的目标元素来处理子元素事件的方法。<p><strong>一、事件委托的原理</strong><p>当一个事件在 DOM 元素上触发时，它会从最具体的目标元素开始向上冒泡，经过它的祖先元素，直到到达文档的根元素。事件委托利用这个特性，将事件处理程序添加到一个较高层次的父元素上，而不是为每个子元素单独添加事件处理程序。当事件在子元素上触发时，它会冒泡到父元素，父元素上的事件处理程序可以通过检查事件的目标元素来确定是否应该处理该事件。<p><strong>二、事件委托的适用场景</strong><ol>
+<li>动态生成的元素</li>
+</ol><ul>
+<li>当页面中有大量动态生成的元素时，如果为每个元素单独添加事件处理程序，会非常低效，因为每次生成新元素都需要重新添加事件处理程序。而使用事件委托，只需要在父元素上添加一个事件处理程序，就可以处理所有子元素的事件，无论子元素是在页面加载时就存在还是在后续动态生成的。</li>
+<li>例如，在一个列表中，当用户点击列表项时需要执行某个操作。如果列表项是动态生成的，使用事件委托可以避免为每个列表项单独添加点击事件处理程序。</li>
+</ul><ol start=2>
+<li>减少内存占用和提高性能</li>
+</ol><ul>
+<li>为大量元素添加事件处理程序会占用较多的内存，并且可能会影响页面的性能。事件委托可以减少事件处理程序的数量，从而降低内存占用和提高性能。</li>
+<li>例如，在一个包含大量按钮的页面中，如果为每个按钮都添加一个点击事件处理程序，会消耗较多的内存。而使用事件委托，只需要在按钮的父元素上添加一个点击事件处理程序，就可以处理所有按钮的点击事件。</li>
+</ul><ol start=3>
+<li>统一处理相似元素的事件</li>
+</ol><ul>
+<li>当有多个相似的元素需要处理相同的事件时，可以使用事件委托将它们的事件处理程序统一添加到一个父元素上，这样可以简化代码并提高可维护性。</li>
+<li>例如，在一个表格中，所有的单元格都需要处理点击事件，可以将点击事件处理程序添加到表格元素上，然后根据点击的目标单元格进行相应的处理。</li>
+</ul></div></div></details>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-event-add-event-listener>addEventListener绑定事件?参数不同的执行顺序<a href=#p1-event-add-event-listener class=hash-link aria-label=addEventListener绑定事件?参数不同的执行顺序的直接链接 title=addEventListener绑定事件?参数不同的执行顺序的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-mouse>mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？<a href=#p2-mouse class=hash-link aria-label="mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？的直接链接" title="mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？的直接链接">​</a></h2>
+<p>这四个事件都与鼠标指针与元素的交互有关，不过它们之间有一些关键的差异：</p>
+<ol>
+<li><strong>mouseEnter 和 mouseLeave</strong>：</li>
+</ol>
+<ul>
+<li><code>mouseEnter</code> 事件当鼠标指针进入元素时触发，但不冒泡，即只有指定的元素可以触发此事件，其子元素不能。</li>
+<li><code>mouseLeave</code> 事件则是当鼠标指针离开元素时触发，同样也不冒泡。</li>
+</ul>
+<ol start=2>
+<li><strong>mouseOver 和 mouseOut</strong>：</li>
+</ol>
+<ul>
+<li><code>mouseOver</code> 事件当鼠标指针移动到元素或其子元素上时触发，该事件会冒泡，即如果鼠标指针移动到其子元素上，也会触发该元素的<code>mouseOver</code>事件。</li>
+<li><code>mouseOut</code> 事件则是当鼠标指针离开元素或其子元素时触发，也会冒泡。</li>
+</ul>
+<p>总结一下它们的区别：</p>
+<ul>
+<li><strong>冒泡</strong>: <code>mouseOver</code> 和 <code>mouseOut</code> 事件会冒泡（父元素也会响应这个事件），而 <code>mouseEnter</code> 和 <code>mouseLeave</code> 不会冒泡。</li>
+<li><strong>对子元素的响应</strong>：<code>mouseOver</code> 和 <code>mouseOut</code> 会在鼠标指针移动到子元素上时也被触发，而 <code>mouseEnter</code> 和 <code>mouseLeave</code> 在鼠标指针移动到子元素上时不会被触发。</li>
+</ul>
+<p>在处理具有嵌套子元素的元素时，使用 <code>mouseEnter</code> 和 <code>mouseLeave</code> 可以避免多余的事件触发，因为它们不会在鼠标从父元素移动到子元素时触发事件。(即不会对内部子元素的进入和离开反应敏感)。而 <code>mouseOver</code> 和 <code>mouseOut</code> 更适合需要监测鼠标指针是否有移动到子元素上的情况。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-onpopstate>onpopstate 可以监听到一个pushstate的事件吗<a href=#p0-onpopstate class=hash-link aria-label="onpopstate 可以监听到一个pushstate的事件吗的直接链接" title="onpopstate 可以监听到一个pushstate的事件吗的直接链接">​</a></h2>
+<p><strong><code>onpopstate</code> 事件只能监听到浏览器历史记录的前进和后退操作，无法直接监听到 <code>pushState</code> 或 <code>replaceState</code> 的调用</strong>。这是因为 <code>pushState</code> 和 <code>replaceState</code> 方法可以修改浏览器历史记录而不触发 <code>onpopstate</code> 事件。</p>
+<p>但是，您可以在调用 <code>pushState</code> 或 <code>replaceState</code> 之后手动触发 <code>popstate</code> 事件，来模拟类似的效果。示例如下：</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token comment" style=color:#999988;font-style:italic>// 监听 popstate 事件</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>addEventListener</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'popstate'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">event</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain">  </span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'popstate event triggered'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 调用 pushState 方法</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">history</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>pushState</span><span class="token punctuation" style=color:#393A34>(</span><span class="token keyword null nil" style=color:#00009f>null</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token keyword null nil" style=color:#00009f>null</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token string" style=color:#e3116c>'/new-url'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// 手动触发 popstate 事件</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> popStateEvent </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token keyword" style=color:#00009f>new</span><span class="token plain"> </span><span class="token class-name">PopStateEvent</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'popstate'</span><span class="token punctuation" style=color:#393A34>,</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token literal-property property" style=color:#36acaa>state</span><span class="token operator" style=color:#393A34>:</span><span class="token plain"> </span><span class="token keyword null nil" style=color:#00009f>null</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token dom variable" style=color:#36acaa>window</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>dispatchEvent</span><span class="token punctuation" style=color:#393A34>(</span><span class="token plain">popStateEvent</span><span class="token punctuation" style=color:#393A34>)</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>在上述示例中，我们首先通过 <code>addEventListener</code> 方法监听 <code>popstate</code> 事件。然后，我们调用 <code>pushState</code> 方法来修改浏览器历史记录，并在之后手动创建一个 <code>PopStateEvent</code> 对象，并使用 <code>dispatchEvent</code> 方法来触发 <code>popstate</code> 事件。</p>
+<p>这样就可以实现在调用 <code>pushState</code> 或 <code>replaceState</code> 之后手动触发一个事件来模拟监听到 <code>pushState</code> 的效果。</div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/html/tag><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>标签</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/html/webapi><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>web api</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-event-bubble class="table-of-contents__link toc-highlight">事件冒泡?</a><li><a href=#p1-event-delegate class="table-of-contents__link toc-highlight">事件委托的作用和意义？</a><li><a href=#p1-event-load-ready-domcontentloaded class="table-of-contents__link toc-highlight">说明 load,ready,DOMContentLoaded 的区别</a><li><a href=#事件冒泡机制 class="table-of-contents__link toc-highlight">事件冒泡机制?</a><li><a href=#stopimmediatepropagation-和-stoppropagation-区别 class="table-of-contents__link toc-highlight">stopImmediatePropagation 和 stopPropagation 区别</a><li><a href=#addeventlistener-和-attribute-onclick class="table-of-contents__link toc-highlight">addEventListener 和 attribute onclick</a><li><a href=#p1-event-delegate class="table-of-contents__link toc-highlight">什么是事件委托</a><li><a href=#p1-event-add-event-listener class="table-of-contents__link toc-highlight">addEventListener绑定事件?参数不同的执行顺序</a><li><a href=#p2-mouse class="table-of-contents__link toc-highlight">mouseEnter、mouseLeave、mouseOver、mouseOut 有什么区别？</a><li><a href=#p0-onpopstate class="table-of-contents__link toc-highlight">onpopstate 可以监听到一个pushstate的事件吗</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

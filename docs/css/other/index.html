@@ -1,0 +1,317 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-css/other" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>杂项 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/css/other><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="杂项 | web-interview"><meta data-rh=true name=description content="css 新特性"><meta data-rh=true property=og:description content="css 新特性"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/css/other><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/css/other hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/css/other hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/css/concept>css</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/concept>概念</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/property>属性</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/value>值</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/layout>布局</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/tool>css 关联的工具</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/css/coding>编码题</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/css/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>css</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>杂项</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>杂项</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-css3>css 新特性<a href=#p0-css3 class=hash-link aria-label="css 新特性的直接链接" title="css 新特性的直接链接">​</a></h2>
+<ol>
+<li>选择器增强：</li>
+</ol>
+<ul>
+<li>属性选择器：支持更多的属性选择器，如属性值前缀、后缀、包含等。</li>
+<li>伪类选择器：引入了新的伪类选择器，如<code>:nth-child()</code>、<code>:nth-of-type()</code>等。</li>
+</ul>
+<ol start=2>
+<li>盒子模型：</li>
+</ol>
+<ul>
+<li>边框圆角（border-radius）：可以设置元素的边框圆角。</li>
+<li>阴影效果（box-shadow）：可以为元素添加阴影效果。</li>
+<li>盒子大小（box-sizing）：可以调整盒子模型的尺寸计算方式。</li>
+</ul>
+<ol start=3>
+<li>背景和渐变：</li>
+</ol>
+<ul>
+<li>线性渐变（linear-gradient）：可以创建水平或垂直方向的渐变背景。</li>
+<li>径向渐变（radial-gradient）：可以创建从一个中心点向外扩散的渐变背景。</li>
+</ul>
+<ol start=4>
+<li>文字和字体：</li>
+</ol>
+<ul>
+<li>@font-face：允许在网页中引用自定义字体文件。</li>
+<li>文字阴影（text-shadow）：可以为文字添加阴影效果。</li>
+<li>多列文字（columns）：可以创建多列布局的文字。</li>
+</ul>
+<ol start=5>
+<li>过渡和动画：</li>
+</ol>
+<ul>
+<li>过渡效果（transition）：可以实现元素在不同状态之间的平滑过渡。</li>
+<li>关键帧动画（@keyframes）：可以定义动画的关键帧和动画效果。</li>
+<li>动画属性（animation）：用于指定动画的持续时间、重复次数等属性。</li>
+</ul>
+<ol start=6>
+<li>弹性布局（Flexbox）：</li>
+</ol>
+<ul>
+<li>引入了弹性布局模型，使元素在容器中的布局更加灵活和自适应。</li>
+</ul>
+<ol start=7>
+<li>响应式布局（Media Queries）：</li>
+</ol>
+<ul>
+<li>可以根据不同的媒体查询条件应用不同的样式，实现响应式布局。</li>
+</ul>
+<ol start=8>
+<li>变换和变形：</li>
+</ol>
+<ul>
+<li>2D变换（transform）：可以对元素进行平移、旋转、缩放等变换操作。</li>
+<li>3D变换（transform）：可以实现元素的三维空间变换效果。</li>
+</ul>
+<ol start=9>
+<li>过滤器（Filter）：</li>
+</ol>
+<ul>
+<li>可以应用各种视觉效果和图像处理效果，如模糊、亮度、对比度等。</li>
+</ul>
+<ol start=10>
+<li>多列布局（Multicolumn Layout）：</li>
+</ol>
+<ul>
+<li>可以将内容分为多列进行布局。</li>
+</ul>
+<p>以上只是 CSS3 中的一些常见新特性，还有许多其他的新特性和模块，使得开发者可以更加灵活和高效地进行样式设计和布局。</p>
+<p>新特性非常多，总结在下面</p>
+<p>详情请看文档：<a href=https://juejin.cn/post/7320288231111016498 target=_blank rel="noopener noreferrer">资料</a></p>
+<p>架构基础</p>
+<ul>
+<li>级联层</li>
+<li>嵌套</li>
+<li>作用域</li>
+<li>选择器 <!-- -->:is<!-- -->() 和 <!-- -->:where<!-- -->()</li>
+<li>选择器 <!-- -->:has<!-- -->()</li>
+<li>复杂的第 n-. 选择</li>
+<li>CSS 三角函数</li>
+<li>子网格 subgrid</li>
+</ul>
+<p>排版</p>
+<ul>
+<li>首字下沉</li>
+<li>均衡和美观</li>
+</ul>
+<p>颜色</p>
+<ul>
+<li>高清色彩空间</li>
+<li>color-mix() 函数</li>
+<li>相对颜色语法</li>
+<li>响应浅色或深色模式的 light-dark() 函数</li>
+</ul>
+<p>响应式设计</p>
+<ul>
+<li>容器查询之尺寸查询</li>
+<li>容器查询之样式查询</li>
+<li>容器查询之状态查询</li>
+<li>更新媒体查询</li>
+<li>脚本媒体查询</li>
+<li>降低透明度的媒体查询</li>
+<li>媒体查询范围</li>
+</ul>
+<p>交互动画</p>
+<ul>
+<li>视图过渡</li>
+<li>滚动驱动动效</li>
+<li>离散属性动画</li>
+<li>@starting-style</li>
+<li>overlay</li>
+<li>锚点定位</li>
+<li>动画合成</li>
+<li>缓动函数 linear()</li>
+<li>Scrollend 事件</li>
+<li>滚动捕捉</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-style-divide>样式隔离方式有哪些<a href=#p1-style-divide class=hash-link aria-label=样式隔离方式有哪些的直接链接 title=样式隔离方式有哪些的直接链接>​</a></h2>
+<p>样式隔离意味着在一个复杂的前端应用中保持组件的样式私有化，使得不同组件之间的样式不会互相影响。以下是一些在前端开发中实现样式隔离的常见方式：</p>
+<ol>
+<li>CSS 模块（CSS Modules）</li>
+</ol>
+<p>CSS 模块是一种在构建时将 CSS 类名局部作用域化的技术。每个类名都是独一无二的，通常通过添加哈希值来实现。当你导入一个 CSS 模块，会得到一个包含生成的类名的对象。这样可以确保样式的唯一性，并防止样式冲突。</p>
+<ol start=2>
+<li>Shadow DOM</li>
+</ol>
+<p>Shadow DOM 是 Web 组件规范的一部分，它允许将一段不受外界影响的 DOM 附加到元素上。在 Shadow DOM 中的样式是局部的，不会影响外部的文档样式。</p>
+<ol>
+<li>CSS-in-JS 库</li>
+</ol>
+<p>CSS-in-JS 是一种技术，允许你用 JavaScript 编写 CSS，并在运行时生成唯一的类名。常见的库有 Styled-components、Emotion 等。这些库通常提供自动的样式隔离，并且还支持主题化和动态样式。</p>
+<ol start=4>
+<li>使用 BEM（Block Element Modifier）命名约定</li>
+</ol>
+<p>BEM 是一种 CSS 命名方法，通过使用严格的命名规则来保持样式的模块化。通过将样式绑定到特定的类名上，这种方法有助于防止样式泄露。</p>
+<ol start=5>
+<li>CSS Scoped</li>
+</ol>
+<p>在 Vue.js 中，可以为 <code>&lt;style></code> 标签添加 <code>scoped</code> 属性，这将使用 Vue 的编译器来实现样式的作用域。虽然这不是一个标准的 Web 特性，但它在 Vue 生态系统中提供了很方便的样式隔离。</p>
+<ol start=6>
+<li>使用 iframe</li>
+</ol>
+<p>将组件或部分页面放在 iframe 中可以提供非常强的样式和脚本隔离。尽管如此，iframe 通常不是最佳选择，因为它们可能导致性能问题，而且使得组件间的沟通变得更加困难。</p>
+<ol start=7>
+<li>Web 组件</li>
+</ol>
+<p>Web 组件利用了自定义元素和 Shadow DOM 来创建封装的、可复用的组件。在 Web 组件中，可以使用 Shadow DOM 实现真正的样式和脚本隔离。</p>
+<ol start=8>
+<li>封装的 CSS 架构</li>
+</ol>
+<p>准确使用 CSS 选择器，避免使用全局标签选择器或基础类，而是使用更具体的类选择器可以部分隔离样式。此外，可以设置严格的 CSS 命名策略，不同模块使用不同的命名前缀，以避免名称冲突。</p>
+<ol start=9>
+<li>PostCSS 插件</li>
+</ol>
+<p>使用 PostCSS 插件来处理 CSS，可以自动添加前缀、变量等，从而实现隔离。例如，PostCSS 前缀插件可以自动为 CSS 类添加唯一的前缀。</p>
+<p>各种方法有各自的优点和限制，选择哪种方法取决于项目的技术栈、团队的熟悉程度以及特定的项目需求。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-global-pullte>避免全局样式污染？<a href=#p0-global-pullte class=hash-link aria-label=避免全局样式污染？的直接链接 title=避免全局样式污染？的直接链接>​</a></h2>
+<p><strong>要避免全局样式污染，可以采取以下几种方式</strong>：</p>
+<ol>
+<li>
+<p>使用命名约定：给不同组件、模块或页面的样式类名添加特定的前缀，以确保它们的作用范围只在对应的组件、模块或页面内生效。例如，使用 BEM（Block Element Modifier）命名约定可以将样式类名划分为块、元素和修饰符，以实现更明确的样式隔离。</p>
+</li>
+<li>
+<p>使用 CSS-in-JS：使用 CSS-in-JS 技术，将样式直接与组件绑定，可以避免全局样式的冲突。每个组件都有自己的样式定义，不会影响其他组件。</p>
+</li>
+<li>
+<p>使用 CSS Modules：CSS Modules 是一种 CSS 模块化的解决方案，它通过将 CSS 文件与组件绑定，在构建过程中自动生成唯一的类名，从而实现样式的局部作用域。这样可以避免全局样式冲突。</p>
+</li>
+<li>
+<p>使用作用域限定符：使用 CSS 预处理器（如 Sass 或 Less）的作用域限定符（如父选择器 <code>&</code>）来限制样式的作用范围。通过嵌套样式规则，并使用作用域限定符，可以确保样式仅应用于特定的父元素。</p>
+</li>
+<li>
+<p>使用样式重置/规范：使用样式重置或规范库，如 Normalize.css，可以消除浏览器默认样式的差异，以确保在不同浏览器下呈现一致的样式，并避免全局样式污染。</p>
+</li>
+<li>
+<p>使用模块化开发框架：使用诸如 React、Vue 或 Angular 等模块化开发框架，它们提供了组件化的开发模式，每个组件具有独立的样式作用域，可以避免全局样式的冲突。</p>
+</li>
+</ol>
+<p><strong>有哪些工具库可以帮助避免全局样式污染</strong></p>
+<p>以下是一些常用的工具库和技术，可以帮助避免全局样式污染：</p>
+<ol>
+<li>
+<p>CSS Modules：CSS Modules 是一种 CSS 模块化的解决方案，可以将样式文件与组件绑定，生成唯一的类名，实现样式的局部作用域。常见的 CSS Modules 实现包括 webpack 的 css-loader 和 vue-style-loader。</p>
+</li>
+<li>
+<p>CSS-in-JS：CSS-in-JS 是一种将 CSS 样式直接写在 JavaScript 代码中的技术，通过将样式与组件绑定，可以实现样式的局部作用域。常见的 CSS-in-JS 工具库有 styled-components、Emotion、Vue的 scoped CSS 等。</p>
+</li>
+<li>
+<p>BEM（Block Element Modifier）命名约定：BEM 是一种命名约定，通过给样式类名添加特定前缀来区分不同组件或元素的样式。使用 BEM 命名约定可以避免样式类名冲突，实现样式的隔离。</p>
+</li>
+<li>
+<p>CSS Reset/Normalize：CSS Reset 或 Normalize.css 是一种重置或规范化浏览器默认样式的方法，通过统一浏览器样式差异，避免全局样式污染。</p>
+</li>
+<li>
+<p>PostCSS 插件：PostCSS 是一个强大的 CSS 处理工具，可以通过使用各种插件来帮助避免全局样式污染。例如，postcss-modules 可以将样式文件转换为 CSS Modules 格式，postcss-preset-env 可以根据目标浏览器自动添加前缀。</p>
+</li>
+<li>
+<p>CSS 预处理器：CSS 预处理器如 Sass 或 Less 提供了作用域限定符和嵌套样式规则的功能，可以帮助限制样式的作用范围，避免全局样式冲突。</p>
+</li>
+</ol>
+<p>这些工具库和技术可以根据项目需求选择适合的方式来避免全局样式污染。每种方式都有其优势和适用场景，根据个人偏好和项目特点选择合适的工具库和技术进行开发。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-postcss>postcss 是什么，作用是啥？<a href=#p0-postcss class=hash-link aria-label="postcss 是什么，作用是啥？的直接链接" title="postcss 是什么，作用是啥？的直接链接">​</a></h2>
+<p>PostCSS 是一个用 JavaScript 编写的工具，用于对 CSS 进行转换和处理。它可以通过插件机制对 CSS 进行各种自定义的转换操作，从而扩展 CSS 的功能和语法。</p>
+<p>PostCSS 的作用主要有以下几个方面：</p>
+<ol>
+<li>
+<p>CSS 预处理器：PostCSS 可以像 Sass 或 Less 一样用于编写更简洁、可维护的 CSS 代码。通过使用类似于变量、嵌套、Mixin 等功能，可以提高 CSS 开发的效率和灵活性。</p>
+</li>
+<li>
+<p>自动添加浏览器前缀：PostCSS 可以根据配置自动为 CSS 属性添加适应不同浏览器的前缀，解决浏览器兼容性问题。</p>
+</li>
+<li>
+<p>CSS 模块化：PostCSS 可以使用类似于 CSS Modules 的功能，将 CSS 代码分割为独立的模块，避免样式冲突，提供更好的可维护性和代码复用性。</p>
+</li>
+<li>
+<p>代码优化和压缩：PostCSS 提供了一些插件，可以对 CSS 代码进行优化和压缩，减小文件大小，提高加载性能。</p>
+</li>
+<li>
+<p>编写自定义插件：PostCSS 的插件机制非常灵活，可以根据项目需求编写自定义的插件，进行各种 CSS 转换和处理操作，如自定义属性、自定义函数等。</p>
+</li>
+</ol>
+<p>可以用于增强 CSS 的能力，并提供更好的开发体验和效果优化。它的灵活性和可扩展性使得开发者可以根据项目需求选择和定制相应的插件，实现对 CSS 的定制化处理。</p>
+<p>postcss css 模块化 和 css-loader 模块化有什么区别？</p>
+<p>PostCSS 的 CSS 模块化和 css-loader 的模块化是两种不同的概念和实现方式。</p>
+<ol>
+<li>
+<p>CSS 模块化 (PostCSS): CSS 模块化是指使用 PostCSS 插件或工具来实现将 CSS 代码拆分为独立的模块，以解决样式冲突和提供更好的可维护性和代码复用性。通过使用类似于 CSS Modules 的功能，每个模块都有自己的作用域，样式定义不会影响其他模块，同时还可以通过类似于变量、嵌套、Mixin 等功能来增强 CSS 的编写能力。CSS 模块化通常需要使用 PostCSS 插件，如 postcss-modules、css-modules 等。</p>
+</li>
+<li>
+<p>CSS 模块化 (css-loader): css-loader 是 Webpack 生态系统中的一个模块化工具，用于处理 CSS 文件。它的模块化功能是通过将 CSS 文件转换为 JavaScript 模块来实现的。每个 CSS 类名都被转换为一个唯一的标识符，以确保样式的唯一性和隔离性。在使用 css-loader 时，需要将 CSS 文件引入 JavaScript 模块中，并通过 JavaScript 代码来操作样式。</p>
+</li>
+</ol>
+<p>区别：</p>
+<ul>
+<li>PostCSS 的 CSS 模块化是在 CSS 层面上进行的，通过插件的方式对 CSS 代码进行拆分和处理，提供更好的作用域隔离和编写能力。</li>
+<li>css-loader 的模块化是在构建工具层面上进行的，将 CSS 文件转换为 JavaScript 模块，通过 JavaScript 代码来操作样式。</li>
+<li>PostCSS 的 CSS 模块化更加灵活，可以根据项目需求选择和定制相应的插件来实现不同的功能。</li>
+<li>css-loader 的模块化是集成在 Webpack 构建流程中的一部分，与模块化开发紧密结合，适用于前端项目的构建和打包过程。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-pesude>伪类 伪元素<a href=#p0-pesude class=hash-link aria-label="伪类 伪元素的直接链接" title="伪类 伪元素的直接链接">​</a></h2>
+<p>伪元素和伪类是 CSS 中用于选择和样式化元素的特殊标记，它们有一些区别和不同的作用。</p>
+<p>伪元素（Pseudo-Element）：</p>
+<ul>
+<li>表示文档中不存在的元素，用于在元素的特定位置插入样式化内容。</li>
+<li>通过双冒号 <code>::</code> 来表示，例如 <code>::before</code>、<code>::after</code>。</li>
+<li>可以使用伪元素为元素添加额外的内容、样式或装饰，如插入文本、图标、边框等。</li>
+<li>通过 <code>content</code> 属性设置伪元素的内容。</li>
+<li>伪元素在文档中并不存在，因此无法通过 JavaScript 直接操作它们。</li>
+</ul>
+<p>伪类（Pseudo-Class）：</p>
+<ul>
+<li>表示元素在特定状态下的样式，例如鼠标悬停、被点击、处于某个状态等。</li>
+<li>通过单冒号 <code>:</code> 来表示，例如 <code>:hover</code>、<code>:active</code>。</li>
+<li>用于选择符合特定条件的元素，如选择第一个子元素、选择奇偶行等。</li>
+<li>伪类通过 CSS 规则选择元素的特定状态或条件来应用样式，与元素本身相关。</li>
+<li>伪类可以通过 JavaScript 动态地添加或移除，以改变元素的状态。</li>
+</ul>
+<p>总结：</p>
+<ul>
+<li>伪元素用于创建不存在于文档结构中的元素，并为其添加样式化内容。</li>
+<li>伪类用于选择元素的特定状态或条件，并为其应用样式。</li>
+<li>伪元素使用双冒号 <code>::</code> 表示，伪类使用单冒号 <code>:</code> 表示。</li>
+<li>伪元素在文档中并不存在，而伪类选择的是实际存在的元素。</li>
+</ul>
+<p>使用伪元素和伪类可以在 CSS 中实现更多的样式化效果和交互行为，使页面更加丰富和动态。</p>
+<p>CSS 中有伪类和伪元素两种，它们在用法和意义上有一些区别。</p>
+<p>伪类是对元素在特定状态下的一种描述。比如 <code>:hover</code> 代表鼠标悬停状态下的样式，<code>:active</code> 代表元素被激活状态下的样式。伪类始终以冒号 <code>:</code> 开头，并放在选择器的最后。常用的 CSS 伪类有：</p>
+<ol>
+<li>
+<p><code>:hover</code>，鼠标移动到元素上时产生的效果。</p>
+</li>
+<li>
+<p><code>:active</code>，鼠标按下去但没有释放时的状态。</p>
+</li>
+<li>
+<p><code>:focus</code>，元素获取焦点时的状态。</p>
+</li>
+<li>
+<p><code>:visited</code>，链接被点击并访问过时的状态。</p>
+</li>
+<li>
+<p><code>:nth-child(n)</code>，选中元素的第 n 个 child 元素。</p>
+</li>
+<li>
+<p><code>:first-child</code>，选中第一个 child 元素。</p>
+</li>
+<li>
+<p><code>:last-child</code>，选中最后一个 child 元素。</p>
+</li>
+</ol>
+<p>另一方面，伪元素是对元素局部样式的描述，允许我们对某个元素的特定部分进行样式设置。比如 <code>::before</code> 可使用内容插入做出类似插画的效果，<code>::after</code> 可用于为元素添加内容等等。双冒号 <code>::</code> 也是伪元素的标识符。常用的 CSS 伪元素有：</p>
+<ol>
+<li>
+<p><code>::before</code>，在元素内容前插入内容。</p>
+</li>
+<li>
+<p><code>::after</code>，在元素内容后插入内容。</p>
+</li>
+<li>
+<p><code>::first-letter</code>，选择元素的第一个字母。</p>
+</li>
+<li>
+<p><code>::first-line</code>，选择元素的第一行。</p>
+</li>
+<li>
+<p><code>::selection</code>，选择用户选中文本的部分。</p>
+</li>
+</ol>
+<p>区别与使用：</p>
+<ul>
+<li>伪类的作用是改变元素在特定状态下的样式，而伪元素则充当一个元素的某一部分来做样式处理。</li>
+<li>由于伪元素技术强大，可以为元素添加完全独立的内容而无需改变 HTML，因此在一些需要前端动态处理或给传统HTML元素嵌入样式的情况下，往往会用到伪元素技术。比如用 <code>::before</code> 和 <code>::after</code> 实现类似插画的效果。</li>
+<li>伪类和伪元素在实际应用中搭配使用，可以产生更复杂和丰富的样式效果。因此在大量的开发工程中，两者的灵活应用至关重要。</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/css/coding><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>编码题</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/node/api><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>node</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-css3 class="table-of-contents__link toc-highlight">css 新特性</a><li><a href=#p1-style-divide class="table-of-contents__link toc-highlight">样式隔离方式有哪些</a><li><a href=#p0-global-pullte class="table-of-contents__link toc-highlight">避免全局样式污染？</a><li><a href=#p0-postcss class="table-of-contents__link toc-highlight">postcss 是什么，作用是啥？</a><li><a href=#p0-pesude class="table-of-contents__link toc-highlight">伪类 伪元素</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

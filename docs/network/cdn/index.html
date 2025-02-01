@@ -1,0 +1,167 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-network/cdn" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>cdn | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/network/cdn><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="cdn | web-interview"><meta data-rh=true name=description content="cdn 的概念及作用?"><meta data-rh=true property=og:description content="cdn 的概念及作用?"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/network/cdn><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/cdn hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/cdn hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/network/concept>network</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/concept>概念</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/tcp>tcp</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/http>http</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/network/cdn>cdn</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/websocket>websocket</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/dns>dns</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>network</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>cdn</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>cdn</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-cdn-basic>cdn 的概念及作用?<a href=#p0-cdn-basic class=hash-link aria-label="cdn 的概念及作用?的直接链接" title="cdn 的概念及作用?的直接链接">​</a></h2>
+<p>CDN（Content Delivery Network）是指内容分发网络，它是由分布在不同地理位置的多台服务器组成的网络系统，用于更快地传递互联网内容和服务。CDN 可以缓存静态资源，加速用户访问速度，降低带宽消耗和服务器压力。</p>
+<ol>
+<li>
+<p>CDN 的工作原理：CDN 通过将资源缓存在离用户更近的边缘节点，使用户可以更快地获取所需的内容。当用户访问一个包含 CDN 链接的网站时，CDN 会从最接近用户的节点返回内容。</p>
+</li>
+<li>
+<p>CDN 的优点：CDN 可以加速网站的加载速度、减轻源服务器的负载、提高网站的可用性和可靠性，同时还可以降低网络带宽使用和成本。</p>
+</li>
+<li>
+<p>CDN 的缓存策略：CDN 缓存可以采用不同的缓存策略，如时间戳策略、版本号策略、缓存控制策略等，以便尽可能地避免缓存出错或不及时更新。</p>
+</li>
+<li>
+<p>CDN 的常见问题：CDN 存在一些常见的问题，如缓存不一致、缓存雪崩、CDN 费用等。需要开发者和运维人员注意这些问题，并采取相应的解决方案。</p>
+</li>
+<li>
+<p>CDN 的选择：CDN 服务提供商众多，选择合适的 CDN 服务提供商需要考虑许多因素，如价格、性能、服务范围、支持的功能和协议等。</p>
+</li>
+<li>
+<p>CDN 的应用：CDN 被广泛应用于各种场景，如网站加速、视频点播、直播、在线游戏等。在实际应用中，需要根据具体场景来选择合适的 CDN 服务提供商和缓存策略，以达到最佳的效果。</p>
+</li>
+</ol>
+<p>CDN 预热</p>
+<p>CDN预热指在流量大涨之前，提前将资源缓存到CDN节点中，以加快用户请求响应速度，提高用户访问质量和稳定性的一种行为。通过提前将内容分发到CDN节点上，可以减少用户访问时由于第一次请求资源而导致的等待时间，从而提升用户的体验感受。一般来说，CDN预热是指在特定时间（如发布活动、重要通知等）前对资源进行CDN缓存的操作。预热完成后，用户请求相关资源时，就可以直接从CDN节点获取资源，而无需请求源站，从而提高网站的访问速度和稳定性。</p>
+<p>CDN 刷新是什么</p>
+<p>CDN刷新指的是CDN缓存中的文件被更新后，需要将CDN服务器上缓存的旧文件清除，让其重新从源站拉取最新的内容，以保证CDN上的文件与源站文件保持一致。</p>
+<p>在网站更新或修改静态资源文件后，如果用户再次请求该文件，CDN服务器上的缓存仍然是旧版本的，用户就会访问到过时的文件，影响用户体验。为了解决这个问题，CDN提供了刷新服务，即将缓存的旧版本强制失效，让用户请求时可以快速访问到更新后的最新版本。</p>
+<p>CDN刷新通常有两种方式：</p>
+<ol>
+<li>
+<p>目录刷新：将某个目录下的所有文件都刷新，比较适用于网站进行大规模更新。</p>
+</li>
+<li>
+<p>文件刷新：只将某个具体的文件刷新，比较适用于紧急情况下需要快速更新某个文件的情况。但由于刷新一次需要一定时间，因此刷新频率需要控制在合理的范围内，以避免影响CDN服务器性能和稳定性。</p>
+</li>
+</ol>
+<p>CDN 缓存策略有哪些</p>
+<p>CDN 缓存策略指的是在 CDN 服务器上缓存哪些资源以及缓存的有效期等相关规则。常见的 CDN 缓存策略有以下几种：</p>
+<ol>
+<li>
+<p>强制缓存：在资源的有效期内，浏览器每次请求该资源时，都直接从浏览器缓存中获取，不发送请求到服务器。可以通过设置响应头的 Cache-Control 和 Expires 字段实现。</p>
+</li>
+<li>
+<p>协商缓存：在资源的有效期过期后，浏览器向服务器发起请求，并通过 If-Modified-Since 或者 If-None-Match 等字段验证资源是否有更新。如果资源未更新，服务器返回 304 Not Modified 响应，浏览器直接从本地缓存中获取资源。可以通过设置响应头的 Last-Modified 和 ETag 字段实现。</p>
+</li>
+<li>
+<p>CDN 边缘缓存：CDN 服务器缓存来自源站的资源，并将其分发给全球各地的用户。当用户请求某个资源时，CDN 服务器会根据缓存策略判断是否需要重新向源站请求资源。常见的缓存策略包括时间戳缓存、版本号缓存、目录级别缓存、参数级别缓存等。</p>
+</li>
+<li>
+<p>客户端缓存：客户端缓存是指浏览器在本地缓存响应资源，下次请求该资源时可以直接从本地获取。可以通过设置响应头的 Cache-Control 和 Expires 字段实现。</p>
+</li>
+<li>
+<p>源站缓存：源站缓存是指将静态资源放到应用服务器上缓存，在应用服务器上缓存的时间要短于 CDN 边缘缓存的时间。当 CDN 服务器的缓存过期或者未命中时，CDN 服务器会向源站发起请求获取最新的资源，并将其缓存到 CDN 服务器上。</p>
+</li>
+</ol>
+<p>参考文档</p>
+<ul>
+<li>
+<p><a href=https://juejin.cn/post/6913704568325046279 target=_blank rel="noopener noreferrer">资料</a></p>
+</li>
+<li>
+<p><a href=https://juejin.cn/post/7064952956201730062 target=_blank rel="noopener noreferrer">资料</a></p>
+</li>
+<li>
+<p><a href=https://juejin.cn/post/7166782260933296142 target=_blank rel="noopener noreferrer">资料</a></p>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-cdn-decision>CDN 是如何工作的<a href=#p1-cdn-decision class=hash-link aria-label="CDN 是如何工作的的直接链接" title="CDN 是如何工作的的直接链接">​</a></h2>
+<p><strong>一、用户请求导向</strong></p>
+<ol>
+<li><strong>DNS 解析引导</strong>：</li>
+</ol>
+<ul>
+<li>当用户在浏览器中输入一个网址请求资源时，首先会进行 DNS（Domain Name System，域名系统）查询，将域名解析为对应的 IP 地址。</li>
+<li>CDN 利用 DNS 系统，将用户的请求导向到离用户最近的 CDN 节点。例如，用户在北京访问一个使用了 CDN 的网站，DNS 服务器会根据用户的地理位置和网络状况，返回一个位于北京或附近的 CDN 节点的 IP 地址。</li>
+<li>这个过程通常是通过修改域名的 DNS 记录来实现的，将域名指向 CDN 提供商的 DNS 服务器，由 CDN 的 DNS 系统进行智能解析和调度。</li>
+</ul>
+<ol start=2>
+<li><strong>Anycast 技术辅助</strong>：</li>
+</ol>
+<ul>
+<li>一些 CDN 提供商还会使用 Anycast 技术，将同一个 IP 地址分配给多个位于不同地理位置的 CDN 节点。</li>
+<li>当用户请求这个 IP 地址时，网络会自动将请求路由到离用户最近的节点。例如，一个 CDN 节点的 IP 地址为 192.168.1.1，这个 IP 地址同时被分配给了位于北京、上海、广州等地的节点。当用户在北京请求这个 IP 地址时，网络会自动将请求路由到北京的节点。</li>
+</ul>
+<p><strong>二、节点选择策略</strong></p>
+<ol>
+<li><strong>地理位置就近原则</strong>：</li>
+</ol>
+<ul>
+<li>CDN 会根据用户的地理位置，选择距离用户最近的节点来响应请求。这样可以减少网络延迟，提高用户访问速度。例如，用户在上海，CDN 会优先选择上海或周边地区的节点来提供服务。</li>
+<li>通过测量用户与各个节点之间的网络延迟、响应时间等指标，确定最近的节点。可以使用 traceroute 等工具来测量网络路径和延迟。</li>
+</ul>
+<ol start=2>
+<li><strong>网络状况评估</strong>：</li>
+</ol>
+<ul>
+<li>CDN 会实时监测各个节点的网络状况，包括带宽利用率、丢包率、延迟等。</li>
+<li>当用户请求资源时，CDN 会选择网络状况较好的节点来响应请求。例如，如果某个节点的带宽利用率过高或出现网络故障，CDN 会自动将请求导向到其他节点。</li>
+<li>使用网络监测工具和算法，不断收集和分析节点的网络性能数据，以便做出最优的节点选择决策。</li>
+</ul>
+<ol start=3>
+<li><strong>负载均衡考虑</strong>：</li>
+</ol>
+<ul>
+<li>CDN 会考虑各个节点的负载情况，避免某个节点负载过高而影响服务质量。</li>
+<li>当用户请求资源时，CDN 会选择负载较轻的节点来响应请求。例如，如果某个节点正在处理大量的请求，CDN 会将新的请求分配到其他负载较轻的节点。</li>
+<li>通过实时监测节点的负载指标，如并发连接数、处理请求的速度等，并使用负载均衡算法来分配请求。</li>
+</ul>
+<p><strong>三、资源缓存与更新策略</strong></p>
+<ol>
+<li><strong>缓存机制</strong>：</li>
+</ol>
+<ul>
+<li>CDN 节点会缓存网站的静态资源，如图片、CSS 文件、JavaScript 文件等。</li>
+<li>当用户请求这些资源时，CDN 节点可以直接从缓存中返回资源，而不需要从源服务器获取，从而大大提高响应速度。</li>
+<li>根据资源的类型、大小、访问频率等因素设置缓存策略，确定资源的缓存时间和更新方式。</li>
+</ul>
+<ol start=2>
+<li><strong>缓存更新</strong>：</li>
+</ol>
+<ul>
+<li>当源服务器上的资源发生变化时，CDN 需要及时更新缓存。</li>
+<li>CDN 可以通过多种方式实现缓存更新，如主动推送、被动拉取等。主动推送是指源服务器在资源发生变化时，主动通知 CDN 节点更新缓存；被动拉取是指 CDN 节点在发现用户请求的资源与缓存中的资源不一致时，自动从源服务器获取最新的资源。</li>
+<li>使用缓存更新策略可以确保用户始终获取到最新的资源，同时又能充分利用缓存提高访问速度。</li>
+</ul>
+<p><strong>四、性能优化与安全保障</strong></p>
+<ol>
+<li><strong>性能优化措施</strong>：</li>
+</ol>
+<ul>
+<li>CDN 可以采用多种性能优化技术，如压缩资源、优化图片大小、合并文件等，减少资源的传输大小和加载时间。</li>
+<li>还可以使用 HTTP/2、QUIC 等新的网络协议，提高网络传输效率。例如，使用 HTTP/2 的多路复用功能，可以在一个连接上同时传输多个请求和响应，减少连接建立的开销。</li>
+</ul>
+<ol start=2>
+<li><strong>安全保障机制</strong>：</li>
+</ol>
+<ul>
+<li>CDN 可以提供一定的安全保障，如 DDoS（Distributed Denial of Service，分布式拒绝服务）攻击防护、WAF（Web Application Firewall，Web 应用防火墙）等。</li>
+<li>通过分布式的架构和强大的网络带宽，可以抵御大规模的 DDoS 攻击。WAF 可以检测和过滤恶意的网络请求，保护网站的安全。</li>
+<li>确保用户请求的资源是安全可靠的，同时保护源服务器免受攻击。</li>
+</ul>
+<p><strong>补充知识：GSLB 在 CDN 资源请求决策中的作用</strong></p>
+<ol>
+<li>全局负载均衡</li>
+</ol>
+<ul>
+<li>GSLB 负责在全球范围内对 CDN 节点进行负载均衡。它通过收集各个 CDN 节点的状态信息，如负载、网络延迟、可用性等，来决定将用户请求导向哪个节点。</li>
+<li>GSLB 可以根据不同的策略进行决策，例如：</li>
+<li>基于地理位置：将用户请求导向距离最近的节点。</li>
+<li>基于网络性能：选择网络延迟最低、带宽最大的节点。</li>
+<li>基于负载情况：避免将请求导向负载过高的节点。</li>
+</ul>
+<ol start=2>
+<li>智能 DNS 解析</li>
+</ol>
+<ul>
+<li>GSLB 通常与智能 DNS 系统结合使用。当用户进行 DNS 解析时，GSLB 会根据用户的 IP 地址和其他因素，返回一个最合适的 CDN 节点的 IP 地址。</li>
+<li>这样，用户的请求就会被直接导向到选定的 CDN 节点，无需经过多次跳转，提高了访问速度和效率。</li>
+</ul>
+<ol start=3>
+<li>故障转移与高可用性</li>
+</ol>
+<ul>
+<li>GSLB 还可以实现故障转移和高可用性。如果某个 CDN 节点出现故障或不可用，GSLB 可以快速将用户请求导向其他正常的节点，确保服务的连续性。</li>
+<li>它会不断监测各个节点的状态，及时发现并处理故障，提高整个 CDN 系统的可靠性。</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/network/http><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>http</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/network/websocket><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>websocket</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-cdn-basic class="table-of-contents__link toc-highlight">cdn 的概念及作用?</a><li><a href=#p1-cdn-decision class="table-of-contents__link toc-highlight">CDN 是如何工作的</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

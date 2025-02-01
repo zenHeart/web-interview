@@ -1,0 +1,173 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-algorithm/other" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>杂项 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/algorithm/other><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="杂项 | web-interview"><meta data-rh=true name=description content="397 了解哪些基础算法"><meta data-rh=true property=og:description content="397 了解哪些基础算法"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/algorithm/other><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/algorithm/other hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/algorithm/other hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/complex-analysis>复杂度分析</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/linklist>linklist</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/tree>树</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/dynamic-programing>dynamic-programing</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/sort>排序</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/encode>编码</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/algorithm/coding>编码题</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/algorithm/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>algorithm</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>杂项</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>杂项</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-basic>397 了解哪些基础算法<a href=#p0-basic class=hash-link aria-label="397 了解哪些基础算法的直接链接" title="397 了解哪些基础算法的直接链接">​</a></h2>
+<p>6 种基础算法思想</p>
+<ul>
+<li>递归算法</li>
+<li>分治算法</li>
+<li>贪心算法</li>
+<li>回溯算法</li>
+<li>动态规划</li>
+<li>枚举算法</li>
+</ul>
+<p><strong>参考文档</strong>: <a href=https://www.toutiao.com/article/7199435823970828857 target=_blank rel="noopener noreferrer">资料</a></p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=treemap和hashmap的实现以及区别>treemap和hashmap的实现以及区别？<a href=#treemap和hashmap的实现以及区别 class=hash-link aria-label=treemap和hashmap的实现以及区别？的直接链接 title=treemap和hashmap的实现以及区别？的直接链接>​</a></h2>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=一致性哈希>一致性哈希<a href=#一致性哈希 class=hash-link aria-label=一致性哈希的直接链接 title=一致性哈希的直接链接>​</a></h2>
+<ul>
+<li>解决分布式缓存的扩展性问题</li>
+<li>环形哈希空间</li>
+<li>虚拟节点</li>
+<li>应用：分布式缓存、负载均衡</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=双端队列的应用场景>双端队列的应用场景？<a href=#双端队列的应用场景 class=hash-link aria-label=双端队列的应用场景？的直接链接 title=双端队列的应用场景？的直接链接>​</a></h2>
+<ul>
+<li>滑动窗口问题</li>
+<li>任务调度系统（既可以从头部添加高优先级任务，也可以从尾部添加普通任务）</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=单调栈的应用>单调栈的应用？<a href=#单调栈的应用 class=hash-link aria-label=单调栈的应用？的直接链接 title=单调栈的应用？的直接链接>​</a></h2>
+<ul>
+<li>寻找下一个更大/更小元素</li>
+<li>直方图中最大矩形面积</li>
+<li>接雨水问题</li>
+<li>股票跨度问题</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=红黑树的平衡原理>红黑树的平衡原理<a href=#红黑树的平衡原理 class=hash-link aria-label=红黑树的平衡原理的直接链接 title=红黑树的平衡原理的直接链接>​</a></h2>
+<ul>
+<li>特性：<!-- -->
+<ol>
+<li>节点是红色或黑色</li>
+<li>根节点是黑色</li>
+<li>所有叶子节点（NIL）是黑色</li>
+<li>红色节点的子节点必须是黑色</li>
+<li>从根到叶子的所有路径包含相同数量的黑色节点</li>
+</ol>
+</li>
+<li>平衡手段：<!-- -->
+<ul>
+<li>变色</li>
+<li>左旋</li>
+<li>右旋</li>
+</ul>
+</li>
+<li>时间复杂度：O(logN)</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=b树和b树的区别>B树和B+树的区别<a href=#b树和b树的区别 class=hash-link aria-label=B树和B+树的区别的直接链接 title=B树和B+树的区别的直接链接>​</a></h2>
+<ul>
+<li>B树：<!-- -->
+<ul>
+<li>所有节点都可以存储数据</li>
+<li>适合随机访问</li>
+<li>常用于文件系统</li>
+</ul>
+</li>
+<li>B+树：<!-- -->
+<ul>
+<li>只有叶子节点存储数据</li>
+<li>叶子节点通过链表相连</li>
+<li>更适合范围查询</li>
+<li>常用于数据库索引</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=avl树与红黑树比较>AVL树与红黑树比较<a href=#avl树与红黑树比较 class=hash-link aria-label=AVL树与红黑树比较的直接链接 title=AVL树与红黑树比较的直接链接>​</a></h2>
+<ul>
+<li>AVL树：<!-- -->
+<ul>
+<li>更严格的平衡（左右子树高度差不超过1）</li>
+<li>查询更快</li>
+<li>插入删除代价更大</li>
+</ul>
+</li>
+<li>红黑树：<!-- -->
+<ul>
+<li>平衡条件较宽松</li>
+<li>插入删除操作更快</li>
+<li>实际应用更广泛（如STL）</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=trie树的应用场景>Trie树的应用场景<a href=#trie树的应用场景 class=hash-link aria-label=Trie树的应用场景的直接链接 title=Trie树的应用场景的直接链接>​</a></h2>
+<ul>
+<li>字符串快速检索</li>
+<li>前缀匹配</li>
+<li>自动补全</li>
+<li>拼写检查</li>
+<li>IP路由表查找</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=跳表的原理和应用>跳表的原理和应用<a href=#跳表的原理和应用 class=hash-link aria-label=跳表的原理和应用的直接链接 title=跳表的原理和应用的直接链接>​</a></h2>
+<ul>
+<li>
+<p>原理：</p>
+<ul>
+<li>多层链表结构</li>
+<li>每层是下层的子集</li>
+<li>类似二分查找的思想</li>
+</ul>
+</li>
+<li>
+<p>应用：</p>
+<ul>
+<li>Redis的有序集合</li>
+<li>替代平衡树的场景</li>
+</ul>
+</li>
+<li>
+<p>时间复杂度：平均O(logN)</p>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=hashmap的并发问题>HashMap的并发问题<a href=#hashmap的并发问题 class=hash-link aria-label=HashMap的并发问题的直接链接 title=HashMap的并发问题的直接链接>​</a></h2>
+<ul>
+<li>并发问题：<!-- -->
+<ul>
+<li>死循环（JDK1.7中的并发扩容问题）</li>
+<li>数据丢失</li>
+<li>数据覆盖</li>
+</ul>
+</li>
+<li>解决方案：<!-- -->
+<ul>
+<li>使用Collections.synchronizedMap()</li>
+<li>使用ConcurrentHashMap</li>
+<li>使用HashTable（不推荐，性能差）</li>
+</ul>
+</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=海量数据下-topk-的问题>海量数据下 topk 的问题？<a href=#海量数据下-topk-的问题 class=hash-link aria-label="海量数据下 topk 的问题？的直接链接" title="海量数据下 topk 的问题？的直接链接">​</a></h2>
+<p>该章节汇总算法常见考点</p>
+<p>从10亿个数中找出最大的10000个数是一项非常具有挑战性的任务，需要使用高效的算法和数据结构来处理。</p>
+<p>以下是一种基于分治思想的常见方法：</p>
+<p>将10亿个数分成1000个小文件，每个文件包含100万个数。
+对每个小文件进行排序，选出每个文件中最大的1000个数，并将它们放入一个临时文件中。
+将1000个临时文件合并成一个大文件，并再次对其进行排序。
+选出最大的10000个数。</p>
+<p>这种方法的时间复杂度为O(N*log(N/K))，其中N是所有数据的数量，K是每个小文件中的数据量。由于K相对较小，因此这种方法非常高效。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=排序算法>排序算法<a href=#排序算法 class=hash-link aria-label=排序算法的直接链接 title=排序算法的直接链接>​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=冒泡排序>冒泡排序<a href=#冒泡排序 class=hash-link aria-label=冒泡排序的直接链接 title=冒泡排序的直接链接>​</a></h3>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=数据结构>数据结构<a href=#数据结构 class=hash-link aria-label=数据结构的直接链接 title=数据结构的直接链接>​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=算法复杂度>算法复杂度<a href=#算法复杂度 class=hash-link aria-label=算法复杂度的直接链接 title=算法复杂度的直接链接>​</a></h3>
+<p>查找 100 以内质数。
+排出 2,3,5 后的时间复杂度。</p>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=单链表反转>单链表反转<a href=#单链表反转 class=hash-link aria-label=单链表反转的直接链接 title=单链表反转的直接链接>​</a></h3>
+<p>2.快排
+3.即时通信(除了Ajax和websocket)</p>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=二叉树遍历>二叉树遍历<a href=#二叉树遍历 class=hash-link aria-label=二叉树遍历的直接链接 title=二叉树遍历的直接链接>​</a></h3>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=算法>算法<a href=#算法 class=hash-link aria-label=算法的直接链接 title=算法的直接链接>​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=各类排序算法以及复杂度计算>各类排序算法以及复杂度计算<a href=#各类排序算法以及复杂度计算 class=hash-link aria-label=各类排序算法以及复杂度计算的直接链接 title=各类排序算法以及复杂度计算的直接链接>​</a></h3>
+<ol>
+<li>快排原理,复杂度计算</li>
+</ol>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=二分法>二分法<a href=#二分法 class=hash-link aria-label=二分法的直接链接 title=二分法的直接链接>​</a></h3>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=编程题>编程题<a href=#编程题 class=hash-link aria-label=编程题的直接链接 title=编程题的直接链接>​</a></h2>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=台阶算法>台阶算法<a href=#台阶算法 class=hash-link aria-label=台阶算法的直接链接 title=台阶算法的直接链接>​</a></h3>
+<p>N 个台阶算法,一次可一步,两步或三步,总共的走法。</p>
+<p>x+2y+3z = n; // 求取所有解 m</p>
+<p>f(n) = f(n-1)+f(n-2)+f(n-3)
+n=1 1
+n=2 2
+n=3 3</p>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=背包问题动态规划>背包问题(动态规划)<a href=#背包问题动态规划 class=hash-link aria-label=背包问题(动态规划)的直接链接 title=背包问题(动态规划)的直接链接>​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=因数分解>因数分解<a href=#因数分解 class=hash-link aria-label=因数分解的直接链接 title=因数分解的直接链接>​</a></h3>
+<p>如下，实现 <code>calc</code> 方法，可以将输入的数拆解为尽可能多的乘数，所有数相乘等于输入数。</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token doc-comment comment" style=color:#999988;font-style:italic>/**</span><br></span><span class=token-line style=color:#393A34><span class="token doc-comment comment" style=color:#999988;font-style:italic> * </span><span class="token doc-comment comment keyword" style=color:#00009f;font-style:italic>@param</span><span class="token doc-comment comment" style=color:#999988;font-style:italic> </span><span class="token doc-comment comment class-name punctuation" style=color:#393A34;font-style:italic>{</span><span class="token doc-comment comment class-name" style=color:#999988;font-style:italic>number</span><span class="token doc-comment comment class-name punctuation" style=color:#393A34;font-style:italic>}</span><span class="token doc-comment comment" style=color:#999988;font-style:italic> </span><span class="token doc-comment comment parameter" style=color:#999988;font-style:italic>n</span><span class="token doc-comment comment" style=color:#999988;font-style:italic> 乘积</span><br></span><span class=token-line style=color:#393A34><span class="token doc-comment comment" style=color:#999988;font-style:italic> * </span><span class="token doc-comment comment keyword" style=color:#00009f;font-style:italic>@return</span><span class="token doc-comment comment" style=color:#999988;font-style:italic> </span><span class="token doc-comment comment class-name punctuation" style=color:#393A34;font-style:italic>{</span><span class="token doc-comment comment class-name" style=color:#999988;font-style:italic>Array</span><span class="token doc-comment comment class-name punctuation" style=color:#393A34;font-style:italic>}</span><span class="token doc-comment comment" style=color:#999988;font-style:italic> 拆解后的乘数</span><br></span><span class=token-line style=color:#393A34><span class="token doc-comment comment" style=color:#999988;font-style:italic> */</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>function</span><span class="token plain"> </span><span class="token function" style=color:#d73a49>calc</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>(</span><span class="token parameter">n</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>{</span><span class="token plain"> </span><span class="token punctuation" style=color:#393A34>}</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token function" style=color:#d73a49>calc</span><span class="token punctuation" style=color:#393A34>(</span><span class="token number" style=color:#36acaa>7</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// [7]</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token function" style=color:#d73a49>calc</span><span class="token punctuation" style=color:#393A34>(</span><span class="token number" style=color:#36acaa>8</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// [2, 2, 2]</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token function" style=color:#d73a49>calc</span><span class="token punctuation" style=color:#393A34>(</span><span class="token number" style=color:#36acaa>24</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// [2, 2, 2, 3]</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain" style=display:inline-block></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token console class-name">console</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>log</span><span class="token punctuation" style=color:#393A34>(</span><span class="token function" style=color:#d73a49>calc</span><span class="token punctuation" style=color:#393A34>(</span><span class="token number" style=color:#36acaa>30</span><span class="token punctuation" style=color:#393A34>)</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token comment" style=color:#999988;font-style:italic>// [2, 3, 5]</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=质数递归>质数递归<a href=#质数递归 class=hash-link aria-label=质数递归的直接链接 title=质数递归的直接链接>​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=数组找公共元素>数组找公共元素<a href=#数组找公共元素 class=hash-link aria-label=数组找公共元素的直接链接 title=数组找公共元素的直接链接>​</a></h3>
+<h3 class="anchor anchorWithStickyNavbar_a6yo" id=最大子数组和>最大子数组和<a href=#最大子数组和 class=hash-link aria-label=最大子数组和的直接链接 title=最大子数组和的直接链接>​</a></h3></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/algorithm/coding><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>编码题</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/network/concept><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>概念</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-basic class="table-of-contents__link toc-highlight">397 了解哪些基础算法</a><li><a href=#treemap和hashmap的实现以及区别 class="table-of-contents__link toc-highlight">treemap和hashmap的实现以及区别？</a><li><a href=#一致性哈希 class="table-of-contents__link toc-highlight">一致性哈希</a><li><a href=#双端队列的应用场景 class="table-of-contents__link toc-highlight">双端队列的应用场景？</a><li><a href=#单调栈的应用 class="table-of-contents__link toc-highlight">单调栈的应用？</a><li><a href=#红黑树的平衡原理 class="table-of-contents__link toc-highlight">红黑树的平衡原理</a><li><a href=#b树和b树的区别 class="table-of-contents__link toc-highlight">B树和B+树的区别</a><li><a href=#avl树与红黑树比较 class="table-of-contents__link toc-highlight">AVL树与红黑树比较</a><li><a href=#trie树的应用场景 class="table-of-contents__link toc-highlight">Trie树的应用场景</a><li><a href=#跳表的原理和应用 class="table-of-contents__link toc-highlight">跳表的原理和应用</a><li><a href=#hashmap的并发问题 class="table-of-contents__link toc-highlight">HashMap的并发问题</a><li><a href=#海量数据下-topk-的问题 class="table-of-contents__link toc-highlight">海量数据下 topk 的问题？</a><li><a href=#排序算法 class="table-of-contents__link toc-highlight">排序算法</a><ul><li><a href=#冒泡排序 class="table-of-contents__link toc-highlight">冒泡排序</a></ul><li><a href=#数据结构 class="table-of-contents__link toc-highlight">数据结构</a><ul><li><a href=#算法复杂度 class="table-of-contents__link toc-highlight">算法复杂度</a><li><a href=#单链表反转 class="table-of-contents__link toc-highlight">单链表反转</a><li><a href=#二叉树遍历 class="table-of-contents__link toc-highlight">二叉树遍历</a></ul><li><a href=#算法 class="table-of-contents__link toc-highlight">算法</a><ul><li><a href=#各类排序算法以及复杂度计算 class="table-of-contents__link toc-highlight">各类排序算法以及复杂度计算</a><li><a href=#二分法 class="table-of-contents__link toc-highlight">二分法</a></ul><li><a href=#编程题 class="table-of-contents__link toc-highlight">编程题</a><ul><li><a href=#台阶算法 class="table-of-contents__link toc-highlight">台阶算法</a><li><a href=#背包问题动态规划 class="table-of-contents__link toc-highlight">背包问题(动态规划)</a><li><a href=#因数分解 class="table-of-contents__link toc-highlight">因数分解</a><li><a href=#质数递归 class="table-of-contents__link toc-highlight">质数递归</a><li><a href=#数组找公共元素 class="table-of-contents__link toc-highlight">数组找公共元素</a><li><a href=#最大子数组和 class="table-of-contents__link toc-highlight">最大子数组和</a></ul></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

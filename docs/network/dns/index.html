@@ -1,0 +1,166 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-network/dns" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>dns | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/network/dns><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="dns | web-interview"><meta data-rh=true name=description content="DNS 协议了解多少"><meta data-rh=true property=og:description content="DNS 协议了解多少"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/network/dns><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/dns hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/network/dns hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/network/concept>network</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/concept>概念</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/tcp>tcp</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/http>http</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/cdn>cdn</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/websocket>websocket</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/network/dns>dns</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/network/other>杂项</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>network</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>dns</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>dns</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-dns-detail>DNS 协议了解多少<a href=#p0-dns-detail class=hash-link aria-label="DNS 协议了解多少的直接链接" title="DNS 协议了解多少的直接链接">​</a></h2>
+<p>DNS 基本概念</p>
+<p>DNS（Domain Name System，域名系统）是因特网上用于将主机名转换为 IP 地址的协议。它是一个分布式数据库系统，通过将主机名映射到 IP 地址来实现主机名解析，并使用户能够通过更容易识别的主机名来访问互联网上的资源。</p>
+<p>在使用 DNS 协议进行主机名解析时，系统首先查询本地 DNS 缓存。如果缓存中不存在结果，系统将向本地 DNS 服务器发出请求，并逐级向上查找，直到找到权威 DNS 服务器并获得解析结果。在域名解析的过程中，DNS 协议采用了分级命名空间的结构，不同的域名可以通过点分隔符分为多个级别，例如 <code>www.example.com</code> 可以分为三个级别：<code>www</code>、<code>example</code> 和 <code>com</code>。</p>
+<p>除了将域名映射到 IP 地址之外，DNS 协议还支持多种其他功能：</p>
+<ol>
+<li>逆向映射：将 IP 地址解析为域名。</li>
+<li>邮件服务器设置：支持邮件服务器的自动发现和设置。</li>
+<li>负载均衡：DNS 还可以实现简单的负载均衡，通过将相同 IP 地址的主机名映射到不同的 IP 地址来分散负载。</li>
+<li>安全：DNSSEC（DNS Security Extensions，DNS 安全扩展）可以提供对域名解析的认证和完整性。</li>
+</ol>
+<p>如何加快 DNS 的解析？</p>
+<p>有以下几种方法可以加快 DNS 的解析：</p>
+<ol>
+<li>
+<p>使用高速 DNS 服务器：默认情况下，网络服务提供商（ISP）为其用户提供 DNS 服务器。但是，这些服务器不一定是最快的，有时会出现瓶颈。如果您想加快 DNS 解析，请尝试使用其他高速 DNS 服务器，例如 Google 的公共 DNS 服务器或 OpenDNS。</p>
+</li>
+<li>
+<p>缓存 DNS 记录：在本地计算机上缓存 DNS 记录可以大大加快应用程序的响应。当您访问特定的网站时，计算机会自动缓存该网站的 DNS 记录。如果您再次访问该网站，则计算机将使用缓存的 DNS 记录。</p>
+</li>
+<li>
+<p>减少 DNS 查找：当您访问一个网站时，您的计算机将会查找该域名的 IP 地址。如果网站有很多域名，则查找过程可能会变得非常缓慢。因此，尽可能使用较少的域名可以减少 DNS 查找的数量，并提高响应速度。</p>
+</li>
+<li>
+<p>使用 CDN：CDN（内容分发网络）是一种将内容存储在全球多个位置的系统。这些位置通常都有专用的 DNS 服务器，可以大大加快站点的加载速度。</p>
+</li>
+<li>
+<p>使用 DNS 缓存工具：一些辅助工具可以帮助您优化与 DNS 相关的设置，例如免费的 DNS Jumper 软件和 Namebench 工具，它们可以测试您的 DNS 响应时间并为您推荐最佳配置。</p>
+</li>
+</ol>
+<p>通过使用高速 DNS 服务器、缓存 DNS 记录、减少 DNS 查找、使用 CDN 和 DNS 缓存工具等方法，可以显著提高 DNS 解析速度，从而加快应用程序响应时间。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-dns>DNS 解析方式<a href=#p0-dns class=hash-link aria-label="DNS 解析方式的直接链接" title="DNS 解析方式的直接链接">​</a></h2>
+<ol>
+<li>浏览器缓存</li>
+<li>操作系统缓存</li>
+<li>本地 hosts 文件</li>
+<li>本地 DNS 服务器</li>
+<li>根 DNS 服务器</li>
+<li>顶级域名服务器</li>
+<li>权威 DNS 服务器</li>
+</ol>
+<p>DNS（Domain Name System，域名系统）解析是将域名转换为对应的IP地址的过程。下面是DNS解析的一般步骤：</p>
+<ol>
+<li>
+<p>用户输入域名：用户在浏览器或其他应用程序中输入要访问的域名，例如 "<a href=http://www.example.com%22%E3%80%82 target=_blank rel="noopener noreferrer">www.example.com"。</a></p>
+</li>
+<li>
+<p>本地缓存查找：操作系统首先会检查本地的DNS缓存，看是否已经缓存了该域名的IP地址。如果有匹配的缓存记录，且仍在有效期内，将直接返回对应的IP地址。</p>
+</li>
+<li>
+<p>本地域名服务器查询：如果本地缓存中没有找到对应的IP地址，操作系统会向配置的本地域名服务器（通常由ISP提供）发送查询请求。本地域名服务器是存储了大量DNS记录的服务器，通常可以快速响应查询请求。</p>
+</li>
+<li>
+<p>递归查询或迭代查询：本地域名服务器接收到查询请求后，会根据自身的配置进行递归查询或迭代查询。</p>
+</li>
+</ol>
+<p>递归查询：本地域名服务器会代表客户端进行完整的查询过程，直到找到目标域名的IP地址。如果本地域名服务器已经缓存了目标域名的IP地址，它将直接返回结果给客户端。</p>
+<p>迭代查询：本地域名服务器向根域名服务器发送查询请求，根域名服务器返回顶级域名服务器（TLD）的地址。然后本地域名服务器再向TLD发送查询请求，TLD返回该域名的授权域名服务器的地址。最后，本地域名服务器向授权域名服务器发送查询请求，授权域名服务器返回目标域名的IP地址。</p>
+<ol start=5>
+<li>
+<p>返回IP地址：经过递归或迭代查询后，本地域名服务器会将获取到的IP地址返回给操作系统，然后操作系统将该IP地址存储在本地DNS缓存中，并将IP地址传递给应用程序。</p>
+</li>
+<li>
+<p>应用程序访问目标IP地址：应用程序收到IP地址后，可以直接使用该IP地址与目标服务器建立连接，并进行相应的网络请求。</p>
+</li>
+</ol>
+<p>DNS解析过程中还涉及到DNS记录的缓存、DNS服务器层级结构、域名的分级管理等概念和机制，以保证高效的解析过程和互联网的正常运行。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=完整域名的构成部分>完整域名的构成部分<a href=#完整域名的构成部分 class=hash-link aria-label=完整域名的构成部分的直接链接 title=完整域名的构成部分的直接链接>​</a></h2>
+<p><strong>一、顶级域名（Top-Level Domain，TLD）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>顶级域名是域名中最右边的部分，它表示域名的类型或所属的国家或地区。例如，在“example.com”中，“.com”就是顶级域名。</li>
+<li>顶级域名分为通用顶级域名（gTLD）和国家代码顶级域名（ccTLD）。通用顶级域名如“.com”（商业机构）、“.org”（非营利组织）、“.net”（网络服务机构）等；国家代码顶级域名如“.cn”（中国）、“.uk”（英国）、“.jp”（日本）等。</li>
+</ul>
+<ol start=2>
+<li><strong>作用</strong>：</li>
+</ol>
+<ul>
+<li>顶级域名帮助用户快速识别域名的类型或所属地区，同时也在互联网的命名体系中起到分类和标识的作用。</li>
+</ul>
+<p><strong>二、二级域名（Second-Level Domain，SLD）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>二级域名位于顶级域名的左边，是域名中的主要标识部分。例如，在“example.com”中，“example”就是二级域名。</li>
+<li>二级域名通常由网站所有者或组织自行定义，可以是任何符合域名命名规则的字符串。</li>
+</ul>
+<ol start=2>
+<li><strong>作用</strong>：</li>
+</ol>
+<ul>
+<li>二级域名用于区分不同的网站、组织或服务。它是网站的主要标识，用户通过二级域名来识别和访问特定的网站。</li>
+</ul>
+<p><strong>三、子域名（Subdomain）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>子域名是位于二级域名前面的部分，它可以进一步细分域名的层次结构。例如，在“blog.example.com”中，“blog”就是子域名。</li>
+<li>子域名可以有多个层次，例如“sub1.sub2.example.com”。</li>
+</ul>
+<ol start=2>
+<li><strong>作用</strong>：</li>
+</ol>
+<ul>
+<li>子域名可以用于划分不同的业务模块、部门或功能区域。例如，一个公司可以使用“blog”子域名来表示其博客站点，使用“shop”子域名来表示其电子商务站点。</li>
+</ul>
+<p><strong>四、协议部分（如 http:// 或 https://）</strong></p>
+<ol>
+<li><strong>含义</strong>：</li>
+</ol>
+<ul>
+<li>协议部分位于域名的前面，用于指定访问网站所使用的通信协议。常见的协议有“http://”（超文本传输协议）和“https://”（安全超文本传输协议）。</li>
+</ul>
+<ol start=2>
+<li><strong>作用</strong>：</li>
+</ol>
+<ul>
+<li>协议部分决定了浏览器与服务器之间的通信方式和安全性。“https://”协议提供了加密和安全的通信，保护用户数据的安全。</li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p3-dns-catch>什么是DNS劫持？<a href=#p3-dns-catch class=hash-link aria-label=什么是DNS劫持？的直接链接 title=什么是DNS劫持？的直接链接>​</a></h2>
+<p>DNS 劫持（DNS Hijacking），也称为 DNS 重定向，是一种通过篡改原本的 DNS 解析流程，使得用户在尝试访问特定网址时被非法重定向到其他（通常是恶意的、广告相关的或者钓鱼的）网站的行为。这种攻击可以发生在用户的个人电脑、网络设备、甚至是直接在 DNS 服务器上。</p>
+<p>DNS 劫持可以通过以下几种方式实现：</p>
+<ol>
+<li><strong>恶意软件</strong>：</li>
+</ol>
+<ul>
+<li>用户的计算机被感染了恶意软件，该软件修改了本地的 DNS 设置，例如更改本地的 <code>hosts</code> 文件或 DNS 配置，使得所有或特定域名的请求都会被发送到攻击者指定的服务器。</li>
+</ul>
+<ol start=2>
+<li><strong>篡改路由器设置</strong>：</li>
+</ol>
+<ul>
+<li>攻击者通过各种手段（如默认密码、漏洞利用等）获取路由器的管理权限，并修改其上的 DNS 服务器设置，使得连接到该路由器的所有设备的 DNS 请求都会被重定向。</li>
+</ul>
+<ol start=3>
+<li><strong>DNS 服务器劫持</strong>：</li>
+</ol>
+<ul>
+<li>攻击者直接对 DNS 服务器进行攻击，将规范域名的正确解析地址更改为恶意地址。</li>
+</ul>
+<ol start=4>
+<li><strong>中间人攻击（Man-in-the-Middle Attack, MiTM）</strong>：</li>
+</ol>
+<ul>
+<li>在用户与 DNS 服务器之间截获和修改 DNS 查询和响应，将用户请求重定向到另一个服务器。</li>
+</ul>
+<ol start=5>
+<li><strong>网络服务提供商干预</strong>：</li>
+</ol>
+<ul>
+<li>部分网络服务商出于广告和监管的目的，可能会在 DNS 层面上进行重定向，将无效域名或特定关键字的域名请求导向他们自己的服务器。</li>
+</ul>
+<p>DNS 劫持对用户的主要威胁是隐私泄露和安全风险，用户有可能无意中访问到含有恶意软件的网页，导致个人信息泄露或者计算机安全受到威胁。为了防范 DNS 劫持，用户可以采取以下措施：</p>
+<ul>
+<li>使用可信赖的 DNS 服务，如 Google 的 8.8.8.8、Cloudflare 的 1.1.1.1 等。</li>
+<li>保持操作系统和防病毒软件都更新至最新状态， regularly scan for malware。</li>
+<li>对家用路由器设置复杂的登录密码，并定期进行固件更新。</li>
+<li>使用 VPN 服务，在密封的隧道中完成所有网络通信。</li>
+<li>对于重要的网站，最好使用书签直接访问，防止输入错误的 URL。</li>
+<li>启用 DNSSEC（Domain Name System Security Extensions），增加额外的验证步骤来保证 DNS 查询的安全。</li>
+</ul></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/network/websocket><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>websocket</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/network/other><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>杂项</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-dns-detail class="table-of-contents__link toc-highlight">DNS 协议了解多少</a><li><a href=#p0-dns class="table-of-contents__link toc-highlight">DNS 解析方式</a><li><a href=#完整域名的构成部分 class="table-of-contents__link toc-highlight">完整域名的构成部分</a><li><a href=#p3-dns-catch class="table-of-contents__link toc-highlight">什么是DNS劫持？</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

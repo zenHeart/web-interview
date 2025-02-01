@@ -1,0 +1,164 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-html/attributes" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>属性 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/html/attributes><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="属性 | web-interview"><meta data-rh=true name=description content="attribute property 区别?"><meta data-rh=true property=og:description content="attribute property 区别?"><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/html/attributes><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/html/attributes hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/html/attributes hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/html/attributes>html</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/html/attributes>属性</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/tag>标签</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/event>事件</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/webapi>web api</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/dom>DOM</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/browser>浏览器原理</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/coding>编程题</a><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class=menu__link tabindex=0 href=/web-interview/docs/html/worker>web worker</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/operate-system/index>operate-system</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>html</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>属性</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>属性</h1></header>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-attribute-property>attribute property 区别?<a href=#p0-attribute-property class=hash-link aria-label="attribute property 区别?的直接链接" title="attribute property 区别?的直接链接">​</a></h2>
+<details open class="details_PyUD alert alert--info details_mhg0" data-collapsed=false><summary><strong>答案</strong></summary><div><div class=collapsibleContent_JSiM><ol>
+<li>从规范的角度 <code>attributes</code> 由 html 定义,<code>properties</code> 由 dom 定义<!-- -->
+<ul>
+<li>少数 html <code>attribute</code> 有对应 <code>id</code> 映射,例如 id</li>
+</ul>
+</li>
+</ol><blockquote>
+<p>非自定义的 property 或attribute的变化多数是联动的</p>
+</blockquote><ul>
+<li>自定义 <code>attribute</code>,<code>colspan</code> 等无映射,需使用 <code>getAttribute</code> 获得</li>
+</ul><ol start=2>
+<li><code>attribute</code> 用于初始化 dom 对象的 <code>property</code>,<code>property</code> 可以修改</li>
+<li>在表单中 getAttribute 访问的 value 属性为初始值,而 <code>value</code> 属性访问获得的是当前值</li>
+</ol><blockquote>
+<p>带有默认值的attribute不随property变化而变化。但是修改 attribute 会修改 <code>property</code></p>
+</blockquote><ol start=3>
+<li>自定义属性采用 <code>data-</code> 定义,利用 dataset 获取。</li>
+<li><code>attribute</code> 大小写不敏感,值均为字符串格式</li>
+<li><code>style</code> attribute 为字符串,但是 <code>property</code> 为对象格式</li>
+<li><code>href</code> <code>attribute</code> 为设定值,<code>property</code> 为完整路径</li>
+</ol><p>attribute 方法<ol>
+<li><code>elem.hasAttribute(name)</code> 检查是否存在该属性</li>
+<li><code>elem.getAttribute(name)</code> 获取属性值</li>
+<li><code>elem.setAttribute(name)</code> 设置属性值</li>
+<li><code>elem.removeAttribute(name)</code> 删除属性值</li>
+</ol><blockquote>
+<p><code>elem.attributes</code> 读取所有属性值</p>
+</blockquote><p>总结:<ol>
+<li><code>attribute</code> 有 html 标签申明,值为字符串,大小写不敏感</li>
+<li><code>properties</code> 是 DOM 元素中所包含的信息,值有多种可能,大小写敏感</li>
+</ol><blockquote>
+<p>参考 <a href=https://JavaScript.info/dom-attributes-and-properties target=_blank rel="noopener noreferrer">attributes 和 properties</a></p>
+</blockquote></div></div></details>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-data-attribute>data- 属性的好处是什么？<a href=#p1-data-attribute class=hash-link aria-label="data- 属性的好处是什么？的直接链接" title="data- 属性的好处是什么？的直接链接">​</a></h2>
+<p>HTML 中前缀为 <code>data-</code> 开头的元素属性被称为自定义数据属性（Custom Data Attributes）或者数据属性（Data Attributes）。</p>
+<p>这些属性的命名以 <code>data-</code> 开头，后面可以跟上任意自定义的名称。这样的属性可以用来存储与元素相关的自定义数据，以便在 JavaScript 或 CSS 中进行访问和操作。</p>
+<p>自定义数据属性的命名应该遵循以下规则：</p>
+<ul>
+<li>属性名必须以 <code>data-</code> 开头。</li>
+<li>属性名可以包含任意<code>字母、数字、连字符（-）、下划线（_）和小数点（.）</code>。</li>
+<li>属性名不应该包含大写字母，因为 HTML 属性名是不区分大小写的。</li>
+</ul>
+<p>通过自定义数据属性，我们可以在 HTML 元素中嵌入自定义的数据，然后在 JavaScript 中使用 <code>getAttribute()</code> 方法或直接通过元素对象的 <code>dataset</code> 属性来访问这些数据。</p>
+<p>例如，在 HTML 中定义了一个自定义数据属性 <code>data-color="red"</code>：</p>
+<div class="language-html codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-html codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token tag punctuation" style=color:#393A34>&lt;</span><span class="token tag" style=color:#00009f>div</span><span class="token tag" style=color:#00009f> </span><span class="token tag attr-name" style=color:#00a4db>id</span><span class="token tag attr-value punctuation attr-equals" style=color:#393A34>=</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag attr-value" style=color:#e3116c>myDiv</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag" style=color:#00009f> </span><span class="token tag attr-name" style=color:#00a4db>data-color</span><span class="token tag attr-value punctuation attr-equals" style=color:#393A34>=</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag attr-value" style=color:#e3116c>red</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag punctuation" style=color:#393A34>></span><span class="token tag punctuation" style=color:#393A34>&lt;/</span><span class="token tag" style=color:#00009f>div</span><span class="token tag punctuation" style=color:#393A34>></span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>在 JavaScript 中可以通过以下方式获取该自定义数据属性的值：</p>
+<div class="language-js codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-js codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> myDiv </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> </span><span class="token dom variable" style=color:#36acaa>document</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>getElementById</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'myDiv'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> color </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> myDiv</span><span class="token punctuation" style=color:#393A34>.</span><span class="token method function property-access" style=color:#d73a49>getAttribute</span><span class="token punctuation" style=color:#393A34>(</span><span class="token string" style=color:#e3116c>'data-color'</span><span class="token punctuation" style=color:#393A34>)</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 获取属性值为 "red"</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> dataset </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> myDiv</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">dataset</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 获取包含所有自定义数据属性的对象 { color: "red" }</span><span class="token plain"></span><br></span><span class=token-line style=color:#393A34><span class="token plain"></span><span class="token keyword" style=color:#00009f>const</span><span class="token plain"> colorValue </span><span class="token operator" style=color:#393A34>=</span><span class="token plain"> dataset</span><span class="token punctuation" style=color:#393A34>.</span><span class="token property-access">color</span><span class="token plain"> </span><span class="token comment" style=color:#999988;font-style:italic>// 获取属性值为 "red"</span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>通过自定义数据属性，我们可以将相关的数据绑定到 HTML 元素上，方便在 JavaScript 中进行处理和操作，增强了 HTML 和 JavaScript 之间的交互性。</p>
+<ul>
+<li><a href=https://h5bp.org/Front-end-Developer-Interview-Questions/translations/chinese target=_blank rel="noopener noreferrer">data-</a></li>
+</ul>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-src-href>src 和 href 有什么区别<a href=#p0-src-href class=hash-link aria-label="src 和 href 有什么区别的直接链接" title="src 和 href 有什么区别的直接链接">​</a></h2>
+<p>下面是一个表格，展示了<code>src</code>和<code>href</code>属性之间的异同点：</p>
+<table><thead><tr><th>特点<th>src属性<th>href属性<tbody><tr><td>适用标签<td><code>&lt;script>、&lt;img>、&lt;audio></code>等<td><code>&lt;a>、&lt;link></code>等<tr><td>加载时间<td>标签加载时立即执行<td>用户与链接交互时加载<tr><td>对页面功能的影响<td>对页面功能至关重要，不能加载或加载错误会影响页面<td>不会直接影响页面功能，无法加载或加载错误时链接无效<tr><td>资源类型<td>脚本文件、图像文件、音频文件等<td>HTML文件、CSS文件、图像文件、音频文件等<tr><td>是否必须有效链接<td>是<td>否<tr><td>作用<td>嵌入外部资源<td>指向其他页面或资源</table>
+<p>请注意，这些是<code>src</code>和<code>href</code>属性的一般规则，但某些特定标签可能会有不同的行为。</p>
+<p><code>src</code> 和 <code>href</code> 是两个在 HTML 中常用的属性，它们具有不同的作用和用途，主要区别如下：</p>
+<ol>
+<li>用途：</li>
+</ol>
+<ul>
+<li><code>src</code> 属性用于指定嵌入资源的 URL，如图片、音频、视频等。</li>
+<li><code>href</code> 属性用于创建超链接，定义链接到的目标 URL 地址。</li>
+</ul>
+<ol start=2>
+<li>资源加载：</li>
+</ol>
+<ul>
+<li><code>src</code> 属性用于指定需要加载的资源，浏览器会根据 <code>src</code> 属性的值去请求资源，并将其嵌入到文档中。例如，<code>&lt;img></code>、<code>&lt;script></code>、<code>&lt;iframe></code> 等标签使用 <code>src</code> 属性加载外部资源。</li>
+<li><code>href</code> 属性用于指定链接的目标 URL，通过点击链接，浏览器会导航到指定的 URL 地址。例如，<code>&lt;a></code>、<code>&lt;link></code>、<code>&lt;link rel="stylesheet"></code> 等标签使用 <code>href</code> 属性创建超链接或引入外部样式表。</li>
+</ul>
+<ol start=3>
+<li>标签使用：</li>
+</ol>
+<ul>
+<li><code>src</code> 属性主要用于嵌入资源的标签，如 <code>&lt;img></code>、<code>&lt;script></code>、<code>&lt;audio></code>、<code>&lt;video></code> 等。</li>
+<li><code>href</code> 属性主要用于超链接标签，如 <code>&lt;a></code>，以及用于引入外部资源的标签，如 <code>&lt;link></code>。</li>
+</ul>
+<ol start=4>
+<li>加载顺序：</li>
+</ol>
+<ul>
+<li><code>src</code> 属性的资源会按照标签在文档中的顺序依次加载，其中某些标签可能会阻塞页面的渲染，比如 <code>&lt;script></code> 标签会阻塞页面的解析和渲染。</li>
+<li><code>href</code> 属性的资源加载不会阻塞页面的解析和渲染，通常用于引入外部样式表或字体等。</li>
+</ul>
+<p>总结：</p>
+<ul>
+<li><code>src</code> 属性用于嵌入资源的标签，指定需要加载的资源。</li>
+<li><code>href</code> 属性用于创建超链接的标签，指定链接的目标 URL 或引入外部资源的 URL。</li>
+</ul>
+<p>需要根据具体的使用场景和标签来选择使用 <code>src</code> 还是 <code>href</code> 属性。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p1-crossorigin>crossorigin 的作用是什么<a href=#p1-crossorigin class=hash-link aria-label="crossorigin 的作用是什么的直接链接" title="crossorigin 的作用是什么的直接链接">​</a></h2>
+<p><code>crossorigin</code> 属性在 <code>&lt;audio>、&lt;img>、&lt;link>、&lt;script> 和 &lt;video></code> 元素中有效，它们提供对 CORS 的支持，定义该元素如何处理跨源请求，从而实现对该元素获取数据的 CORS 请求的配置。根据元素的不同，该属性可以是一个 CORS 设置属性。</p>
+<p><strong>属性值</strong></p>
+<p><code>crossorigin</code> 属性有以下几个取值选项，每个选项的作用如下：</p>
+<ol>
+<li><code>anonymous</code>：表示跨域请求不发送凭证信息（如 cookie、HTTP 认证信息）。这是默认值，适用于无需发送凭证的跨域请求，可提高安全性。</li>
+<li><code>use-credentials</code>：表示跨域请求发送凭证信息。适用于需要发送凭证的跨域请求，但需要服务器配置支持，并且需要设置 <code>Access-Control-Allow-Credentials</code> 头为 <code>true</code>。</li>
+<li><code>null</code>：表示不返回跨域资源，并在控制台中报告错误，而不加载跨域资源。适用于跨域资源加载失败时的错误处理。</li>
+</ol>
+<p>这些取值选项用来在 HTML 中指定跨域资源请求的行为，通过设置不同的取值选项，可以控制是否发送凭证、如何处理跨域资源加载失败等。</p>
+<p><strong>作用</strong></p>
+<p><code>crossorigin</code> 属性是 HTML 中用来控制跨域资源请求行为的属性。它用于指定浏览器在加载跨域资源时如何处理跨域请求。</p>
+<p>主要作用有以下几点：</p>
+<ol>
+<li>跨域资源请求：当在 HTML 中引用跨域的资源（如图片、音频、视频、脚本、样式表等）时，浏览器会发送跨域请求。<code>crossorigin</code> 属性可以控制这些跨域请求的行为。</li>
+<li>控制凭证的发送：默认情况下，跨域请求会发送用户凭证（如 cookie、HTTP 认证信息）。通过 <code>crossorigin</code> 属性，可以控制资源请求时是否发送凭证信息。</li>
+<li>防止资源污染：当加载跨域的脚本文件时，如果不使用 <code>crossorigin</code> 属性，可能会导致脚本文件被污染从而引发安全问题。使用 <code>crossorigin</code> 属性可以确保加载的脚本是可信任的。</li>
+<li>错误处理：<code>crossorigin</code> 属性还可以用来处理跨域请求中可能发生的错误。通过设置不同的取值选项，可以在跨域请求出现错误时进行相应的处理。</li>
+</ol>
+<p><strong>资源加载错误处理方式</strong></p>
+<p><code>crossorigin</code> 属性在错误处理方面有不同的行为，取决于属性的取值选项：</p>
+<ol>
+<li>
+<p>当 <code>crossorigin</code> 属性值为 <code>anonymous</code> 或未设置时，如果跨域资源加载失败，浏览器会忽略加载失败，不会报告任何错误，也不会影响页面的正常渲染。</p>
+</li>
+<li>
+<p>当 <code>crossorigin</code> 属性值为 <code>use-credentials</code> 时，如果跨域资源加载失败，浏览器会在控制台报告错误，并且不会加载跨域资源。这样可以确保在有凭证的情况下，不加载错误的或未授权的跨域资源。</p>
+</li>
+<li>
+<p>当 <code>crossorigin</code> 属性值为 <code>null</code> 时，如果跨域资源加载失败，浏览器会在控制台报告错误，并且不加载跨域资源。这种设置适用于当跨域资源加载失败时要显示错误信息，并且不加载其他资源。</p>
+</li>
+</ol>
+<p>总之，通过设置 <code>crossorigin</code> 属性，可以控制跨域资源加载失败时的错误处理行为，从而在不同的情况下选择合适的错误处理方式。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p0-rel>html rel 属性 的参数 preload和prefetch 的作用是什么<a href=#p0-rel class=hash-link aria-label="html rel 属性 的参数 preload和prefetch 的作用是什么的直接链接" title="html rel 属性 的参数 preload和prefetch 的作用是什么的直接链接">​</a></h2>
+<p><code>rel</code> 属性定义了所链接的资源与当前文档的关系，在 <code>&lt;a>、&lt;area> 和 &lt;link></code> 元素上有效。支持的值取决于拥有该属性的元素。</p>
+<p><code>preload和prefetch</code>是浏览器提供的两种对静态资源预下载的方式，对于优化页面的渲染速度是很有作用的。</p>
+<p>preload - 立即下载</p>
+<p>preload针对的是当前页面需要加载的资源，使用preload加载的资源会提前下载，但是并不会立即执行，<code>而且等到使用的时候才会执行</code>。</p>
+<p><strong>preload 使用方式</strong></p>
+<p>preload是<code>&lt;link></code>元素中rel属性的一个值，所以需要使用link标签来实现资源的预加载</p>
+<div class="language-html codeBlockContainer_Db7k theme-code-block" style=--prism-color:#393A34;--prism-background-color:#f6f8fa><div class=codeBlockContent_vfrs><pre tabindex=0 class="prism-code language-html codeBlock_fMk5 thin-scrollbar" style=color:#393A34;background-color:#f6f8fa><code class=codeBlockLines_Z2T1><span class=token-line style=color:#393A34><span class="token tag punctuation" style=color:#393A34>&lt;</span><span class="token tag" style=color:#00009f>link</span><span class="token tag" style=color:#00009f> </span><span class="token tag attr-name" style=color:#00a4db>rel</span><span class="token tag attr-value punctuation attr-equals" style=color:#393A34>=</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag attr-value" style=color:#e3116c>preload</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag" style=color:#00009f> </span><span class="token tag attr-name" style=color:#00a4db>as</span><span class="token tag attr-value punctuation attr-equals" style=color:#393A34>=</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag attr-value" style=color:#e3116c>script</span><span class="token tag attr-value punctuation" style=color:#393A34>"</span><span class="token tag" style=color:#00009f> </span><span class="token tag attr-name" style=color:#00a4db>href</span><span class="token tag attr-value punctuation attr-equals" style=color:#393A34>=</span><span class="token tag attr-value punctuation" style=color:#393A34>'</span><span class="token tag attr-value" style=color:#e3116c>https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js</span><span class="token tag attr-value punctuation" style=color:#393A34>'</span><span class="token tag punctuation" style=color:#393A34>></span><br></span></code></pre><div class=buttonGroup_XqHc><button type=button aria-label=复制代码到剪贴板 title=复制 class=clean-btn><span class=copyButtonIcons_FbLT aria-hidden=true><svg viewBox="0 0 24 24" class=copyButtonIcon_Vt0T><path fill=currentColor d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg><svg viewBox="0 0 24 24" class=copyButtonSuccessIcon_dUyb><path fill=currentColor d=M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z /></svg></span></button></div></div></div>
+<p>对于预加载的资源来说，一般需要设置以下三个属性：</p>
+<ul>
+<li><code>rel</code>: preload或者prefetch，表示预加载的方式。必填（rel的值很多，这里只考虑预加载的情况）</li>
+<li><code>as</code>: 表示预加载资源的类型。必填</li>
+<li><code>href</code>: 表示预加载资源的地址。必填</li>
+</ul>
+<p>当预加载的是字体资源时，必须加上<code>crossorigin</code>属性</p>
+<p><strong>preload的好处</strong></p>
+<ul>
+<li>能够分离资源的下载和执行</li>
+<li>能够提高资源的下载优先级</li>
+<li>能够支持多种资源的预下载，比如脚本，样式，图片等等</li>
+</ul>
+<p><strong>preload VS defer</strong></p>
+<p>和preload一样，defer的script资源也会将下载和执行过程分离。不同的是，preload的资源是由开发者来确定何时执行，defer的script资源是由浏览器来决定何时执行。</p>
+<p>除此之外，defer和preload相比还有以下缺点：</p>
+<p>只能支持script资源</p>
+<p><strong>preload VS 预解析操作</strong></p>
+<p>在分析页面渲染流程的时候我们提到过浏览器的一个优化操作，就是预解析操作。当浏览器获取到HTML文件之后，会分析其中依赖哪些外部资源，并提前下载这些外部资源。</p>
+<p>看上去这个功能和preload基本上是一样的，可以达到同样的效果。</p>
+<p>但是浏览器预解析操作有一个缺陷：就是只能预下载HTML文件中引入的静态资源，对于当前页面动态加载的资源是无能为力的。但是preload可以解析这个问题。</p>
+<p>prefetch - 有空才下载</p>
+<p>prefetch针对的资源是用户下个浏览的页面需要的资源，可以在当前页面开始预下载，提高下个页面渲染的速度。</p>
+<p>在使用上，prefetch和preload基本是一致的。</p>
+<p>preload VS prefetch</p>
+<p>preload 和 prefetch在使用上是有很大的不同的。</p>
+<ul>
+<li><strong>preload针对的资源是当前页面需要的资源，下载的优先级很高</strong></li>
+<li><strong>prefetch针对的资源是下个页面需要的资源，下载的优先级很低，有空的时候才下载</strong></li>
+</ul>
+<p>所以开发者是使用的时候需要区分场景，避免浪费用户的带宽资源。</div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/js/other><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>杂项</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/html/tag><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>标签</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#p0-attribute-property class="table-of-contents__link toc-highlight">attribute property 区别?</a><li><a href=#p1-data-attribute class="table-of-contents__link toc-highlight">data- 属性的好处是什么？</a><li><a href=#p0-src-href class="table-of-contents__link toc-highlight">src 和 href 有什么区别</a><li><a href=#p1-crossorigin class="table-of-contents__link toc-highlight">crossorigin 的作用是什么</a><li><a href=#p0-rel class="table-of-contents__link toc-highlight">html rel 属性 的参数 preload和prefetch 的作用是什么</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>

@@ -1,0 +1,168 @@
+<!doctype html><html lang=zh-hans dir=ltr class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-operate-system/index" data-has-hydrated=false><meta charset=UTF-8><meta name=generator content="Docusaurus v3.7.0"><title data-rh=true>计算机基础 | web-interview</title><meta data-rh=true name=viewport content="width=device-width, initial-scale=1.0"><meta data-rh=true name=twitter:card content=summary_large_image><meta data-rh=true property=og:url content=https://blog.zenheart.site/web-interview/docs/operate-system/index><meta data-rh=true property=og:locale content=zh_hans><meta data-rh=true name=docusaurus_locale content=zh-hans><meta data-rh=true name=docsearch:language content=zh-hans><meta data-rh=true name=docusaurus_version content=current><meta data-rh=true name=docusaurus_tag content=docs-default-current><meta data-rh=true name=docsearch:version content=current><meta data-rh=true name=docsearch:docusaurus_tag content=docs-default-current><meta data-rh=true property=og:title content="计算机基础 | web-interview"><meta data-rh=true name=description content=详解计算机基础的相关概念><meta data-rh=true property=og:description content=详解计算机基础的相关概念><link data-rh=true rel=canonical href=https://blog.zenheart.site/web-interview/docs/operate-system/index><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/operate-system/index hreflang=zh-hans><link data-rh=true rel=alternate href=https://blog.zenheart.site/web-interview/docs/operate-system/index hreflang=x-default><link rel=stylesheet href=/web-interview/assets/css/styles.d80416ed.css><script src=/web-interview/assets/js/runtime~main.3fc33434.js defer></script><script src=/web-interview/assets/js/main.1a00b813.js defer></script><body class=navigation-with-keyboard><script>!function(){var t,e=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();t=null!==e?e:"light",document.documentElement.setAttribute("data-theme",t)}(),function(){try{for(var[t,e]of new URLSearchParams(window.location.search).entries())if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id=__docusaurus><div role=region aria-label=跳到主要内容><a class=skipToContent_Bmn5 href=#__docusaurus_skipToContent_fallback>跳到主要内容</a></div><nav aria-label=主导航 class="navbar navbar--fixed-top"><div class=navbar__inner><div class=navbar__items><button aria-label=切换导航栏 aria-expanded=false class="navbar__toggle clean-btn" type=button><svg width=30 height=30 viewBox="0 0 30 30" aria-hidden=true><path stroke=currentColor stroke-linecap=round stroke-miterlimit=10 stroke-width=2 d="M4 7h22M4 15h22M4 23h22"/></svg></button><a class=navbar__brand href=/web-interview/><b class="navbar__title text--truncate">web interview</b></a><a aria-current=page class="navbar__item navbar__link navbar__link--active" href=/web-interview/docs/js/type>questions</a><a class="navbar__item navbar__link" href=/web-interview/contributors/>contributors</a><a class="navbar__item navbar__link" href=/web-interview/company/>company</a><a class="navbar__item navbar__link" href=/web-interview/reference>reference</a><a class="navbar__item navbar__link" href=/web-interview/kanban>kanban</a></div><div class="navbar__items navbar__items--right"><a href=https://github.com/zenHeart/web-interview target=_blank rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width=13.5 height=13.5 aria-hidden=true viewBox="0 0 24 24" class=iconExternalLink_TfAQ><path fill=currentColor d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></svg></a><div class="toggle_chIG colorModeToggle_FKbV"><button class="clean-btn toggleButton_PPGN toggleButtonDisabled_OzN_" type=button disabled title=切换浅色/暗黑模式（当前为浅色模式） aria-label=切换浅色/暗黑模式（当前为浅色模式） aria-live=polite aria-pressed=false><svg viewBox="0 0 24 24" width=24 height=24 class=lightToggleIcon_Rs0N><path fill=currentColor d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"/></svg><svg viewBox="0 0 24 24" width=24 height=24 class=darkToggleIcon_Cgc7><path fill=currentColor d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"/></svg></button></div><div class=navbarSearchContainer_S3Xx></div></div></div><div role=presentation class=navbar-sidebar__backdrop></div></nav><div id=__docusaurus_skipToContent_fallback class="main-wrapper mainWrapper_zlUw"><div class=docsWrapper_jIwN><button aria-label=回到顶部 class="clean-btn theme-back-to-top-button backToTopButton_t3lV" type=button></button><div class=docRoot_PaRY><aside class="theme-doc-sidebar-container docSidebarContainer_Hwg5"><div class=sidebarViewport_qDlF><div class=sidebar_Ab13><nav aria-label=文档侧边栏 class="menu thin-scrollbar menu_xdzH"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/js/type>js</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/html/attributes>html</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/css/concept>css</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/node/api>node</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/react/component>react</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/vue/component>vue</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/hybird/rn>hybird</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/engineering/concept>engineering</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/algorithm/complex-analysis>algorithm</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/network/concept>network</a></div><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role=button aria-expanded=true href=/web-interview/docs/operate-system/index>operate-system</a></div><ul style=display:block;overflow:visible;height:auto class=menu__list><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current=page tabindex=0 href=/web-interview/docs/operate-system/index>计算机基础</a></ul><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class=menu__list-item-collapsible><a class="menu__link menu__link--sublist menu__link--sublist-caret" role=button aria-expanded=false href=/web-interview/docs/interview/index>interview</a></div></ul></nav></div></div></aside><main class=docMainContainer__Bu4><div class="container padding-top--md padding-bottom--lg"><div class=row><div class="col docItemCol_nx5b"><div class=docItemContainer_G9IQ><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_FrWe" aria-label=页面路径><ul class=breadcrumbs itemscope itemtype=https://schema.org/BreadcrumbList><li class=breadcrumbs__item><a aria-label=主页面 class=breadcrumbs__link href=/web-interview/><svg viewBox="0 0 24 24" class=breadcrumbHomeIcon_whcU><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill=currentColor /></svg></a><li class=breadcrumbs__item><span class=breadcrumbs__link>operate-system</span><meta itemprop=position content=1><li itemscope itemprop=itemListElement itemtype=https://schema.org/ListItem class="breadcrumbs__item breadcrumbs__item--active"><span class=breadcrumbs__link itemprop=name>计算机基础</span><meta itemprop=position content=2></ul></nav><div class="tocCollapsible_sgzh theme-doc-toc-mobile tocMobile_wRIx"><button type=button class="clean-btn tocCollapsibleButton_rCmu">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>计算机基础</h1></header>
+<p><strong>详解计算机基础的相关概念</strong></p>
+<hr>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=进程和线程区别>进程和线程区别<a href=#进程和线程区别 class=hash-link aria-label=进程和线程区别的直接链接 title=进程和线程区别的直接链接>​</a></h2>
+<p>进程（Process）和线程（Thread）是计算机操作系统中的两个核心概念，它们在程序执行和资源管理方面有着不同的特点和作用。下面是它们之间的区别：</p>
+<ol>
+<li>
+<p>定义：进程是程序的一次执行过程，是资源分配的基本单位；线程是进程的一部分，是程序执行的最小单位。</p>
+</li>
+<li>
+<p>资源拥有：每个进程都拥有独立的内存空间和系统资源，包括文件、设备、网络连接等；而线程是在进程内部共享进程的资源。</p>
+</li>
+<li>
+<p>调度和执行：操作系统以进程为单位进行调度，给每个进程分配CPU时间片来执行；而线程是进程内部的执行单元，由线程调度器调度执行。</p>
+</li>
+<li>
+<p>并发性：由于进程拥有独立的内存空间和资源，不同进程之间可以并发执行，相互之间不会影响；而线程是在同一个进程内部执行，多个线程共享进程的资源，因此线程之间需要通过同步机制来保证数据的一致性和安全性。</p>
+</li>
+<li>
+<p>创建和销毁：创建和销毁进程需要操作系统的参与，而线程的创建和销毁相对较轻量，可以由程序自身来控制。</p>
+</li>
+<li>
+<p>开销：由于进程拥有独立的资源和内存空间，进程之间切换的开销较大；而线程之间的切换开销较小，因为线程共享进程的资源和内存空间。</p>
+</li>
+</ol>
+<p>总的来说，进程和线程是操作系统中用于实现并发执行的两种基本单位，进程是资源分配的基本单位，而线程是调度和执行的基本单位。它们在资源拥有、调度方式、并发性、创建销毁方式、开销等方面有着明显的区别。在实际应用中，可以根据需求和具体场景选择使用进程或线程来实现并发和多任务处理。</p>
+<p><strong>下面是进程和线程在几个方面的对比表格</strong>：</p>
+<table><thead><tr><th>特性<th>进程<th>线程<tbody><tr><td>定义<td>程序的一次执行过程，是资源分配的基本单位<td>进程的一部分，是程序执行的最小单位<tr><td>资源拥有<td>拥有独立的内存空间和系统资源<td>在进程内部共享进程的资源<tr><td>调度和执行<td>以进程为单位进行调度，给每个进程分配CPU时间片<td>在进程内部调度执行<tr><td>并发性<td>不同进程之间可以并发执行，相互之间不会影响<td>线程在同一个进程内部执行，共享进程的资源<tr><td>创建和销毁<td>需要操作系统的参与<td>可以由程序自身来控制<tr><td>开销<td>进程切换开销较大<td>线程切换开销较小</table>
+<ul>
+<li><strong>进程</strong> 操作系统资源管理的最小单位</li>
+<li><strong>线程</strong> 操作系统程序执行的最小单位</li>
+</ul>
+<p>线程的本质是对计算机资源的复用。
+一个进程实际上包含如下资源的抽象:</p>
+<ol>
+<li>cpu 状态,寄存器等状态记录</li>
+<li>内存执行状态记录</li>
+<li>程序权限状态记录</li>
+<li>和各种通选状态的记录</li>
+</ol>
+<p>在 linux 操作系统下只有任务的概念,进程和线程的意义
+就是控制不同的 <strong>COE(context of execution)</strong>
+参看此文理解 <a href=http://blog.coderhuo.tech/2017/10/12/Virtual_Memory_C_strings_proc/ target=_blank rel="noopener noreferrer">进程内存结构</a></p>
+<p><a href=https://juejin.cn/post/6991849728493256741 target=_blank rel="noopener noreferrer">操作系统进程线程</a></p>
+<p>进程（Process）和 线程（Thread）是操作系统中的重要概念。</p>
+<p><strong>进程是指计算机中已经运行的程序，它是操作系统资源分配的最小单位</strong>。进程拥有独立的内存空间和系统资源，如打开的文件、网络连接等。在操作系统中，每个进程都拥有一个唯一的标识符，称为进程ID。</p>
+<p><strong>线程是进程中的执行单元</strong>，一个进程可以包含多个线程，它们共享进程的内存空间和系统资源。线程是CPU调度的最小单位，它可以看作是进程中的一个独立执行流程。与进程不同的是，线程没有自己的系统资源，只有一部分与进程共享的资源。在操作系统中，每个线程都拥有一个唯一的标识符，称为线程ID。</p>
+<p>可以将进程和线程的关系类比为一家工厂。工厂代表一个进程，工厂中的工人代表线程。每个工人负责自己的一部分工作，但是他们共享工厂的资源，如原材料、设备等。</p>
+<p>总的来说，进程和线程都是操作系统资源分配和调度的基本单位，它们之间的关系是多对一的，即多个线程可以属于同一个进程，共享进程的资源。</p>
+<p>协程（Coroutine）</p>
+<p>协程（Coroutine）是一种用户态的轻量级线程，也称为协作式多任务处理，与传统的抢占式多任务处理方式不同，协程的调度不由系统来控制，而是由程序员自己控制。在协程内部，程序可以自己决定在何处挂起、何时恢复执行。协程可以有效地避免多线程并发操作时出现的死锁、竞争、状态同步等问题，同时协程又可以充分利用 CPU 资源，提高程序执行效率。</p>
+<p>在协程中，所有任务共享一个线程，通过在任务之间切换来实现并发，这种方式可以避免线程切换时的性能损耗，也可以避免线程之间的同步问题。协程主要有以下特点：</p>
+<ul>
+<li>协程是一种轻量级的线程，其切换过程不需要操作系统介入，而是在用户态实现的。</li>
+<li>协程是一种非抢占式调度方式，需要程序员显式地让出执行权。</li>
+<li>协程可以共享全局变量等状态信息，但是需要程序员自己管理状态同步。</li>
+</ul>
+<p>协程在很多语言中都得到了广泛的应用，例如 Python 中的 asyncio、Lua 中的 coroutine 等。在前端领域中，JavaScript 的 Generator 函数就是一种协程实现方式。</p>
+<h2 class="anchor anchorWithStickyNavbar_a6yo" id=p2-manage>权限管理模型相关概念<a href=#p2-manage class=hash-link aria-label=权限管理模型相关概念的直接链接 title=权限管理模型相关概念的直接链接>​</a></h2>
+<ul>
+<li>
+<p><strong>DAC (Discretionary Access Control):</strong> 用户对资源有自主权，资源的所有者可以自由地授予或撤销其他用户的访问权限。</p>
+</li>
+<li>
+<p><strong>MAC (Mandatory Access Control):</strong> 系统管理员定义了一组强制性的规则，控制用户对资源的访问。用户不能改变这些规则，这通常应用于一些需要高度安全性的环境。</p>
+</li>
+<li>
+<p><strong>RBAC (Role-Based Access Control):</strong> 根据用户的角色分配权限，用户被分组为角色，每个角色被赋予一定的权限。这简化了权限管理，特别适用于大型组织。</p>
+</li>
+<li>
+<p><strong>ABAC (Attribute-Based Access Control):</strong> 根据用户的属性来控制访问权限。这可以包括用户的属性、环境信息等，提供更细粒度的控制。</p>
+</li>
+<li>
+<p><strong>PBAC (Policy-Based Access Control):</strong> 根据预定义的策略来控制访问权限。策略可以包括多个规则和条件，灵活适应各种访问控制需求。</p>
+</li>
+</ul>
+<p>DAC</p>
+<p>Discretionary Access Control（DAC）自主访问控制，是一种权限管理模型，强调资源的所有者对其资源拥有自主权，可以自由决定其他用户对其资源的访问权限。每个用户被赋予特定的权限，这些权限决定了用户能够对资源执行哪些操作，如读取、写入、执行等。资源的所有者通常是创建该资源的用户，而DAC模型提供了一定的灵活性，因为资源的所有者可以根据实际需要灵活地管理对其资源的访问。在 DAC 模型中，文件系统是一个常见的应用场景，其中文件和文件夹具有所有者，所有者决定了其他用户的访问权限。这是一种相对简单而直观的权限管理方式，适用于一些相对简单的场景。</p>
+<p>这种设计最常见的应用就是文件系统的权限设计，如微软的 NTFS。
+<img decoding=async loading=lazy src=https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/2/5/17010f5b773f5aa1~tplv-t2oaga2asx-jj-mark:3024:0:0:0:q75.awebp alt=01 class=img_GoKf></p>
+<p>MAC</p>
+<p>Mandatory Access Control（MAC，强制访问控制）是一种权限管理模型，其核心特点在于由系统管理员预先定义一组强制性规则，这些规则决定了用户对资源的访问权限。在 MAC 模型中，用户无法自行修改这些规则，这种不可修改性使得 MAC 模型适用于高度安全性的环境。与 Discretionary Access Control（DAC）不同，MAC 强调系统级别上的强制性控制，而不是资源所有者的自主权。此模型通常使用标签或级别来表示用户和资源的安全属性，并支持多级别的安全控制。 MAC 在军事、政府和情报机构等对安全性要求极高的领域中得到广泛应用。在 MAC 模型下，系统管理员的定义对于用户和资源的访问权限至关重要，确保了系统的整体安全性和合规性。</p>
+<p>这个权限最大的一个特点就是：<strong>权限标签和分级</strong>。使用标签或级别来表示用户和资源的安全级别。这些标签反映了用户和资源的安全属性，用于决定是否允许访问。</p>
+<p>举例：MAC 模型通常在对安全性要求极高的领域中得到广泛应用，如军事、政府和情报机构。</p>
+<p>例如：考虑一个政府机构的文件系统，其中包含了各种敏感信息。在 MAC 模型下：</p>
+<ul>
+<li>系统管理员定义了访问控制规则，例如只有具有 "Top Secret" 标签的用户才能访问 "Top Secret" 级别的文件。</li>
+<li>用户无法自行更改其安全级别或绕过系统管理员定义的规则来进行查看。</li>
+<li>文件的创建者是某个用户，该用户也是一位普通用户， 但是只能查看， 不能篡改文件的访问级别和编辑级别。</li>
+</ul>
+<p>RBAC</p>
+<p>Role-Based Access Control（RBAC，基于角色的访问控制）是一种权限管理模型，其核心思想是根据用户的角色进行访问控制。在 RBAC 模型中，用户被分配到一个或多个角色，而每个角色都具有特定的权限，用户通过角色来获取相应的访问权限。
+目前来说基于角色的访问控制模型是应用较广的一个，特别是 2B 方向 SAAS 领域，应用尤其常见。</p>
+<p><img decoding=async loading=lazy src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a6faeff4a2984a3fb04053e0abe2fc6e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1231&h=720&s=536982&e=png&b=ffffff" alt=image.png class=img_GoKf></p>
+<p>其中最重要的两个关键因素就是：权限与角色关联、角色再分配给具体的用户；</p>
+<p>ABAC</p>
+<p>基于属性的访问控制模型(ABAC: Attribute-Based Access Control)，被一些人称为是权限系统设计的未来。
+不同于常见的将用户通过某种方式关联到权限的方式，ABAC 则是通过动态计算一个或一组属性是否满足某种条件来进行授权判断（可以编写简单的逻辑）。
+用户、资源和环境都有各自的属性。这些属性可以包括用户的身份、角色、部门、资源的类型、敏感级别、时间等。
+访问控制策略通过属性的匹配和条件评估来确定是否允许访问。例如，如果用户的角色属性是 "Manager" 且资源的敏感级别属性是 "High"，则允许访问。</p>
+<p>举例子：考虑一个企业的文档管理系统，使用 Attribute-Based Access Control (ABAC) 模型来控制对文档的访问。在这个例子中，访问控制的决策基于用户的属性、文档的属性以及其他环境因素。</p>
+<ol>
+<li><strong>用户属性：</strong></li>
+</ol>
+<ul>
+<li>属性 1：用户角色（Role） - 可能的值包括 "Employee"（员工）和 "Manager"（经理）。</li>
+<li>属性 2：用户部门（Department） - 包括 "Sales"（销售部门）和 "Engineering"（工程部门）。</li>
+</ul>
+<ol start=2>
+<li><strong>文档属性：</strong></li>
+</ol>
+<ul>
+<li>属性 1：文档类型（Document Type） - 包括 "Internal"（内部文档）和 "Confidential"（机密文档）。</li>
+<li>属性 2：文档部门（Document Department） - 指定文档所属的部门。</li>
+</ul>
+<ol start=3>
+<li><strong>环境属性：</strong></li>
+</ol>
+<ul>
+<li>属性 1：访问时间（Access Time） - 确定用户访问文档的时间。</li>
+</ul>
+<ol start=4>
+<li><strong>策略定义：</strong></li>
+</ol>
+<ul>
+<li>规则 1：如果用户角色是 "Manager" 且文档类型是 "Confidential"，允许访问。</li>
+<li>规则 2：如果文档部门是 "Sales" 且访问时间是工作时间，允许员工访问。</li>
+</ul>
+<ol start=5>
+<li><strong>访问请求示例：</strong></li>
+</ol>
+<ul>
+<li>用户A是 "Manager"，想要访问一个 "Confidential" 类型的文档，由于规则 1 的匹配，允许访问。</li>
+<li>用户B是 "Employee"，想要访问一个 "Internal" 类型的文档，在工作时间内，由于规则 2 的匹配，允许访问。</li>
+</ul>
+<p>在这个例子中，ABAC 模型通过匹配用户、文档和环境的属性来决定访问权限。管理员可以根据组织的需求定义和更新访问规则，以实现更精细和动态的访问控制。</p>
+<p>这种权限设计侧重点， 在于<strong>数据属性</strong>；</p>
+<p>PBAC</p>
+<p>Policy-Based Access Control (PBAC) 是一种基于策略的访问控制模型，它的核心思想是通过定义和实施一组策略来管理对系统资源的访问。在 PBAC 中，访问控制是通过规则和条件的集合来决定的，这些规则描述了在特定条件下用户能够执行的操作。</p>
+<p>跟 ABAC 是同属于一个级别的权限控制模型， 只是侧重点不同， PBAC 更加侧重于： <strong>重定义和实施访问控制策略。这些策略是由一组规则组成，这些规则描述了在特定条件下用户能够执行的操作。</strong></p>
+<p>举例子：</p>
+<p>考虑一个企业的文件管理系统，管理员使用 Policy-Based Access Control (PBAC) 来定义访问控制策略，以确保对文件的访问仅限于授权用户和特定条件下的访问。</p>
+<ol>
+<li><strong>用户和角色定义：</strong></li>
+</ol>
+<ul>
+<li>角色 1：Employee（普通员工）</li>
+<li>角色 2：Manager（经理）</li>
+<li>角色 3：Admin（管理员）</li>
+</ul>
+<ol start=2>
+<li><strong>资源定义：</strong></li>
+</ol>
+<ul>
+<li>资源 1：Project Documents（项目文件夹）</li>
+<li>资源 2：Financial Reports（财务报告文件夹）</li>
+</ul>
+<ol start=3>
+<li><strong>策略定义：</strong></li>
+</ol>
+<ul>
+<li>策略 1：如果用户是经理，允许访问项目文件夹。</li>
+<li>策略 2：如果用户是管理员，允许访问财务报告文件夹。</li>
+<li>策略 3：如果访问时间在工作时间内，允许访问项目文件夹和财务报告文件夹。</li>
+<li>策略 4：如果用户是普通员工，仅在工作时间内允许访问项目文件夹。</li>
+</ul>
+<p>这些策略和规则的组合允许管理员定义对文件的访问控制。例如，一个经理在工作时间内可以访问项目文件夹，而管理员可以在任何时间访问财务报告文件夹。这个例子展示了 PBAC 模型如何通过灵活的策略定义，实现对资源访问的细粒度控制。管理员可以根据企业需求调整和更新这些策略，以适应不同的访问控制需求。</p>
+<p><strong>参考文档</strong>： <a href=https://juejin.cn/post/6844904056876433416 target=_blank rel="noopener noreferrer">资料</a></div></article><nav class="pagination-nav docusaurus-mt-lg" aria-label=文件选项卡><a class="pagination-nav__link pagination-nav__link--prev" href=/web-interview/docs/network/other><div class=pagination-nav__sublabel>上一页</div><div class=pagination-nav__label>杂项</div></a><a class="pagination-nav__link pagination-nav__link--next" href=/web-interview/docs/interview/index><div class=pagination-nav__sublabel>下一页</div><div class=pagination-nav__label>通用问题</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_H33e thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href=#进程和线程区别 class="table-of-contents__link toc-highlight">进程和线程区别</a><li><a href=#p2-manage class="table-of-contents__link toc-highlight">权限管理模型相关概念</a></ul></div></div></div></div></main></div></div></div><footer class="footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class=footer__copyright>Copyright © 2025 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>
