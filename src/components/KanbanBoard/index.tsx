@@ -4,6 +4,8 @@ import { usePluginData } from "@docusaurus/useGlobalData";
 import type { Question } from "../plugins/extractQuestions";
 import KanbanSearch from "./KanbanSearch";
 import PriorityTag from "../PriorityTag";
+import record from "./record.json";
+const doneKeys = record.Done;
 
 
 
@@ -54,12 +56,29 @@ function KanbanBoard() {
       );
     }
 
+    // 新增逻辑：根据 record.json 中的 Done 项目移动问题
+
+    console.log('doneKeys',doneKeys)
+
+    const completedQuestions = questions.filter((q) =>
+      doneKeys.some(key => q.link?.includes(key))
+    );
+
+    // 从结果中排除已完成的问题
+    results = results.filter((q) => {
+      const isDone = doneKeys.some(key => q.link?.includes(key));
+      return !isDone;
+    });
+
+    // 将已完成的问题添加到结果中
+    results = [...results, ...completedQuestions];
+
     setFilteredQuestions(results);
   };
 
   // 将问题按状态和域名分组
   const groupedQuestions = filteredQuestions.reduce((acc, question) => {
-    const status = question.status || "Todo";
+    const status = doneKeys.some(key => question.link?.includes(key)) ? "Done" : (question.status || "Todo");
     const domain = question.domain || "未分类";
 
     if (!acc[status]) {
