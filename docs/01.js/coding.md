@@ -3568,3 +3568,5 @@ Promise.prototype.finally = function (callback) {
 ```
 
 这个实现方法中，使用了 `Promise.resolve()` 来返回一个新的 Promise 实例，因此可以避免了 Promise 链的状态改变。另外，由于 `finally()` 方法只是在 Promise 链的最后执行回调函数，因此不需要使用异步函数。
+
+## 如何判断一个数值是整数，实现 isInteger {#p1-is-integer}
