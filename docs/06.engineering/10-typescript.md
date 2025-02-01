@@ -305,7 +305,7 @@ npm install --save-dev ts-loader @babel/core @babel/preset-env @babel/preset-rea
 
 更新`webpack.config.js`配置以使用`babel-loader`，并确保它能够正确处理`.js`和`.jsx`以及`.ts`和`.tsx`文件：
 
-```javascript
+```js
 const path = require('path')
 
 module.exports = {

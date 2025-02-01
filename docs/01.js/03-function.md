@@ -82,7 +82,7 @@ JavaScript中有两种主要的方式来定义函数：函数声明（Function D
 
 示例：
 
-```javascript
+```js
 function sayHello () {
   console.log('Hello!')
 }
@@ -99,7 +99,7 @@ sayHello() // 可以在函数声明之后调用
 
 示例：
 
-```javascript
+```js
 // 匿名函数表达式
 const sayHello = function () {
   console.log('Hello!')
@@ -129,7 +129,7 @@ console.log(add(2, 3)) // 输出: 5
 
 1. 函数表达式：
 
- ```javascript
+ ```js
  const func = function () {
  // 函数的代码块
  }
@@ -139,7 +139,7 @@ console.log(add(2, 3)) // 输出: 5
 
 2. 箭头函数：
 
- ```javascript
+ ```js
  const func = () => {
  // 函数的代码块
  }
@@ -161,7 +161,7 @@ console.log(add(2, 3)) // 输出: 5
 
 具名函数示例：
 
-```javascript
+```js
 function add (a, b) {
   return a + b
 }
@@ -171,7 +171,7 @@ function add (a, b) {
 
 匿名函数示例：
 
-```javascript
+```js
 const sum = function (a, b) {
   return a + b
 }
@@ -296,7 +296,7 @@ Person.prototype.say = () => { console.log(this.name) }
 
 看个例子:
 
-```javascript
+```js
 const person = {
   name: '张三',
   age: 18,
@@ -320,7 +320,7 @@ person.getAge() // 我的年龄是undefined
 
 **先解答下标题问题，为啥箭头函数不能作为构造函数？**
 
-```javascript
+```js
 // 构造函数生成实例的过程
 function Person (name, age) {
   this.name = name
@@ -353,7 +353,7 @@ Person.call(p)
 
 示例：
 
-```javascript
+```js
 function sum (a, b, ...rest) {
   console.log(a, b) // 输出前两个参数
   console.log(rest) // 输出剩余的动态参数，作为数组
@@ -369,7 +369,7 @@ sum(1, 2, 3, 4, 5) // 输出: 1 2， [3, 4, 5]
 
 示例：
 
-```javascript
+```js
 const sum = (a, b, ...rest) => {
   console.log(a, b) // 输出前两个参数
   console.log(rest) // 输出剩余的动态参数，作为数组
@@ -390,7 +390,7 @@ sum(1, 2, 3, 4, 5) // 输出: 1 2， [3, 4, 5]
 
 1. 使用 for 循环和索引：通过使用普通的 for 循环和索引来遍历类数组对象。
 
-```javascript
+```js
 function sum () {
   for (let i = 0; i < arguments.length; i++) {
     console.log(arguments[i])
@@ -402,7 +402,7 @@ sum(1, 2, 3) // 输出：1 2 3
 
 2. 使用 for...of 循环：`arguments` 是特殊的类数组， 因为他实现了`[Symbol.iterator]`迭代器， 故可以使用 for...of 循环
 
-```javascript
+```js
 function sum () {
   for (const arg of arguments) {
     console.log(arg)
@@ -414,7 +414,7 @@ sum(1, 2, 3) // 输出：1 2 3
 
 3. 将类数组对象转换为真正的数组后遍历：可以使用上述提到的类数组转换方法将类数组对象转换为真正的数组，然后使用数组的遍历方法进行遍历，如 `forEach()`、`map()` 等。
 
-```javascript
+```js
 function sum () {
   const args = Array.from(arguments)
   args.forEach(arg => {
@@ -850,7 +850,7 @@ Generator 函数使用 `function*` 声明，内部可以使用 `yield` 关键字
 
 以下是一个简单的示例，展示了 Generator 函数的中断和恢复特性：
 
-```javascript
+```js
 function * generatorFunction () {
   console.log('Step 1')
   yield

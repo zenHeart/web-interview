@@ -106,7 +106,7 @@
 为什么 `{capture:true}` 不是先触发
 参见此回答 [Event listeners registered for capturing phase not triggered before bubbling - why?](https://stackoverflow.com/questions/11841330/event-listeners-registered-for-capturing-phase-not-triggered-before-bubbling-w)
 
-* [冒泡和捕获](https://javascript.info/bubbling-and-capturing)
+* [冒泡和捕获](https://JavaScript.info/bubbling-and-capturing)
 
 ## 什么是事件委托 {#p1-event-delegate}
 
@@ -122,9 +122,9 @@
 
 * [Javascript: Closures vs Event Delegation](https://lists.evolt.org/archive/Week-of-Mon-20090209/127331.html)
 * [delegating_the](https://www.quirksmode.org/blog/archives/2008/04/delegating_the.html)
-* [event delegation](https://humanwhocodes.com/blog/2009/06/30/event-delegation-in-javascript/)
+* [event delegation](https://humanwhocodes.com/blog/2009/06/30/event-delegation-in-JavaScript/)
 * [stackoverflow event delegation](https://stackoverflow.com/questions/1687296/what-is-dom-event-delegation)
-* [ ] [事件委托模式](https://zh.javascript.info/event-delegation)
+* [ ] [事件委托模式](https://zh.JavaScript.info/event-delegation)
 * [ ] [jquery delegate](https://api.jquery.com/delegate/)
 * [ ] [jquery on](https://api.jquery.com/on/#direct-and-delegated-events)
 * [ ] [github delegate 源码](https://github.com/dgraham/delegated-events#readme)
@@ -190,7 +190,7 @@
 
 但是，您可以在调用 `pushState` 或 `replaceState` 之后手动触发 `popstate` 事件，来模拟类似的效果。示例如下：
 
-```javascript
+```js
 // 监听 popstate 事件
 window.addEventListener('popstate', function (event) {
   console.log('popstate event triggered')

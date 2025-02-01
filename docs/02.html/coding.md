@@ -47,7 +47,7 @@
 * 使用 JavaScript 来检测文本是否溢出。可以通过比较元素的`offsetWidth`和`scrollWidth`来实现。如果`scrollWidth`大于`offsetWidth`，说明文本溢出了。
 * 当文本溢出时，创建一个`popover`来显示完整内容。可以使用一些现成的 JavaScript 库（如 Bootstrap 的`popover`插件）或者自己编写简单的`popover`功能。以下是一个使用自定义 JavaScript 实现简单`popover`功能的示例（不依赖第三方库）：
 
- ```javascript
+ ```js
  document.addEventListener('DOMContentLoaded', function () {
    const textElement = document.getElementById('textElement')
    if (textElement.scrollWidth > textElement.offsetWidth) {
@@ -95,7 +95,7 @@
 * 首先，可以使用`window.location.search`获取 URL 的查询字符串，然后将其传递给`URLSearchParams`构造函数来创建一个`URLSearchParams`对象。
 * 例如：
 
-```javascript
+```js
 const urlParams = new URLSearchParams(window.location.search)
 ```
 
@@ -103,7 +103,7 @@ const urlParams = new URLSearchParams(window.location.search)
 
 * 可以使用`get`方法来获取指定参数的值。例如，要获取名为`paramName`的参数值，可以使用以下代码：
 
-```javascript
+```js
 const paramValue = urlParams.get('paramName')
 ```
 
@@ -111,7 +111,7 @@ const paramValue = urlParams.get('paramName')
 
 * 可以使用`forEach`方法来遍历所有的参数。例如：
 
-```javascript
+```js
 urlParams.forEach((value, key) => {
   console.log(`${key}: ${value}`)
 })
@@ -126,7 +126,7 @@ urlParams.forEach((value, key) => {
 
 2. **示例代码**：
 
-```javascript
+```js
 const queryString = window.location.search.substring(1)
 const params = {}
 const paramPairs = queryString.split('&')
@@ -149,7 +149,7 @@ paramPairs.forEach((pair) => {
 
 2. **使用示例**：
 
-```javascript
+```js
 import qs from 'qs'
 
 const queryString = window.location.search.substring(1)
@@ -160,7 +160,7 @@ const params = qs.parse(queryString)
 
 下面是一个简单的 JavaScript 函数，用于解析 URL 参数并返回一个包含参数键值对的对象：
 
-```javascript
+```js
 function parseUrlParams (url) {
   const params = {}
   const queryString = url.split('?')[1]
@@ -179,7 +179,7 @@ function parseUrlParams (url) {
 
 这个函数接受一个 URL 字符串作为参数，并返回解析后的参数对象。例如：
 
-```javascript
+```js
 const url = 'https://example.com?name=John&age=30&city=New%20York'
 const params = parseUrlParams(url)
 
@@ -195,7 +195,7 @@ console.log(params)
 
 下面是一个修改后的函数，支持解析复杂的 JSON 字符串作为查询参数：
 
-```javascript
+```js
 function parseUrlParams (url) {
   const params = {}
   const queryString = url.split('?')[1]
@@ -223,7 +223,7 @@ function parseUrlParams (url) {
 
 以下是一个示例：
 
-```javascript
+```js
 const url = 'https://example.com?name=John&age=30&address={"city":"New York","zipcode":10001}'
 const params = parseUrlParams(url)
 
@@ -235,7 +235,7 @@ console.log(params)
 
 下面是修改后的函数，支持解析复杂的查询参数，包括嵌套对象和数组：
 
-```javascript
+```js
 function parseUrlParams (url) {
   const params = {}
   const queryString = url.split('?')[1]
@@ -300,7 +300,7 @@ function parseValue (value) {
 
 以下是一个示例：
 
-```javascript
+```js
 const url = 'https://example.com?name=John&age=30&address.city=New%20York&address.zipcode=10001&tags[]=tag1&tags[]=tag2'
 const params = parseUrlParams(url)
 
@@ -428,7 +428,7 @@ body {
 
 3. 使用 JavaScript 动态切换主题：
 
-```javascript
+```js
 function toggleTheme () {
   const root = document.documentElement
   if (root.dataset.theme === 'dark') {
@@ -457,7 +457,7 @@ function toggleTheme () {
 
 2. 手动切换 CSS 类：
 
-```javascript
+```js
 function toggleTheme () {
   const bodyClass = document.body.classList
   if (bodyClass.contains('dark-theme')) {
@@ -470,7 +470,7 @@ function toggleTheme () {
 
  使用 LocalStorage 记录用户主题偏好
 
-```javascript
+```js
 // 当用户切换主题时
 function saveThemePreference () {
   localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light')
@@ -546,7 +546,7 @@ applyThemePreference()
 
 * 在 JavaScript 中，可以通过修改`document.documentElement.style`来改变 CSS 变量的值，从而切换主题色：
 
-```javascript
+```js
 const setTheme = (theme) => {
   document.documentElement.style.setProperty('--primary-color', theme.primaryColor)
   document.documentElement.style.setProperty('--secondary-color', theme.secondaryColor)
@@ -597,7 +597,7 @@ $secondary-color: #6c757d;
 
 * 在 HTML 中，可以通过`<link>`标签引入不同的 CSS 文件来切换主题。在 JavaScript 中，可以动态地修改`<link>`标签的`href`属性来切换主题文件：
 
-```javascript
+```js
 const setTheme = (theme) => {
   const link = document.getElementById('theme-link')
   link.href = theme.href
@@ -644,7 +644,7 @@ setTheme(theme2)
 
 * 在 JavaScript 中，可以通过修改元素的`classList`属性来切换样式类，从而切换主题：
 
-```javascript
+```js
 const setTheme = (theme) => {
   const element = document.getElementById('my-element')
   element.classList.remove('theme1', 'theme2')
@@ -711,7 +711,7 @@ setTheme('theme2')
 
 以下是使用 JavaScript 实现一个`once`函数的方法：
 
-```javascript
+```js
 function once (func) {
   let hasRun = false
   let result
@@ -727,7 +727,7 @@ function once (func) {
 
 你可以这样使用这个函数：
 
-```javascript
+```js
 function expensiveOperation () {
   console.log('执行了昂贵的操作')
   return 42
@@ -752,7 +752,7 @@ console.log(memoizedOperation()) // 直接返回上次的结果 42，不再执�
 * 在客户端上传文件之前，先对整个文件计算哈希值。常用的哈希算法有 MD5、SHA-1、SHA-256 等。
 * 例如，使用 JavaScript 的`crypto-js`库计算文件的 MD5 哈希值：
 
- ```javascript
+ ```js
  import CryptoJS from 'crypto-js'
  
  const calculateFileHash = async (file) => {
@@ -827,7 +827,7 @@ console.log(memoizedOperation()) // 直接返回上次的结果 42，不再执�
  ```nginx
  gzip on;
  gzip_comp_level 6;
- gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+ gzip_types text/plain text/css application/JavaScript application/json image/svg+xml;
  ```
 
 2. **客户端解压缩**：
@@ -849,7 +849,7 @@ console.log(memoizedOperation()) // 直接返回上次的结果 42，不再执�
 * 例如，对于图片、视频等资源，可以在用户滚动到可视区域时再进行加载，避免在页面初始加载时加载所有资源。
 * 对于 JavaScript 模块，可以使用动态导入（dynamic import）的方式实现懒加载：
 
- ```javascript
+ ```js
  const loadModule = async () => {
    const module = await import('./largeModule.js')
  // 使用加载的模块
@@ -918,7 +918,7 @@ console.log(memoizedOperation()) // 直接返回上次的结果 42，不再执�
 
 这个方法涉及到创建一个与目标文本拥有相同样式（字体、字号等）的临时 DOM 元素，将目标文本内容设置到临时元素中，然后插入到文档流（不可见状态下）来测量其尺寸。测量完成后，再从文档中移除该临时元素。
 
-```javascript
+```js
 function getTextWidth (text, font) {
   // 创建一个临时的span元素
   const tempEl = document.createElement('span')
@@ -944,7 +944,7 @@ console.log(getTextWidth(text, font))
 
 如果你不想与 DOM 打交道，也可以使用 Canvas 的 API 来测量文本宽度。`CanvasRenderingContext2D.measureText()` 方法返回一个对象，该对象包含了给定文本渲染后的宽度（以像素为单位）。
 
-```javascript
+```js
 function measureTextWidth (text, font) {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
@@ -1039,7 +1039,7 @@ console.log(measureTextWidth(text, font))
 
 下面是一个简单的示例，展示如何使用 `resize` 事件来获取并打印当前浏览器窗口的宽度和高度：
 
-```javascript
+```js
 // 定义一个函数来处理窗口大小变化
 function handleResize () {
   const width = window.innerWidth
@@ -1060,7 +1060,7 @@ handleResize()
 
 以下是如何应用节流优化的示例：
 
-```javascript
+```js
 function throttle (fn, wait) {
   let inThrottle, lastFn, lastTime
   return function () {
@@ -1202,7 +1202,7 @@ window.addEventListener('resize', throttledHandleResize)
 
 使用 JavaScript 来控制文本的“展开”和“收起”状态。我们监听按钮的点击事件来切换文本的显示状态。
 
-```javascript
+```js
 document.getElementById('toggleButton').addEventListener('click', function () {
   const textContainer = document.getElementById('textContainer')
   const button = document.getElementById('toggleButton')
@@ -1238,7 +1238,7 @@ cute-method}
 
 `beforeunload` 事件在窗口、文档或其资源即将卸载时触发，这一点让它成为在页面关闭前提示用户保存未保存更改的理想选择。在绑定到该事件的处理函数中，你可以执行特定的逻辑，但请注意，按照现代浏览器的安全策略，除非你设置了 `event.returnValue`，否则不会显示自定义的离开提示信息。
 
-```javascript
+```js
 window.addEventListener('beforeunload', (event) => {
   // 在这里执行你的清理逻辑或者其他操作
   // 例如，发送一个统计日志
@@ -1253,7 +1253,7 @@ window.addEventListener('beforeunload', (event) => {
 
 `unload` 事件在用户即将从页面导航走，或关闭页面时触发。你可以在这个事件的处理函数中执行不能阻止页面卸载的清理逻辑。不过需要注意，这个事件的执行时间非常短，某些操作（例如异步操作）可能无法完成。
 
-```javascript
+```js
 window.addEventListener('unload', (event) => {
   // 执行简短的同步操作，例如发送统计信息
   // 注意：这种情况下 navigator.sendBeacon 是更好的选择
@@ -1264,7 +1264,7 @@ window.addEventListener('unload', (event) => {
 
 对于在页面卸载时需要发送数据到服务器的情况，使用 `navigator.sendBeacon` 方法是一种更可靠的方式。它有效地解决了通过异步 AJAX 请求可能导致的数据不被送出的问题。
 
-```javascript
+```js
 window.addEventListener('unload', (event) => {
   navigator.sendBeacon('/log-out', '用户离开')
 })
@@ -1304,7 +1304,7 @@ window.addEventListener('unload', (event) => {
 
  4. 示例代码
 
-```javascript
+```js
 function calculateChunks (fileSize, chunkSize) {
   // 文件总大小（byte），切片大小（byte）
   const chunksCount = Math.ceil(fileSize / chunkSize)
@@ -1403,7 +1403,7 @@ box.addEventListener('touchend', end)
 
 * 第一步：点击右边的导航菜单，利用 scrollIntoView 方法使内容区域对应的元素出现在可视区域中。
 
-```javascript
+```js
 const rightBox = document.querySelector('.rightBox')
 rightBox.addEventListener(
   'click',
@@ -1422,7 +1422,7 @@ rightBox.addEventListener(
 
 * 第二步：页面容器滚动时，当目标元素出现在检测区域内则联动改变对应导航的样式。
 
-```javascript
+```js
 const observer = new IntersectionObserver(
   function (entries) {
     entries.forEach((entry) => {
@@ -1461,7 +1461,7 @@ const observer = new IntersectionObserver(
 1. 监听鼠标右键事件
  在文档或富文本区域上添加 `contextmenu` 事件的监听。
 
-```javascript
+```js
 document.addEventListener('contextmenu', function (event) {
   // 阻止默认的浏览器右键菜单
   event.preventDefault()
@@ -1474,7 +1474,7 @@ document.addEventListener('contextmenu', function (event) {
 2. 显示自定义右键菜单
  创建一个自定义的菜单元素，并根据选择的文本设置菜单选项。
 
-```javascript
+```js
 function showCustomMenu (event) {
   const customMenu = document.createElement('div')
   customMenu.style.position = 'absolute'
@@ -1499,7 +1499,7 @@ function showCustomMenu (event) {
 3. 处理菜单选项的操作
  例如，实现复制选中文本的功能。
 
-```javascript
+```js
 function copySelectedText () {
   const selection = window.getSelection()
   if (selection) {
@@ -1516,7 +1516,7 @@ function copySelectedText () {
 4. 隐藏右键菜单
  当用户点击菜单之外的区域时，隐藏自定义右键菜单。
 
-```javascript
+```js
 document.addEventListener('click', function (event) {
   const customMenu = document.querySelector('.custom-menu')
   if (customMenu && !customMenu.contains(event.target)) {
@@ -1604,7 +1604,7 @@ document.addEventListener('click', function (event) {
 
 **创建与发送消息**
 
-```javascript
+```js
 // 在任何一个 tab 或 iframe 中创建一个广播频道
 const channel = new BroadcastChannel('my-channel-name')
 
@@ -1614,7 +1614,7 @@ channel.postMessage('Hello from a tab!')
 
 **监听消息**
 
-```javascript
+```js
 // 监听这个频道的消息
 channel.addEventListener('message', function (event) {
   if (event.data === 'Hello from a tab!') {
@@ -1627,7 +1627,7 @@ channel.addEventListener('message', function (event) {
 
 假设你有两个标签页，并且你想更新每个标签页来显示另一个标签页中发生的事情，比如用户数量计数器：
 
-```javascript
+```js
 // 在第一个标签页中
 self.addEventListener('load', () => {
   const channel = new BroadcastChannel('visitor-channel')
@@ -1681,7 +1681,7 @@ self.addEventListener('load', () => {
 
 首先，创建名为 `sw.js` 的 ServiceWorker 文件。这个文件在你的网站目录下，会在用户访问网站时注册并激活。
 
-```javascript
+```js
 // sw.js
 
 self.addEventListener('message', (event) => {
@@ -1704,7 +1704,7 @@ self.addEventListener('message', (event) => {
 
 在主页面（index.html）通过 JavaScript 注册这个 ServiceWorker 文件。
 
-```javascript
+```js
 // index.html
 
 if ('serviceWorker' in navigator) {
@@ -1723,7 +1723,7 @@ if ('serviceWorker' in navigator) {
 
 在主页面使用 `navigator.serviceWorker.controller` 来检查是否已经有 ServiceWorker 主动控制。
 
-```javascript
+```js
 if (navigator.serviceWorker.controller) {
   // Post a message to the ServiceWorker
   navigator.serviceWorker.controller.postMessage('This is from main page')
@@ -1742,7 +1742,7 @@ SharedWorker 提供了一种更传统的跨文档通信机制，在不同文档�
 
 1. **创建和连接**:
 
-```javascript
+```js
 // 创建一个 SharedWorker，并指定要加载的脚本
 const myWorker = new SharedWorker('worker.js')
 // 开启端口通信
@@ -1751,7 +1751,7 @@ myWorker.port.start()
 
 2. **端口通信**: 使用端口接收和发送消息
 
-```javascript
+```js
 // 发送数据给worker
 myWorker.port.postMessage({ command: 'start', data: [1, 2, 3] })
 
@@ -1767,7 +1767,7 @@ myWorker.port.onmessage = function (event) {
 
 在 `worker.js` 内，通过 `onconnect` 事件监听端口连接，并在使用 `postMessage` 发送数据的页面之间转发消息。
 
-```javascript
+```js
 // worker.js
 
 // 自身的事件监听器
@@ -1796,7 +1796,7 @@ function someHeavyComputation (data) {
 
 当你希望基于上文提到的 SharedWorker 执行的计算结果通知其他所有的页面更新时，可以利用 `SharedWorkerGlobalScope` 中的 `clients` 对象。
 
-```javascript
+```js
 // 在 worker.js 中
 
 self.addEventListener('message', (e) => {
@@ -1816,7 +1816,7 @@ self.addEventListener('message', (e) => {
 
 虽然 `localStorage` 没有直接提供跨标签页推送机制，但是可以使用 `window.addEventListener('storage', listener)` 监听 `storage` 事件，实现不同标签页间的通信。
 
-```javascript
+```js
 // 标签页1修改了 localStorage
 localStorage.setItem('someKey', 'someValue')
 
@@ -1933,7 +1933,7 @@ window.addEventListener('storage', function (event) {
 
 以下是一个简单的虚拟滚动实现的 JavaScript 代码示例：
 
-```javascript
+```js
 class VirtualScroll {
   constructor (container, itemHeight, totalItems, renderCallback) {
     this.container = container // 容器元素
@@ -2006,7 +2006,7 @@ const virtualScroll = new VirtualScroll(container, 30, 10000, createItem)
 
 以下是一个简化版使用 `IntersectionObserver` 来实现虚拟滚动的例子：
 
-```javascript
+```js
 class VirtualScroll {
   constructor (container, itemHeight, totalItems, renderItem) {
     this.container = container
@@ -2202,7 +2202,7 @@ xhr.send()
 
 实现如下：
 
-```javascript
+```js
 const getJSON = function (url) {
   const promise = new Promise(function (resolve, reject) {
     function handler () {
@@ -2412,7 +2412,7 @@ renderDOMList();
 
 **实现方式1**
 
-```javascript
+```js
 function mySetInterval (callback, interval) {
   let startTime = Date.now()
   let elapsedTime = 0
@@ -2523,7 +2523,7 @@ function _setIntervalUseTimeout (
 
 示例代码（使用 Fetch API）：
 
-```javascript
+```js
 const originalFetch = window.fetch
 window.fetch = function (url, options) {
   // 在请求发出前进行拦截和处理
@@ -2540,7 +2540,7 @@ window.fetch = function (url, options) {
 
 示例代码：
 
-```javascript
+```js
 self.addEventListener('fetch', function (event) {
   // 在请求发出前进行拦截和处理
   console.log('拦截到请求:', event.request.url)
@@ -2560,7 +2560,7 @@ self.addEventListener('fetch', function (event) {
 
 示例代码：
 
-```javascript
+```js
 import axios from 'axios'
 
 // 请求拦截器
@@ -2659,7 +2659,7 @@ axios.get('/api/data')
 
 以下是一个简单的示例代码，演示了如何使用 MutationObserver 监听 DOM 变化：
 
-```javascript
+```js
 // 目标节点
 const targetNode = document.body
 
@@ -2708,7 +2708,7 @@ observer.observe(targetNode, config)
 
 以下是一个封装了支持过期时间的`localStorage`的示例代码：
 
-```javascript
+```js
 class EnhancedLocalStorage {
   constructor () {
     this.prefix = 'enhanced_storage_'
@@ -2744,7 +2744,7 @@ export default enhancedStorage
 
 使用方法如下：
 
-```javascript
+```js
 // 设置带有过期时间的存储项
 enhancedStorage.setItem('myKey', 'myValue', 60) // 60 秒后过期
 
@@ -2773,7 +2773,7 @@ setTimeout(() => {
 
 以下是一个示例代码：
 
-```javascript
+```js
 // 存储数据
 function setLocalStorageData (key, data, expiration) {
   const item = {
@@ -2817,7 +2817,7 @@ console.log(storedData)
 
 该方法返回元素的大小及其相对于视口的位置，包括 top、right、bottom、left 四个属性。我们可以根据这四个属性来判断元素是否在可视区域内。
 
-```javascript
+```js
 function isInViewport (element) {
   const rect = element.getBoundingClientRect()
   return (
@@ -2841,7 +2841,7 @@ if (isInViewport(element)) {
 
 该 API 可以观察元素与其祖先元素或视口交叉的情况，并且可以设置回调函数，当元素的可见性发生变化时会调用该回调函数。
 
-```javascript
+```js
 function callback (entries, observer) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -2910,7 +2910,7 @@ HTML 结构：
 
 JavaScript 代码（your_script.js）：
 
-```javascript
+```js
 // 获取相关元素
 const content = document.getElementById('content')
 const loading = document.getElementById('loading')
@@ -2993,7 +2993,7 @@ function simulateLoad () {
 
 下面是一个使用 AJAX 封装的上传文件函数的示例代码：
 
-```javascript
+```js
 function uploadFile (file, url, progressCallback, successCallback, errorCallback) {
   const xhr = new XMLHttpRequest()
   const formData = new FormData()
@@ -3077,7 +3077,7 @@ uploadButton.addEventListener('click', function () {
 
 下面是一个示例代码，展示了如何使用标志位实现取消请求的效果：
 
-```javascript
+```js
 let isRequestCanceled = false
 
 function sendGetRequest (url, callback) {
@@ -3200,7 +3200,7 @@ Antd（Ant Design）的 Tooltip 组件是通过 CSS 和 JavaScript 结合实现�
 
 下面是一个简单的实现方式：
 
-```javascript
+```js
 const resources = window.performance.getEntriesByType('resource')
 const totalResources = resources.length
 let loadedResources = 0
@@ -3239,7 +3239,7 @@ function updateProgress (progress) {
 
 然后在 JavaScript 中，监听页面加载事件和资源加载事件，实时更新 `progress` 元素的 `value` 属性。
 
-```javascript
+```js
 const progressBar = document.getElementById('progressBar')
 
 window.addEventListener('load', () => {
@@ -3271,7 +3271,7 @@ bashCopy codenpm install nprogress --save
 
 3. 在 JavaScript 中初始化 `nprogress` 并监听页面加载事件和资源加载事件
 
-```javascript
+```js
 // 初始化 nprogress
 NProgress.configure({ showSpinner: false })
 
@@ -3362,7 +3362,7 @@ htmlCopy code<form enctype="multipart/form-data">
 
 当用户选择了本地的文件后，提交表单时就会将文件作为 `FormData` 对象的一部分进行发送。在 JavaScript 中，可以通过 `FormData` 构造函数来创建一个 `FormData` 对象，并使用 `append()` 方法向其中添加上传的文件数据。例如：
 
-```javascript
+```js
 const formData = new FormData()
 const fileInput = document.querySelector('input[type="file"]')
 formData.append('image', fileInput.files[0])
@@ -3378,7 +3378,7 @@ formData.append('image', fileInput.files[0])
 
 以下是一个使用 `koa-body` 中间件解析上传文件的例子：
 
-```javascript
+```js
 const Koa = require('koa')
 const koaBody = require('koa-body')
 

@@ -35,7 +35,7 @@ attribute 方法
 1. `attribute` 有 html 标签申明,值为字符串,大小写不敏感
 2. `properties` 是 DOM 元素中所包含的信息,值有多种可能,大小写敏感
 
-> 参考 [attributes 和 properties](https://javascript.info/dom-attributes-and-properties)
+> 参考 [attributes 和 properties](https://JavaScript.info/dom-attributes-and-properties)
 
 </Answer>
 
@@ -61,7 +61,7 @@ HTML 中前缀为 `data-` 开头的元素属性被称为自定义数据属性（
 
 在 JavaScript 中可以通过以下方式获取该自定义数据属性的值：
 
-```javascript
+```js
 const myDiv = document.getElementById('myDiv')
 const color = myDiv.getAttribute('data-color') // 获取属性值为 "red"
 const dataset = myDiv.dataset // 获取包含所有自定义数据属性的对象 { color: "red" }

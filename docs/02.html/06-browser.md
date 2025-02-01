@@ -330,7 +330,7 @@ process.nextTick, setTimeout 以及 setImmediate 三者的执行顺序
 
 首先来看一个非常经典的例子：
 
-```javascript
+```js
 setImmediate(function () {
   console.log(1) // 7
 }, 0)
@@ -379,7 +379,7 @@ micro-task(微任务): process.nextTick, Promise(原生)，Object.observe，Muta
 整个过程描述起来像是同步操作，实际上是基于Event Loop的事件循环。
 关于micro-task和macro-task的执行顺序，可看下面这个例子(来自《深入浅出Node.js》)：
 
-```javascript
+```js
 // 加入两个nextTick的回调函数
 process.nextTick(function () {
   console.log('nextTick延迟执行1')
@@ -433,7 +433,7 @@ check观察者：setImmediate，setTimeout
 **setImmediate 和 setTimeout 的优先级**
 看下面这个例子：
 
-```javascript
+```js
 setImmediate(function () {
   console.log('1')
 })
@@ -448,7 +448,7 @@ console.log('3')
 上面说到setTimeout 的优先级比 setImmediate的高，其实这种说法是有条件的。
 再看下面这个例子，为setTimeout增加了一个延迟20ms的时间：
 
-```javascript
+```js
 setImmediate(function () {
   console.log('1')
 })
@@ -461,7 +461,7 @@ console.log('3')
 
 试试打印出这个程序的执行时间：
 
-```javascript
+```js
 const t1 = +new Date()
 setImmediate(function () {
   console.log('1')
@@ -482,7 +482,7 @@ console.log('time: ' + (t2 - t1))
 
 程序执行用了23ms, 也就是说，在script(整体代码)执行完之前，setTimeout已经过时了，所以当进入macro-task的时候setTimeout依然优先于setImmediate执行。如果我们把这个值调大一点呢？
 
-```javascript
+```js
 const t1 = +new Date()
 setImmediate(function () {
   console.log('1')
@@ -529,8 +529,8 @@ console.log('script end')
 
  原因
 
-`javascript`的单线程，与它的用途有关。作为浏览器脚本语言，`javascript`的主要用途是与用户互动，以及操作`DOM`。这决定了它只能是单线程，否则会带来很复杂的同步问题。比如，假定`javascript`同时有两个线程，一个在添加`DOM`节点，另外一个是删除`DOM`节点，那浏览器应该应该以哪个为准，如果在增加一个线程进行管理多个线程，虽然解决了问题，但是增加了复杂度，为什么不使用单线程呢，执行有个先后顺序，某个时间只执行单个事件。
-为了利用多核`CPU`的计算能力，`HTML5`提出`Web Worker`标准，运行`javascript`创建多个线程，但是子线程完全受主线程控制，且不得操作`DOM`。所以，这个标准并没有改变`javascript`单线程的本质
+`JavaScript`的单线程，与它的用途有关。作为浏览器脚本语言，`JavaScript`的主要用途是与用户互动，以及操作`DOM`。这决定了它只能是单线程，否则会带来很复杂的同步问题。比如，假定`JavaScript`同时有两个线程，一个在添加`DOM`节点，另外一个是删除`DOM`节点，那浏览器应该应该以哪个为准，如果在增加一个线程进行管理多个线程，虽然解决了问题，但是增加了复杂度，为什么不使用单线程呢，执行有个先后顺序，某个时间只执行单个事件。
+为了利用多核`CPU`的计算能力，`HTML5`提出`Web Worker`标准，运行`JavaScript`创建多个线程，但是子线程完全受主线程控制，且不得操作`DOM`。所以，这个标准并没有改变`JavaScript`单线程的本质
 
  浏览器中的`Event Loop`
 
@@ -562,7 +562,7 @@ while(queue.waitForMessage()) {
 下面是`Event Loop`的示意图
 
 ![](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/10/24/16dfca86d30dc6d0~tplv-t2oaga2asx-zoom-in-crop-mark:3024:0:0:0.awebp)
-一段`javascript`执行的具体流程就是如下：
+一段`JavaScript`执行的具体流程就是如下：
 
 1. 首先执行宏队列中取出第一个，一段`script`就是相当于一个`macrotask`,所以他先会执行同步代码，当遇到例如`setTimeout`的时候，就会把这个异步任务推送到宏队列队尾中。
 2. 当前`macrotask`执行完成以后，就会从微队列中取出位于头部的异步任务进行执行，然后微队列中任务的长度减一。
@@ -663,19 +663,19 @@ Broadcast Channel API 是 HTML5 提供的一种跨页面通信的机制，它可
 
 1. 创建一个 BroadcastChannel 对象，并指定一个唯一的通道名称：
 
-```javascript
+```js
 const channel = new BroadcastChannel('channelName')
 ```
 
 2. 在一个标签页中发送消息：
 
-```javascript
+```js
 channel.postMessage('message')
 ```
 
 3. 在其他标签页中监听消息并做出响应：
 
-```javascript
+```js
 channel.addEventListener('message', event => {
   const message = event.data
   // 处理接收到的消息
@@ -692,7 +692,7 @@ SharedWorker 是 HTML5 提供的一种多页签之间共享的 Web Worker。通�
 
 在一个 JavaScript 文件（worker.js）中创建 SharedWorker：
 
-```javascript
+```js
 // worker.js
 
 // 在共享 Worker 中监听消息
@@ -719,7 +719,7 @@ self.onconnect = function (event) {
 
 在多个页面中分别引入 SharedWorker，并进行通信：
 
-```javascript
+```js
 // 页面1
 const sharedWorker = new SharedWorker('worker.js')
 
@@ -769,14 +769,14 @@ port.onmessage = function (event) {
 
 在发送消息的窗口中：
 
-```javascript
+```js
 // 发送消息到目标窗口
 window.postMessage('Hello, World!', 'https://example.com')
 ```
 
 在接收消息的窗口中：
 
-```javascript
+```js
 // 监听消息事件
 window.addEventListener('message', function (event) {
   // 确保消息来自指定域名
@@ -806,7 +806,7 @@ window.addEventListener('message', function (event) {
 * 当进行 AJAX 请求时，浏览器不会阻塞等待响应，而是继续执行其他代码。一旦请求完成，相应的回调函数会被添加到任务队列中，等待事件循环处理。
 * 例如，使用`XMLHttpRequest`或`fetch`进行网络请求：
 
-```javascript
+```js
 function makeAjaxRequest (url) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
@@ -841,7 +841,7 @@ makeAjaxRequest('https://example.com/data')
 * `setTimeout`和`setInterval`函数会在指定的时间后将回调函数添加到任务队列中。
 * 例如：
 
-```javascript
+```js
 console.log('Start')
 setTimeout(() => {
   console.log('Timeout after 1 second')
@@ -899,7 +899,7 @@ console.log('End')
 * 使用`requestAnimationFrame`函数可以创建一个动画循环，在每一帧更新动画状态并重新绘制界面。这个函数会在浏览器下一次重绘之前调用指定的回调函数，确保动画的流畅性。
 * 例如：
 
-```javascript
+```js
 function animate () {
   // 更新动画状态
   // 例如，移动一个元素的位置
@@ -923,7 +923,7 @@ requestAnimationFrame(animate)
 * 在复杂的界面应用中，可以使用事件循环来异步更新界面，避免阻塞主线程。例如，当有大量数据需要渲染到界面上时，可以将渲染过程分成小块，每次在事件循环的空闲时间进行一部分渲染。
 * 例如：
 
-```javascript
+```js
 function updateUI (data) {
   const chunkSize = 10
   let index = 0
@@ -1016,14 +1016,14 @@ updateUI(largeData)
 
 2. 使用JavaScript获取选择的文件。在JavaScript中，通过访问input元素的files属性来获取选择的文件对象，例如：
 
-```javascript
+```js
 const fileInput = document.getElementById('fileInput')
 const selectedFile = fileInput.files[0]
 ```
 
 3. 读取文件内容。使用FileReader对象来读取文件内容。创建一个新的FileReader对象，然后使用它的readAsText()方法来读取文件内容，例如：
 
-```javascript
+```js
 const reader = new FileReader()
 reader.onload = function (event) {
   const fileContent = event.target.result
@@ -1036,7 +1036,7 @@ reader.readAsText(selectedFile)
 
 5. 写入文件。如果需要将内容写入本地文件，可以使用FileWriter对象来实现。创建一个新的FileWriter对象，然后使用它的write()方法来写入内容，例如：
 
-```javascript
+```js
 const fileOutput = new Blob([fileContent], { type: 'text/plain' })
 const downloadLink = document.createElement('a')
 downloadLink.href = URL.createObjectURL(fileOutput)

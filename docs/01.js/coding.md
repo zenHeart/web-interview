@@ -25,7 +25,7 @@
 
  初步实现
 
-```javascript
+```js
 function debounce (func, wait) {
   let timer
   return function () {
@@ -46,7 +46,7 @@ debounce 函数的 settimeout计时器 ID timeout 变量可以在debounce 函数
 
 相比于未防抖时的
 
-```javascript
+```js
 container.onmousemove = doSomething
 ```
 
@@ -55,7 +55,7 @@ container.onmousemove = doSomething
 
  修复代码
 
-```javascript
+```js
 function debounce (func, wait) {
   let timeout
   return function () {
@@ -78,7 +78,7 @@ function debounce (func, wait) {
 
 在原来基础上，添加一个是否立即执行的功能
 
-```javascript
+```js
 function debounce (func, wait, immediate) {
   let time
   const debounced = function () {
@@ -112,7 +112,7 @@ function debounce (func, wait, immediate) {
 函数也是对象，也可以为其添加属性。
 为了添加 “取消立即执行”功能，为 debounced 函数添加了个 cancel 属性，属性值是一个函数
 
-```javascript
+```js
 debounced.cancel = function () {
   clearTimeout(time)
   time = null
@@ -121,7 +121,7 @@ debounced.cancel = function () {
 
 示意：
 
-```javascript
+```js
 const setSomething = debounce(doSomething, 1000, true)
 container.onmousemove = setSomething
 document.getElementById('button').addEventListener('click', function () {
@@ -131,7 +131,7 @@ document.getElementById('button').addEventListener('click', function () {
 
 整代码
 
-```javascript
+```js
 function debounce (func, wait, immediate) {
   let time
   const debounced = function () {
@@ -192,7 +192,7 @@ function debounce (func, wait, immediate) {
 
  代码如下
 
-```javascript
+```js
 function throttle (func, wait) {
   let previous = 0
   return function () {
@@ -218,7 +218,7 @@ container.onmousemove = throttle(doSomething, 1000)
 
  代码
 
-```javascript
+```js
 function throttle (func, wait) {
   let time, context
   return function () {
@@ -243,7 +243,7 @@ function throttle (func, wait) {
 
 结合二者，实现一次触发，两次执行（先立即执行，结尾也有执行）
 
-```javascript
+```js
 function throttle (func, wait) {
   let previous = 0
   let context, args, time
@@ -281,7 +281,7 @@ function throttle (func, wait) {
 
  完善后代码
 
-```javascript
+```js
 function throttle (func, wait) {
   let previous = 0
   let context, args, time, remaining
@@ -316,7 +316,7 @@ function throttle (func, wait) {
 * leading：false 表示禁用第一次执行
 * trailing: false 表示禁用停止触发的回调
 
-```javascript
+```js
 function throttle (func, wait, options) {
   let time, context, args, result
   let previous = 0
@@ -353,7 +353,7 @@ function throttle (func, wait, options) {
 
 如果想添加一个取消功能：
 
-```javascript
+```js
 throttled.cancel = function () {
   clearTimeout(time)
   time = null
@@ -380,7 +380,7 @@ throttled.cancel = function () {
 
 一个简单的demo:
 
-```javascript
+```js
 const yanle = {
   name: 'yanle',
   sayHello: function (age) {
@@ -416,7 +416,7 @@ apply()方法在使用一个指定的this值和参数值必须是数组类型的
 
 知道了这个基本原来我们再来看看刚才jawil.sayHello.call(lulin, 24)执行的过程：
 
-```javascript
+```js
 // 第一步
 lulin.fn = jawil.sayHello
 // 第二步
@@ -463,7 +463,7 @@ Arguments不知道是何物，赶紧补习，此文也不太适合初学者，�
 
 参数问题其实很简单，我们先偷个懒，我们接着要把这个参数数组放到要执行的函数的参数里面去。
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.applyTwo = function (context) {
   context.fn = this
@@ -506,7 +506,7 @@ Test(1,2,3,4)
 
 第二版代码大致如下：
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.applyTwo = function (context) {
   const args = arguments[1] // 获取传入的数组参数
@@ -544,7 +544,7 @@ jawil.sayHello.applyTwo(lulin, [24])// lulin 24
 
 demo1:
 
-```javascript
+```js
 const name = 'jawil'
 function sayHello () {
   console.log(this.name)
@@ -554,7 +554,7 @@ sayHello.apply(null) // 'jawil'
 
 demo2:
 
-```javascript
+```js
 const name = 'jawil'
 function sayHello () {
   console.log(this.name)
@@ -564,7 +564,7 @@ sayHello.apply() // 'jawil'
 
 2.函数是可以有返回值的
 
-```javascript
+```js
 const obj = {
   name: 'jawil'
 }
@@ -581,7 +581,7 @@ console.log(sayHello.apply(obj, [24]))// {name: "jawil", age: 24}
 
 这些都是小问题，想到了，就很好解决。我们来看看此时的第三版apply模拟方法。
 
-```javascript
+```js
 // 原生JavaScript封装apply方法，第三版
 // eslint-disable-next-line
 Function.prototype.applyThree = function (context) {
@@ -610,7 +610,7 @@ Function.prototype.applyThree = function (context) {
 
 其实一开始就埋下了一个隐患，我们看看这段代码：
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.applyThree = function (context) {
   // eslint-disable-next-line
@@ -631,7 +631,7 @@ Function.prototype.applyThree = function (context) {
 
 ES5对象属性名都是字符串容易造成属性名的冲突。
 
-```javascript
+```js
 const a = { name: 'jawil' }
 a.name = 'lulin'
 // 这样就会重写属性
@@ -641,7 +641,7 @@ ES6引入了一种新的原始数据类型Symbol，表示独一无二的值。
 注意，Symbol函数前不能使用new命令，否则会报错。这是因为生成的Symbol是一个原始类型的值，不是对象
 Symbol函数可以接受一个字符串作为参数，表示对Symbol实例的描述，主要是为了在控制台显示，或者转为字符串时，比较容易区分。
 
-```javascript
+```js
 // 没有参数的情况
 // eslint-disable-next-line
 var s1 = Symbol()
@@ -688,7 +688,7 @@ a[mySymbol] // "Hello!"
 
 继续看下面这个例子：
 
-```javascript
+```js
 const a = {}
 // eslint-disable-next-line
 const name = Symbol()
@@ -707,7 +707,7 @@ Symbol值作为属性名时，该属性还是公开属性，不是私有属性�
 看看第四版的实现demo，想必大家了解上面知识已经猜得到怎么写了，很简单。
 直接加个var fn = Symbol()就行了
 
-```javascript
+```js
 // 原生JavaScript封装apply方法，第四版
 // eslint-disable-next-line
 Function.prototype.applyFour = function (context) {
@@ -744,7 +744,7 @@ Function.prototype.applyFour = function (context) {
 ES5 没有 Sybmol，属性名称只可能是一个字符串，如果我们能做到这个字符串不可预料，
 那么就基本达到目标。要达到不可预期，一个随机数基本上就解决了。
 
-```javascript
+```js
 // 简单模拟Symbol属性
 function jawilSymbol (obj) {
 // eslint-disable-next-line
@@ -797,7 +797,7 @@ console.log(sayHello.applyFive(obj, [24]))// 完美输出{name: "jawil", age: 24
 
 这个不需要讲了吧，道理都一样，就是参数一样，这里我给出我实现的一种方式，看不懂，自己写一个去。
 
-```javascript
+```js
 // 原生JavaScript封装call方法
 // eslint-disable-next-line
 Function.prototype.callOne = function (context) {
@@ -849,7 +849,7 @@ bind方法传递给调用函数的参数可以逐个列出，也可以写在数�
 bind方法与call、apply最大的不同就是前者返回一个绑定上下文的函数，
 而后两者是直接执行了函数。由于这个原因，上面的代码也可以这样写:
 
-```javascript
+```js
 jawil.sayHello.bind(lulin)(24) // hello, i am lulin 24 years old
 jawil.sayHello.bind(lulin)([24]) // hello, i am lulin 24 years old
 ```
@@ -862,7 +862,7 @@ bind方法还可以这样写 fn.bind(obj, arg1)(arg2).
 
 以前解决这个问题的办法通常是缓存this，例如：
 
-```javascript
+```js
 function Person (name) {
   this.nickname = name
   this.distractedGreeting = function () {
@@ -880,7 +880,7 @@ alice.distractedGreeting()
 
 但是现在有一个更好的办法！您可以使用bind。上面的例子中被更新为：
 
-```javascript
+```js
 function Person (name) {
   this.nickname = name
   this.distractedGreeting = function () {
@@ -901,7 +901,7 @@ JavaScript新手经常犯的一个错误是将一个方法从对象中拿出来�
 （比如在回调中传入这个方法。）如果不做特殊处理的话，一般会丢失原来的对象。
 从原来的函数和原来的对象创建一个绑定函数，则能很漂亮地解决这个问题：
 
-```javascript
+```js
 this.x = 9
 const module = {
   x: 81,
@@ -928,7 +928,7 @@ bind 函数在 ECMA-262 第五版才被加入；它可能无法在所有浏览�
 
 了解了以上内容，我们来实现一个初级的bind函数Polyfill:
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.bind = function (context) {
   const me = this
@@ -948,7 +948,7 @@ Function.prototype.bind = function (context) {
 
 进行兼容处理，就是锦上添花了。
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.bind = Function.prototype.bind || function (context) {
   // ...
@@ -961,7 +961,7 @@ Function.prototype.bind = Function.prototype.bind || function (context) {
 上述的实现方式中，我们返回的参数列表里包含：atgsArray.slice(1)，他的问题在于存在预置参数功能丢失的现象。
 想象我们返回的绑定函数中，如果想实现预设传参（就像bind所实现的那样），就面临尴尬的局面。真正实现颗粒化的“完美方式”是：
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.bind = Function.prototype.bind || function (context) {
   const me = this
@@ -976,7 +976,7 @@ Function.prototype.bind = Function.prototype.bind || function (context) {
 
  构造函数场景下的兼容
 
-```javascript
+```js
 // eslint-disable-next-line
 Function.prototype.bind = Function.prototype.bind || function (context) {
   const me = this
@@ -997,7 +997,7 @@ Function.prototype.bind = Function.prototype.bind || function (context) {
 
 我们需要调用bind方法的一定要是一个函数，所以可以在函数体内做一个判断：
 
-```javascript
+```js
 if (typeof this !== 'function') {
   throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable')
 }
@@ -1008,7 +1008,7 @@ if (typeof this !== 'function') {
 
  最终答案
 
-```javascript
+```js
 // 简单模拟Symbol属性
 function jawilSymbol (obj) {
 // eslint-disable-next-line
@@ -1137,7 +1137,7 @@ const person = {
   schools: ['xiaoxue', 'daxue']
 }
 const programer = {
-  language: 'javascript'
+  language: 'JavaScript'
 }
 function extend (p, c) {
   // eslint-disable-next-line
@@ -1157,7 +1157,7 @@ person.schools[0] //输出结果也是lelele，
 
 o.2 普通的深拷贝
 
-```javascript
+```js
 const person = {
   name: 'yanle',
   age: 24,
@@ -1168,7 +1168,7 @@ const person = {
   schools: ['xiaoxue', 'daxue']
 }
 const programer = {
-  language: 'javascript'
+  language: 'JavaScript'
 }
 
 function extendDeeply (p, c = {}) {
@@ -1201,7 +1201,7 @@ o.3 数组对象深贝的简单实现
 
 o.4 利用对象实现深拷贝
 
-```javascript
+```js
 function Parent () {
   this.name = 'abc'
   this.address = { home: 'home' }
@@ -1229,7 +1229,7 @@ console.log(child)
 
 o.5 利用class实现深拷贝
 
-```javascript
+```js
 class Person {
   constructor (name, age) {
     this.name = name
@@ -1283,7 +1283,7 @@ github有开源模块专门解决这个问题的： [https://github.com/unclechu
 
 以下是使用 JavaScript 实现的函数：
 
-```javascript
+```js
 function processString (str) {
   if (str.length <= 256) {
     return str
@@ -1313,7 +1313,7 @@ function processString (str) {
 
 3. 在请求的`.then()`或`.catch()`中记录结束时间戳并计算耗时：
 
-```javascript
+```js
 Promise.resolve().then(response => {
   const endTime = performance.now()
   const duration = endTime - startTime
@@ -1331,7 +1331,7 @@ Promise.resolve().then(response => {
 
 1. 创建`XMLHttpRequest`对象并记录开始时间：
 
-```javascript
+```js
 const xhr = new XMLHttpRequest()
 const startTime = performance.now()
 ```
@@ -1342,7 +1342,7 @@ const startTime = performance.now()
 
 3. 在请求的`onload`、`onerror`等事件处理函数中记录结束时间并计算耗时：
 
-```javascript
+```js
 xhr.onload = function () {
   const endTime = performance.now()
   const duration = endTime - startTime
@@ -1361,7 +1361,7 @@ xhr.onerror = function () {
 
 * 在请求拦截器中记录开始时间，在响应拦截器中记录结束时间并计算耗时。
 
-```javascript
+```js
 axios.interceptors.request.use((config) => {
   config.startTime = performance.now()
   return config
@@ -1404,7 +1404,7 @@ Performance API 提供了一系列的性能测量工具，可以测量网页加�
 
 以下是一个示例代码：
 
-```javascript
+```js
 // 计算页面加载过程中第一个请求的耗时
 const timing = performance.timing
 const requestDuration = timing.responseEnd - timing.requestStart
@@ -1429,7 +1429,7 @@ Web Worker 可以用于统计请求耗时。
 
 1. 创建一个 Web Worker 文件，例如`worker.js`：
 
-```javascript
+```js
 self.onmessage = function (event) {
   const url = event.data.url
   const startTime = performance.now()
@@ -1447,7 +1447,7 @@ self.onmessage = function (event) {
 
 2. 在主页面中使用 Web Worker：
 
-```javascript
+```js
 const worker = new Worker('worker.js')
 const url = 'your-api-url'
 worker.postMessage({ url })
@@ -1475,7 +1475,7 @@ worker.onmessage = function (event) {
 
 2. 示例代码：
 
-```javascript
+```js
 function Person () {}
 Person.prototype.name = 'prototype name'
 
@@ -1497,7 +1497,7 @@ console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在�
 
 2. 示例代码：
 
- ```javascript
+ ```js
  function Person () {}
  Person.prototype.name = 'prototype name'
  
@@ -1524,7 +1524,7 @@ console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在�
 
 2. 示例代码：
 
- ```javascript
+ ```js
  function Person () {}
  Person.prototype.name = 'prototype name'
  
@@ -1559,7 +1559,7 @@ obj.set('address.info', 'chongqing') // 正确方式， 允许添加属性。
 
 以下是使用 JavaScript 实现的`createObject`函数：
 
-```javascript
+```js
 function createObject (initialData) {
   const data = initialData
   return new Proxy(data, {
@@ -1596,7 +1596,7 @@ function createObject (initialData) {
 
 你可以使用以下方式测试这个函数：
 
-```javascript
+```js
 const obj = createObject({ name: 'name' })
 
 obj.name = 'name2' // 不会生效，禁止直接修改属性
@@ -1621,7 +1621,7 @@ console.log(obj.address.info) // 'chongqing'
 
 2. **示例代码**：
 
-```javascript
+```js
 const array = [1, 2, 3, 4, 5]
 
 array.sort(() => Math.random() - 0.5)
@@ -1639,7 +1639,7 @@ console.log(array)
 
 2. **示例代码**：
 
-```javascript
+```js
 function shuffleArray (array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random()(i + 1));
@@ -1661,7 +1661,7 @@ console.log(shuffledArray)
 
 以下是用 JavaScript 手写实现类似于 `lodash.flattenDeep` 的函数来将数组递归展平为一维数组：
 
-```javascript
+```js
 function flattenDeep (arr) {
   let result = []
   for (const item of arr) {
@@ -1677,7 +1677,7 @@ function flattenDeep (arr) {
 
 你可以使用以下方式测试这个函数：
 
-```javascript
+```js
 const nestedArray = [1, [2, [3, [4]]]]
 const flattenedArray = flattenDeep(nestedArray)
 console.log(flattenedArray) // [1, 2, 3, 4]
@@ -1687,7 +1687,7 @@ console.log(flattenedArray) // [1, 2, 3, 4]
 
 要判断一个对象是否为空，并且考虑到对象自身及其原型链上是否有自定义数据或方法，您可以使用以下的 JavaScript 函数来实现：
 
-```javascript
+```js
 function isObjectEmpty (obj) {
   // 首先获取对象自身的属性
   const ownProperties = Object.getOwnPropertyNames(obj)
@@ -1735,7 +1735,7 @@ function isObjectEmpty (obj) {
 
 可以使用这个函数来判断对象是否为空，例如：
 
-```javascript
+```js
 function MyClass () {}
 
 MyClass.prototype.myMethod = function () {}
@@ -1749,7 +1749,7 @@ console.log(isObjectEmpty(instance))
 
 当然可以，以下是一个简单的 JavaScript 函数，用于解析当前页面的 cookie 并将它们存储到一个对象中：
 
-```javascript
+```js
 function parseCookies () {
   // 创建一个空对象来存储解析后的 cookie
   const cookiesObj = {}
@@ -1798,6 +1798,7 @@ console.log(cookies)
 保证同时运行的任务限制。完善代码中 Scheduler 类，使得以下程序能正确输出：
 
 // 实现带并发限制的异步调度器
+
 ```js
 class Scheduler {
   // Your code
@@ -1861,7 +1862,7 @@ class Scheduler {
 
 以下是一个使用Web Workers的简单示例：
 
-```javascript
+```js
 // 主线程代码
 const worker = new Worker('worker.js') // 创建一个新的Web Worker
 
@@ -1890,7 +1891,7 @@ onmessage = function (event) {
 
 使用`requestAnimationFrame`来实现任务分割是一种常见的方式，它可以确保任务在浏览器的每一帧之间执行，从而避免卡顿。以下是一个使用`requestAnimationFrame`来分割任务的简单例子：
 
-```javascript
+```js
 // 假设有一个包含大量元素的数组
 const bigArray = Array.from({ length: 1000000 }, (_, i) => i + 1)
 
@@ -1927,7 +1928,7 @@ processArrayWithRAF()
 
 `const chunkSize = 1000; // 每个小块的大小` 是不能保证不卡的， 那么久需要动态调整 `chunkSize` 的大小， 代码可以参考下面的示范：
 
-```javascript
+```js
 const $result = document.getElementById('result')
 
 // 假设有一个包含大量元素的数组
@@ -1985,7 +1986,7 @@ processArrayWithDynamicChunkSize()
 
 以下是 `window.requestIdleCallback` 的基本用法：
 
-```javascript
+```js
 window.requestIdleCallback(function (deadline) {
   // 在空闲时执行的任务
   // deadline 参数提供了一些信息，比如剩余的空闲时间等
@@ -1996,7 +1997,7 @@ window.requestIdleCallback(function (deadline) {
 
 此外，还有一个配套的 `window.cancelIdleCallback` 方法，用于取消通过 `requestIdleCallback` 请求的回调：
 
-```javascript
+```js
 const id = window.requestIdleCallback(function (deadline) {
   // 在空闲时执行的任务
 })
@@ -2077,7 +2078,7 @@ console.log(formattedDate) // 输出结果为当前日期和时间的格式化�
 
 以下是使用JavaScript实现计算两个日期之间的天数差的函数：
 
-```javascript
+```js
 function calculateDateDifference (date1, date2) {
   // 将日期字符串转换为 Date 对象
   const d1 = new Date(date1)
@@ -2112,7 +2113,7 @@ console.log(difference) // 输出结果为 9
 
 在JavaScript中，可以使用递归的方式实现数组的深度对比。以下是一个示例函数，用于比较两个数组是否相等：
 
-```javascript
+```js
 // 判断对象是否相同
 function deepEqual (obj1, obj2) {
   // 检查类型是否相同
@@ -2174,7 +2175,7 @@ function deepArrayEqual (arr1, arr2) {
 
 使用示例：
 
-```javascript
+```js
 const arr1 = [1, [2, 3], { name: 'John' }]
 const arr2 = [1, [2, 3], { name: 'John' }]
 const arr3 = [1, [2, 3], { name: 'Jane' }]
@@ -2189,7 +2190,7 @@ console.log(deepArrayEqual(arr1, arr3)) // false
 
 在JavaScript中，可以使用递归的方式实现大对象的深度对比。以下是一个示例函数，用于比较两个大对象的每个属性是否相等：
 
-```javascript
+```js
 function deepEqual (obj1, obj2) {
   // 检查类型是否相同
   if (typeof obj1 !== typeof obj2) {
@@ -2220,7 +2221,7 @@ function deepEqual (obj1, obj2) {
 
 使用示例：
 
-```javascript
+```js
 const obj1 = {
   name: 'John',
   age: 30,
@@ -2553,7 +2554,7 @@ request('https://api.example.com/data', { method: 'GET' })
 
 管道函数是一种函数编程的概念，它可以将多个函数串联起来，将前一个函数的输出作为后一个函数的输入。以下是一个简单的实现示例：
 
-```javascript
+```js
 // 简化版的管道函数实现
 function pipe (...fns) {
   return function (input) {
@@ -2610,7 +2611,7 @@ console.log('p.name :>> ', p.name) // p.name :>> Jerome
 
 可以使用以下代码来模拟`new`操作：
 
-```javascript
+```js
 function myNew (constructor, ...args) {
   // 创建一个新对象，该对象继承自构造函数的原型
   const obj = Object.create(constructor.prototype)
@@ -2625,7 +2626,7 @@ function myNew (constructor, ...args) {
 
 使用示例：
 
-```javascript
+```js
 function Person (name, age) {
   this.name = name
   this.age = age
@@ -2653,7 +2654,7 @@ instanceof 运算符用于检测一个对象是否是某个构造函数的实例
 
 示例代码：
 
-```javascript
+```js
 function Person (name) {
   this.name = name
 }
@@ -2670,7 +2671,7 @@ console.log(person instanceof Array) // Output: false
 
 instanceof 运算符用于检测一个对象是否是某个构造函数的实例。可以通过以下方式手写实现 instanceof 运算符。
 
-```javascript
+```js
 function myInstanceof (obj, constructor) {
   let proto = Object.getPrototypeOf(obj)
   while (proto) {
@@ -2695,7 +2696,7 @@ console.log(myInstanceof(arr, RegExp)) // Output: false
 
 Object.create() 方法可以用于创建一个新对象，使其原型与指定的对象完全相同。可以通过以下方式手写实现 Object.create() 方法。
 
-```javascript
+```js
 function createObject (proto) {
   function F () {}
   F.prototype = proto
@@ -2722,7 +2723,7 @@ console.log(anotherPerson.fullName()) // Output: "Jane Doe"
 
 用于创建一个带有缓存功能的函数。下面是一个简化版本的手写实现，展示了如何自己实现 `memoize` 函数：
 
-```javascript
+```js
 function memoize (func) {
   const cache = {}
 
@@ -2768,7 +2769,7 @@ console.log(expensiveFunction(10)) // 再次调用，直接从缓存中获取结
 
 下面是使用 Promise 实现异步流量控制的函数的示例：
 
-```javascript
+```js
 function asyncFlowControl (tasks, limit) {
   let runningCount = 0 // 当前正在运行的任务数
   let index = 0 // 当前执行的任务索引
@@ -2842,7 +2843,7 @@ asyncFlowControl(tasks, 2).then((results) => {
 
 `JSON.stringify` 是一个将 JavaScript 对象或值转换为 JSON 字符串的函数。下面是一个简化的实现，主要考虑以下几种类型：字符串、数字、布尔值、对象和数组。
 
-```javascript
+```js
 function jsonStringify (value) {
   const type = typeof value
 
@@ -2888,7 +2889,7 @@ console.log(jsonStringify(obj)) // {"a":"hello","b":42,"c":true,"d":{"e":"world"
 
 `JSON.parse` 是一个将 JSON 字符串转换为 JavaScript 对象或值的函数。手写一个简化版的 `JSON.parse` 可能不会涵盖所有的细节和兼容性问题，这里提供一个基于 JavaScript 的 eval 函数实现的简单版本。请注意，在实际项目中应使用原生的 `JSON.parse` 函数以保证安全性和性能。
 
-```javascript
+```js
 function jsonParse (jsonString) {
   // eslint-disable-next-line
   return eval('(' + jsonString + ')')
@@ -2918,7 +2919,7 @@ console.log(jsonParse(jsonString))
 
 1. Esprima: Esprima 是一个流行的JavaScript解析器，它可以将JavaScript代码解析成AST。你可以使用它的 JavaScript API 来将代码解析成AST对象。
 
-```javascript
+```js
 const esprima = require('esprima')
 const code = 'var x = 5;'
 const ast = esprima.parseScript(code)
@@ -2927,7 +2928,7 @@ console.log(ast)
 
 2. Acorn: Acorn 是另一个广泛使用的JavaScript解析器，它也可以将JavaScript代码解析成AST。你可以使用它的 JavaScript API 来解析代码并获取AST对象。
 
-```javascript
+```js
 const acorn = require('acorn')
 const code = 'var x = 5;'
 const ast = acorn.parse(code, { ecmaVersion: 2020 })
@@ -2936,7 +2937,7 @@ console.log(ast)
 
 3. Babel: Babel 是一个功能强大的JavaScript编译器，它可以将代码转换为AST，并提供了丰富的插件系统，用于转换和操作AST。你可以使用 Babel 的 API 来解析代码并获取AST对象。
 
-```javascript
+```js
 const babelParser = require('@babel/parser')
 const code = 'const x = 5;'
 const ast = babelParser.parse(code, { sourceType: 'module' })
@@ -3080,7 +3081,7 @@ if (typeof lastPromise.then !== 'function') {
 
 1. 使用正则表达式
 
-```javascript
+```js
 function formatNumber (num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
@@ -3090,7 +3091,7 @@ console.log(formatNumber(123456789)) // 输出 123,456,789
 
 2. 使用 Intl.NumberFormat
 
-```javascript
+```js
 function formatNumber (num) {
   return new Intl.NumberFormat().format(num)
 }
@@ -3100,7 +3101,7 @@ console.log(formatNumber(123456789)) // 输出 123,456,789（在大多数环境�
 
 3. 使用自带千分位分隔符的 toLocaleString
 
-```javascript
+```js
 function formatNumber (num) {
   return num.toLocaleString()
 }
@@ -3118,7 +3119,7 @@ console.log(formatNumber(123456789)) // 输出 123,456,789（在大多数环境�
 
 以下是一个示例代码：
 
-```javascript
+```js
 function intersection (nums1, nums2) {
   const set1 = new Set(nums1)
   const res = []
@@ -3135,7 +3136,7 @@ function intersection (nums1, nums2) {
 
 使用示例：
 
-```javascript
+```js
 const nums1 = [1, 2, 2, 1]
 const nums2 = [2, 2]
 
@@ -3148,7 +3149,7 @@ console.log(intersection(nums1, nums2)) // [2]
 
 可以通过在 Number 原型上定义 add 和 minus 方法来实现该功能，代码如下：
 
-```javascript
+```js
 // eslint-disable-next-line
 Number.prototype.add = function (num) {
   return this + num
@@ -3266,7 +3267,7 @@ if (a == 1 && a == 2 && a == 3) {
 
 下面是一个简单的示例：
 
-```javascript
+```js
 class Subject {
   constructor () {
     this.observers = []
@@ -3324,7 +3325,7 @@ subject.notifyObservers()
 
 下面是一个简单的实现订阅-发布模式的例子：
 
-```javascript
+```js
 class EventEmitter {
   constructor () {
     this._events = {}
@@ -3359,7 +3360,7 @@ class EventEmitter {
 
 使用方法如下：
 
-```javascript
+```js
 const emitter = new EventEmitter()
 
 // 订阅事件
@@ -3412,7 +3413,7 @@ csharpCopy codeevent: hello, world
 
 以下是手写实现 `Promise.allSettled` 方法的代码：
 
-```javascript
+```js
 function allSettled (promises) {
   return new Promise((resolve) => {
     const results = []
@@ -3446,7 +3447,7 @@ function allSettled (promises) {
 
 下面是手写实现 `Promise.all()` 方法的代码：
 
-```javascript
+```js
 Promise.all = function (promises) {
   return new Promise((resolve, reject) => {
     const results = []
@@ -3481,7 +3482,7 @@ Promise.all = function (promises) {
 
 下面是手写实现 `Promise.race()` 方法的代码：
 
-```javascript
+```js
 Promise.race = function (promises) {
   return new Promise((resolve, reject) => {
     promises.forEach((promise) => {

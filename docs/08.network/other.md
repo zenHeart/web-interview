@@ -10,7 +10,7 @@
 
 * 示例代码：
 
-```javascript
+```js
 function checkNetworkStatus () {
   if (navigator.onLine) {
     console.log('网络连接正常')
@@ -33,7 +33,7 @@ window.addEventListener('offline', checkNetworkStatus)
 
 * 示例代码：
 
-```javascript
+```js
 function measureNetworkLatency () {
   const startTime = performance.now()
   fetch('small-test-file.txt')
@@ -103,7 +103,7 @@ Protobuf 的核心思想是使用协议（Protocol）来定义数据的结构和
 
 2. 使用备用资源路径：在 JavaScript 中使用备用的资源路径，当主要的资源路径加载失败时，切换到备用路径。
 
-```javascript
+```js
 const script = document.createElement('script')
 script.src = 'https://cdn.example.com/script.js'
 script.onerror = function () {
@@ -117,7 +117,7 @@ document.head.appendChild(script)
 
 3. 使用动态加载和错误处理：使用 JavaScript 动态加载静态资源，并处理加载失败的情况。
 
-```javascript
+```js
 function loadScript (src, backupSrc) {
   return new Promise(function (resolve, reject) {
     const script = document.createElement('script')

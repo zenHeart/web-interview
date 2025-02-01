@@ -281,7 +281,7 @@ defer:
 
 3. `defer`：可选属性，用于指示浏览器延迟执行脚本，直到文档解析完成。这样可以确保脚本在文档完全呈现之前不会执行。例如：`<script src="script.js" defer></script>`。
 
-4. `type`：指定脚本语言的MIME类型。通常是`text/javascript`或者`module`（用于ES6模块）。如果未指定该属性，浏览器默认将其视为JavaScript类型。例如：`<script type="text/javascript">...</script>`。
+4. `type`：指定脚本语言的MIME类型。通常是`text/JavaScript`或者`module`（用于ES6模块）。如果未指定该属性，浏览器默认将其视为JavaScript类型。例如：`<script type="text/JavaScript">...</script>`。
 
 5. `charset`：指定外部脚本文件的字符编码。例如：`<script src="script.js" charset="UTF-8"></script>`。
 
@@ -407,7 +407,7 @@ HTML 中的行内元素（Inline elements）和块级元素（Block-level elemen
 
 * 例如，在后端使用 Node.js 和 Express 框架，可以这样设置响应头来提供一个文件下载：
 
-```javascript
+```js
 const express = require('express')
 const app = express()
 const fs = require('fs')
@@ -438,7 +438,7 @@ app.listen(3000, () => {
 
 * 例如：
 
-```javascript
+```js
 const data = 'This is the content of the file'
 const blob = new Blob([data], { type: 'text/plain' })
 ```
@@ -451,7 +451,7 @@ const blob = new Blob([data], { type: 'text/plain' })
 
 * 例如：
 
-```javascript
+```js
 const a = document.createElement('a')
 a.style.display = 'none'
 a.href = url

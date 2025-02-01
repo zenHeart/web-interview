@@ -28,7 +28,7 @@
 1. 创建一个主入口文件，例如`index.js`。
 2. 在入口文件中，引入`commander`模块并进行配置：
 
- ```javascript
+ ```js
  const program = require('commander')
  
  program
@@ -116,7 +116,7 @@
 
 要实现一个命令行工具来统计输入目录下指定代码的行数，你可以使用Node.js的`fs`模块来读取文件内容并进行行数统计。以下是一个简单的实现示例：
 
-```javascript
+```js
 const fs = require('fs')
 const path = require('path')
 

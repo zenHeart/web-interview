@@ -20,6 +20,7 @@ console.log(1)
    - 应用场景：前端字符串处理、性能优化
 
 暴力
+
 ```typescript
 function lengthOfLongestSubstring (s: string): number {
   let maxLength = 0
@@ -40,6 +41,7 @@ function lengthOfLongestSubstring (s: string): number {
 ```
 
 滑动窗口
+
 ```typescript
 function lengthOfLongestSubstring (s: string): number {
   const seen = new Map<string, number>()
@@ -73,6 +75,7 @@ function lengthOfLongestSubstring (s: string): number {
    - 应用场景：文本处理、算法优化
 
 暴力
+
 ```typescript
 // 暴力 x 2
 function isPalindromic (s: string) {
@@ -101,6 +104,7 @@ function longestPalindrome (s: string): string {
 ```
 
 中心扩展
+
 ```typescript
 function longestPalindrome (s: string): string {
   if (s.length < 2) return s
@@ -408,6 +412,7 @@ async function promiseLimit<T> (
    - 应用场景：组合状态管理、路径规划
 
 暴力 O(n * n!)
+
 ```typescript
 function permute (nums: number[]): number[][] {
   let current = [[]]
@@ -430,6 +435,7 @@ function permute (nums: number[]): number[][] {
 ```
 
 回溯算法 O(n!)
+
 ```typescript
 /*
 []
@@ -481,6 +487,7 @@ function permute (nums: number[]): number[][] {
    - 应用场景：图形处理、连通性问题
 
 dfs
+
 ```typescript
 function numIslands (grid: string[][]): number {
   if (grid.length === 0) return 0
@@ -520,6 +527,7 @@ function numIslands (grid: string[][]): number {
 ```
 
 bfs
+
 ```typescript
 function numIslands (grid: string[][]): number {
   if (grid.length === 0) return 0
@@ -935,7 +943,7 @@ console.log(foundNode) // 将打印出 id 为 3 的节点
 
 使用JavaScript实现的代码：
 
-```javascript
+```js
 function isCyclicLinkedList (head) {
   if (!head) {
     return false
@@ -1024,7 +1032,7 @@ DFS 可以使用递归或栈来实现。
 
 递归实现：
 
-```javascript
+```js
 function dfsRecursive (node, visited) {
   if (!node || visited.has(node)) {
     return
@@ -1039,7 +1047,7 @@ function dfsRecursive (node, visited) {
 
 栈实现：
 
-```javascript
+```js
 function dfsStack (node) {
   const visited = new Set()
   const stack = [node]
@@ -1065,7 +1073,7 @@ BFS 可以使用队列来实现。
 
 队列实现：
 
-```javascript
+```js
 function bfsQueue (node) {
   const visited = new Set()
   const queue = [node]
@@ -1090,7 +1098,7 @@ function bfsQueue (node) {
 
 深度优先思想实现拷贝函数可以采用递归的方式遍历对象或数组，对每个元素进行复制。如果当前元素是一个对象或数组，则递归调用拷贝函数，如果是基本数据类型则直接进行复制。以下是一个用深度优先思想实现拷贝函数的示例代码：
 
-```javascript
+```js
 function deepClone (obj) {
   // 如果obj是基本数据类型或null，则直接返回
   if (typeof obj !== 'object' || obj === null) {
@@ -1116,7 +1124,7 @@ function deepClone (obj) {
 
 广度优先思想实现拷贝函数可以使用队列的方式，将每个元素放入队列中，然后循环遍历队列。如果当前元素是一个对象或数组，则将其属性或元素放入队列中，然后继续循环遍历队列。如果是基本数据类型则直接进行复制。以下是一个用广度优先思想实现拷贝函数的示例代码：
 
-```javascript
+```js
 function breadthClone (obj) {
   // 如果obj是基本数据类型或null，则直接返回
   if (typeof obj !== 'object' || obj === null) {

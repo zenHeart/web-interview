@@ -13,7 +13,7 @@ npm  test
 ## 资料清单
 
 * [ ] [front-end-handbook](https://frontendmasters.com/guides/front-end-handbook/2024/)
-* [ ] [26 Important JavaScript Questions](https://www.toptal.com/javascript/interview-questions) 已收录
+* [ ] [26 Important JavaScript Questions](https://www.toptal.com/JavaScript/interview-questions) 已收录
 * [ ] [Front-end-Developer-Interview-Questions](https://github.com/h5bp/Front-end-Developer-Interview-Questions) 已收录
 * [ ] [前端面试手册](https://github.com/yangshun/front-end-interview-handbook/blob/master/Translations/Chinese/questions/css-questions.md#%E8%AF%B7%E9%98%90%E8%BF%B0%E5%9D%97%E6%A0%BC%E5%BC%8F%E5%8C%96%E4%B8%8A%E4%B8%8B%E6%96%87block-formatting-context%E5%8F%8A%E5%85%B6%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
 * [ ] web 面试官系列 <https://vue3js.cn/interview/>
@@ -32,12 +32,12 @@ npm  test
 * [ ] [coding-interview-university](https://github.com/jwasham/coding-interview-university) google 面试题及流程包含算法,需整理
 * [ ] [fe-interview](https://github.com/haizlin/fe-interview) 需要长期追踪的面试题库
 * [ ] hackerrank <https://www.hackerrank.com/interview/interview-preparation-kit>
-* [ ] <https://www.educative.io/path/ace-javascript-coding-interview>
+* [ ] <https://www.educative.io/path/ace-JavaScript-coding-interview>
 * [ ] github interview <https://performancejs.com/post/hde6d32/The-Best-Frontend-JavaScript-Interview-Questions-(Written-by-a-Frontend-Engineer)>
 * [ ] awsome interview <https://github.com/Awesome-Interview/Awesome-Interview?tab=readme-ov-file>
 * [ ] frontend interview <https://github.com/evestorm/front-end-interview>
 * [ ] [剑指前端](https://github.com/hzfe/awesome-interview)
-* [ ] [javascript  中文网](https://www.javascriptcn.com/interview/)
+* [ ] [JavaScript  中文网](https://www.javascriptcn.com/interview/)
 * [ ] [hpbn](https://hpbn.co/)
 * [ ] [可访问性问题列表](https://scottaohara.github.io/accessibility_interview_questions/)
 * [ ] [awsome list](https://github.com/DopplerHQ/awesome-interview-questions?tab=readme-ov-file#html)

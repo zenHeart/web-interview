@@ -8,7 +8,7 @@
 
 1. 创建 Worker 通过 new 的方式来生成一个实例，参数为 url 地址，该地址必须和其创建者是同源的。
 
-```javascript
+```js
 const worker = new Worker('./worker.js') // 参数是url，这个url必须与创建者同源
 ```
 
@@ -29,7 +29,7 @@ Worker 的作用域跟主线程中的 Window 是相互独立的，并且 Worker 
 
 示例：
 
-```javascript
+```js
 // Worker.js
 importScripts('constant.js')
 // 下面就可以获取到 constant.js 中的所有变量了
@@ -134,7 +134,7 @@ ServiceWorker 一般作为 Web 应用程序、浏览器和网络之间的代理�
 
 2. 安装 ServiceWorker
 
-```javascript
+```js
 // serviceWorker.js
 const CACHE_NAME = 'cache-v1'
 // 需要缓存的文件
@@ -161,7 +161,7 @@ self.oninstall = (event) => {
 
 3. 缓存和返回请求
 
-```javascript
+```js
 self.onfetch = (event) => {
   event.respondWith(
     caches

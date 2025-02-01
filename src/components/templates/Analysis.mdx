@@ -1,0 +1,19 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+  defaultValue="Interviewee"
+  values={[
+    {label: '应聘者', value: 'Interviewee'},
+    {label: '面试官', value: 'Interviewer'},
+  ]}>
+<TabItem value="Interviewee">
+ {props.children[0]}
+
+</TabItem>
+<TabItem value="orange">
+</TabItem>
+<TabItem value="banana">
+ {props.children[1]}
+</TabItem>
+</Tabs>

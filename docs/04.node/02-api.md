@@ -9,7 +9,7 @@
 * `nextTick`会在当前事件循环的当前阶段结束后立即执行回调函数。这意味着它会在所有同步代码执行完毕后，但在事件循环进入下一个阶段之前执行。
 * 例如：
 
- ```javascript
+ ```js
  console.log('Sync code')
  process.nextTick(() => {
    console.log('NextTick callback')
@@ -24,7 +24,7 @@
 * `setTimeout`会在指定的延迟时间过后，将回调函数添加到事件循环的定时器阶段进行执行。实际的执行时间可能会比指定的延迟时间稍长，因为它取决于事件循环的负载和其他正在等待执行的任务。
 * 例如：
 
- ```javascript
+ ```js
  console.log('Sync code')
  setTimeout(() => {
    console.log('Timeout callback')
@@ -113,7 +113,7 @@ Node.js的异步代码可以充分利用多核优势，主要有两个原因：
 
 1. `spawn(command[, args][, options])`: 这个方法用于启动一个新的进程，并可以执行指定的命令。它返回一个`ChildProcess`对象，通过该对象可以与子进程进行通信。例如：
 
-```javascript
+```js
 const { spawn } = require('child_process')
 
 const ls = spawn('ls', ['-l'])
@@ -133,7 +133,7 @@ ls.on('close', (code) => {
 
 2. `exec(command[, options][, callback])`: 这个方法用于执行一个命令，并返回输出结果。它将整个命令作为一个字符串参数传递。可以通过回调函数获取命令执行的结果。例如：
 
-```javascript
+```js
 const { exec } = require('child_process')
 
 exec('ls -l', (error, stdout, stderr) => {
@@ -148,7 +148,7 @@ exec('ls -l', (error, stdout, stderr) => {
 
 3. `fork(modulePath[, args][, options])`: 这个方法用于创建一个新的Node.js进程，并在该进程中执行指定的模块。它是通过`child_process.fork()`方法创建的子进程。例如：
 
-```javascript
+```js
 const { fork } = require('child_process')
 
 const child = fork('child.js')
@@ -168,7 +168,7 @@ child.send('Hello from parent')
 
 1. 标准输入和标准输出：子进程可以通过标准输入（stdin）和标准输出（stdout）进行通信。父进程可以通过`stdin`向子进程发送数据，子进程可以通过`stdout`向父进程发送数据。例如：
 
-```javascript
+```js
 // Parent.js
 const { spawn } = require('child_process')
 
@@ -181,7 +181,7 @@ child.stdout.on('data', (data) => {
 child.stdin.write('Hello child\n')
 ```
 
-```javascript
+```js
 // Child.js
 process.stdin.on('data', (data) => {
   console.log(`Received data from parent: ${data}`)
@@ -192,7 +192,7 @@ process.stdout.write('Hello parent\n')
 
 2. 事件机制：子进程可以通过事件机制与父进程进行通信。子进程可以使用`process.send()`方法发送消息给父进程，父进程可以通过监听`message`事件来接收子进程发送的消息。例如：
 
-```javascript
+```js
 // Parent.js
 const { fork } = require('child_process')
 
@@ -205,7 +205,7 @@ child.on('message', (message) => {
 child.send('Hello child')
 ```
 
-```javascript
+```js
 // Child.js
 process.on('message', (message) => {
   console.log(`Received message from parent: ${message}`)

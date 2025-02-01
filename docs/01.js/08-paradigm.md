@@ -66,7 +66,7 @@ function currying (fn, ...args) {
 
 以下是一个简单的柯里化函数的例子：
 
-```javascript
+```js
 function curry (fn) {
   return function curried (...args) {
     if (args.length >= fn.length) {
@@ -102,7 +102,7 @@ console.log(curriedSum(1, 2, 3)) // 6
 
 例：
 
-```javascript
+```js
 function multiply (a, b) {
   return ab
 }
@@ -118,7 +118,7 @@ console.log(triple(5)) // 15
 
 例：
 
-```javascript
+```js
 const data = [1, 2, 3, 4, 5]
 const curriedFilter = curry((predicate, arr) => arr.filter(predicate))
 
@@ -134,7 +134,7 @@ console.log(result) // [4, 5]
 
 例：
 
-```javascript
+```js
 const curriedMap = curry((fn, arr) => arr.map(fn))
 
 const doubleAll = curriedMap(double)

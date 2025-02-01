@@ -12,7 +12,7 @@
 分区过程：将比这个“基准”大的数全放到“基准”的右边，小于或等于“基准”的数全放到“基准”的左边。
 再对左右区间重复第二步，直到各区间只有一个数。
 
-```javascript
+```js
 const quickSort = function (arr) {
   if (arr.length <= 1) { return arr }
   const pivotIndex = Math.floor(arr.length / 2) // 基准位置（理论上可任意选取）
@@ -36,7 +36,7 @@ const quickSort = function (arr) {
 再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。
 重复第二步，直到所有元素均排序完毕。
 
-```javascript
+```js
 function selectionSort (arr) {
   const len = arr.length
   let minIndex, temp
@@ -60,7 +60,7 @@ function selectionSort (arr) {
 将第一待排序序列第一个元素看做一个有序序列，把第二个元素到最后一个元素当成是未排序序列。
 从头到尾依次扫描未排序序列，将扫描到的每个元素插入有序序列的适当位置。（如果待插入的元素与有序序列中的某个元素相等，则将待插入元素插入到相等元素的后面。）
 
-```javascript
+```js
 function insertionSort (arr) {
   const len = arr.length
   let preIndex, current
@@ -84,7 +84,7 @@ function insertionSort (arr) {
 针对所有的元素重复以上的步骤，除了最后一个。
 持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。
 
-```javascript
+```js
 function bubbleSort (arr) {
   const len = arr.length
   for (let i = 0; i < len - 1; i++) {
@@ -111,7 +111,7 @@ function bubbleSort (arr) {
 每趟排序，根据对应的增量ti，将待排序列分割成若干长度为m 的子序列，分别对各子表进行直接插入排序。
 仅增量因子为1 时，整个序列作为一个表来处理，表长度即为整个序列的长度。
 
-```javascript
+```js
 function shellSort (arr) {
   const len = arr.length
   let temp

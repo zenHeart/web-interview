@@ -17,7 +17,7 @@ Webpack Tapable 的使用分为三个步骤：
 
 1. 定义一个新的 Tapable 实例：在 Webpack 插件中定义一个新的 Tapable 实例，并定义需要监听的事件。
 
-```javascript
+```js
 const { SyncHook } = require('tapable')
 
 class MyPlugin {
@@ -42,7 +42,7 @@ class MyPlugin {
 
 2. 触发事件：在 Webpack 的编译过程中，调用 Tapable 实例的触发方法，触发事件。
 
-```javascript
+```js
 compiler.hooks.beforeRun.call(compiler)
 // Webpack is starting to run...
 
@@ -60,7 +60,7 @@ compiler.run((err, stats) => {
 
 3. 注册插件：在 Webpack 的配置文件中，将插件实例注册到 Webpack 中。
 
-```javascript
+```js
 const MyPlugin = require('./my-plugin')
 
 module.exports = {
@@ -72,7 +72,7 @@ module.exports = {
 
 * SyncHook：同步 Hook，按照注册的顺序同步执行所有回调函数。
 
-```javascript
+```js
 const { SyncHook } = require('tapable')
 
 const hook = new SyncHook(['arg1', 'arg2'])
@@ -92,7 +92,7 @@ hook.call('Hello', 'world')
 
 * AsyncParallelHook：异步 Hook，按照注册的顺序异步执行所有回调函数，不关心回调函数的返回值。
 
-```javascript
+```js
 const { AsyncParallelHook } = require('tapable')
 
 const hook = new AsyncParallelHook(['arg1', 'arg2'])
@@ -118,7 +118,7 @@ Webpack Tapable 是基于发布-订阅模式的一个插件系统，它提供了
 
 下面是一个简单的自定义 Tapable 的实现：
 
-```javascript
+```js
 class Tapable {
   constructor () {
     this.hooks = {}
@@ -146,7 +146,7 @@ class Tapable {
 
 下面是一个使用自定义 Tapable 的例子：
 
-```javascript
+```js
 const tapable = new Tapable()
 
 tapable.tap('event1', (arg1, arg2) => {
@@ -497,7 +497,7 @@ Hash 码的生成可以被 webpack 配置的 hashFunction，hashDigest，hashDig
 
 在 webpack 的配置文件中，可以通过如下方式设定 hash:
 
-```javascript
+```js
 const config = {
   output: {
     filename: '[name].[chunkhash].js'
@@ -509,7 +509,7 @@ const config = {
 
 Webpack打包运行时chunk的方式可以通过optimization.runtimeChunk选项来配置。下面是一个示例的配置：
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -524,7 +524,7 @@ module.exports = {
 
 1. 通过script标签加载：可以使用HtmlWebpackPlugin插件来自动将运行时chunk添加到 HTML 文件中。在webpack配置文件中添加以下配置：
 
-```javascript
+```js
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
@@ -542,7 +542,7 @@ module.exports = {
 
 2. 通过import语句动态加载：可以使用动态导入的方式来加载运行时chunk。在需要加载运行时chunk的地方，使用以下代码：
 
-```javascript
+```js
 import(/* webpackChunkName: "runtime" */ './path/to/runtime').then((runtime) => {
   // 运行时chunk加载完成后的逻辑
 })
@@ -559,7 +559,7 @@ import(/* webpackChunkName: "runtime" */ './path/to/runtime').then((runtime) => 
 
 首先，在Webpack的配置文件中，将这几个文件指定为单独的`entry`点。例如：
 
-```javascript
+```js
 module.exports = {
   // ...
   entry: {
@@ -573,7 +573,7 @@ module.exports = {
 
 然后，在你的业务代码中，通过`import()`动态导入这些文件。例如：
 
-```javascript
+```js
 function loadRuntime () {
   return import('./runtime.js')
 }
@@ -656,7 +656,7 @@ Webpack 是一个现代 JavaScript 应用程序的静态模块打包器。配置
 
 在 webpack 配置文件中，可以直接设置 `mode` 的值：
 
-```javascript
+```js
 module.exports = {
   mode: 'development' // 'production' 或 'none'
   // 其他配置...
@@ -688,7 +688,7 @@ webpack --mode=production
 
 1. 在Webpack配置文件中，使用entry属性指定多个入口文件，并为每个入口文件命名一个唯一的键名。例如：
 
-```javascript
+```js
 module.exports = {
   entry: {
     app1: './src/app1.js',
@@ -702,7 +702,7 @@ module.exports = {
 
 2. 使用SplitChunks插件进行公共依赖的提取。在Webpack配置文件中添加以下配置：
 
-```javascript
+```js
 module.exports = {
   // 其他配置项...
   optimization: {
@@ -723,7 +723,7 @@ module.exports = {
 
 3. 添加output配置，指定打包后文件的输出路径和文件名。例如：
 
-```javascript
+```js
 module.exports = {
   // 其他配置项...
   output: {
@@ -1270,7 +1270,7 @@ Tree Shaking 是一个通过清除未引用代码（dead-code）的过程，可�
 
 Webpack 通过压缩输出文件来减小包大小，如删除未使用的代码、缩短变量名等。确保在生产环境中启用了 UglifyJS 插件或 TerserPlugin。
 
-```javascript
+```js
 const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
@@ -1299,7 +1299,7 @@ import(/* webpackChunkName: "my-chunk-name" */ 'path/to/myModule').then((module)
 
 通过配置 externals 选项，可以阻止 Webpack 将某些 import 的包打包到 bundle 中，而是在运行时(runtime)再去从外部获取这些扩展依赖。
 
-```javascript
+```js
 module.exports = {
   externals: {
     jquery: 'jQuery'
@@ -1311,7 +1311,7 @@ module.exports = {
 
 使用 `[contenthash]` 替换 `[hash]` 或 `[chunkhash]` 来为输出文件命名，这确保了只有当文件内容改变时，文件名称才会改变，可以更好地利用浏览器缓存。
 
-```javascript
+```js
 const config = {
   output: {
     filename: '[name].[contenthash].js'
@@ -1323,7 +1323,7 @@ const config = {
 
 使用 PurgeCSS 或`purify-css`等工具检查你的 CSS 文件，自动去除未使用的 CSS，可以极大地压缩 CSS 的体积。
 
-```javascript
+```js
 const PurgecssPlugin = require('purgecss-webpack-plugin')
 ```
 
@@ -1396,7 +1396,7 @@ const config = {
 
 在你的 `webpack.config.js` 配置文件中，找到或添加 `optimization` 部分，并在 `splitChunks` 中配置如下：
 
-```javascript
+```js
 module.exports = {
   // ...其他配置
 
@@ -1433,7 +1433,7 @@ module.exports = {
 
 使用 `splitChunks` 的基本配置如下：
 
-```javascript
+```js
 module.exports = {
   // ...其他配置...
   optimization: {
@@ -1469,7 +1469,7 @@ module.exports = {
 
  基本配置
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -1512,7 +1512,7 @@ module.exports = {
 
 使用实例：
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -1549,7 +1549,7 @@ module.exports = {
 
 缓存组（cacheGroups）能让你对分割出来的 chunks 进一步细分和控制。
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -1578,7 +1578,7 @@ module.exports = {
 
 当你使用像`import()`这样的动态导入语法时，`splitChunks`插件会自动进行代码分割。
 
-```javascript
+```js
 function getComponent () {
   // 当我们调用 import() 时，webpack 会对 lodash 进行代码分割
   return import('lodash').then(({ default: _ }) => {
@@ -1621,7 +1621,7 @@ SplitChunksPlugin的默认配置包括以下三个块：
 
 其中，第二个块是最常见的，它包括从多个入口点引用的公共模块。我们可以通过以下示例来说明：
 
-```javascript
+```js
 // webpack.config.js
 module.exports = {
   entry: {
@@ -1646,7 +1646,7 @@ module.exports = {
 
 当我们打包时，Webpack将分析这两个入口点，并发现它们都引用了`node_modules`目录下的依赖，于是将这些依赖提取到`vendors`代码块中。我们可以在`main.js`和`other.js`中看到这样的代码：
 
-```javascript
+```js
 import 'lodash' // 公共模块被引用
 ```
 
@@ -1731,7 +1731,7 @@ import('./path/to/module')
 
 2. 使用 require.ensure: 异步加载模块并将其放置到指定的 chunk 中。
 
-```javascript
+```js
 require.ensure(['./path/to/module'], function (require) {
   const module = require('./path/to/module')
   // do something with module
@@ -1750,7 +1750,7 @@ load(function (module) {
 
 4. 使用webpack的require.ensure API
 
-```javascript
+```js
 require.ensure([], function (require) {
   // require dependencies
   const foo = require('./foo')
@@ -1760,7 +1760,7 @@ require.ensure([], function (require) {
 
 5. 使用webpack的import动态导入
 
-```javascript
+```js
 import('./dynamic-module.js').then(module => {
   // do something with module
 })
@@ -1788,7 +1788,7 @@ import('./dynamic-module.js').then(module => {
 * 首先，安装`optimize-module-ids`插件（可能需要自行开发类似功能插件或寻找已有合适插件）。
 * 然后，在 Webpack 配置文件中添加插件配置。例如：
 
- ```javascript
+ ```js
  const CustomModuleIdsPlugin = require('optimize-module-ids')
  module.exports = {
  // ...其他配置
@@ -1811,7 +1811,7 @@ import('./dynamic-module.js').then(module => {
 * **查看构建日志**：Webpack 在构建过程中会输出大量的日志信息。可在构建日志里查找模块的路径信息以区分源文件和外部依赖。比如，日志中来自`src`目录的模块通常是源文件，而来自`node_modules`目录的模块则是外部依赖。
 * **分析统计信息（`stats`）**：Webpack 提供了`stats`选项，可生成详细的构建统计信息。通过将`stats`配置为`'verbose'`或其他详细级别，能获取每个模块的路径、大小、依赖关系等信息。在这些信息中，可轻易识别出源文件和外部依赖。例如，配置`stats`如下：
 
- ```javascript
+ ```js
  module.exports = {
  // ...其他配置
    stats: 'verbose'
@@ -1824,7 +1824,7 @@ import('./dynamic-module.js').then(module => {
 
 * **分离输出目录**：在 Webpack 的输出配置（`output`）中，可以设置不同的输出路径来分离源文件和外部依赖的打包产物。例如：
 
- ```javascript
+ ```js
  module.exports = {
  // ...其他配置
    output: {
@@ -1850,7 +1850,7 @@ import('./dynamic-module.js').then(module => {
 
 1. **使用 `entry` 来定义不同的入口点**: 可以通过配置一个额外的入口来创建一个只包含通用库的 bundle，也就是所谓的 "vendor" bundle。
 
-```javascript
+```js
 module.exports = {
   entry: {
     main: './src/index.js', // 你的应用代码
@@ -1862,7 +1862,7 @@ module.exports = {
 
 2. **使用 `SplitChunksPlugin`**: 这个插件可以将共享代码分割成不同的 chunks，并可以通过配置将其从业务代码中分离出来。在 Webpack 4 及之后的版本中，默认内置了 `optimization.splitChunks`，就是这个插件的配置方法。
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -2057,7 +2057,7 @@ Plugin的使用方式是在Webpack的配置文件中定义plugins属性，它是
 
 例如，生成HTML文件需要使用HtmlWebpackPlugin，可以在Webpack配置文件中添加如下配置：
 
-```javascript
+```js
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
   // ...
@@ -2160,7 +2160,7 @@ module.exports = {
 
 loader 文件 `report-loader.js` 可能看起来像这样：
 
-```javascript
+```js
 module.exports = function (source) {
   // 使用此 loader 处理的文件的路径
   const filePath = this.resourcePath
@@ -2184,7 +2184,7 @@ module.exports = function (source) {
 
 在你的 `webpack.config.js` 文件中，添加一个 `module.rules` 条目，以确定哪些文件应该通过你的 loader 处理：
 
-```javascript
+```js
 module.exports = {
   module: {
     rules: [
@@ -2221,7 +2221,7 @@ module.exports = {
 
 在 webpack 4 及以后的版本中，一个 loader 可以利用它的 `this.data` 属性来共享会话数据。这个属性是特定于当前 loader 运行实例的，可以在 loader 的 `pitch` 阶段和正常的加载阶段之间共享数据。
 
-```javascript
+```js
 // pitch 阶段
 module.exports.pitch = function (remainingRequest, precedingRequest, data) {
   data.sharedValue = 'Hello from pitch phase'
@@ -2230,7 +2230,7 @@ module.exports.pitch = function (remainingRequest, precedingRequest, data) {
 
 在上面的代码片段中，`pitch` 方法设置了 `data.sharedValue`。这个 `pitch` 方法是可选的，它在 loader 处理资源之前执行。`data` 对象会从 `pitch` 阶段传递到正常的加载阶段，从而可以在后者中访问之前设置的共享值。
 
-```javascript
+```js
 // 正常的加载阶段
 module.exports = function (content) {
   const callback = this.async()
@@ -2277,11 +2277,11 @@ module.exports = function (content) {
 
 下面是一个插件的基本实现：
 
-```javascript
+```js
 class ConsoleLogStatsPlugin {
   apply (compiler) {
     compiler.hooks.compilation.tap('ConsoleLogStatsPlugin', (compilation) => {
-      compilation.moduleTemplates.javascript.hooks.render.tap('ConsoleLogStatsPlugin', (moduleSource, module) => {
+      compilation.moduleTemplates.JavaScript.hooks.render.tap('ConsoleLogStatsPlugin', (moduleSource, module) => {
         // 计算当前模块的 console.log 调用并记录文件路径
         const source = moduleSource.source()
         const consoleLogMatches = source.match(/console\.log\(/g) || []
@@ -2303,7 +2303,7 @@ module.exports = ConsoleLogStatsPlugin
 
 要在你的 webpack 配置中使用这个插件，首先要导入它，然后将它的一个实例添加到配置的 `plugins` 数组中：
 
-```javascript
+```js
 const ConsoleLogStatsPlugin = require('./path/to/ConsoleLogStatsPlugin')
 
 module.exports = {
@@ -2417,7 +2417,7 @@ module.exports = {
 
  例如，使用`html-webpack-plugin`和`externals`，你可以将一个库配置为 external，然后通过`html-webpack-plugin`将其引入：
 
- ```javascript
+ ```js
  // webpack.config.js 文件
  const HtmlWebpackPlugin = require('html-webpack-plugin')
  
@@ -2443,7 +2443,7 @@ module.exports = {
 
  使用`externals`的方法能让你在 Webpack 打包的模块代码中用正常的`import`或`require`语句来引用那个全局变量：
 
- ```javascript
+ ```js
  // 你的 JavaScript 代码文件中
  import Library from 'libraryName' // 虽然定义了external，Webpack依然会处理这个import
  ```
@@ -2734,7 +2734,7 @@ Webpack 的 Tree Shaking 主要是用来消除未被使用的代码，以减小�
 
 1. 在`webpack.config.js`文件中，将`mode`设置为`production`，这会启用Webpack的优化功能，包括tree shaking。
 
-```javascript
+```js
 module.exports = {
   mode: 'production'
   // 其他配置...
@@ -2745,7 +2745,7 @@ module.exports = {
 
 3. 确保你的代码库中没有副作用。Webpack会假设没有副作用的代码可以安全地移除。如果你的代码确实有副作用，可以在webpack配置文件中的`optimization`选项中设置`sideEffects`为`false`来告诉Webpack可以安全地进行tree shaking。
 
-```javascript
+```js
 module.exports = {
   mode: 'production',
   optimization: {
@@ -2781,7 +2781,7 @@ module.exports = {
 
 在Webpack配置文件中，可以使用`sideEffects`选项来指定哪些文件或模块具有副作用，不允许清理。`sideEffects`接受一个正则表达式、一个文件名或一个数组。例如：
 
-```javascript
+```js
 module.exports = {
   // ...
   optimization: {
@@ -2847,7 +2847,7 @@ module.exports = {
 
 例如，假设 `src/myModule.js` 文件有下面的代码：
 
-```javascript
+```js
 export /* #__PURE__ */ function add (a, b) {
   return a + b
 }
@@ -3021,7 +3021,7 @@ Babel 是一个 JavaScript 编译器，主要用于将 ES6 及以上版本的代
 
 例如，如果代码中使用了 `promise`，可以这样导入：
 
-```javascript
+```js
 import promise from 'babel-runtime/core-js/promise'
 ```
 
@@ -3033,7 +3033,7 @@ import promise from 'babel-runtime/core-js/promise'
 
 首先，在 `babel.config.js` 文件中，你需要添加 `@babel/preset-typescript` 预设，以便兼容 TypeScript：
 
-```javascript
+```js
 module.exports = {
   presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
 }
@@ -3041,7 +3041,7 @@ module.exports = {
 
 接下来，在 `webpack.config.js` 文件中，你需要对 `.tsx` 文件使用 `babel-loader`：
 
-```javascript
+```js
 module.exports = {
   // ...其他配置项
   module: {
@@ -3138,7 +3138,7 @@ Webpack还会对打包产物进行一系列的优化，例如代码压缩、拆�
 
 1. 在webpack配置文件中，设置`output`选项中的`chunkFilename`属性，用于指定按需加载模块的输出文件名。例如：
 
-```javascript
+```js
 const config = {
   output: {
     filename: 'bundle.js',
@@ -3150,7 +3150,7 @@ const config = {
 
 2. 在应用程序中使用动态导入语法加载需要按需加载的模块。例如：
 
-```javascript
+```js
 import(/* webpackChunkName: "moduleName" */ './module')
   .then(module => {
     // 使用加载的模块
@@ -3179,7 +3179,7 @@ Webpack配置按需加载是通过代码分割（code splitting）的方式，�
 
 下面是一个示例，展示了如何使用Webpack配置按需加载和React的`lazy`函数：
 
-```javascript
+```js
 import React, { lazy, Suspense } from 'react'
 
 const LazyComponent = lazy(() => import('./LazyComponent'))
@@ -3205,7 +3205,7 @@ function App () {
 
 首先，你需要确保你的Webpack配置中启用了代码分割（code splitting）功能。这可以通过以下方式配置：
 
-```javascript
+```js
 // webpack.config.js
 
 module.exports = {
@@ -3232,7 +3232,7 @@ module.exports = {
 
 最后，确保你的React代码使用了`lazy`函数进行组件的按需加载，如前面的示例所示：
 
-```javascript
+```js
 import React, { lazy, Suspense } from 'react'
 
 const LazyComponent = lazy(() => import('./LazyComponent'))
@@ -3272,7 +3272,7 @@ Webpack 5 的 Module Federation 是一项用于实现微前端架构的功能，
 
 首先，我们需要在 App2 的 Webpack 配置中启用 Module Federation：
 
-```javascript
+```js
 // webpack.config.js (App2)
 
 const { ModuleFederationPlugin } = require('webpack')
@@ -3293,7 +3293,7 @@ module.exports = {
 
 接下来，我们需要在 App1 的 Webpack 配置中配置远程加载 App2 的模块：
 
-```javascript
+```js
 // webpack.config.js (App1)
 
 const { ModuleFederationPlugin } = require('webpack')
@@ -3313,7 +3313,7 @@ module.exports = {
 
 在 App1 中，我们可以像使用本地模块一样使用 App2 的模块：
 
-```javascript
+```js
 // App1
 
 import React from 'react'
@@ -3365,7 +3365,7 @@ Babel 是一个 JavaScript 编译器，它的主要功能是将新版本的 Java
 
 3. 导出插件函数：在插件文件中，导出一个函数作为你的插件。这个函数将接收一个 Babel 的 `babel` 对象作为参数，包含了一些 Babel 的工具方法，如 `types` 和 `template`。
 
-```javascript
+```js
 module.exports = function (babel) {
   // 插件代码
 }
@@ -3373,7 +3373,7 @@ module.exports = function (babel) {
 
 4. 实现插件逻辑：在插件函数内部，实现你的插件逻辑。可以使用 `babel.types` 对象提供的方法来操作抽象语法树（AST）节点，例如 `babel.types.VariableDeclaration`、`babel.types.CallExpression` 等。
 
-```javascript
+```js
 module.exports = function (babel) {
   const { types: t } = babel
 
@@ -3391,7 +3391,7 @@ module.exports = function (babel) {
 
 5. 导出插件配置：为了让 Babel 可以识别你的插件，需要在插件函数中返回一个配置对象，其中 `visitor` 属性指定了你的插件要处理的 AST 节点类型和对应的处理函数。
 
-```javascript
+```js
 module.exports = function (babel) {
   const { types: t } = babel
 
@@ -3481,7 +3481,7 @@ module.exports = function (babel) {
 
 以下是一个简单的 Babel 插件示例，用于去除代码中的 `console.log` 语句：
 
-```javascript
+```js
 // babel-plugin-remove-console.js
 
 module.exports = function ({ types: t }) {
@@ -3558,13 +3558,13 @@ npm install --save-dev @babel/core @babel/preset-env @babel/polyfill
 
 使用 import（适用于 ES6 模块）：
 
-```javascript
+```js
 import '@babel/polyfill'
 ```
 
 使用 require（适用于 CommonJS 模块）：
 
-```javascript
+```js
 require('@babel/polyfill')
 ```
 
@@ -3621,7 +3621,7 @@ npm install --save-dev @babel/core @babel/preset-env core-js
 
 3. 导入 Polyfill：在需要使用特定功能的文件中，按需导入所需的 Polyfill。例如，如果你需要填充 `Promise` 和 `Array.prototype.includes`，你可以按如下方式导入：
 
-```javascript
+```js
 import 'core-js/features/promise'
 import 'core-js/features/array/includes'
 ```
@@ -3697,7 +3697,7 @@ class Server {
 
 启动本地服务前，调用了`updateCompiler(this.compiler)`方法。这个方法中有 2 段关键性代码。一个是获取`websocket`客户端代码路径，另一个是根据配置获取`webpack`热更新代码路径。
 
-```javascript
+```js
 // 获取websocket客户端代码
 const clientEntry = `${require.resolve(
  '../../client/'
@@ -3744,7 +3744,7 @@ if (options.hotOnly) {
 
 修改好入口配置后，又调用了`setupHooks`方法。这个方法是用来注册监听事件的，监听每次`webpack`编译完成。
 
-```javascript
+```js
 // node_modules/webpack-dev-server/lib/Server.js
 // 绑定监听事件
 setupHooks() {
@@ -3851,7 +3851,7 @@ function reloadApp () {
 
 这个文件的代码同样会被打包到`bundle.js`中，运行在浏览器中。这个文件做了什么就显而易见了吧！先瞄一眼代码：
 
-```javascript
+```js
 // node_modules/webpack/hot/dev-server.js
 const check = function check () {
   module.hot.check(true)
@@ -3919,7 +3919,7 @@ hotSetStatus("prepare"); // 进入热更新准备状态
 
 * 调用`hotDownloadUpdateChunk`发送`xxx/hash.hot-update.js` 请求，通过`JSONP`方式。
 
-```javascript
+```js
 function hotDownloadUpdateChunk (chunkId) {
   const script = document.createElement('script')
   script.charset = 'utf-8'
@@ -4036,7 +4036,7 @@ Webpack 可以通过 DefinePlugin 插件给 web 应用注入环境变量。该�
 
 在 webpack 的配置文件中，需要先引入该插件，然后将需要注入的环境变量通过该插件进行配置。例如：
 
-```javascript
+```js
 const webpack = require('webpack')
 
 module.exports = {
@@ -4056,7 +4056,7 @@ module.exports = {
 
 在代码中使用这些环境变量时，只需要直接引用即可：
 
-```javascript
+```js
 if (process.env.NODE_ENV === 'production') {
   console.log('当前为生产环境')
 }

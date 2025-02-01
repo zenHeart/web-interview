@@ -603,7 +603,7 @@ CSS中没有直接的属性可以实现省略样式。但是，可以使用一�
 
 3. 使用JavaScript来监听页面滚动事件，并更新滚动进度条的宽度。
 
-```javascript
+```js
 const scrollProgress = document.getElementById('scroll-progress')
 let requestId
 

@@ -22,7 +22,7 @@ XMLHttpRequest 对象的特点和功能包括：
 
 下面是一个简单的示例代码，展示如何基于 XMLHttpRequest 封装一个发送 GET 请求的函数：
 
-```javascript
+```js
 function sendGetRequest (url, callback) {
   const xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
@@ -69,7 +69,7 @@ XHR（XMLHttpRequest）对象支持取消请求。你可以使用 `xhr.abort()` 
 
 下面是一个使用 XHR 取消请求的示例代码：
 
-```javascript
+```js
 const xhr = new XMLHttpRequest()
 xhr.open('GET', 'https://api.example.com/data', true)
 xhr.send()
@@ -86,7 +86,7 @@ xhr.abort()
 
 AbortController 是一个用于控制和取消异步操作的 API，它可以与 fetch 一起使用来取消网络请求。下面是一个使用 AbortController 来取消 fetch 请求的示例代码：
 
-```javascript
+```js
 const controller = new AbortController()
 const signal = controller.signal
 
@@ -133,7 +133,7 @@ AJAX半遮半掩的底层API是饱受诟病的一件事情. XMLHttpRequest 并�
 
 在我看来 XHR 有点复杂。使用XHR的方式大致如下:
 
-```javascript
+```js
 const getJson = function (url) {
   return new Promise(function (resolve, reject) {
     const client = new XMLHttpRequest()
@@ -156,7 +156,7 @@ etch 的使用
 
 fetch 是全局量 window 的一个方法, 第一个参数是URL:
 
-```javascript
+```js
 // url (必须), options (可选)
 fetch('/some/url', {
   method: 'get'
@@ -169,7 +169,7 @@ fetch('/some/url', {
 
 fetch API 也使用了 JavaScript Promises 来处理结果/回调:
 
-```javascript
+```js
 // 对响应的简单处理
 fetch('/some/url').then(function (response) {
 // eslint-disable-next-line
@@ -192,7 +192,7 @@ fetch('/some/url').then(function (response) {
 
 自定义请求头信息极大地增强了请求的灵活性。我们可以通过 new Headers() 来创建请求头:
 
-```javascript
+```js
 // 创建一个空的 Headers 对象,注意是Headers，不是Header
 var headers = new Headers()
 
@@ -220,7 +220,7 @@ var headers = new Headers({
 
 需要创建一个 Request 对象来包装请求头:
 
-```javascript
+```js
 const request = new Request('/some-url', {
   headers: new Headers({
     'Content-Type': 'text/plain'
@@ -249,7 +249,7 @@ Request 对象表示一次 fetch 调用的请求信息。传入 Request 参数�
 
 Request 的示例如下:
 
-```javascript
+```js
 const request = new Request('/users.json', {
   method: 'POST',
   mode: 'cors',
@@ -268,7 +268,7 @@ fetch(request).then(function () { // handle response */
 
 fetch 的方法签名(signature,可理解为配置参数), 和 Request 很像, 示例如下:
 
-```javascript
+```js
 fetch('/users.json', {
   method: 'POST',
   mode: 'cors',
@@ -293,7 +293,7 @@ Response 代表响应, fetch 的 then 方法接收一个 Response 实例,
 * statusText - 状态值(例如: OK)
 * headers - 与响应相关联的 Headers 对象.
 
-```javascript
+```js
 // 在 service worker 测试中手动创建 response
 // new Response(BODY, OPTIONS)
 const response = new Response('.....', {
@@ -324,7 +324,7 @@ fetch('/')
 
 假设需要请求 JSON —— 回调结果对象 response 中有一个json()方法,用来将原始数据转换成 JavaScript 对象:
 
-```javascript
+```js
 fetch('https://davidwalsh.name/demo/arsenal.json').then(function (response) {
   // 转换为 JSON
   return response.json()
@@ -338,7 +338,7 @@ fetch('https://davidwalsh.name/demo/arsenal.json').then(function (response) {
 
 JSON 并不总是理想的请求/响应数据格式, 那么我们看看如何处理 HTML或文本结果:
 
-```javascript
+```js
 fetch('/next/page')
   .then(function (response) {
     return response.text()
@@ -352,7 +352,7 @@ fetch('/next/page')
 
 如果你想通过 fetch 加载图像或者其他二进制数据, 则会略有不同:
 
-```javascript
+```js
 fetch('flowers.jpg')
   .then(function (response) {
     return response.blob()
@@ -366,7 +366,7 @@ fetch('flowers.jpg')
 
 另一种常用的 AJAX 调用是提交表单数据 —— 示例代码如下:
 
-```javascript
+```js
 fetch('/submit', {
   method: 'post',
   body: new FormData(document.getElementById('comment-form'))
@@ -375,7 +375,7 @@ fetch('/submit', {
 
 提交 JSON 的示例如下:
 
-```javascript
+```js
 fetch('/submit-json', {
   method: 'post',
   body: JSON.stringify({
@@ -464,7 +464,7 @@ Ajax、Axios和Fetch都是用于进行HTTP请求的工具或技术，但它们�
 
 以下是如何使用`IntersectionObserver`的示例：
 
-```javascript
+```js
 // 创建一个回调函数，当观察的元素交叉进入或离开另一个元素时，该函数会被触发
 const callback = (entries, observer) => {
   entries.forEach((entry) => {
@@ -520,7 +520,7 @@ observer.observe(target)
 
 下面的示例代码展示了如何使用 `ResizeObserver` 来监测一个元素的尺寸变化，并在尺寸变化时输出新的尺寸信息：
 
-```javascript
+```js
 // 监测的目标元素
 const targetElement = document.querySelector('.resizable')
 
@@ -663,7 +663,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 
 1. 获取`canvas`元素和绘图上下文：
 
- ```javascript
+ ```js
  const canvas = document.getElementById('myCanvas')
  const ctx = canvas.getContext('2d')
  ```
@@ -673,7 +673,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 * 通常可以监听整个文档或包含`canvas`的父元素的鼠标事件（如`mousemove`、`mousedown`、`mouseup`等）和触摸事件（如`touchstart`、`touchmove`、`touchend`等）。
 * 例如：
 
- ```javascript
+ ```js
  document.addEventListener('mousemove', handleMouseMove)
  ```
 
@@ -683,7 +683,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 * 判断坐标是否在特定图形范围内，以确定是否发生了交互。
 * 例如：
 
- ```javascript
+ ```js
  function handleMouseMove (event) {
    const rect = canvas.getBoundingClientRect()
    const mouseX = event.clientX - rect.left
@@ -701,7 +701,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 * 根据不同的图形形状，编写相应的函数来判断坐标是否在图形内。
 * 例如，对于圆形：
 
- ```javascript
+ ```js
  function isPointInCircle (x, y, circleX, circleY, radius) {
    const dx = x - circleX
    const dy = y - circleY
@@ -716,7 +716,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 * 可以维护一个图形对象的数组，在事件处理函数中遍历这个数组，判断与每个图形的交互。
 * 例如：
 
- ```javascript
+ ```js
  const shapes = [
    { type: 'circle', x: 100, y: 100, radius: 50 },
    { type: 'rectangle', x: 200, y: 200, width: 100, height: 50 }
@@ -745,7 +745,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 * 根据交互状态改变图形的外观、位置等属性，以实现动态效果。
 * 例如，当鼠标悬停在圆形上时，改变圆形的颜色：
 
- ```javascript
+ ```js
  function handleMouseMove (event) {
    const rect = canvas.getBoundingClientRect()
    const mouseX = event.clientX - rect.left
@@ -784,7 +784,7 @@ cookie只能存储字符串类型的数据，而sessionStorage和localStorage可
 
 * 可以从当前页面的 URL 中提取查询参数来创建`URLSearchParams`对象。例如：
 
-```javascript
+```js
 const urlParams = new URLSearchParams(window.location.search)
 ```
 
@@ -794,7 +794,7 @@ const urlParams = new URLSearchParams(window.location.search)
 
 * 也可以直接从一个查询字符串创建`URLSearchParams`对象。例如：
 
-```javascript
+```js
 const queryString = 'param1=value1&param2=value2'
 const urlParams = new URLSearchParams(queryString)
 ```
@@ -805,7 +805,7 @@ const urlParams = new URLSearchParams(queryString)
 
 * 用于获取指定参数的第一个值。例如：
 
-```javascript
+```js
 const value = urlParams.get('paramName')
 ```
 
@@ -815,7 +815,7 @@ const value = urlParams.get('paramName')
 
 * 设置指定参数的值。如果参数不存在，将添加一个新的参数。例如：
 
-```javascript
+```js
 urlParams.set('paramName', 'newValue')
 ```
 
@@ -823,7 +823,7 @@ urlParams.set('paramName', 'newValue')
 
 * 向现有参数添加一个新的值。如果参数不存在，将添加一个新的参数。例如：
 
-```javascript
+```js
 urlParams.append('paramName', 'anotherValue')
 ```
 
@@ -831,7 +831,7 @@ urlParams.append('paramName', 'anotherValue')
 
 * 删除指定参数。例如：
 
-```javascript
+```js
 urlParams.delete('paramName')
 ```
 
@@ -839,7 +839,7 @@ urlParams.delete('paramName')
 
 * 检查是否存在指定参数。返回一个布尔值。例如：
 
-```javascript
+```js
 const hasParam = urlParams.has('paramName')
 ```
 
@@ -847,7 +847,7 @@ const hasParam = urlParams.has('paramName')
 
 * 可以使用`forEach()`方法遍历所有参数。例如：
 
-```javascript
+```js
 urlParams.forEach((value, key) => {
   console.log(`${key}: ${value}`)
 })
@@ -871,7 +871,7 @@ urlParams.forEach((value, key) => {
 
 * 可以与`URL`对象结合使用，方便地构建和操作完整的 URL。例如：
 
-```javascript
+```js
 const url = new URL('https://example.com')
 url.searchParams.set('paramName', 'value')
 console.log(url.toString())
@@ -897,7 +897,7 @@ console.log(url.toString())
  <div id="contentToCopy">这是要复制的内容</div>
  ```
 
- ```javascript
+ ```js
  function copyToClipboard () {
    const content = document.getElementById('contentToCopy').textContent
    const tempInput = document.createElement('input')
@@ -923,7 +923,7 @@ console.log(url.toString())
 * 现代浏览器提供了`navigator.clipboard` API，它提供了更安全和可靠的方式来访问剪切板。这个 API 主要使用异步方法来进行复制操作。
 * 例如：
 
- ```javascript
+ ```js
  async function copyToClipboard () {
    const content = '这是要复制的内容'
    try {
@@ -953,7 +953,7 @@ console.log(url.toString())
  <button id="copyButton">复制</button>
  ```
 
- ```javascript
+ ```js
  document.getElementById('copyButton').addEventListener('click', copyToClipboard)
  ```
 
@@ -972,7 +972,7 @@ console.log(url.toString())
 
 例如：
 
-```javascript
+```js
 localStorage.setItem('key', 'value')
 console.log(localStorage.getItem('key'))
 ```
@@ -995,7 +995,7 @@ console.log(localStorage.getItem('key'))
 
 下面的代码演示了如何使用 `visibilitychange` 事件和 `document.visibilityState` 来判断页面是否为活跃状态：
 
-```javascript
+```js
 document.addEventListener('visibilitychange', function () {
   if (document.visibilityState === 'visible') {
     console.log('页面现在是活跃状态。')
@@ -1024,7 +1024,7 @@ document.addEventListener('visibilitychange', function () {
 
 用户代理字符串包含了浏览器类型、版本、操作系统等信息，可以通过分析这些信息来大致判断用户的设备类型。`navigator.userAgent` 属性用于获取用户代理字符串。
 
-```javascript
+```js
 function detectDevice () {
   const userAgent = navigator.userAgent
 
@@ -1049,7 +1049,7 @@ console.log(detectDevice())
 
 有时候用户代理字符串可能不够准确或被修改，此时可以根据视口尺寸作为补充手段。通过检测屏幕的宽度，你可以推断出设备的大致类别。
 
-```javascript
+```js
 function detectDeviceByViewport () {
   const width = window.innerWidth
 
@@ -1069,7 +1069,7 @@ console.log(detectDeviceByViewport())
 
 虽然 CSS 媒体查询主要用于响应式设计，但你也可以在 JavaScript 中使用 `window.matchMedia()` 方法来判断设备类型。这提供了一种基于 CSS 媒体查询语法来检测设备/视口特性的方式。
 
-```javascript
+```js
 function detectDeviceByMediaQuery () {
   if (window.matchMedia('(max-width: 767px)').matches) {
     return 'Mobile'
@@ -1096,7 +1096,7 @@ console.log(detectDeviceByMediaQuery())
 
  基本语法
 
-```javascript
+```js
 navigator.sendBeacon(url, data)
 ```
 
@@ -1118,7 +1118,7 @@ navigator.sendBeacon(url, data)
 
 发送一些统计数据到服务器的简单示例：
 
-```javascript
+```js
 window.addEventListener('unload', function () {
   const data = { action: 'leave', timestamp: Date.now() }
   navigator.sendBeacon('https://example.com/analytics', JSON.stringify(data))
@@ -1141,7 +1141,7 @@ window.addEventListener('unload', function () {
 
 `navigator.sendBeacon()` 方法允许你在浏览器会话结束时异步地向服务器发送小量数据。这个方法的设计初衷就是为了解决上述问题。`sendBeacon()` 在大多数现代浏览器中得到支持，并且其异步特性意味着它不会阻塞页面卸载或影响用户体验。
 
-```javascript
+```js
 window.addEventListener('beforeunload', function (event) {
   const data = {
 
@@ -1156,7 +1156,7 @@ window.addEventListener('beforeunload', function (event) {
 
 如果因某种原因 `navigator.sendBeacon()` 不能满足需求，`fetch()` API 的 `keepalive` 选项是另一个选择。这个选项允许你发送一个保持存活状态的请求，即使用户已经离开页面。但是，需要注意的是，使用 `keepalive` 选项发送的请求有大小限制（大约为 64KB）。
 
-```javascript
+```js
 window.addEventListener('beforeunload', function (event) {
   const data = {
 
@@ -1186,7 +1186,7 @@ window.addEventListener('beforeunload', function (event) {
 
 在 DOM（文档对象模型）中，要判断元素 `a` 是否是元素 `b` 的子元素，您可以使用以下的 JavaScript 代码：
 
-```javascript
+```js
 function isChildElement (a, b) {
   return b.contains(a)
 }
@@ -1194,7 +1194,7 @@ function isChildElement (a, b) {
 
 可以这样使用上述函数：
 
-```javascript
+```js
 const elementA = document.getElementById('elementA')
 const elementB = document.getElementById('elementB')
 
@@ -1213,7 +1213,7 @@ if (isChildElement(elementA, elementB)) {
 
  创建 `MutationObserver` 实例
 
-```javascript
+```js
 const observer = new MutationObserver(callback)
 ```
 
@@ -1221,7 +1221,7 @@ const observer = new MutationObserver(callback)
 
 你可以指定要观察的 DOM 变动的类型和具体的目标节点：
 
-```javascript
+```js
 const config = {
   attributes: true, // 观察属性变动
   childList: true, // 观察子列表变动
@@ -1240,7 +1240,7 @@ observer.observe(targetNode, config)
 1. `mutationsList`：一个 `MutationRecord` 对象的数组，每个对象都描述了一个变动。
 2. `observer`：触发通知的 `MutationObserver` 实例。
 
-```javascript
+```js
 function callback (mutationsList) {
   for (const mutation of mutationsList) {
     if (mutation.type === 'childList') {
@@ -1256,7 +1256,7 @@ function callback (mutationsList) {
 
 你可以通过调用 `disconnect` 方法来停止观察：
 
-```javascript
+```js
 observer.disconnect()
 ```
 
@@ -1388,7 +1388,7 @@ DocumentFragment API 有几个关键的特点和用途：
 
  示例代码
 
-```javascript
+```js
 // 创建 DocumentFragment
 const fragment = document.createDocumentFragment()
 
@@ -1427,7 +1427,7 @@ body.appendChild(fragment)
 
 使用 `requestIdleCallback`，你需要传递一个回调函数给它，此函数会在浏览器的空闲时间调用。你可以指定一个超时参数，它定义了浏览器在“空闲期”最多可以花费的时间来执行你的回调。
 
-```javascript
+```js
 requestIdleCallback(myNonCriticalFunction, { timeout: 5000 })
 ```
 
@@ -1441,7 +1441,7 @@ requestIdleCallback(myNonCriticalFunction, { timeout: 5000 })
 * **didTimeout** - 一个布尔值，如果超时已经被触发为 `true`。
 * **timeRemaining** - 返回当前空闲阶段剩余时间的函数，单位是毫秒。
 
-```javascript
+```js
 function myNonCriticalFunction (deadline) {
   while ((deadline.timeRemaining() > 0 || deadline.didTimeout) && someCondition()) {
     // 执行工作直到时间用完或下次更新不是必要的
@@ -1478,7 +1478,7 @@ scrollIntoView api
 
  基本用法
 
-```javascript
+```js
 element.scrollIntoView(smoothScrollingOptions)
 ```
 
@@ -1505,7 +1505,7 @@ element.scrollIntoView(smoothScrollingOptions)
 
  例子
 
-```javascript
+```js
 document.getElementById('myElement').scrollIntoView({
   behavior: 'smooth', // 平滑滚动
   block: 'start' // 元素顶部与包含块顶部对齐
@@ -1541,7 +1541,7 @@ document.getElementById('myElement').scrollIntoView({
 
  JavaScript
 
-```javascript
+```js
 // 一个假设的表单验证函数
 function validateInput (inputId) {
   // 调用此处的校验逻辑，返回是否存在错误
@@ -1875,7 +1875,7 @@ IndexedDB 的存储空间大小通常由浏览器的策略决定，并且在大�
 
 下面是一个简单的示例代码，演示如何使用 popstate 事件监听路由的变化：
 
-```javascript
+```js
 // 监听 popstate 事件
 window.addEventListener('popstate', function (event) {
   // 在这里可以执行路由变化后的处理逻辑
@@ -1895,7 +1895,7 @@ history.pushState(null, null, '/new-route')
 
 另外，还可以使用 history.state 属性来获取当前历史记录的状态对象，该对象可以在调用 history.pushState() 或 history.replaceState() 方法时传入。这样可以在 popstate 事件回调函数中访问和使用该状态对象。
 
-```javascript
+```js
 window.addEventListener('popstate', function (event) {
   const state = history.state
   // 在这里可以访问和使用历史记录的状态对象
@@ -1926,7 +1926,7 @@ window.addEventListener('popstate', function (event) {
 
 `requestAnimationFrame` 的使用方法如下：
 
-```javascript
+```js
 let animationId
 
 function animate () {
@@ -1939,7 +1939,7 @@ animate() // 启动动画
 
 在上面的代码中，`requestAnimationFrame` 方法返回一个唯一的标识符，可以用来取消动画，如下所示：
 
-```javascript
+```js
 cancelAnimationFrame(animationId) // 取消动画
 ```
 
@@ -1951,21 +1951,21 @@ cancelAnimationFrame(animationId) // 取消动画
 
 1. `escape()` 函数用于编码字符串中的特殊字符，使其能够安全地传输。它对字符进行编码，包括非 ASCII 字符和特殊字符。但需要注意的是，`escape()` 不会编码 URL 中的保留字符（例如 `:/?#[]@!$&'()*+,;=`），它只会编码其他字符。
 
-```javascript
+```js
 // 输出：%48%65%6c%6c%6f%20%57%6f%72%6c%64%21
 console.log(escape('Hello World!'))
 ```
 
 2. `encodeURI()` 函数用于对整个 URL 进行编码，用于将 URL 中的特殊字符转换为可传输的形式。它不会编码 URL 中的保留字符和一些特殊字符（例如 `:/?#[]@!$&'()*+,;=`）。它主要用于编码整个 URL，而不是编码 URL 的参数值。
 
-```javascript
+```js
 // 输出：http://example.com/page.php?id=123
 console.log(encodeURI('http://example.com/page.php?id=123'))
 ```
 
 3. `encodeURIComponent()` 函数用于编码 URL 的参数值，它会对所有特殊字符进行编码，包括 URL 中的保留字符和其他特殊字符。它用于编码 URL 参数中的特殊字符，以确保它们在 URL 中的传输和解析过程中不会被误解。
 
-```javascript
+```js
 // 输出：Hello%20World%21
 console.log(encodeURIComponent('Hello World!'))
 ```

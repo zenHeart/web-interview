@@ -226,7 +226,7 @@ ws://" 与 "wss://" 有啥区别？
 
 下面是一个示范代码片段：
 
-```javascript
+```js
 let ws
 let retryInterval = 1000 // 初始重连间隔为 1 秒
 const maxInterval = 60000 // 最大间隔为 1 分钟

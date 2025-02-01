@@ -27,7 +27,7 @@ module被加载的时候执行，加载后缓存；
 * 3、根据CommonJs规范一个单独的文件就是一个模块。每个模块都是一个 单独的作用域。也就是说：一个文件中的所有变量、类、方法都是私有的， 别的文件是不可见，不能直接引用的。
 例如：我们创建一个js文件a.js
 
-```javascript
+```js
 const name1 = 'bangbang'
 const name2 = function (name) {
   return name
@@ -46,7 +46,7 @@ global定义的变量，在任何地方都可以使用，类似于浏览器端�
 每个文件对外接口是module.exports对象。这个对象 的所有属性和方法都可以被其他文件导入。
 例如：我们创建一个js文件：b1.js
 
-```javascript
+```js
 const num1 = 6
 function add (a) {
   return a + num1
@@ -57,7 +57,7 @@ module.exports.add = add
 
 再创建一个test2.js
 
-```javascript
+```js
 const b1 = require('./b1')
 console.log(b1.num1) // 6
 console.log(b1.add(4)) // 10
@@ -107,7 +107,7 @@ Module.children – 返回一个数组，表示该模块要用到的其他模块
 不能直接将exports变量指向一个值，因为这样等于切断了，exports与module.exports的联系。
 下面的代码也是无效的，name函数无法对外输出。但是module.exports却可以直接指定一个值， 这样是有效的。
 
-```javascript
+```js
 exports.name = function () {
   return 'yanle'
 }
@@ -153,7 +153,7 @@ module.exports = 'lele'
 * 如果直接将一个值赋值给`exports`，它将不再是对`module.exports`的引用，而是变成一个独立的变量。此时，模块的导出内容将变为这个新的值，而不是原本期望的通过添加属性到`exports`来构建的导出对象。
 * 例如：
 
- ```javascript
+ ```js
 //  exports = function () {
 //    console.log('This is a new function.')
 //  }
@@ -167,7 +167,7 @@ module.exports = 'lele'
 
 * 如果模块只需要导出一个简单的值，如一个函数或一个字符串，可以使用`module.exports`直接赋值的方式。例如：
 
- ```javascript
+ ```js
  module.exports = function add (a, b) {
    return a + b
  }
@@ -177,7 +177,7 @@ module.exports = 'lele'
 
 * 当模块需要导出多个相关的值或功能时，可以先使用`exports`添加属性，最后确保`module.exports`指向一个包含所有需要导出内容的对象。例如：
 
- ```javascript
+ ```js
  exports.foo = function () {
    console.log('foo function.')
  }

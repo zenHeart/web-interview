@@ -235,4 +235,4 @@ ES6开始，在语法标准上实现了模块化功能。简称ES Module
 
 **参考文档**
 
-* [https://github.com/careyke/frontend_knowledge_structure/blob/master/javascript/module/question01_module.md](https://github.com/careyke/frontend_knowledge_structure/blob/master/javascript/module/question01_module.md)
+* [https://github.com/careyke/frontend_knowledge_structure/blob/master/JavaScript/module/question01_module.md](https://github.com/careyke/frontend_knowledge_structure/blob/master/JavaScript/module/question01_module.md)

@@ -1,31 +1,48 @@
 # 类型
 
-## javascript 中有几种数据类型 ? {#p0-types}
+## JavaScript 中有几种数据类型 ? {#p0-types}
 
-- 基础类型
-  - undefined
+<Answer>
+
+- 原始类型
+  - Undefined
   - Null
   - Boolean
-  - Number 采用 IEEE 754 标准
   - String
   - Symbol
+  - Number 采用 IEEE 754 标准
   - BigInt 属于新增类型
 - 引用类型
-  - 内建对象 EMACScript 定义
+  - [内建对象 EMACScript 定义](https://tc39.es/ecma262/#sec-global-object) 一些常用对象类型如下
     - Object
     - Function
+    - Date
+    - Error
     - Set
-    - WeackSet
+    - WeakSet
     - Map
     - WeakMap
     - Array
-    - Regexp
-  - 宿主对象 取决于运行环境，如浏览器、Node.js
+    - RegExp
+    - Proxy
+    - Reflect
+  - 宿主对象 取决于运行环境，如 DOM、BOM..
   - 自定义对象 用户创建的对象
 
-- [mdn](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Data_structures)
+**题解**
 
-## 值类型和引用类型的区别? {#p0-value-reference}
+该题一般作为面试热身题，帮助面试者快速进入状态，通过此题又可以引出很多知识点，来对面试者能力作进一步下探。
+
+**延伸阅读**
+
+- [ecmascript language types](https://tc39.es/ecma262/#sec-ecmascript-language-types) 规范中定义的类型
+- [MDN 数据类型](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Data_structures)
+
+</Answer>
+
+## 原始类型和引用类型的区别? {#p0-primitive-reference}
+
+<Answer>
 
 在JavaScript中，值类型和引用类型是两种不同的数据类型，它们之间的区别在于数据存储和传递的方式不同。
 
@@ -60,6 +77,12 @@ console.log(b.age) // 输出30，原因是 a 和 b 指向同一个对象
 接下来，我们创建了一个包含 name 和 age 属性的对象 a，并将其赋给变量 b。然后我们修改了 a 的 age 属性的值。此时，由于 a 和 b 引用同一个对象，因此 b.age 的值也随之改变，这才是引用类型的典型特性。
 
 在代码中我们看到，值类型的变量在赋值时是通过复制整个值本身的副本，在内存中分配了新的空间来存储。而引用类型的变量赋值时是将指针复制到新变量中，用来指向堆（heap）中存储对象的内存空间。
+
+**延伸阅读**
+
+- [JavaScript高级程序设计（第5版） 第四章](https://book.douban.com/subject/37143075/) 原始类型和引用类型讲解
+
+</Answer>
 
 ## 引用类型 {#p0-reference-type}
 
@@ -288,7 +311,7 @@ console.log(0.1 + 0.2 === 0.3)
 
 1. 使用 `Number.EPSILON` 来比较两个浮点数是否接近：
 
-```javascript
+```js
 function numbersAreCloseEnough (num1, num2) {
   return Math.abs(num1 - num2) < Number.EPSILON
 }
@@ -299,7 +322,7 @@ console.log(numbersAreCloseEnough(result, 0.3))
 
 2. 将浮点数乘以一个适当的倍数转换为整数进行计算，计算完成后再除以这个倍数转换回浮点数：
 
-```javascript
+```js
 const num1 = 0.110
 const num2 = 0.210
 const sum = (num1 + num2) / 10
@@ -308,7 +331,7 @@ console.log(sum === 0.3)
 
 3. 使用第三方库，如 `decimal.js` ，它提供了更精确的十进制运算：
 
-```javascript
+```js
 const Decimal = require('decimal.js')
 
 const num1 = new Decimal('0.1')
@@ -376,7 +399,7 @@ console.log(sum.eq(0.3))
 
 1. 转换为字符串：可以使用String()函数或toString()方法将其他类型的值转换为字符串类型。例如：
 
- ```javascript
+ ```js
  const num = 42
  const str = String(num) // 将数字转换为字符串
  const bool = true
@@ -385,7 +408,7 @@ console.log(sum.eq(0.3))
 
 2. 转换为数字：可以使用Number()函数或使用parseInt()、parseFloat()等方法将其他类型的值转换为数字类型。例如：
 
- ```javascript
+ ```js
  const str = '42'
  const num = Number(str) // 将字符串转换为数字
  const str2 = '3.14'
@@ -394,7 +417,7 @@ console.log(sum.eq(0.3))
 
 3. 转换为布尔值：可以使用Boolean()函数将其他类型的值转换为布尔类型。例如：
 
- ```javascript
+ ```js
  const num = 42
  const bool = Boolean(num) // 将数字转换为布尔值
  const str = 'hello'
@@ -403,9 +426,10 @@ console.log(sum.eq(0.3))
 
 4. 隐式类型转换：JavaScript在某些情况下会自动进行类型转换，例如通过算术运算符、比较运算符等进行操作时，会根据需要隐式地将值转换为特定的类型。例如：
 
- ```javascript
+ ```js
  const num1 = 42
  const num2 = '3'
  const sum = num1 + Number(num2) // 隐式将字符串转换为数字并进行相加
  ```
+
 q

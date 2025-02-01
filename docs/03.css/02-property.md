@@ -430,7 +430,7 @@ CSS 中 `position` 属性用于指定元素的定位方式，它有以下常见�
 
 首先，创建一个 JS 文件作为 Web Worker 的脚本。我们把这个文件命名为 `preloadWorker.js`。
 
-```javascript
+```js
 // preloadWorker.js
 
 self.addEventListener('message', (e) => {
@@ -476,7 +476,7 @@ self.addEventListener('message', (e) => {
 
 然后，创建主线程脚本 `main.js` 用于启动和与 Web Worker 交互。
 
-```javascript
+```js
 // main.js
 
 if (window.Worker) {

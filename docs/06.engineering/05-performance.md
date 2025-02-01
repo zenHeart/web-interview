@@ -381,7 +381,7 @@ Long Tasks API认为任何超过50毫秒的任务都可能存在潜在的问题�
 
 以下是一个使用 PerformanceObserver 的示例代码：
 
-```javascript
+```js
 // 创建回调函数
 function performanceCallback (list, observer) {
   list.getEntries().forEach(entry => {
@@ -414,7 +414,7 @@ observer.observe({ entryTypes: ['measure', 'paint'] })
 
 1. 创建 PerformanceObserver 实例，并指定一个回调函数作为参数。
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries()
   entries.forEach((entry) => {
@@ -429,7 +429,7 @@ const observer = new PerformanceObserver((list) => {
 
 2. 使用 PerformanceObserver 的 observe() 方法监听 'paint' 类型的性能事件。
 
-```javascript
+```js
 observer.observe({ entryTypes: ['paint'] })
 ```
 
@@ -439,7 +439,7 @@ observer.observe({ entryTypes: ['paint'] })
 
 完整的示例代码如下：
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries()
   entries.forEach((entry) => {
@@ -464,7 +464,7 @@ observer.observe({ entryTypes: ['paint'] })
 
 1. 创建 PerformanceObserver 实例，并指定一个回调函数作为参数。
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries()
   entries.forEach((entry) => {
@@ -475,7 +475,7 @@ const observer = new PerformanceObserver((list) => {
 
 2. 使用 PerformanceObserver 的 observe() 方法监听 'longtask' 类型的性能事件。
 
-```javascript
+```js
 observer.observe({ entryTypes: ['longtask'] })
 ```
 
@@ -485,7 +485,7 @@ observer.observe({ entryTypes: ['longtask'] })
 
 完整的示例代码如下：
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries()
   entries.forEach((entry) => {
@@ -571,7 +571,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * 通过`performance.timing`可以获取页面加载过程中的各个关键时间点，如`navigationStart`（导航开始时间）、`domLoading`（开始解析 DOM 的时间）、`domInteractive`（DOM 准备就绪时间）、`domContentLoadedEventEnd`（`DOMContentLoaded`事件结束时间）、`loadEventEnd`（页面完全加载时间）等。计算这些时间点之间的差值可以得出不同阶段的加载时间，帮助开发者了解页面加载的性能瓶颈并进行优化。
 * 例如，可以计算从导航开始到页面完全加载的时间，以评估整体加载性能。
 
- ```javascript
+ ```js
  const timing = performance.timing
  const loadTime = timing.loadEventEnd - timing.navigationStart
  console.log(`Page load time: ${loadTime} milliseconds.`)
@@ -582,7 +582,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * 使用`performance.getEntriesByType('resource')`可以获取所有资源（如脚本、样式表、图片等）的加载性能信息。可以分析每个资源的加载时间、发起请求的时间、响应时间等，以便优化资源的加载策略。
 * 例如，可以找出加载时间较长的资源并考虑优化其大小、压缩方式或加载时机。
 
- ```javascript
+ ```js
  const resources = performance.getEntriesByType('resource')
  for (const resource of resources) {
    console.log(`Resource ${resource.name} took ${resource.responseEnd - resource.startTime} milliseconds to load.`)
@@ -594,7 +594,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * 可以结合`fetch`或`XMLHttpRequest`与 Performance API 来测量特定网络请求的耗时。在请求发送前记录时间戳，在请求完成后再次记录时间戳并计算差值，同时可以利用 Performance API 的其他信息来进一步分析请求性能。
 * 例如，可以统计某个 API 请求的耗时并与其他指标一起分析网络性能对应用的影响。
 
- ```javascript
+ ```js
  const startTime = performance.now()
  fetch('your-api-url')
    .then((response) => {
@@ -615,7 +615,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * 通过记录用户操作（如点击按钮、滚动页面等）的时间戳和相应的响应事件（如按钮点击后的处理完成时间、滚动事件触发后的页面更新时间等），可以测量用户交互的响应时间。这有助于确保应用在用户操作后能够及时做出反应，提高用户体验。
 * 例如，可以在用户点击一个按钮后记录开始时间，在按钮对应的操作完成后记录结束时间，计算响应时间并进行优化。
 
- ```javascript
+ ```js
  document.getElementById('your-button').addEventListener('click', () => {
    const startTime = performance.now()
    // 执行按钮对应的操作
@@ -631,7 +631,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * Performance API 中的`performance.now()`可以提供高精度的时间戳，通过在一定时间间隔内记录时间戳并分析时间差，可以检测页面是否出现卡顿。如果连续的时间差较大，可能表示页面出现了卡顿现象。此外，还可以结合浏览器的`requestAnimationFrame`来确保动画和交互的流畅性，通过在每一帧中执行特定的操作并测量时间，可以判断页面的流畅度是否符合预期。
 * 例如，可以在动画循环中记录每一帧的时间戳，分析帧与帧之间的时间间隔是否稳定，以检测动画的流畅度。
 
- ```javascript
+ ```js
  let lastFrameTime = performance.now()
  function animate () {
    const currentTime = performance.now()
@@ -652,7 +652,7 @@ observer.observe({ entryTypes: ['longtask'] })
 * 利用 Performance API 提供的数据，可以开发自定义的性能分析工具，用于特定项目或团队的需求。这些工具可以收集和展示各种性能指标，提供详细的报告和分析，帮助开发者更好地理解应用的性能状况并进行针对性的优化。
 * 例如，可以开发一个插件或工具，集成到开发环境中，实时监测页面性能并提供可视化的报告，包括加载时间、资源使用情况、网络请求耗时等。
 
- ```javascript
+ ```js
  class PerformanceAnalyzer {
    constructor () {
      this.measurements = []
@@ -955,7 +955,7 @@ Frame Timing API 提供了一种方式来测量浏览器渲染每一帧所花费
 
 * 使用 `performance.getEntriesByType('frame')` 方法可以获取帧时间数据的数组。每个条目代表一帧的信息，包括帧的开始时间、持续时间等。
 
- ```javascript
+ ```js
  const frameEntries = performance.getEntriesByType('frame')
  frameEntries.forEach((entry) => {
    console.log(`Frame start time: ${entry.startTime}`)
@@ -1021,7 +1021,7 @@ Frame Timing API 提供了一种方式来测量浏览器渲染每一帧所花费
 
 要使用`performance.mark()`，直接调用此函数并传入一个字符串作为标记的名称即可：
 
-```javascript
+```js
 performance.mark('startLoad')
 // 执行一些操作
 performance.mark('endLoad')
@@ -1033,7 +1033,7 @@ performance.mark('endLoad')
 
 创建标记后，你可以使用`performance.measure()`方法来测量这两个标记点之间的耗时。`performance.measure()`方法同样需要一个名称，并且可以接受两个额外的参数：起始标记和结束标记的名称。
 
-```javascript
+```js
 performance.measure('loadDuration', 'startLoad', 'endLoad')
 ```
 
@@ -1043,7 +1043,7 @@ performance.measure('loadDuration', 'startLoad', 'endLoad')
 
 通过`performance.getEntriesByName()`或其他类似的 API，你可以获取到性能条目并分析结果：
 
-```javascript
+```js
 const measure = performance.getEntriesByName('loadDuration')[0]
 console.log(`加载耗时：${measure.duration}毫秒`)
 ```
@@ -1054,7 +1054,7 @@ console.log(`加载耗时：${measure.duration}毫秒`)
 
 为了避免性能条目缓冲区满了或是数据混乱，你可以在完成测量和分析后，使用`performance.clearMarks()`和`performance.clearMeasures()`来清除标记和测量结果。
 
-```javascript
+```js
 performance.clearMarks('startLoad')
 performance.clearMarks('endLoad')
 performance.clearMeasures('loadDuration')
@@ -1085,7 +1085,7 @@ performance.clearMeasures('loadDuration')
 
 以下是一个简单的 JavaScript 代码示例，展示了如何使用 `PerformanceObserver` 来统计全站静态资源的加载耗时：
 
-```javascript
+```js
 // 创建性能观察者实例来监听资源加载事件
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntries()
@@ -1117,7 +1117,7 @@ observer.observe({ entryTypes: ['resource'] })
 
  使用 PerformanceObserver 监听资源加载
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   const entries = list.getEntriesByType('resource')
   console.log(`当前页面共发起了 ${entries.length} 个资源请求。`)
@@ -1133,7 +1133,7 @@ observer.observe({ entryTypes: ['resource'] })
 
  拦截 XMLHttpRequest
 
-```javascript
+```js
 (function () {
   const oldOpen = XMLHttpRequest.prototype.open
   window.requestCount = 0
@@ -1147,7 +1147,7 @@ observer.observe({ entryTypes: ['resource'] })
 
  拦截 Fetch API
 
-```javascript
+```js
 const oldFetch = window.fetch
 window.fetch = function () {
   window.requestCount++
@@ -1175,7 +1175,7 @@ window.fetch = function () {
 
 这个 API 提供有关系统的网络连接的信息，如网络的类型和下载速度。这个 API 的支持度不是全局性的，但在许多现代浏览器上可用。使用这个 API，你可以获取到有关用户网络连接的详细信息。
 
-```javascript
+```js
 if ('connection' in navigator) {
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection
 
@@ -1198,7 +1198,7 @@ if ('connection' in navigator) {
 
 通过发送一个小请求（可能是一个小文件或 API 请求）并测量它完成的时间，可以粗略地估计当前的网络速度。
 
-```javascript
+```js
 const startTime = new Date().getTime() // 记录开始时间
 fetch('your-small-file-or-api-url').then((response) => {
   const endTime = new Date().getTime() // 记录结束时间
@@ -1212,14 +1212,14 @@ fetch('your-small-file-or-api-url').then((response) => {
 
 HTML5 引入了在线和离线事件监听，可以用来简单判断用户是否连接到网络。
 
-```javascript
+```js
 window.addEventListener('online', () => console.log('网络已连接'))
 window.addEventListener('offline', () => console.log('网络已断开'))
 ```
 
 根据`navigator.onLine`的属性值，你可以检测用户是否在线。
 
-```javascript
+```js
 if (navigator.onLine) {
   console.log('用户在线')
 } else {
@@ -1250,7 +1250,7 @@ if (navigator.onLine) {
 
 下面的例子展示了如何使用 `PerformanceObserver` 来监听首次内容绘制 (First Contentful Paint, FCP) 和最大内容绘制 (Largest Contentful Paint, LCP) 的性能指标。
 
-```javascript
+```js
 const perfObserver = new PerformanceObserver((entryList) => {
   for (const entry of entryList.getEntries()) {
     if (entry.name === 'first-contentful-paint') {
@@ -1508,7 +1508,7 @@ web worker是运行在Main线程之外的一个线程，叫做worker线程。我
 
 下面是一个简单的示例代码，演示如何注册 `LongTask` 观察者并打印任务的一些基本信息：
 
-```javascript
+```js
 const observer = new PerformanceObserver((list) => {
   list.getEntries().forEach((entry) => {
     console.log('LongTask Detected:', entry)
@@ -1535,7 +1535,7 @@ observer.observe({ entryTypes: ['longtask'] })
 
  使用 PerformanceObserver 监听长任务
 
-```javascript
+```js
 // 创建一个性能观察者实例来订阅长任务
 let observer = new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) {
@@ -1570,7 +1570,7 @@ observer.observe({ entryTypes: ['longtask'] })
 
 以下是如何在实际使用中停止观察和获取当前的统计数据：
 
-```javascript
+```js
 // 停止观察能力
 observer.disconnect()
 
@@ -1723,7 +1723,7 @@ npm install webpack-spritesmith --save-dev
 
 2. 配置Webpack：在Webpack配置文件中，引入`webpack-spritesmith`插件，并配置相应的选项。
 
-```javascript
+```js
 const SpritesmithPlugin = require('webpack-spritesmith')
 
 module.exports = {
@@ -1878,7 +1878,7 @@ npm install url-loader --save-dev
 
 2. 配置Webpack：在Webpack的配置文件中，添加对图片文件的处理规则。您可以在`module.rules`数组中添加一个新的规则，以匹配图片文件的后缀。
 
-```javascript
+```js
 module.exports = {
   // ...
   module: {
@@ -1907,7 +1907,7 @@ module.exports = {
 
 3. 在代码中引用图片：在您的代码中，可以像引用普通图片一样引用图片文件，Webpack会根据配置自动将其转换为Base64编码。
 
-```javascript
+```js
 import imgSrc from './path/to/image.png'
 
 const imgElement = document.createElement('img')
@@ -2025,7 +2025,7 @@ document.addEventListener('scroll', function () {
 
 1. 使用原生JavaScript实现图片预加载：
 
-```javascript
+```js
 function preloadImage (url) {
   return new Promise(function (resolve, reject) {
     const img = new Image()
@@ -2061,7 +2061,7 @@ preloadImage('image.jpg')
 
 然后，在JavaScript代码中使用Preload.js库来进行图片预加载：
 
-```javascript
+```js
 const preload = new createjs.LoadQueue()
 preload.on('complete', handleComplete)
 preload.on('error', handleError)

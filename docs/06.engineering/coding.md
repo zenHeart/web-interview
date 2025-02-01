@@ -60,7 +60,7 @@ Service workers 位于浏览器和网络之间，可以控制页面的资源缓�
 
 下面是一个简单的洋葱模型的示例代码：
 
-```javascript
+```js
 function middleware1 (next) {
   return function (ctx) {
     console.log('middleware1 before')
@@ -363,7 +363,7 @@ module.exports = {
 
 **3.使用 webpack 的 ProvidePlugin 插件**，将需要共享的模块注入到全局作用域中，这样就可以在不同模块中共享相同的依赖库。例如，在 webpack 配置文件中添加以下代码：
 
-```javascript
+```js
 const webpack = require('webpack')
 
 module.exports = {
@@ -382,7 +382,7 @@ module.exports = {
 
 **4.使用 webpack 的 resolve.modules 配置选项**，将 node\_modules 目录移动到项目根目录之外，然后在 resolve.modules 中添加该目录的绝对路径，这样就可以解决不同模块中引用相同依赖库不同版本的问题。例如，在 webpack 配置文件中添加以下代码：
 
-```javascript
+```js
 const path = require('path')
 
 module.exports = {

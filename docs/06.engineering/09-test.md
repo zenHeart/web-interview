@@ -36,7 +36,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
 
 3. 测试示例：
 
- ```javascript
+ ```js
  function add (a, b) {
    return a + b
  }
@@ -80,7 +80,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
 
 * 使用 Cypress 测试一个电子商务网站的购物流程：
 
- ```javascript
+ ```js
  describe('E-commerce Shopping Flow', function () {
    it('should add an item to the cart and complete the purchase', function () {
      cy.visit('https://your-ecommerce-site.com')
@@ -109,7 +109,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
 
 * 使用 React Testing Library 测试一个 React 组件：
 
- ```javascript
+ ```js
  import React from 'react'
  import { render, fireEvent } from '@testing-library/react'
  import YourComponent from './YourComponent'
@@ -141,7 +141,7 @@ TDD、BDD 和 DDD 这三个缩写在软件开发中分别代表以下概念：
 
 * 在项目中配置 ESLint，可以创建一个`.eslintrc.js`文件，定义规则和插件：
 
- ```javascript
+ ```js
  module.exports = {
    extends: ['eslint:recommended', 'plugin:react/recommended'],
    rules: {
@@ -239,7 +239,7 @@ yarn add --dev @testing-library/react-hooks
 
 然后，让我们以一个简单的`useCounter` Hook 为例，来看怎么进行单元测试。以下是这个 Hook 的代码：
 
-```javascript
+```js
 import { useState, useCallback } from 'react'
 
 function useCounter (initialValue = 0) {
@@ -255,7 +255,7 @@ export default useCounter
 
 接下来是对应的单元测试：
 
-```javascript
+```js
 import { renderHook, act } from '@testing-library/react-hooks'
 import useCounter from './useCounter'
 

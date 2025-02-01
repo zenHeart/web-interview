@@ -145,7 +145,7 @@ Crankshaft编译器为了性能考虑，通常会做出比较乐观和大胆的�
 
 例如，下面的示例：
 
-```javascript
+```js
 let counter = 0
 function test (x, y) {
   counter++
@@ -372,7 +372,7 @@ JavaScript 作用域链（Scope Chain）是指变量和函数的可访问性和�
 
 示例：
 
-```javascript
+```js
 const obj = {}
 console.log(obj.toString()) // obj 没有定义 toString 方法，通过原型链找到 Object.prototype 上的 toString 方法
 
@@ -421,7 +421,7 @@ JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and 
 * 闭包可以创建一个私有作用域，将变量封装在函数内部，防止外部直接访问和修改。只有通过特定的函数接口才能访问和操作这些变量。
 * 例如：
 
- ```javascript
+ ```js
  function createCounter () {
    let count = 0
    return {
@@ -446,7 +446,7 @@ JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and 
 * 在面向对象编程中，可以使用闭包来模拟私有方法。私有方法只能在对象内部被访问，外部无法直接调用。
 * 例如：
 
- ```javascript
+ ```js
  const myObject = (function () {
    let privateVariable = 0
  
@@ -474,7 +474,7 @@ JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and 
 * 闭包可以用于实现函数柯里化，将一个多参数的函数转换为一系列单参数的函数。每次调用只接受一部分参数，并返回一个新的函数，直到所有参数都被提供。
 * 例如：
 
- ```javascript
+ ```js
  function add (a) {
    return function (b) {
      return function (c) {
@@ -501,7 +501,7 @@ JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and 
 * 在异步编程或者事件处理中，闭包可以保存外部函数的变量和状态，使得回调函数能够访问这些信息。
 * 例如：
 
- ```javascript
+ ```js
  function setTimeoutWithMessage (message) {
    setTimeout(function () {
      console.log(message)
@@ -537,7 +537,7 @@ JavaScript的垃圾收集器使用了一种称为"**标记-清除**"（mark and 
 * 闭包可以用于实现记忆化，将函数的计算结果缓存起来，避免重复计算。如果相同的参数再次被传入，直接返回缓存的结果，而不是重新计算。
 * 例如：
 
- ```javascript
+ ```js
  function memoizedAdd () {
    const cache = {}
    return function (a, b) {
@@ -580,7 +580,7 @@ JavaScript中闭包的应用使用闭包需要注意的地方：闭包使得函�
 
 第一种写法：
 
-```javascript
+```js
 // 第1种写法
 function Circle (r) {
   this.r = r
@@ -615,7 +615,7 @@ alert(c.area(1.0))
 
 第三种写法：
 
-```javascript
+```js
 // 第3种写法
 // eslint-disable-next-line
 const Circle = new Object()
@@ -629,7 +629,7 @@ alert(Circle.Area(1.0))
 
 **第四种写法：**
 
-```javascript
+```js
 // 第4种写法
 const Circle = {
   PI: 3.14159,
@@ -653,7 +653,7 @@ alert((new Circle()).area(1.0))
 **基础用法：**
 示例1：解决作用域问题
 
-```javascript
+```js
 function f1 () {
   let n = 1
   // eslint-disable-next-line
@@ -674,7 +674,7 @@ console.log(res()) // 结果2和undefined
 
 示例2：实现get 和 set
 
-```javascript
+```js
 let setValue, getValue;
 (function () {
   let n = 0
@@ -694,7 +694,7 @@ console.log(getValue())
 
 示例3：用闭包实现迭代器的效果
 
-```javascript
+```js
 // 迭代器中得应用
 function test (x) {
   let i = 0
@@ -713,7 +713,7 @@ console.log(next()) // 每调用一次，都可以将数组指针向下移动一
 示例4：
 错误的示范：
 
-```javascript
+```js
 function f () {
   const a = []
   let i
@@ -732,7 +732,7 @@ console.log(test[2]()) // 结果都是 3 3 3 这种写法是错误的
 
 正确的示范：
 
-```javascript
+```js
 function f () {
   const a = []
   let i
@@ -753,7 +753,7 @@ console.log(test[2]())
 
 示例5：对示例4的优化
 
-```javascript
+```js
 function f () {
   function test (x) {
     return function () {
@@ -777,7 +777,7 @@ alert(res[2]())
 
 上面代码中出现了JS中常用的Prototype，那么Prototype有什么用呢？下面我们来看一下：
 
-```javascript
+```js
 const dom = function () {
 
 }
@@ -804,7 +804,7 @@ d.Show() // error
 
 下面我们再来看一段代码：
 
-```javascript
+```js
 const dom = function () {
   const Name = 'Default'
   this.Sex = 'Boy'
@@ -820,7 +820,7 @@ alert(dom.Sex)
 大家先看看，会显示什么呢？ 答案是两个都显示Undefined,为什么呢？这是由于在Javascript中每个function都会形成一个作用域，而这些变量声明在函数中，
 所以就处于这个函数的作用域中，外部是无法访问的。要想访问变量，就必须new一个实例出来。
 
-```javascript
+```js
 const html = {
   Name: 'Object',
   Success: function () {
@@ -849,7 +849,7 @@ alert('Obj Success')
 变量html是一个对象，不是函数，所以没有Prototype属性，其方法也都是公有方法，html不能被实例化。
 但是他可以作为值赋给其它变量，如var o = html; 我们可以这样使用它：
 
-```javascript
+```js
 alert(html.Name)
 html.Success()
 ```
@@ -879,7 +879,7 @@ s.Show()
 除了每次使用变量都是用var关键字外，我们在实际情况下经常遇到这样一种情况，即有的函数只需要执行一次，其内部变量无需维护，
 比如UI的初始化，那么我们可以使用闭包：
 
-```javascript
+```js
 const data = {
   table: [],
   tree: {}
@@ -904,7 +904,7 @@ const data = {
 那么我们就需要将计算出来的值存储起来，当调用这个函数的时候，首先在缓存中查找，如果找不到，则进行计算，然后更新缓存并返回值，如果找到了，直接返回查找到的值即可。
 闭包正是可以做到这一点，因为它不会释放外部的引用，从而函数内部的值可以得以保留。
 
-```javascript
+```js
 const CachedSearchBox = (function () {
   const cache = {}
   const count = []
@@ -936,7 +936,7 @@ CachedSearchBox.attachSearchBox('input')
 
  3、封装
 
-```javascript
+```js
 const person = (function () {
   // 变量作用域为函数内部，外部无法访问
   let name = 'default'
@@ -965,7 +965,7 @@ print(person.getName())
 
  4、实现类和继承
 
-```javascript
+```js
 function Person () {
   let name = 'default'
 
@@ -1024,7 +1024,7 @@ alert(j.getName())
 
 使用严格模式可以提高代码的质量和可靠性，并避免一些常见的错误。为了启用严格模式，只需在 JavaScript 文件或函数的顶部添加 `"use strict"` 即可。严格模式默认不启用，需要显式地指定。例如：
 
-```javascript
+```js
 'use strict'
 
 // 严格模式下的代码
@@ -1073,7 +1073,7 @@ this 是执行上下文中的一个属性，它指向最后一次调用这个方
 这四种方式，使用构造器调用模式的优先级最高，然后是 apply、call 和 bind 调用模式，然后是方法调用模式，然后是函数调用模式。
 
 1. this 是一个关键字,它的值取决于当前的执行环境,而非申明环境
-2. this 值的判定方法,参考 [你不知道的 javascript 上卷-第二部分　 this 和对象原型](https://book.douban.com/subject/26351021/)
+2. this 值的判定方法,参考 [你不知道的 JavaScript 上卷-第二部分　 this 和对象原型](https://book.douban.com/subject/26351021/)
     1. **默认绑定**,当为普通函数调用或处于全局环境时
         1. 严格模式 this 为 undefined
         2. 非严格模式为 window
@@ -1190,7 +1190,7 @@ JavaScript 中 this 指向混乱的原因主要有以下几个：
 
 实例2：
 
-```javascript
+```js
 const name = 'Kevin Yang'
 function sayHi () {
   console.log('你好，我的名字叫' + this.name)
@@ -1218,7 +1218,7 @@ person.sayHello()
 
 理解了上面所说的之后，我们将上面最后一段示例改造成面向对象式的代码。
 
-```javascript
+```js
 const name = 'Kevin Yang'
 function sayHi () {
   console.log('你好，我的名字叫' + this.name)
@@ -1240,7 +1240,7 @@ kevin.sayHello()
 ```html
 <body>
 <input id="btnTest" type="button" value="点击我" onclick="sayHi()">
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  function sayHi(){ 
   alert("当前点击的元素是" + this.tagName); 
  } 
@@ -1259,7 +1259,7 @@ kevin.sayHello()
 
 ```html
 <input id="btnTest" type="button" value="点击我" onclick="sayHi(this)">
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  function sayHi(el){ 
   alert("当前点击的元素是" + el.tagName); } 
 </script> 
@@ -1268,7 +1268,7 @@ kevin.sayHello()
 等价代码如下：
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  document.getElementById("btnTest").onclick = function(){ sayHi(this); } 
 </script>
 ```
@@ -1276,7 +1276,7 @@ kevin.sayHello()
  示例2——临时变量导致的this指针丢失
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  var Utility = { 
   decode:function(str){ return unescape(str); }, 
   getCookie:function(key){ 
@@ -1297,7 +1297,7 @@ kevin.sayHello()
 但是有个人不小心这样使用Utility对象呢？
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  function showUserIdentity(){ 
   // 保存getCookie函数到一个局部变量，因为下面会经常用到 
   var getCookie = Utility.getCookie; 
@@ -1320,7 +1320,7 @@ getCookie函数内部使用Utility.decode显式引用decode对象而不通过thi
 第三种使用apply 和 call 修正的办法实例如下：
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  function showUserIdentity(){ 
   // 保存getCookie函数到一个局部变量，因为下面会经常用到 
   var getCookie = Utility.getCookie; 
@@ -1334,7 +1334,7 @@ getCookie函数内部使用Utility.decode显式引用decode对象而不通过thi
  示例3——函数传参时导致的this指针丢失
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  var person = { 
   name:"Kevin Yang", 
   sayHi:function(){ 
@@ -1358,7 +1358,7 @@ getCookie函数内部使用Utility.decode显式引用decode对象而不通过thi
 Prototype的解决方案——传参之前使用bind方法将函数封装起来，并返回封装后的对象
 
 ```html
-<script type="text/javascript"> 
+<script type="text/JavaScript"> 
  var person = { 
   name:"Kevin Yang", 
   sayHi:function(){ 
@@ -1372,7 +1372,7 @@ Prototype的解决方案——传参之前使用bind方法将函数封装起来�
 
 bind方法的实现其实是用到了Javascript又一个高级特性——**闭包**。我们来看一下源代码：
 
-```javascript
+```js
 function bind () {
   if (arguments.length < 2 && arguments[0] === undefined) { return this }
   const __method = this; const args = $A(arguments); const object = args.shift()
@@ -1390,7 +1390,7 @@ function bind () {
 
 在几种常见场景中this的变化
 
- ```javascript
+ ```js
 function doSomething () {
    alert(this.navigator) // appCodeName
    this.value = 'I am from the Object constructor'
@@ -1408,7 +1408,7 @@ function doSomething () {
 
 下来文章中我们将要讨论的问题是：在函数doSomething()中this所指的是什么？
 
-```javascript
+```js
 function doSomething () {
   this.style.color = '#cc0000'
 }
@@ -1428,7 +1428,7 @@ function doSomething () {
 
 ## 变量提升
 
-参考 [我知道你懂 hoisting，可是你了解到多深？](https://blog.techbridge.cc/2018/11/10/javascript-hoisting/)
+参考 [我知道你懂 hoisting，可是你了解到多深？](https://blog.techbridge.cc/2018/11/10/JavaScript-hoisting/)
 
 变量提升是 js 语言的一种机制确保在变量或函数定义后,无需考虑调用位置对变量或函数进行引用。
 
@@ -1484,7 +1484,7 @@ JIT 编译器的一个关键优点是它能够在不牺牲启动速度的情况�
 
 下面是一个使用隐藏类的简单示例：
 
-```javascript
+```js
 function MyClass (a, b) {
   this.prop1 = a
   this.prop2 = b
@@ -1647,12 +1647,12 @@ for 性能优于 forEach ， 主要原因如下：
 
 * [资料](https://zhuanlan.zhihu.com/p/461523927)
 
-* [javascript 中 for 的性能比 forEach 的性能要好，为何还要使用 forEach？ - 李十三的回答 - 知乎](https://www.zhihu.com/question/556786869/answer/2706658837)
+* [JavaScript 中 for 的性能比 forEach 的性能要好，为何还要使用 forEach？ - 李十三的回答 - 知乎](https://www.zhihu.com/question/556786869/answer/2706658837)
 * [资料](https://juejin.cn/post/6844904159938887687)
 
 ## 尾调优化
 
-[es6 javascript 尾调用](https://blog.csdn.net/qq_30100043/article/details/53406001)
+[es6 JavaScript 尾调用](https://blog.csdn.net/qq_30100043/article/details/53406001)
 [深入理解JavaScript中的尾调用(Tail Call)](https://www.jb51.net/article/104875.htm)
 
  1、什么是尾调用
@@ -1661,7 +1661,7 @@ for 性能优于 forEach ， 主要原因如下：
 一句话就能说清楚，它的意思是在函数的执行过程中，如果最后一个动作是一个函数的调用，
 即这个调用的返回值被当前函数直接返回，则称为尾调用。
 
-```javascript
+```js
 function f (x) {
   return g(x)
 }
@@ -1669,7 +1669,7 @@ function f (x) {
 
 上面代码中，函数 f 的最后一步是调用函数 g ，这就叫尾调用。**以下三种情况，都不属于尾调用。**
 
-```javascript
+```js
 // 情况一
 function f (x) {
   const y = g(x)
@@ -1688,7 +1688,7 @@ function f2 (x) {
 
 上面代码中，情况一是调用函数 g 之后，还有赋值操作，所以不属于尾调用，即使语义完全一样。情况二也属于调用后还有操作，即使写在一行内。情况三等同于下面的代码。
 
-```javascript
+```js
 function f (x) {
   g(x)
   return undefined
@@ -1697,7 +1697,7 @@ function f (x) {
 
 尾调用不一定出现在函数尾部，只要是最后一步操作即可。
 
-```javascript
+```js
 function f (x) {
   if (x > 0) {
     return m(x)
@@ -1721,7 +1721,7 @@ function f (x) {
 尾调用由于是函数的最后一步操作，所以不需要保留外层函数的调用帧，
 因为调用位置、内部变量等信息都不会再用到了，只要直接用内层函数的调用帧，取代外层函数的调用帧就可以了。
 
-```javascript
+```js
 function f () {
   const m = 1
   const n = 2
@@ -1745,7 +1745,7 @@ g(3)
 
 注意，只有不再用到外层函数的内部变量，内层函数的调用帧才会取代外层函数的调用帧，否则就无法进行 “ 尾调用优化 ” 。
 
-```javascript
+```js
 function addOne (a) {
   const one = 1
   function inner (b) {
@@ -1763,7 +1763,7 @@ function addOne (a) {
 递归非常耗费内存，因为需要同时保存成千上百个调用帧，很容易发生 “ 栈溢出 ” 错误（ stack overflow ）。
 但对于尾递归来说，由于只存在一个调用帧，所以永远不会发生 “ 栈溢出 ” 错误。
 
-```javascript
+```js
 function factorial (n) {
   if (n === 1) return 1
   return nfactorial(n - 1)
@@ -1775,7 +1775,7 @@ factorial(5) // 120
 
 如果改写成尾递归，只保留一个调用记录，复杂度 O(1) 。
 
-```javascript
+```js
 function factorial (n, total) {
   if (n === 1) return total
   return factorial(n - 1, ntotal)
@@ -1786,7 +1786,7 @@ factorial(5, 1) // 120
 还有一个比较著名的例子，就是计算 fibonacci（斐波那契） 数列，也能充分说明尾递归优化的重要性
 如果是非尾递归的 fibonacci 递归方法
 
-```javascript
+```js
 function Fibonacci (n) {
   if (n <= 1) { return 1 }
   return Fibonacci(n - 1) + Fibonacci(n - 2)
@@ -1799,7 +1799,7 @@ Fibonacci(10) // 89
 
 如果我们使用尾递归优化过的 fibonacci 递归算法
 
-```javascript
+```js
 function Fibonacci2 (n, ac1 = 1, ac2 = 1) {
   if (n <= 1) { return ac2 }
   return Fibonacci2(n - 1, ac2, ac1 + ac2)
@@ -1821,7 +1821,7 @@ ES6 也是如此，第一次明确规定，所有 ECMAScript 的实现，都必�
 两个方法可以解决这个问题。
 **方法一是在尾递归函数之外，再提供一个正常形式的函数。**
 
-```javascript
+```js
 function tailFactorial (n, total) {
   if (n === 1) return total
   return tailFactorial(n - 1, ntotal)
@@ -1836,7 +1836,7 @@ factorial(5) // 120
 
 函数式编程有一个概念，**叫做柯里化（ currying ）**，意思是将多参数的函数转换成单参数的形式。这里也可以使用柯里化。
 
-```javascript
+```js
 function currying (fn, n) {
   return function (m) {
     return fn.call(this, m, n)
@@ -1854,7 +1854,7 @@ factorial(5) // 120
 
 **第二种方法就简单多了，就是采用 ES6 的函数默认值。**
 
-```javascript
+```js
 function factorial (n, total = 1) {
   if (n === 1) return total
   return factorial(n - 1, ntotal)
@@ -1875,7 +1875,7 @@ func.arguments：返回调用时函数的参数。
 func.caller：返回调用当前函数的那个函数。
 尾调用优化发生时，函数的调用栈会改写，因此上面两个变量就会失真。严格模式禁用这两个变量，所以尾调用模式仅在严格模式下生效。
 
-```javascript
+```js
 function restricted () {
   'use strict'
   restricted.caller // 报错
@@ -1892,7 +1892,7 @@ restricted()
 
 下面是一个正常的递归函数。
 
-```javascript
+```js
 function sum (x, y) {
   if (y > 0) {
     return sum(x + 1, y - 1)
@@ -1908,7 +1908,7 @@ sum(1, 100000)
 一旦指定sum递归 100000 次，就会报错，提示超出调用栈的最大次数。
 **蹦床函数(trampoline)** 可以将递归执行转为循环执行。
 
-```javascript
+```js
 function trampoline (f) {
   while (f && f instanceof Function) {
     f = f()
@@ -1922,7 +1922,7 @@ function trampoline (f) {
 
 然后，要做的就是将原来的递归函数，改写为每一步返回另一个函数。
 
-```javascript
+```js
 function sum (x, y) {
   if (y > 0) {
     return sum.bind(null, x + 1, y - 1)
@@ -2009,7 +2009,7 @@ const o3 = Object.create(P)
 
 例子：
 
-```javascript
+```js
 const M = function (name) { this.name = name }
 const o3 = new M('o3')
 ```
@@ -2018,7 +2018,7 @@ const o3 = new M('o3')
 占用内存，而且也没有必要，这个时候就可以新添加的方法写进原型里面去，添加到原型链中去，
 在实例的原型链中我们可以在原型对象上找到添加的方法；
 
-```javascript
+```js
 const M = function (name) { this.name = name }
 const o3 = new M('o3')
 M.prototype.say = function () {

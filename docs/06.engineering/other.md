@@ -59,7 +59,7 @@
 * 根据你使用的编程语言，可能需要指定一个解析器。例如，对于 TypeScript 项目，你可以使用`@typescript-eslint/parser`。
 * 在`.eslintrc.*`文件中，可以这样配置：
 
- ```javascript
+ ```js
  module.exports = {
    parser: '@typescript-eslint/parser'
  }
@@ -70,7 +70,7 @@
 * ESLint 插件可以提供额外的规则和功能。例如，`@typescript-eslint/eslint-plugin`是用于 TypeScript 的插件。
 * 配置插件如下：
 
- ```javascript
+ ```js
  module.exports = {
    plugins: ['@typescript-eslint']
  }
@@ -81,7 +81,7 @@
 * 规则用于定义代码的风格和质量要求。每个规则都有一个可配置的选项，可以设置为`off`（关闭规则）、`warn`（警告）或`error`（错误）。
 * 例如，以下配置禁止使用未声明的变量，并要求使用分号：
 
- ```javascript
+ ```js
  module.exports = {
    rules: {
      'no-undef': 'error',
@@ -95,7 +95,7 @@
 * 指定代码运行的环境，以便 ESLint 可以正确地识别全局变量和内置模块。
 * 例如，如果你的代码在浏览器中运行，可以配置`browser`环境：
 
- ```javascript
+ ```js
  module.exports = {
    env: {
      browser: true
@@ -248,13 +248,13 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 1. 在 Webpack 配置文件（通常是`webpack.config.js`）中，引入`eslint-webpack-plugin`插件：
 
- ```javascript
+ ```js
  const ESLintPlugin = require('eslint-webpack-plugin')
  ```
 
 2. 在 Webpack 配置对象的`plugins`数组中添加`ESLintPlugin`实例：
 
- ```javascript
+ ```js
  module.exports = {
  // ...其他配置项
    plugins: [
@@ -283,7 +283,7 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 2. 定义插件对象：
 
-```javascript
+```js
 module.exports = {
   rules: {}
 }
@@ -293,7 +293,7 @@ module.exports = {
 
 1. 定义规则函数，接收一个参数`options`，这个参数可以包含你要检测的字符串。
 
-```javascript
+```js
 module.exports = {
   rules: {
     'check-custom-string': (context, options) => {
@@ -320,7 +320,7 @@ module.exports = {
 1. 在项目目录下创建一个`tests`目录。
 2. 在`tests`目录下创建一个测试文件，例如`test.js`。
 
-```javascript
+```js
 const ruleTester = require("eslint").RuleTester;
 const rule = require("../index").rules["check-custom-string"];
 

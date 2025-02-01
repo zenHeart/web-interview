@@ -745,7 +745,7 @@ position: absolute;
 
  js 代码实现
 
-```javascript
+```js
 // 获取用户屏幕宽度，决定一行几张图
 // 操作下一张图，放到上一行最矮的列下
 imgLocation('container', 'box')

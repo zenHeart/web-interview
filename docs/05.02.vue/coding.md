@@ -248,7 +248,7 @@ function Dropdown() {
 
 1. 创建日志插件函数：
 
-```javascript
+```js
 const loggerMiddleware = (store) => (next) => (action) => {
   console.log('prev state', store.getState())
   console.log('action', action)
@@ -262,7 +262,7 @@ const loggerMiddleware = (store) => (next) => (action) => {
 
 2. 将日志插件添加到 Redux store：
 
-```javascript
+```js
 import { createStore, applyMiddleware } from 'redux'
 import rootReducer from './reducers'
 import loggerMiddleware from './loggerMiddleware'

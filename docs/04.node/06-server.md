@@ -18,7 +18,7 @@
 
 示例代码：
 
-```javascript
+```js
 app.use((req, res, next) => {
   // 这里是中间件逻辑
   next()
@@ -103,7 +103,7 @@ vbnetCopy codeasync function myMiddleware(ctx, next) {
 
 2. 使用 Koa 的错误处理中间件：Koa 提供了一个错误处理中间件 `koa-json-error`，可以通过在应用程序中使用该中间件来处理异常。这个中间件会自动捕获应用程序中未被处理的异常，并将错误信息以 JSON 格式返回给客户端。例如：
 
-```javascript
+```js
 const Koa = require('koa')
 const jsonError = require('koa-json-error')
 
@@ -127,7 +127,7 @@ app.listen(3000)
 
 在这个例子中，`koa-json-error` 中间件会自动捕获应用程序中未被处理的异常，并将错误信息以 JSON 格式返回给客户端。开发人员可以通过自定义错误处理函数来处理异常，例如：
 
-```javascript
+```js
 const Koa = require('koa')
 const jsonError = require('koa-json-error')
 
@@ -300,7 +300,7 @@ app.use(async (ctx, next) => {
 
 下面是一个使用生成器函数实现的简单的 Koa 中间件函数：
 
-```javascript
+```js
 function * myMiddleware (next) {
   // 中间件函数的代码
   console.log('Start')
@@ -311,7 +311,7 @@ function * myMiddleware (next) {
 
 在这个中间件函数中，`yield next` 表示挂起当前的执行，执行下一个中间件函数。假设我们有两个中间件函数 `middleware1` 和 `middleware2`，它们的代码如下：
 
-```javascript
+```js
 function * middleware1 (next) {
   console.log('middleware1 Start')
   yield next
@@ -356,7 +356,7 @@ Koa 中间件 `koa-bodyparser` 的原理是将 HTTP 请求中的 `request body` 
 
 下面是一个简单的 `koa-bodyparser` 中间件的实现示例：
 
-```javascript
+```js
 function bodyParser () {
   return async (ctx, next) => {
     if (ctx.request.method === 'POST' || ctx.request.method === 'PUT') {
@@ -397,7 +397,7 @@ function bodyParser () {
 
 以下是一个示例：
 
-```javascript
+```js
 const Koa = require('koa')
 const app = new Koa()
 
@@ -667,7 +667,7 @@ SSR 在完成访问响应的时候需要做更多的计算和生成工作
 * renderToString()
 * renderToStaticMarkup()
 
-```javascript
+```js
 ReactDOMServer.renderToStaticMarkup(element)
 ```
 

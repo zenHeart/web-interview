@@ -16,7 +16,7 @@
 
 下面是一个简单的模板引擎实现示例：
 
-```javascript
+```js
 function simpleTemplateEngine (template, data) {
   const variableRegex = /{{\s*([\w]+)\s*}}/g // 匹配变量插值
 
@@ -52,7 +52,7 @@ console.log(simpleTemplateEngine(template, data)) // 输出：Hello, John! Today
 
 以下代码实现了一个简化的模板引擎，支持条件判断：
 
-```javascript
+```js
 function parseTemplate (template, data) {
   const tokenRegex = /{{\s*(\/?[\w\s]+\/?)\s*}}/g // 匹配模板语法 token
   const keywords = /^(if|\/if|else)$/
@@ -655,7 +655,7 @@ Canvas 可以通过一帧帧的绘制来实现动画。具体来说，可以通�
 
 首先，需要获取 Canvas 对象和上下文对象。
 
-```javascript
+```js
 const canvas = document.getElementById('myCanvas')
 const ctx = canvas.getContext('2d')
 ```
@@ -670,7 +670,7 @@ const ctx = canvas.getContext('2d')
 
 动画函数中主要包含两个部分：更新状态和绘制图形。更新状态指更新 Canvas 上的图形的位置、大小、颜色等属性，绘制图形指将更新后的图形绘制到 Canvas 上。
 
-```javascript
+```js
 function animate () {
   // 更新状态
   // ...
@@ -684,7 +684,7 @@ function animate () {
 
 最后，可以使用 `requestAnimationFrame` 方法不断执行动画函数，从而实现动画效果。
 
-```javascript
+```js
 function animate () {
   // 更新状态
   // ...
@@ -803,7 +803,7 @@ bashCopy codeserver {
 
 我们知道 JavaScript 中，关于作用域（scope）,只有全局作用域（global scope）、函数作用域（function scope）以及从 ES6 开始才有的块级作用域（block scope）。如果要将一段代码中的变量、函数等的定义隔离出来，受限于 JavaScript 对作用域的控制，只能将这段代码封装到一个 Function 中，通过使用 function scope 来达到作用域隔离的目的。也因为需要这种使用函数来达到作用域隔离的目的方式，于是就有 IIFE（立即调用函数表达式）,这是一个被称为 自执行匿名函数的设计模式
 
-```javascript
+```js
 (function foo () {
   const a = 1
   console.log(a)
@@ -814,7 +814,7 @@ console.log(a) // 抛出错误："Uncaught ReferenceError: a is not defined"
 
 当函数变成立即执行的函数表达式时，表达式中的变量不能从外部访问，它拥有独立的词法作用域。不仅避免了外界访问 IIFE 中的变量，而且又不会污染全局作用域，弥补了 JavaScript 在 scope 方面的缺陷。一般常见于写插件和类库时，如 JQuery 当中的沙箱模式
 
-```javascript
+```js
 (function (window) {
   const jQuery = function (selector, context) {
     return new jQuery.fn.init(selector, context)
@@ -866,7 +866,7 @@ Function 构造函数创建一个新的 Function 对象。直接调用这个构�
 
 **functionBody** 一个含有包括函数定义的 JavaScript 语句的字符串。
 
-```javascript
+```js
 const sum = new Function('a', 'b', 'return a + b')
 
 console.log(sum(1, 2))// 3
@@ -874,7 +874,7 @@ console.log(sum(1, 2))// 3
 
 同样也会遇到和 eval 类似的的安全问题和相对较小的性能问题。
 
-```javascript
+```js
 const a = 1
 
 function sandbox () {
@@ -891,7 +891,7 @@ console.log(f())
 
 with 是 JavaScript 中一个关键字,扩展一个语句的作用域链。它允许半沙盒执行。那什么叫半沙盒？语句将某个对象添加到作用域链的顶部，如果在沙盒中有某个未使用命名空间的变量，跟作用域链中的某个属性同名，则这个变量将指向这个属性值。如果沒有同名的属性，则将拋出 ReferenceError。
 
-```javascript
+```js
 function sandbox(o) {
  with (o){
  //a=5; 
@@ -917,7 +917,7 @@ console.log(c,d); // 2,3 c、d被泄露到window对象上
 
 > in 运算符能够检测左侧操作数是否为右侧操作数的成员。其中，左侧操作数是一个字符串，或者可以转换为字符串的表达式，右侧操作数是一个对象或数组。
 
-```javascript
+```js
 const o = {
   a: 1,
   b: function () {}
@@ -933,7 +933,7 @@ console.log('constructor' in o) // 返回true，继承Object的原型属性
 
 配合 with 用法可以稍微限制沙盒作用域，先从当前的 with 提供对象查找，但是如果查找不到依然还能从上获取，污染或篡改全局环境。
 
-```javascript
+```js
 function sandbox (src) {
   src = 'with (sandbox) {' + src + '}'
   return new Function('sandbox', src)
@@ -952,7 +952,7 @@ console.log(window.name)// '张三'
 
 > ES6 Proxy 用于修改某些操作的默认行为，等同于在语言层面做出修改，属于一种“元编程”（meta programming）
 
-```javascript
+```js
 function sandbox (code) {
   code = 'with (sandbox) {' + code + '}'
   const fn = new Function('sandbox', code)
@@ -977,7 +977,7 @@ sandbox(code)({})
 
 > Symbol.unscopables 对象的 Symbol.unscopables 属性，指向一个对象。该对象指定了使用 with 关键字时，哪些属性会被 with 环境排除。
 
-```javascript
+```js
 Array.prototype[Symbol.unscopables]
 // {
 // copyWithin: true,
@@ -994,7 +994,7 @@ Object.keys(Array.prototype[Symbol.unscopables])
 
 由此我们的代码还需要修改如下：
 
-```javascript
+```js
 function sandbox (code) {
   code = 'with (sandbox) {' + code + '}'
   const fn = new Function('sandbox', code)
@@ -1028,7 +1028,7 @@ Symbol.unscopables 定义对象的不可作用属性。Unscopeable 属性永远�
 
 以下是 qiankun 的 snapshotSandbox 的源码，这里为了帮助理解做部分精简及注释。
 
-```javascript
+```js
 function iter (obj, callbackFn) {
   for (const prop in obj) {
     if (obj.hasOwnProperty(prop)) {
@@ -1101,7 +1101,7 @@ const sandbox = new SnapshotSandbox();
 
 qiankun 框架 singular 模式下 proxy 沙箱实现，为了便于理解，这里做了部分代码的精简和注释。
 
-```javascript
+```js
 //legacySandBox
 const callableFnCacheMap = new WeakMap();
 
@@ -1287,7 +1287,7 @@ legacySandBox 还是会操作 window 对象，但是他通过激活沙箱时还�
 
 源码展示：
 
-```javascript
+```js
 
 function createFakeWindow(global: Window) {
  // map always has the fastest performance in has check scenario

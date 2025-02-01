@@ -23,7 +23,7 @@ performance.getEntries()这个是可以获取到所有的家已经加载的资�
 
 Error事件捕获使用方式:
 
-```javascript
+```js
 window.addEventListener('error', function (e) {
   console.log('捕获', e)
 }, true)
@@ -790,7 +790,7 @@ Simulator 是将设计器传入的 DocumentModel 和组件/库描述转成相应
 
 以下是一个使用LocalStorage将静态资源缓存的示例代码：
 
-```javascript
+```js
 // 定义一个数组，包含需要缓存的静态资源的URL
 const resources = [
   'https://example.com/css/style.css',
@@ -823,7 +823,7 @@ resources.forEach(function (url) {
 
 以下是一个使用IndexedDB将静态资源缓存的示例代码：
 
-```javascript
+```js
 // 打开或创建一个IndexedDB数据库
 const request = indexedDB.open('myDatabase', 1)
 

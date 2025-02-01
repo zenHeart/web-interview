@@ -109,7 +109,7 @@ DOM3级处理事件是在DOM2级处理事件的基础上再添加了很多事件
  <span id="son">我是子元素</span>
  </div>
 </body>
-<script type="text/javascript">
+<script type="text/JavaScript">
 var parent = document.getElementById('parent');
 var son = document.getElementById('son');
 

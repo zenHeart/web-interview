@@ -6,7 +6,7 @@
 
 举例：
 
-```javascript
+```js
 const obj = {
   prop1: 'value1',
   prop2: {
@@ -65,7 +65,7 @@ console.log('复制后的对象 obj2:', obj2)
 
 以下是一个使用不同循环方式遍历数组的示例：
 
-```javascript
+```js
 const arr = [1, 2, 3]
 
 console.log('for...of 循环:')
@@ -107,7 +107,7 @@ for 循环:
 
 要冻结一个 JavaScript 对象，以防止别人更改它，可以使用`Object.freeze()`方法。`Object.freeze()`方法会递归地冻结一个对象的所有属性，使其变为只读的，并防止更改、删除或添加新属性。以下是使用`Object.freeze()`方法冻结对象的示例：
 
-```javascript
+```js
 const obj = {
   prop1: 1,
   prop2: 'Hello'
@@ -135,7 +135,7 @@ console.log(obj)
 
 要冻结嵌套属性，可以使用一个递归函数来处理。该函数会遍历对象的所有属性，并对每个属性进行冻结。以下是一个示例：
 
-```javascript
+```js
 function deepFreeze (obj) {
   // 首先冻结当前对象
   Object.freeze(obj)
@@ -264,7 +264,7 @@ JavaScript异步解决方案的发展历程主要有以下几个阶段：
 
 最初，JavaScript采用回调函数的方式来解决异步编程问题。回调函数即在异步任务完成后调用的回调函数。例如，`setTimeout`函数就是一个使用回调函数的例子。
 
-```javascript
+```js
 setTimeout(() => {
   console.log('Hello, world!')
 }, 1000)
@@ -297,7 +297,7 @@ Promise是ES6引入的一种异步编程解决方案，用于解决回调函数�
 
 Promise的优点是解决了回调函数嵌套的问题，使得代码可读性和可维护性更好。缺点是语法相对复杂。
 
-```javascript
+```js
 // Promise示例
 function fetchData () {
   return new Promise((resolve, reject) => {
@@ -322,7 +322,7 @@ Generator 可以使用 yield 语句来暂停函数执行，并返回一个 Gener
 
 ES8引入了Async/Await语法，使得异步编程更加简单和可读。Async/Await是基于Promise实现的，可以看作是对Promise的一种封装。Async/Await语法可以让异步代码像同步代码一样书写，让代码的可读性更高。
 
-```javascript
+```js
 // Async/Await示例
 async function fetchData () {
   return new Promise((resolve, reject) => {
@@ -388,7 +388,7 @@ class MyClass {
 
 call和apply改变的是JS运行的上下文:
 
-```javascript
+```js
 /* 借助构造函数实现继承 */
 function Parent (name) {
   this.name = name
@@ -412,7 +412,7 @@ console.log(child.type)
 
  2、通过原型链实现继承
 
-```javascript
+```js
 /* 通过原型链实现继承 */
 function Parent2 () {
   this.name = 'parent2'
@@ -439,7 +439,7 @@ s1.**proto**===s2.**proto**;//返回true
 
  3、组合方式
 
-```javascript
+```js
 /* 组合方式 */
 function Parent3 () {
   this.name = 'parent3'
@@ -464,7 +464,7 @@ constructor指向了parent了
 
  4、组合继承的优化
 
-```javascript
+```js
 /* 组合继承的优化1 */
 function Parent4 () {
   this.name = 'parent3'
@@ -488,7 +488,7 @@ Child3.constructor 也有这种情况
 
  5、组合继承的优化2
 
-```javascript
+```js
 function Parent5 () {
   this.name = 'parent5'
   this.play = [1, 2, 3]

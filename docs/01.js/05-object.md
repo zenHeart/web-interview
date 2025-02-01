@@ -13,7 +13,7 @@
    2. 键名为 Symbol 类型会被忽略
    3. 不能序列化函数
    4. 不能解决循环引用对象
-详见此文 [javascript 深拷贝](https://dassur.ma/things/deep-copy/)
+详见此文 [JavaScript 深拷贝](https://dassur.ma/things/deep-copy/)
 
 2. 浅拷贝
    1. Object.assign()
@@ -91,7 +91,7 @@ console.log(john instanceof Person) // true
 
 以下是`hasOwnProperty()`方法的使用示例：
 
-```javascript
+```js
 const obj = {
   prop1: 'value1',
   prop2: 'value2'
@@ -121,7 +121,7 @@ const obj = {
 
 使用示例：
 
-```javascript
+```js
 const obj = {
   prop: 'value'
 }
@@ -236,7 +236,7 @@ console.log(obj instanceof Array) // false
 
 示例：
 
-```javascript
+```js
 // 伪数组
 const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
 console.log(arrayLike[0]) // 'apple'
@@ -256,7 +256,7 @@ console.log(arrayLikeObject.push) // undefined
 
 1. Array.from()：使用 Array.from() 方法可以将可迭代对象或类数组对象转换为数组。
 
-```javascript
+```js
 const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
 const array = Array.from(arrayLike)
 console.log(array) // ['apple', 'banana']
@@ -264,7 +264,7 @@ console.log(array) // ['apple', 'banana']
 
 2. Array.prototype.slice.call()：通过调用 Array.prototype.slice() 方法，并将类数组对象作为参数传入，可以将其转换为数组。
 
-```javascript
+```js
 const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
 const array = Array.prototype.slice.call(arrayLike)
 console.log(array) // ['apple', 'banana']
@@ -272,7 +272,7 @@ console.log(array) // ['apple', 'banana']
 
 3. Spread Operator（展开运算符）：使用展开运算符 `...` 可以将可迭代对象或类数组对象展开为数组。
 
-```javascript
+```js
 const arrayLike = { 0: 'apple', 1: 'banana', length: 2 }
 const array = [...arrayLike]
 console.log(array) // ['apple', 'banana']
@@ -318,7 +318,7 @@ console.log(array) // ['apple', 'banana']
 
 1. 忽略 Promise 的结果：
 
-```javascript
+```js
 const promise = new Promise((resolve, reject) => {
   // 执行异步操作...
 })
@@ -330,7 +330,7 @@ const promise = new Promise((resolve, reject) => {
 
 2. 基于标志位的取消机制：
 
-```javascript
+```js
 let canceled = false
 
 const promise = new Promise((resolve, reject) => {
@@ -350,7 +350,7 @@ canceled = true
 
 3. 使用第三方库：
 
-```javascript
+```js
 import PCancelable from 'p-cancelable'
 
 const promise = new PCancelable((resolve, reject, onCancel) => {
@@ -447,7 +447,7 @@ terator 和 for...of 循环
 [5.3、计算生成的数据结构](#53%E8%AE%A1%E7%AE%97%E7%94%9F%E6%88%90%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84)
 [5.4、对象](#54%E5%AF%B9%E8%B1%A1)
 * [6、对比JS中的几种遍历：for forEach for...in for...of](#6%E5%AF%B9%E6%AF%94js%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8D%E9%81%8D%E5%8E%86for-----foreach---forin---forof)
-[理解 JavaScript 中的 for…of 循环](#%E7%90%86%E8%A7%A3-javascript-%E4%B8%AD%E7%9A%84-forof-%E5%BE%AA%E7%8E%AF)
+[理解 JavaScript 中的 for…of 循环](#%E7%90%86%E8%A7%A3-JavaScript-%E4%B8%AD%E7%9A%84-forof-%E5%BE%AA%E7%8E%AF)
 [Arrays(数组)](#arrays%E6%95%B0%E7%BB%84)
 [Maps(映射)](#maps%E6%98%A0%E5%B0%84)
 [Set(集合)](#set%E9%9B%86%E5%90%88)
@@ -486,7 +486,7 @@ Iterator 接口的目的，就是为所有数据结构，提供了一种统一�
 
 实例：
 
-```javascript
+```js
 const arr = ['a', 'b', 'c']
 const iter = arr[Symbol.iterator]()
 iter.next() // { value: 'a', done: false }
@@ -506,7 +506,7 @@ iter.next() // { value: undefined, done: true }
 对数组和 Set 结构进行解构赋值时，会默认调用Symbol.iterator方法。
 实例1：
 
-```javascript
+```js
 const set = new Set().add('a').add('b').add('c')
 const [x, y] = set
 // x='a'; y='b'
@@ -519,7 +519,7 @@ const [first, ...rest] = set
 扩展运算符（ ... ）也会调用默认的 iterator 接口。
 实例2：
 
-```javascript
+```js
 // 例一
 const str = 'hello';
 [...str] // ['h','e','l','l','o']
@@ -534,7 +534,7 @@ const arr = ['b', 'c'];
 yield* 后面跟的是一个可遍历的结构，它会调用该结构的遍历器接口。
 实例3：
 
-```javascript
+```js
 const generator = function * () {
   yield 1
   yield * [2, 3, 4]
@@ -598,7 +598,7 @@ for...of 循环可以使用的范围包括数组、 Set 和 Map 结构、某些�
 数组原生具备 iterator 接口，for...of循环本质上就是调用这个接口产生的遍历器，可以用下面的代码证明。
 实例1:
 
-```javascript
+```js
 const arr = ['red', 'green', 'blue']
 const iterator = arr[Symbol.iterator]()
 
@@ -614,7 +614,7 @@ for (const v of iterator) {
 JavaScript 原有的for...in循环，只能获得对象的键名，不能直接获取键值。 ES6 提供for...of循环，允许遍历获得键值。
 实例2:
 
-```javascript
+```js
 const arr = ['a', 'b', 'c', 'd']
 
 for (const a in arr) {
@@ -630,7 +630,7 @@ for (const a of arr) {
 
 实例3：for...of循环调用遍历器接口，数组的遍历器接口只返回具有数字索引的属性。这一点跟for...in循环也不一样。
 
-```javascript
+```js
 const arr = [3, 5, 7]
 arr.foo = 'hello'
 
@@ -648,7 +648,7 @@ for (const i of arr) {
 Set 和 Map 结构也原生具有 Iterator 接口，可以直接使用for...of循环。
 实例1：基本使用
 
-```javascript
+```js
 const engines = new Set(['Gecko', 'Trident', 'Webkit', 'Webkit'])
 for (const e of engines) {
   console.log(e)
@@ -671,7 +671,7 @@ for (const [name, value] of es6) {
 Set 结构遍历时，返回的是一个值，而 Map 结构遍历时，返回的是一个数组，该数组的两个成员分别为当前 Map 成员的键名和键值。
 实例2：
 
-```javascript
+```js
 const map = new Map().set('a', 1).set('b', 2)
 for (const pair of map) {
   console.log(pair)
@@ -696,7 +696,7 @@ for (const [key, value] of map) {
 
 实例：
 
-```javascript
+```js
 const arr = ['a', 'b', 'c']
 
 for (const pair of arr.entries()) {
@@ -712,7 +712,7 @@ for (const pair of arr.entries()) {
 对于普通的对象，for...of结构不能直接使用，会报错，必须部署了 iterator 接口后才能使用。但是，这样情况下，for...in循环依然可以用来遍历键名。
 实例：
 
-```javascript
+```js
 const es6 = {
   edition: 6,
   committee: 'TC39',
@@ -734,7 +734,7 @@ for (e of es6) {
 
 一种解决方法是，使用Object.keys方法将对象的键名生成一个数组，然后遍历这个数组。
 
-```javascript
+```js
 for (const key of Object.keys(someObject)) {
   console.log(key + ': ' + someObject[key])
 }
@@ -742,7 +742,7 @@ for (const key of Object.keys(someObject)) {
 
 另一个方法是使用 Generator 函数将对象重新包装一下。
 
-```javascript
+```js
 function * entries (obj) {
   for (const key of Object.keys(obj)) {
     yield [key, obj[key]]
@@ -835,7 +835,7 @@ for (const value of iterable) {
 
 ```js
 // string-example.js
-const iterable = 'javascript'
+const iterable = 'JavaScript'
 
 for (const value of iterable) {
   console.log(value)
@@ -963,7 +963,7 @@ for...in 不考虑构造函数原型的不可枚举属性。它只需要查找�
 * `done`：一个布尔值，表示迭代是否已经完成。如果迭代完成，`done`为`true`；否则为`false`。
 * 例如：
 
- ```javascript
+ ```js
  const iterable = [1, 2, 3]
  const iterator = iterable[Symbol.iterator]()
  console.log(iterator.next()) // { value: 1, done: false }
@@ -986,7 +986,7 @@ for...in 不考虑构造函数原型的不可枚举属性。它只需要查找�
 * Iterator 对象可以与`for...of`循环、扩展运算符（`...`）、解构赋值等语言特性一起使用，使得对可迭代对象的遍历更加简洁和方便。
 * 例如：
 
- ```javascript
+ ```js
  const iterable = [1, 2, 3]
  for (const value of iterable) {
    console.log(value)
@@ -1023,7 +1023,7 @@ Iterator 接口的目的，就是为所有数据结构，提供了一种统一�
 
 实例：
 
-```javascript
+```js
 const arr = ['a', 'b', 'c']
 const iter = arr[Symbol.iterator]()
 iter.next() // { value: 'a', done: false }
@@ -1043,7 +1043,7 @@ iter.next() // { value: undefined, done: true }
 对数组和 Set 结构进行解构赋值时，会默认调用Symbol.iterator方法。
 实例1：
 
-```javascript
+```js
 const set = new Set().add('a').add('b').add('c')
 const [x, y] = set
 // x='a'; y='b'
@@ -1056,7 +1056,7 @@ const [first, ...rest] = set
 扩展运算符（ ... ）也会调用默认的 iterator 接口。
 实例2：
 
-```javascript
+```js
 // 例一
 const str = 'hello';
 [...str] // ['h','e','l','l','o']
@@ -1071,7 +1071,7 @@ const arr = ['b', 'c'];
 yield* 后面跟的是一个可遍历的结构，它会调用该结构的遍历器接口。
 实例3：
 
-```javascript
+```js
 const generator = function * () {
   yield 1
   yield * [2, 3, 4]
@@ -1361,7 +1361,7 @@ console.log(merged.get(3)) // three
 
 `Map` 对象有一个 `forEach` 方法，你可以像遍历数组一样使用它来遍历 `Map`。`forEach` 方法会按照插入顺序遍历 Map 对象。
 
-```javascript
+```js
 const myMap = new Map()
 myMap.set('a', 'alpha')
 myMap.set('b', 'beta')
@@ -1378,7 +1378,7 @@ myMap.forEach((value, key) => {
 
 * 遍历 `Map` 的键值对:
 
-```javascript
+```js
 for (const [key, value] of myMap) {
   console.log(key + ' = ' + value)
 }
@@ -1386,7 +1386,7 @@ for (const [key, value] of myMap) {
 
 * 遍历 `Map` 的键:
 
-```javascript
+```js
 for (const key of myMap.keys()) {
   console.log(key)
 }
@@ -1394,7 +1394,7 @@ for (const key of myMap.keys()) {
 
 * 遍历 `Map` 的值:
 
-```javascript
+```js
 for (const value of myMap.values()) {
   console.log(value)
 }
@@ -1406,21 +1406,21 @@ for (const value of myMap.values()) {
 
 * 键值对数组:
 
-```javascript
+```js
 const keyValueArray = [...myMap]
 console.log(keyValueArray)
 ```
 
 * 键数组:
 
-```javascript
+```js
 const keysArray = [...myMap.keys()]
 console.log(keysArray)
 ```
 
 * 值数组:
 
-```javascript
+```js
 const valuesArray = [...myMap.values()]
 console.log(valuesArray)
 ```
@@ -1580,7 +1580,7 @@ Proxy可以用于实现很多功能，包括：
 
 1. 数据验证和过滤：你可以使用`Proxy`来拦截对对象属性的访问和修改，从而进行数据验证和过滤。例如，你可以使用`Proxy`来确保一个对象的属性只能是特定的类型或范围。
 
-```javascript
+```js
 const person = {
   name: 'Alice',
   age: 25
@@ -1602,7 +1602,7 @@ personProxy.age = -10 // 抛出错误：Invalid age
 
 2. 计算属性：你可以使用`Proxy`来动态计算属性的值，而无需实际存储它们。这对于需要根据其他属性的值来计算衍生属性的情况非常有用。
 
-```javascript
+```js
 const person = {
   firstName: 'Alice',
   lastName: 'Smith'
@@ -1623,7 +1623,7 @@ console.log(personProxy.fullName) // Alice Smith
 
 3. 资源管理和延迟加载：你可以使用`Proxy`来延迟加载资源，直到它们被真正需要。这在处理大型数据集或昂贵的资源时非常有用，可以节省内存和提高性能。
 
-```javascript
+```js
 const expensiveResource = {
   // 一些昂贵的操作
 }
@@ -1645,7 +1645,7 @@ console.log(expensiveResourceProxy.someProperty) // 加载资源并返回属性�
 
 4. 日志记录和调试：你可以使用`Proxy`来记录对象属性的访问和修改，以便进行调试和日志记录。
 
-```javascript
+```js
 const person = {
   name: 'Alice',
   age: 25
@@ -1708,7 +1708,7 @@ handler 能代理的一些常用的方法如下：
 
  基础使用
 
-```javascript
+```js
 const target = {
   name: 'obj'
 }
@@ -1730,7 +1730,7 @@ console.log(target.name) // 控制台输出: others
 
  使用示例 - 实现虚拟属性
 
-```javascript
+```js
 const person = {
   fisrsName: '张',
   lastName: '小白'
@@ -1762,7 +1762,7 @@ console.log('姓:%s, 名:%s, 全名: %s', proxyedPerson.fisrsName, proxyedPerson
 
 下面的 demo 实现了真正的私有变量。代理中把以 _ 开头的变量都认为是私有的。
 
-```javascript
+```js
 let api = {
   _secret: 'xxxx',
   _otherSec: 'bbb',
@@ -1799,7 +1799,7 @@ console.log('ver' in api) // true
 
  使用示例 - 抽离校验模块
 
-```javascript
+```js
 function Animal () {
   return createValidator(this, animalValidator)
 }
@@ -1847,7 +1847,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 
 * 举例
 
- ```javascript
+ ```js
  const ages = [11, 33, 12, 54, 18, 96]
  
  // 旧写法
@@ -1864,7 +1864,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 * Reflect.construct(target, argumentsList[, newTarget]): 对构造函数进行 new 操作，相当于执行 new target(...args)。
 * Reflect.construct方法等同于new target(...args)，这提供了一种不使用new，来调用构造函数的方法。
 
- ```javascript
+ ```js
  function Greeting (name) {
    this.name = name
  }
@@ -1881,7 +1881,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 * Reflect.deleteProperty(target, propertyKey): 作为函数的delete操作符，相当于执行 delete target[name]。该方法返回一个布尔值。
 * Reflect.deleteProperty方法等同于delete obj[name]，用于删除对象属性。
 
- ```javascript
+ ```js
  const myObj = { foo: 'bar' }
  
  // 旧写法
@@ -1896,7 +1896,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 * Reflect.get(target, propertyKey[, receiver]): 获取对象身上某个属性的值，类似于 target[name]。
 * Reflect.get方法查找并返回target的name属性，如果没有，则返回undefined。
 
- ```javascript
+ ```js
  const myObject = {
    foo: 1,
    bar: 2,
@@ -1938,7 +1938,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 * Reflect.has(target, propertyKey): 判断一个对象是否存在某个属性，和 in 运算符 的功能完全相同。
 * Reflect.has对应 name in obj 里面的in操作
 
- ```javascript
+ ```js
  const myObject = {
    foo: 1
  }
@@ -1961,7 +1961,7 @@ Reflect 是一个内置的对象，它提供拦截 JavaScript 操作的方法。
 * Reflect.set(target, propertyKey, value[, receiver]): 将值分配给属性的函数。返回一个Boolean，如果更新成功，则返回true。
 * Reflect.set方法设置target对象的name属性等于value。
 
-```javascript
+```js
 const myObject = {
   foo: 1,
   // eslint-disable-next-line
@@ -1982,7 +1982,7 @@ myObject.foo // 3
 
 * 如果name属性设置的赋值函数，则赋值函数的this绑定receiver。
 
- ```javascript
+ ```js
  const myObject = {
    foo: 4,
    // eslint-disable-next-line
@@ -2007,7 +2007,7 @@ myObject.foo // 3
 
 举个例子：
 
-```javascript
+```js
 function createDeepProxy (obj) {
   // 递归函数，为对象及其嵌套对象创建代理
   const handler = {
@@ -2055,7 +2055,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = { name: 'John' }
  console.log(Reflect.get(obj, 'name')) // 'John'
  ```
@@ -2074,7 +2074,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = {}
  Reflect.set(obj, 'name', 'Jane')
  console.log(obj.name) // 'Jane'
@@ -2093,7 +2093,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = { age: 30 }
  console.log(Reflect.has(obj, 'age')) // true
  console.log(Reflect.has(obj, 'gender')) // false
@@ -2107,7 +2107,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  function Person () {}
  const person = new Person()
  console.log(Reflect.getPrototypeOf(person) === Person.prototype) // true
@@ -2121,7 +2121,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  function Person () {}
  function Employee () {}
  const person = new Person()
@@ -2141,7 +2141,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = {}
  console.log(Reflect.isExtensible(obj)) // true
  Object.preventExtensions(obj)
@@ -2156,7 +2156,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = {}
  Reflect.preventExtensions(obj)
  try {
@@ -2174,7 +2174,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = { name: 'John', [Symbol('secret')]: 'secret value' }
  console.log(Reflect.ownKeys(obj)) // ['name', Symbol(secret)]
  ```
@@ -2212,7 +2212,7 @@ console.log(original.address.city) // 输出 San Francisco
 
 例如，当在`Proxy`捕获器中捕获属性的读取行为时，使用`Reflect.get()`可以非常容易地调用相应对象的默认读取行为：
 
-```javascript
+```js
 const obj = {
   a: 1,
   b: 2,
@@ -2252,7 +2252,7 @@ p.b = 4 // 将属性 b 设置为 4
 * 如果属性不存在，返回`undefined`。
 * 例如：
 
- ```javascript
+ ```js
  const obj = {}
  const value = Reflect.get(obj, 'property')
  console.log(value) // undefined
@@ -2263,7 +2263,7 @@ p.b = 4 // 将属性 b 设置为 4
 * 如果属性不存在，在非严格模式下返回`undefined`；在严格模式下，会抛出一个`ReferenceError`错误。
 * 例如：
 
- ```javascript
+ ```js
  const obj = {}
  // 非严格模式下
  console.log(obj.property); // undefined
@@ -2279,7 +2279,7 @@ p.b = 4 // 将属性 b 设置为 4
 * 可以接受第三个参数`receiver`，用于指定属性访问的上下文对象，这在某些情况下非常有用，比如在使用代理时可以控制属性访问的行为。
 * 例如：
 
- ```javascript
+ ```js
  const obj = { name: 'John' }
  const proxy = new Proxy(obj, {})
  console.log(Reflect.get(proxy, 'name', { name: 'Jane' })) // 'Jane'
@@ -2296,7 +2296,7 @@ p.b = 4 // 将属性 b 设置为 4
 * 与代理对象配合使用时，会触发代理对象上定义的相应拦截方法，使得可以对属性访问进行更精细的控制。
 * 例如：
 
- ```javascript
+ ```js
  const obj = { name: 'John' }
  const handler = {
    get (target, property, receiver) {
@@ -2357,7 +2357,7 @@ p.b = 4 // 将属性 b 设置为 4
 
 1. 以下是一个使用`Object.keys()`和`Object.getOwnPropertyNames()`的示例：
 
-```javascript
+```js
 const obj = {
   property1: 'value1',
   property2: 'value2'
@@ -2374,7 +2374,7 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
 在这个例子中，`Object.keys()`只返回了可枚举的属性`property1`和`property2`，而`Object.getOwnPropertyNames()`返回了所有属性，包括不可枚举的`nonEnumerableProperty`。
 
-## Javascript 数组中有那些方法可以改变自身，那些不可以 {#p2-javascript-array-change-self}
+## Javascript 数组中有那些方法可以改变自身，那些不可以 {#p2-JavaScript-array-change-self}
 
 在 JavaScript 中，数组的方法可以分为两类：改变自身的方法和不改变自身的方法。
 
@@ -2410,7 +2410,7 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = {
    prop1: 'value1',
    prop2: { nestedProp: 'nestedValue' }
@@ -2433,7 +2433,7 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = {
    prop1: 'value1',
    prop2: { nestedProp: 'nestedValue' }
@@ -2457,7 +2457,7 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
 2. 示例：
 
- ```javascript
+ ```js
  const obj = { prop: 'value' }
  
  // 这个操作是允许的
@@ -2472,7 +2472,7 @@ console.log(Object.getOwnPropertyNames(obj)) // ['property1', 'property2', 'nonE
 
 2. 示例：
 
- ```javascript
+ ```js
  const targetObject = { prop: 'value' }
  const handler = {
    set (target, key, value) {

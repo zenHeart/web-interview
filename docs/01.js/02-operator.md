@@ -116,7 +116,7 @@ console.log(Object.is(NaN, NaN)) // true
 - `Object.is()`可以区分`-0`和`+0`。
 - 例如：
 
-```javascript
+```js
 // eslint-disable-next-line
 console.log(+0 === -0) // true
 console.log(Object.is(-0, +0)) // false
@@ -129,7 +129,7 @@ console.log(Object.is(-0, +0)) // false
 - 比较两个数字、字符串、布尔值、对象等，如果它们的值和类型都相同，则认为它们相等。
 - 例如：
 
-```javascript
+```js
 // eslint-disable-next-line
 console.log(5 === 5) // true
 console.log(Object.is(5, 5)) // true
@@ -212,7 +212,7 @@ printObjectInfo(myObj) // 输出: Printing...
 
 以下是一个示例，演示如何使用 `new` 关键字创建一个对象实例：
 
-```javascript
+```js
 function Person (name, age) {
   this.name = name
   this.age = age
@@ -239,7 +239,7 @@ ES5 和 ES6 使用 `new` 关键字实例化对象的流程基本上是一样的�
 
 可以使用以下代码来模拟`new`操作：
 
-```javascript
+```js
 function myNew (constructor, ...args) {
   // 创建一个新对象，该对象继承自构造函数的原型
   const obj = Object.create(constructor.prototype)
@@ -254,7 +254,7 @@ function myNew (constructor, ...args) {
 
 使用示例：
 
-```javascript
+```js
 function Person (name, age) {
   this.name = name
   this.age = age
@@ -292,7 +292,7 @@ john.sayHello() // 输出：Hello, my name is John and I'm 25 years old.
 
 下面是一些示例：
 
-```javascript
+```js
 console.log(Object.is(1, 1)) // true
 console.log(Object.is('foo', 'foo')) // true
 console.log(Object.is(true, true)) // true

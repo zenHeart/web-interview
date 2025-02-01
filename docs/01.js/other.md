@@ -60,7 +60,7 @@ AMD（Asynchronous Module Definition）和CMD（Common Module Definition）都�
 
 AMD是在require.js推广过程中诞生的，它的特点是提前执行，强调依赖前置。也就是说，在定义模块时就需要声明其所有依赖的模块。它的语法如下：
 
-```javascript
+```js
 define(['dependency1', 'dependency2'], function (dependency1, dependency2) {
   // 模块的定义
 })
@@ -68,7 +68,7 @@ define(['dependency1', 'dependency2'], function (dependency1, dependency2) {
 
 CMD是在Sea.js推广过程中诞生的，它和AMD非常相似，但是更加懒惰，是依赖就近，延迟执行。也就是说，在模块中需要用到依赖时，才去引入依赖。它的语法如下：
 
-```javascript
+```js
 define(function (require, exports, module) {
   const dependency1 = require('dependency1')
   const dependency2 = require('dependency2')
@@ -114,7 +114,7 @@ stage0、stage1、stage2 和 stage3 这些术语指的是 ECMAScript 提案的�
 
 考虑下面的对象和`with`语句：
 
-```javascript
+```js
 const person = {
   name: 'Alice',
   age: 25
@@ -191,7 +191,7 @@ console.log(window.phone) // 输出: '123-456-7890'
 
 下面是一个递归函数的例子，用于计算一个正整数的阶乘：
 
-```javascript
+```js
 function factorial (n) {
   if (n === 0) { // 终止条件
     return 1
@@ -205,7 +205,7 @@ console.log(factorial(5)) // 输出 120
 
 现在，我们将对上述递归函数进行尾递归优化。在这个例子中，我们使用一个辅助参数`result`来保存每次递归调用的结果，并将其作为参数传递给下一次递归调用。这样，递归调用不会导致函数调用栈的增长。
 
-```javascript
+```js
 function factorialTail (n, result = 1) {
   if (n === 0) { // 终止条件
     return result
