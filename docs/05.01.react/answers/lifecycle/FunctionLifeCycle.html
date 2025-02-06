@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 生命周期演示</title>
+    <style>
+      .lifecycle-demo {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .controls {
+        margin: 20px 0;
+      }
+      .controls button {
+        margin-right: 10px;
+        padding: 8px 16px;
+      }
+      .class-component {
+        padding: 20px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+      .lifecycle-phase {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+      }
+      .lifecycle-phase h4 {
+        margin: 0 0 10px 0;
+        color: #333;
+      }
+      .lifecycle-phase ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .lifecycle-phase li {
+        margin: 5px 0;
+        color: #666;
+      }
+      .component-status {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel" data-type="module">
+      import React, { Component } from "https://esm.sh/react@19";
+      import ReactDOM from "https://esm.sh/react-dom@19/client";
+
+      // 替换原来的 ClassComponent
+      function HooksComponent({ mounted, updateTime }) {
+        const [count, setCount] = React.useState(0);
+    
+        // 模拟 componentDidMount
+        React.useEffect(() => {
+          console.log('useEffect 仅在挂载时执行 (类似 componentDidMount)');
+          return () => {
+            console.log('useEffect 仅在卸载时执行 (类似 componentWillUnmount)');
+          };
+        }, []);
+
+        // 监听特定属性变化模拟 componentDidUpdate
+        React.useEffect(() => {
+          console.log('useEffect 通过监听 updateTime 变化模拟 update', updateTime);
+          return () => {
+            console.log('useEffect 通过监听 updateTime 变化模拟 update 每次更新时清除，上次 updateTime', updateTime);
+          };
+        }, [updateTime]);
+
+        // useLayoutEffect 示例
+        React.useLayoutEffect(() => {
+          console.log('useLayoutEffect - 同步执行，会阻塞渲染');
+          return () => {
+            console.log('useLayoutEffect 清理');
+          };
+        });
+
+        console.log("渲染: HooksComponent", { mounted, updateTime, count });
+
+        return (
+          <div className="hooks-component">
+            <h3>Hooks 生命周期演示</h3>
+            <div className="component-status">
+              <p>当前状态: {mounted ? "已挂载" : "未挂载"}</p>
+              <p>最后更新: {updateTime}</p>
+              <p>内部计数: {count}</p>
+              <button onClick={() => setCount(c => c + 1)}>
+                更新内部状态
+              </button>
+            </div>
+          </div>
+        );
+      }
+
+      // 外层容器组件 - 控制类组件的生命周期
+      class LifecycleDemo extends Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            mounted: false,
+          };
+        }
+
+        handleMount = () => {
+          if (!this.state.mounted) {
+            console.log('%c=== 挂载阶段 ===', 'color: green; font-weight: bold;'); 
+            this.setState({
+              mounted: true,
+            });
+          }
+        };
+
+        handleUpdate = () => {
+          if (this.state.mounted) {
+            console.log('%c=== 更新阶段 ===', 'color: blue; font-weight: bold;');
+            this.setState({
+              updateTime: new Date().toLocaleTimeString(),
+            });
+          }
+        };
+
+        handleUnmount = () => {
+          if (this.state.mounted) {
+            console.clear();
+            console.log('%c=== 卸载阶段 ===', 'color: red; font-weight: bold;');
+            this.setState({ mounted: false });
+          }
+        };
+
+        render() {
+          return (
+            <div className="lifecycle-demo">
+              <h2>React Hooks 生命周期演示</h2>
+              <div className="controls">
+                <button onClick={this.handleMount}>Mount</button>
+                <button onClick={this.handleUpdate}>Update</button>
+                <button onClick={this.handleUnmount}>Unmount</button>
+              </div>
+
+              {this.state.mounted && (
+                <HooksComponent {...this.state} />
+              )}
+
+              <div className="note">
+                <p>请打开控制台查看生命周期钩子的触发顺序</p>
+              </div>
+            </div>
+          );
+        }
+      }
+
+      // 渲染组件
+      const container = document.getElementById("root");
+      const root = ReactDOM.createRoot(container);
+      root.render(<LifecycleDemo />);
+    </script>
+  </body>
+</html>

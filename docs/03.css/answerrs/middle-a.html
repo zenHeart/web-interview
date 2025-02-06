@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+		.body {
+			width: 100%;
+		}
+		.middle-box {
+			display: flex;
+			height: 100px;
+			border: 1px solid #000;
+			align-items: center;
+			justify-content: center;
+			
+		}
+		/* 主要表布局导致宽度被压缩 */
+		.middle-box1 {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+			width: 100vw;
+			border: 1px solid #000;
+			
+		}
+	
+	</style>
+</head>
+
+<body>
+		<h1>采用 flex 实现垂直水平居中</h1>
+		<div class="middle-box">
+			<p>居中的内容</p>
+			<span>居中</span>
+			<p>居中的内容</p>
+		</div>
+		<h1>采用 table-cell 实现垂直居中</h1>
+		<div class="middle-box1">
+			<p>居中的内容</p>
+			<span>居中</span>
+			<p>居中的内容</p>
+		</div>
+		<h1>采用负 margin 实现垂直居中布局</h1>
+
+</body>
+
+</html>

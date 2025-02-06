@@ -1,0 +1,109 @@
+.api-reference {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Domain 部分样式 */
+.domain-section {
+  margin-bottom: 48px;
+}
+
+.domain-title {
+  font-size: 2.5em;
+  color: #213547;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+/* Topics 容器样式 */
+.topics-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 16px;
+  margin: 0;
+}
+
+/* Topic 块样式 */
+.topic-block {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+/* 确保最后一个topic块没有底部间距 */
+.topics-column > .topic-block:last-child {
+  margin-bottom: 0;
+}
+
+/* Topic 标题样式 */
+.topic-title {
+  color: #42b883;
+  font-size: 1.2em;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+/* 问题列表容器 */
+.question-list-container {
+  flex: 1;
+  overflow-y: auto;
+  /* 自定义滚动条样式 */
+  scrollbar-width: thin;
+  scrollbar-color: #42b883 #f9f9f9;
+}
+
+/* Webkit 浏览器的滚动条样式 */
+.question-list-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.question-list-container::-webkit-scrollbar-track {
+  background: #f9f9f9;
+}
+
+.question-list-container::-webkit-scrollbar-thumb {
+  background-color: #42b883;
+  border-radius: 3px;
+}
+
+/* 问题列表样式 */
+.question-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* 问题项样式 */
+.question-item {
+  color: #476582;
+  padding: 8px 0;
+  font-size: 0.95em;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.question-item:hover {
+  color: #42b883;
+}
+
+/* 响应式布局 */
+@media (max-width: 1200px) {
+  .topics-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .topics-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .topic-block {
+    max-height: 70vh;
+  }
+}

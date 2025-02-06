@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React 生命周期演示</title>
+    <style>
+      .lifecycle-demo {
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .controls {
+        margin: 20px 0;
+      }
+      .controls button {
+        margin-right: 10px;
+        padding: 8px 16px;
+      }
+      .class-component {
+        padding: 20px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+      .lifecycle-phase {
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid #eee;
+        border-radius: 4px;
+      }
+      .lifecycle-phase h4 {
+        margin: 0 0 10px 0;
+        color: #333;
+      }
+      .lifecycle-phase ol {
+        margin: 0;
+        padding-left: 20px;
+      }
+      .lifecycle-phase li {
+        margin: 5px 0;
+        color: #666;
+      }
+      .component-status {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f5f5f5;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel" data-type="module">
+      import React, { Component } from "https://esm.sh/react@19";
+      import ReactDOM from "https://esm.sh/react-dom@19/client";
+
+      // 内部类组件 - 用于演示生命周期
+      class ClassComponent extends Component {
+        // 添加默认属性
+        static defaultProps = {
+          defaultTime: new Date().toLocaleTimeString()
+        };
+
+        // 添加上下文类型
+        static contextType = React.createContext('light');
+
+        constructor(props) {
+          super(props);
+          console.log("Constructor: 初始化状态");
+        }
+
+        static getDerivedStateFromProps(nextProps, prevState) {
+          console.log("getDerivedStateFromProps: 从props获取state", {nextProps, prevState});
+          return null;
+        }
+
+        shouldComponentUpdate(nextProps, nextState, nextContext) {
+          console.log("shouldComponentUpdate: 判断是否需要重新渲染", {
+            nextProps,
+            nextState,
+            nextContext
+          });
+          return true;
+        }
+
+        getSnapshotBeforeUpdate(prevProps, prevState) {
+          console.log("getSnapshotBeforeUpdate: 获取更新前的快照", {prevProps, prevState});
+          return { scrollPos: 0 }; // 示例返回值
+        }
+
+        componentDidMount() {
+          console.log("componentDidMount: 组件已挂载");
+        }
+
+        componentDidUpdate(prevProps, prevState, snapshot) {
+          console.log("componentDidUpdate: 组件已更新", {
+            prevProps,
+            prevState,
+            snapshot
+          });
+        }
+
+        componentWillUnmount() {
+          console.log("componentWillUnmount: 组件即将卸载");
+        }
+
+        static getDerivedStateFromError(error) {
+          console.log("getDerivedStateFromError: 从错误中派生状态", error);
+          return { error: error.message };
+        }
+
+        componentDidCatch(error, info) {
+          console.log("componentDidCatch: 捕获到错误", {
+            error,
+            info
+          });
+        }
+
+        render() {
+          console.log("render: 渲染组件", {
+            props: this.props,
+          });
+
+          return (
+            <div className="class-component">
+              <h3>类组件生命周期</h3>
+              <div className="component-status">
+                <p>当前状态: {this.props.mounted ? "已挂载" : "未挂载"}</p>
+                <p>最后更新: {this.props.updateTime}</p>
+              </div>
+            </div>
+          );
+        }
+      }
+
+      // 外层容器组件 - 控制类组件的生命周期
+      class LifecycleDemo extends Component {
+        constructor(props) {
+          super(props);
+          this.state = {
+            mounted: false,
+            updateTime: new Date().toLocaleTimeString(),
+          };
+        }
+
+        handleMount = () => {
+          if (!this.state.mounted) {
+            console.log('%c=== 挂载阶段 ===', 'color: green; font-weight: bold;'); 
+            this.setState({
+              mounted: true,
+              updateTime: new Date().toLocaleTimeString(),
+            });
+          }
+        };
+
+        handleUpdate = () => {
+          if (this.state.mounted) {
+            console.log('%c=== 更新阶段 ===', 'color: blue; font-weight: bold;');
+            this.setState({
+              updateTime: new Date().toLocaleTimeString(),
+            });
+          }
+        };
+
+        handleUnmount = () => {
+          if (this.state.mounted) {
+            console.clear();
+            console.log('%c=== 卸载阶段 ===', 'color: red; font-weight: bold;');
+            this.setState({ mounted: false });
+          }
+        };
+
+        render() {
+          return (
+            <div className="lifecycle-demo">
+              <h2>React 生命周期演示</h2>
+              <div className="controls">
+                <button onClick={this.handleMount}>Mount</button>
+                <button onClick={this.handleUpdate}>Update</button>
+                <button onClick={this.handleUnmount}>Unmount</button>
+              </div>
+
+              {this.state.mounted && (
+                <ClassComponent
+                  {...this.state}
+                />
+              )}
+
+              <div className="note">
+                <p>请打开控制台查看生命周期钩子的触发顺序</p>
+              </div>
+            </div>
+          );
+        }
+      }
+
+      // 渲染组件
+      const container = document.getElementById("root");
+      const root = ReactDOM.createRoot(container);
+      root.render(<LifecycleDemo />);
+    </script>
+  </body>
+</html>

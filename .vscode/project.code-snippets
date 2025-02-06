@@ -1,0 +1,15 @@
+{
+   "import Anwer": {
+      "prefix": "importTabs",
+      "scope": "markdown",
+      "body": [   
+         "<Tabs",
+         "  defaultValue=\"$1\">",
+         "<TabItem value=\"$2\">",
+         "$3",
+         "</TabItem>",
+         "</Tabs>"
+      ],
+      "description": "import tabs component"
+   }
+}

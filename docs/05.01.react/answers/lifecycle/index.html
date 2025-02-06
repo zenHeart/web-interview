@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React 生命周期演示</title>
+    <style>
+        .lifecycle-demo {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        .controls button {
+            margin-right: 10px;
+            padding: 8px 16px;
+        }
+        .warning {
+            color: #ff4d4f;
+            background-color: #fff2f0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- 引入 React -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- 组件代码 -->
+    <script>
+        const { Component } = React;
+
+        class LifecycleDemo extends Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    count: 0,
+                    isDev: true
+                };
+                console.log('Constructor: 初始化状态');
+            }
+
+            static getDerivedStateFromProps(nextProps, nextState) {
+                console.log('getDerivedStateFromProps: 更新状态');
+                return null; // 返回 null 表示不更新状态
+            }
+
+            componentDidMount() {
+                console.log('componentDidMount: 组件已挂载');
+            }
+
+            shouldComponentUpdate(nextProps, nextState) {
+                console.log('shouldComponentUpdate: 判断是否更新');
+                // 只有count改变时才更新
+                return this.state.count !== nextState.count;
+            }
+
+            componentDidUpdate(prevProps, prevState) {
+                console.log('componentDidUpdate: 组件已更新', {
+                    prevCount: prevState.count,
+                    currentCount: this.state.count
+                });
+            }
+
+            componentWillUnmount() {
+                console.log('componentWillUnmount: 组件将卸载');
+            }
+
+            toggleMode = () => {
+                this.setState(state => ({
+                    isDev: !state.isDev
+                }));
+            }
+
+            incrementCount = () => {
+                this.setState(prevState => ({ count: prevState.count + 1 }));
+            }
+
+            render() {
+                console.log('render: 渲染组件');
+                return React.createElement(
+                    'div',
+                    { className: 'lifecycle-demo' },
+                    React.createElement('h2', null, 'React 生命周期演示'),
+                    React.createElement(
+                        'div',
+                        { className: 'controls' },
+                        React.createElement(
+                            'button',
+                            { onClick: this.incrementCount },
+                            `增加计数: ${this.state.count}`
+                        ),
+                        React.createElement(
+                            'button',
+                            { onClick: this.toggleMode },
+                            `切换模式: ${this.state.isDev ? '开发' : '生产'}`
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'note' },
+                        React.createElement(
+                            'p',
+                            null,
+                            '请打开控制台查看生命周期钩子的触发顺序'
+                        ),
+                        this.state.isDev &&
+                            React.createElement(
+                                'p',
+                                { className: 'warning' },
+                                '注意:在开发模式下,React 会额外调用一次 componentDidMount 和 componentWillUnmount 来帮助发现问题'
+                            )
+                    )
+                );
+            }
+        }
+
+        // 渲染组件
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(React.createElement(LifecycleDemo));
+    </script>
+</body>
+</html> 

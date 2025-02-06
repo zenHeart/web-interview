@@ -1,0 +1,15 @@
+{
+    "name": "virtual-dom-demo",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "zenheart <zenheart_register@163.com> (https://blog.zenheart.site/)",
+    "license": "ISC",
+    "devDependencies": {
+        "virtual-dom": "^2.1.1"
+    }
+}
