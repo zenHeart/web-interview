@@ -1,0 +1,80 @@
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/babel-standalone"></script>
+<div id="root"></div>
+<script type="text/babel">
+   let { Component } = React;
+
+   class Counter extends React.Component {
+      constructor(props) {
+         super(props);
+         this.state = { count: 0 };
+         this.refElem = React.createRef();
+      }
+
+      componentDidMount() {
+         this.setState({ count: this.state.count + 1 });
+         console.log("钩子中，setState 是异步，返回历史状态:", this.state.count);
+         
+         this.refElem.current.addEventListener(
+            "click",
+            this.nativeIncrement,
+            false
+         );
+
+         setTimeout(() => {
+            // 原生事件中 setState 是同步
+            this.setState({ count: this.state.count + 1 });
+            console.log("setTimeout，setState 是异步，返回历史状态:", this.state.count);
+         }, 1000);
+      }
+
+      increment = () => {
+         this.setState({ count: this.state.count + 1 });
+         this.setState({ count: this.state.count + 1 });
+         console.log("React 合成事件中，setState 是异步，返回历史状态:", this.state.count);
+      };
+
+      nativeIncrement = () => {
+         this.setState({ count: this.state.count + 1 });
+         this.setState({ count: this.state.count + 1 });
+         console.log("原生事件中，setState 是异步，返回历史状态:", this.state.count);
+      };
+
+      fetchRemote = () => {
+         fetch("https://jsonplaceholder.typicode.com/todos/1")
+            .then((response) => response.json())
+            .then((data) => {
+               this.setState({ count: this.state.count + 1 });
+               console.log("fetch setState 是异步，返回历史状态:", this.state.count);
+            });
+      };
+
+      componentWillUnmount() {
+         this.refElem.current.removeEventListener(
+            "click",
+            this.nativeIncrement,
+            false
+         );
+      }
+
+      render() {
+         return (
+            <div>
+               {/* React 合成事件 setState 异步 */}
+               <button onClick={this.increment}>react add</button>
+               
+               {/* 原生事件 setState 同步 */}
+               <button ref={this.refElem}>dom add</button>
+               {/* Fetch 事件 setState 同步 */}
+               <button onClick={this.fetchRemote}>fetch add</button>
+               <div>count: {this.state.count}</div>
+            </div>
+         );
+      }
+   }
+   ReactDOM.createRoot(document.getElementById("root")).render(<Counter />)
+   // 注意采用如下语句任然触发 sync mode ，行为和 17 一致
+   // ReactDOM.render(<Counter />, document.getElementById("root"));
+
+</script>

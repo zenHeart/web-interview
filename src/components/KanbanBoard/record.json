@@ -7,6 +7,7 @@
       "p0-hoc",
       "p0-react-component-communication",
       "p0-react-key",
-      "p0-createPortal"
+      "p0-createPortal",
+      "p1-setState"
    ]
 }

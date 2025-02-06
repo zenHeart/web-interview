@@ -1,129 +1,127 @@
-import React, { useState } from "react";
-import "./KanbanBoard.css";
-import { usePluginData } from "@docusaurus/useGlobalData";
-import type { Question } from "../plugins/extractQuestions";
-import KanbanSearch from "./KanbanSearch";
-import PriorityTag from "../PriorityTag";
-import record from "./record.json";
-const doneKeys = record.Done;
+import { useState } from 'react'
+import './KanbanBoard.css'
+import { usePluginData } from '@docusaurus/useGlobalData'
+import type { Question } from '@site/src/plugins/extractQuestions'
+import KanbanSearch, { SearchFilters } from './KanbanSearch'
+import PriorityTag from '../PriorityTag'
+import record from './record.json'
+const doneKeys = record.Done
 
-
-
-function KanbanBoard() {
-  const { questions = [] } = usePluginData("extract-questions-plugin") as {
+function KanbanBoard () {
+  const { questions = [] } = usePluginData('extract-questions-plugin') as {
     questions: Question[];
-  };
-  const [filteredQuestions, setFilteredQuestions] = useState(questions);
+  }
+  const [filteredQuestions, setFilteredQuestions] = useState(questions)
   const [collapsedGroups, setCollapsedGroups] = useState<
     Record<string, boolean>
-  >({});
+  >({})
 
   const handleSearch = (filters: SearchFilters) => {
-    let results = questions;
+    let results = questions
 
     if (filters.domain) {
       results = results.filter((q) =>
         q.domain?.toLowerCase().includes(filters.domain!.toLowerCase())
-      );
+      )
     }
 
     if (filters.title) {
       results = results.filter((q) =>
         q.title.toLowerCase().includes(filters.title!.toLowerCase())
-      );
+      )
     }
 
     if (filters.topic) {
       results = results.filter((q) =>
         q.topic?.toLowerCase().includes(filters.topic!.toLowerCase())
-      );
+      )
     }
 
     if (filters.raw) {
-      const searchTerm = filters.raw.toLowerCase();
+      const searchTerm = filters.raw.toLowerCase()
       results = results.filter(
         (q) =>
           q.title.toLowerCase().includes(searchTerm) ||
           q.domain?.toLowerCase().includes(searchTerm) ||
           q.topic?.toLowerCase().includes(searchTerm)
-      );
+      )
     }
 
     if (filters.priority) {
-      const searchPriority = filters.priority.toUpperCase();
-      results = results.filter((q) => 
+      const searchPriority = filters.priority.toUpperCase()
+      results = results.filter((q) =>
         q.priority?.toUpperCase() === searchPriority
-      );
+      )
     }
 
     // 新增逻辑：根据 record.json 中的 Done 项目移动问题
 
-    console.log('doneKeys',doneKeys)
+    console.log('doneKeys', doneKeys)
 
     const completedQuestions = questions.filter((q) =>
       doneKeys.some(key => q.link?.includes(key))
-    );
+    )
 
     // 从结果中排除已完成的问题
     results = results.filter((q) => {
-      const isDone = doneKeys.some(key => q.link?.includes(key));
-      return !isDone;
-    });
+      const isDone = doneKeys.some(key => q.link?.includes(key))
+      return !isDone
+    })
 
     // 将已完成的问题添加到结果中
-    results = [...results, ...completedQuestions];
+    results = [...results, ...completedQuestions]
 
-    setFilteredQuestions(results);
-  };
+    setFilteredQuestions(results)
+  }
 
   // 将问题按状态和域名分组
   const groupedQuestions = filteredQuestions.reduce((acc, question) => {
-    const status = doneKeys.some(key => question.link?.includes(key)) ? "Done" : (question.status || "Todo");
-    const domain = question.domain || "未分类";
+    const status = doneKeys.some(key => question.link?.includes(key)) ? 'Done' : (question.status || 'Todo')
+    const domain = question.domain || '未分类'
 
     if (!acc[status]) {
-      acc[status] = {};
+      acc[status] = {}
     }
     if (!acc[status][domain]) {
-      acc[status][domain] = [];
+      acc[status][domain] = []
     }
 
-    acc[status][domain].push(question);
-    return acc;
-  }, {} as Record<string, Record<string, Question[]>>);
+    acc[status][domain].push(question)
+    return acc
+  }, {} as Record<string, Record<string, Question[]>>)
 
   const columns = [
     {
-      id: "Todo",
-      title: "待办",
-      color: "#4CAF50",
-      description: "这个项目还未开始",
+      id: 'Todo',
+      title: '待办',
+      color: '#4CAF50',
+      description: '这个项目还未开始'
     },
     {
-      id: "InProgress",
-      title: "进行中",
-      color: "#FFA000",
-      description: "正在积极开发中",
+      id: 'InProgress',
+      title: '进行中',
+      color: '#FFA000',
+      description: '正在积极开发中'
     },
     {
-      id: "Done",
-      title: "已完成",
-      color: "#9C27B0",
-      description: "已经完成的项目",
-    },
-  ];
+      id: 'Done',
+      title: '已完成',
+      color: '#9C27B0',
+      description: '已经完成的项目'
+    }
+  ]
 
   const toggleGroup = (status: string, domain: string) => {
-    const key = `${status}-${domain}`;
+    const key = `${status}-${domain}`
     setCollapsedGroups((prev) => ({
       ...prev,
-      [key]: !prev[key],
-    }));
-  };
+      [key]: !prev[key]
+    }))
+  }
 
   const getStatusCount = (status: string) => {
-    return Object.values(groupedQuestions[status] || {}).flat().length;
-  };
+    return Object.values(groupedQuestions[status] || {}).flat().length
+  }
 
   return (
     <div className="kanban-container">
@@ -155,7 +153,7 @@ function KanbanBoard() {
                       onClick={() => toggleGroup(column.id, domain)}
                     >
                       <span className="collapse-icon">
-                        {collapsedGroups[`${column.id}-${domain}`] ? "▶" : "▼"}
+                        {collapsedGroups[`${column.id}-${domain}`] ? '▶' : '▼'}
                       </span>
                       <span className="domain-name">{domain}</span>
                       <span className="domain-count">{items.length}</span>
@@ -166,7 +164,7 @@ function KanbanBoard() {
                         {items.map((question, index) => (
                           <div key={index} className="task-card">
                             <div className="task-title">
-                              <a href={question.link}>{question.title}</a>
+                              <a target="_blank" href={question.link} rel="noreferrer">{question.title}</a>
                               {question.priority && (
                                 <PriorityTag priority={question.priority} />
                               )}
@@ -190,7 +188,7 @@ function KanbanBoard() {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
-export default KanbanBoard;
+export default KanbanBoard

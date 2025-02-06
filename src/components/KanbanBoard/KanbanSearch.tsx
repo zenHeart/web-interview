@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useHistory, useLocation } from '@docusaurus/router'
 import './KanbanSearch.css'
 
-interface SearchFilters {
+export interface SearchFilters {
   domain?: string;
   title?: string;
   topic?: string;

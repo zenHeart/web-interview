@@ -21,13 +21,13 @@ interface NumberedDomain {
   topics: Record<string, NumberedTopic>;
 }
 
-function QuestionList() {
+function QuestionList () {
   const { questions = [] } = usePluginData('extract-questions-plugin') as { questions: Question[] }
 
   // 按 domain 和 topic 组织数据，并添加编号
   const organizedQuestions = questions.reduce((acc, question) => {
     const { domain, topic } = question
-    
+
     // 如果是新的 domain，添加到最后面
     if (!acc[domain]) {
       const existingDomains = Object.values(acc)
@@ -38,7 +38,7 @@ function QuestionList() {
         topics: {}
       }
     }
-    
+
     // 如果是新的 topic，添加到最后面
     if (!acc[domain].topics[topic]) {
       const existingTopics = Object.values(acc[domain].topics)
@@ -49,7 +49,7 @@ function QuestionList() {
         questions: []
       }
     }
-    
+
     acc[domain].topics[topic].questions.push(question)
     return acc
   }, {} as Record<string, NumberedDomain>)
@@ -58,11 +58,11 @@ function QuestionList() {
   const distributeTopics = (topics: Record<string, NumberedTopic>) => {
     const topicEntries = Object.entries(topics)
       .sort((a, b) => a[1].number - b[1].number)
-    
+
     const columns = [[], [], []] as [string, NumberedTopic][][]
     const columnHeights = [0, 0, 0]
     const COLUMNS = 3
-    
+
     const estimateTopicHeight = (topic: NumberedTopic) => {
       return 20 + 16 + (topic.questions.length * 32)
     }
@@ -104,17 +104,17 @@ function QuestionList() {
       const topicHeight = estimateTopicHeight(topic)
       let bestColumn = -1
       let minVariance = Infinity
-      
+
       // 遍历所有列，寻找最佳放置位置
       for (let i = 0; i < COLUMNS; i++) {
         if (isValidPlacement(topic, i)) {
           const newHeights = [...columnHeights]
           newHeights[i] += topicHeight
           const variance = calculateVariance(newHeights)
-          
+
           // 优先选择左边的列，除非方差差异显著（比如超过 20%）
-          if (bestColumn === -1 || 
-              variance < minVariance * 0.8) {  // 允许 20% 的方差容忍度
+          if (bestColumn === -1 ||
+              variance < minVariance * 0.8) { // 允许 20% 的方差容忍度
             minVariance = variance
             bestColumn = i
           }
@@ -126,7 +126,7 @@ function QuestionList() {
         columnHeights[bestColumn] += topicHeight
       }
     })
-    
+
     return columns
   }
 
@@ -145,7 +145,7 @@ function QuestionList() {
                   {columnTopics.map(([topicKey, topic]) => (
                     <div key={topicKey} className="topic-block">
                       <h2 className="topic-title">
-                        <a href={topic.questions[0]?.link?.split('#')[0]}>
+                        <a target="_blank" href={topic.questions[0]?.link?.split('#')[0]} rel="noreferrer">
                           {topic.number}.{topic.name}
                         </a>
                       </h2>
@@ -153,7 +153,7 @@ function QuestionList() {
                         <ul className="question-list">
                           {topic.questions.map((question) => (
                             <li key={question.title} className="question-item">
-                              <a href={question.link}>
+                              <a target="_blank" href={question.link} rel="noreferrer">
                                 {question.title}
                               </a>
                             </li>
