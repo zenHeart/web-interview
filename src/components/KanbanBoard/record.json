@@ -8,6 +8,8 @@
       "p0-react-component-communication",
       "p0-react-key",
       "p0-createPortal",
-      "p1-setState"
+      "p1-setState",
+      "p0-react-react-dom",
+      "p0-react-element-component"
    ]
 }
