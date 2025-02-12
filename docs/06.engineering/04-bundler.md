@@ -2454,6 +2454,111 @@ module.exports = {
 
 1. esm 静态分析，优于 commonjs 动态分析
 
+## rollup 内联优化是什么？ {#p2-rollup-inline-optimization}
+
+<Answer>
+
+**内联优化** 是指将模块的代码直接插入到引用它的地方。这种优化可以减少模块的加载时间，提高代码的执行效率。
+
+例如 react 中如下代码 [const nextRootContext = getRootHostContext(nextRootInstance);](https://github.com/facebook/react/blob/cd90a4d8c0d5dbaa8ab61e839b112b1518d5058f/packages/react-reconciler/src/ReactFiberHostContext.js#L75)  在打包后会注入 getRootHostContext(nextRootInstance), [var nextRootContext = nextRootInstance.nodeType](https://unpkg.com/browse/react-dom@19.0.0/cjs/react-dom-client.development.js#L695) rollup 会在编译的时候识别全局只调用一次的函数，编译的时候直接内联到调用的地方，避免采用引用方式调用的开销
+
+<Tabs defaultValue="打包前">
+<TabItem value="打包前">
+
+```js
+function pushHostContainer(fiber: Fiber, nextRootInstance: Container): void {
+  // Push current root instance onto the stack;
+  // This allows us to reset root when portals are popped.
+  push(rootInstanceStackCursor, nextRootInstance, fiber);
+  // Track the context and the Fiber that provided it.
+  // This enables us to pop only Fibers that provide unique contexts.
+  push(contextFiberStackCursor, fiber, fiber);
+
+  // Finally, we need to push the host context to the stack.
+  // However, we can't just call getRootHostContext() and push it because
+  // we'd have a different number of entries on the stack depending on
+  // whether getRootHostContext() throws somewhere in renderer code or not.
+  // So we push an empty value first. This lets us safely unwind on errors.
+  push(contextStackCursor, null, fiber);
+  // highlight-next-line
+  const nextRootContext = getRootHostContext(nextRootInstance);
+  // Now that we know this function doesn't throw, replace it.
+  pop(contextStackCursor, fiber);
+  push(contextStackCursor, nextRootContext, fiber);
+}
+```
+
+</TabItem>
+
+<TabItem value="打包后">
+
+```jsx
+function pushHostContainer (fiber, nextRootInstance) {
+  push(rootInstanceStackCursor, nextRootInstance, fiber)
+  push(contextFiberStackCursor, fiber, fiber)
+  push(contextStackCursor, null, fiber)
+  // highlight-start
+  let nextRootContext = nextRootInstance.nodeType
+  switch (nextRootContext) {
+    case 9:
+    case 11:
+      nextRootContext = nextRootContext === 9 ? '#document' : '#fragment'
+      nextRootInstance = (nextRootInstance =
+            nextRootInstance.documentElement)
+        ? (nextRootInstance = nextRootInstance.namespaceURI)
+            ? getOwnHostContext(nextRootInstance)
+            : HostContextNamespaceNone
+        : HostContextNamespaceNone
+      break
+    default:
+      if (
+        ((nextRootInstance =
+              nextRootContext === 8
+                ? nextRootInstance.parentNode
+                : nextRootInstance),
+        (nextRootContext = nextRootInstance.tagName),
+        (nextRootInstance = nextRootInstance.namespaceURI))
+      ) {
+        (nextRootInstance = getOwnHostContext(nextRootInstance)),
+        (nextRootInstance = getChildHostContextProd(
+          nextRootInstance,
+          nextRootContext
+        ))
+      } else {
+        switch (nextRootContext) {
+          case 'svg':
+            nextRootInstance = HostContextNamespaceSvg
+            break
+          case 'math':
+            nextRootInstance = HostContextNamespaceMath
+            break
+          default:
+            nextRootInstance = HostContextNamespaceNone
+        }
+      }
+  }
+  nextRootContext = nextRootContext.toLowerCase()
+  nextRootContext = updatedAncestorInfoDev(null, nextRootContext)
+  nextRootContext = {
+    context: nextRootInstance,
+    ancestorInfo: nextRootContext
+  }
+  // highlight-end
+  pop(contextStackCursor, fiber)
+  push(contextStackCursor, nextRootContext, fiber)
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+**延伸阅读**
+
+* [Compiler inlining optimizations](https://github.com/rollup/rollup/issues/1904) 讨论哪些场景会触发内联优化
+
+</Answer>
+
 ## webpack 和 vite 区别 {#p0-webpack-vite-difference}
 
 1. dev 模式 vite 采用 esm, 而 webpack 采用 commonjs
@@ -4093,3 +4198,5 @@ ES6 代码转成 ES5 代码的实现思路主要是通过使用 Babel 这样的�
 4. 代码生成：最后，Babel 会根据转换后的 AST 生成可运行的 ES5 代码。
 
 在转换过程中，Babel 会根据预定义的插件和预设对代码进行转换。插件和预设可以分别处理一些特定的语法和功能，如箭头函数、类和模块等。同时，Babel 还支持开发者自定义插件和预设来处理更加特殊和个性化的需求。
+
+## Webpack 怎么实现按需异步加载模块 {#p0-webpack-async}

@@ -348,6 +348,12 @@ console.log(sum.eq(0.3))
 
 ## 什么是 NaN ，它的类型，如何判断 NaN? {#p1-nan}
 
+## BigInt 是如何实现的？{#p3-bigint}
+
+**延伸阅读**
+
+- [v8 bigint](https://v8.dev/blog/bigint)
+
 ## js 中类型转换规则？{#p1-type-convert}
 
 类型转换分为两种
