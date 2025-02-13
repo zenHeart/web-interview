@@ -11,7 +11,7 @@
    padding: 10px;
    border-radius: 8px;
    height: 200px;
-   overflow-y: scroll;
+   overflow: scroll;
    width: 32%;
 }
 
@@ -32,7 +32,7 @@
   margin-bottom: 10px;
 }
 
-.topics-container {
+.wi-topics-container {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -40,24 +40,9 @@
 
 .topic-tag {
   background-color: #f4f4f5;
+  text-align: center;
   border-radius: 12px;
-  padding: 5px 10px;
+  padding: 2px 8px;
   font-size: 0.9em;
+  margin-bottom: 10px;
 }
-
-.topic-block {
-  margin-bottom: 15px;
-}
-
-.topic-title {
-  font-size: 1.2em;
-}
-
-.question-list {
-  list-style-type: none;
-  padding: 0;
-}
-
-.question-item {
-  margin: 5px 0;
-} 

@@ -24,10 +24,7 @@ function HomepageHeader () {
           community-driven for the most up-to-date content.
         </div>
         <div className={styles.homeBtns}>
-          <Link className="button button--primary" to="/docs">
-            <Translate>Get Started</Translate>
-          </Link>
-          <Link className="button button--secondary" to="/docs">
+          <Link className="button button--secondary" to="/reference">
             <Translate>Get Started</Translate>
           </Link>
         </div>
