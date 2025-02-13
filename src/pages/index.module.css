@@ -16,8 +16,17 @@
   }
 }
 
-.buttons {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.homeBtns {
+   --ifm-button-size-multiplier: 1.6;
+   display: flex;
+   flex-wrap: wrap;
+   align-items: center;
+   gap: 20px;
+   justify-content: center;
+   margin-top: 24px;
+ }
+
+.homeBtns a,
+.homeBtns a:hover {
+  color: black;
 }
