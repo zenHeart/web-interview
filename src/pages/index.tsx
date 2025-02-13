@@ -6,6 +6,8 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures'
 import Heading from '@theme/Heading'
 import Link from '@docusaurus/Link'
 import Translate from '@docusaurus/Translate'
+import HomeQuestionsSummary from '../components/HomeQuestionsSummary'
+import HomeContributor from '../components/HomeContributor'
 
 import styles from './index.module.css'
 
@@ -53,6 +55,15 @@ export default function Home (): ReactNode {
           Why {siteConfig.title}
         </h1>
         <HomepageFeatures />
+        <h1
+          style={{
+            textAlign: 'center'
+          }}
+        >
+          Explore Knowledge Domains
+        </h1>
+        <HomeQuestionsSummary />
+        <HomeContributor />
       </main>
     </Layout>
   )
