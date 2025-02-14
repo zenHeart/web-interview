@@ -1,6 +1,6 @@
-import React from "react";
-import { usePluginData } from "@docusaurus/useGlobalData";
-import "./HomeQuestionsSummary.css";
+import React from 'react'
+import { usePluginData } from '@docusaurus/useGlobalData'
+import './HomeQuestionsSummary.css'
 
 interface Question {
   domain: string;
@@ -16,31 +16,31 @@ interface NumberedDomain {
 }
 
 const HomeQuestionsSummary: React.FC = () => {
-  const { questions = [] } = usePluginData("extract-questions-plugin") as {
+  const { questions = [] } = usePluginData('extract-questions-plugin') as {
     questions: Question[];
-  };
+  }
 
   // 按 domain 和 topic 组织数据，并计算每个 topic 的问题数量
   const organizedQuestions = questions.reduce((acc, question) => {
-    const { domain, topic } = question;
+    const { domain, topic } = question
 
     if (!acc[domain]) {
       acc[domain] = {
         number: Object.keys(acc).length + 1,
         name: domain,
-        topics: {},
-      };
+        topics: {}
+      }
     }
 
     if (!acc[domain].topics[topic]) {
-      acc[domain].topics[topic] = { count: 0, questions: [] };
+      acc[domain].topics[topic] = { count: 0, questions: [] }
     }
 
-    acc[domain].topics[topic].count += 1;
-    acc[domain].topics[topic].questions.push(question); // 保存问题以便后续使用
+    acc[domain].topics[topic].count += 1
+    acc[domain].topics[topic].questions.push(question) // 保存问题以便后续使用
 
-    return acc;
-  }, {} as Record<string, NumberedDomain>);
+    return acc
+  }, {} as Record<string, NumberedDomain>)
 
   return (
     <div className="home-questions-summary">
@@ -65,7 +65,7 @@ const HomeQuestionsSummary: React.FC = () => {
           </div>
         ))}
     </div>
-  );
-};
+  )
+}
 
-export default HomeQuestionsSummary;
+export default HomeQuestionsSummary
