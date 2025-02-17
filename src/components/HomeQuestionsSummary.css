@@ -6,7 +6,7 @@
   flex-wrap: wrap;
 }
 
-.domain-card {
+.subject-card {
    border: 1px solid #eaeaea;
    padding: 10px;
    border-radius: 8px;
@@ -20,14 +20,14 @@
    .home-questions-summary {
      flex-direction: column;
    }
-   .domain-card {
+   .subject-card {
      width: 100%;
    }
  }
  
 
 
-.domain-title {
+.subject-title {
   font-size: 1.5em;
   margin-bottom: 10px;
 }

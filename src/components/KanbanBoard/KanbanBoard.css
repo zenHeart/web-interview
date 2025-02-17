@@ -52,11 +52,11 @@
   padding: 0.5rem;
 }
 
-.domain-group {
+.subject-group {
   margin-bottom: 1rem;
 }
 
-.domain-header {
+.subject-header {
   display: flex;
   align-items: center;
   padding: 0.5rem;
@@ -65,7 +65,7 @@
   border-radius: 4px;
 }
 
-.domain-header:hover {
+.subject-header:hover {
   background: var(--ifm-color-emphasis-100);
 }
 
@@ -75,19 +75,19 @@
   color: var(--ifm-color-emphasis-600);
 }
 
-.domain-name {
+.subject-name {
   flex: 1;
   font-weight: 500;
 }
 
-.domain-count {
+.subject-count {
   background: var(--ifm-color-emphasis-200);
   padding: 1px 6px;
   border-radius: 10px;
   font-size: 0.8rem;
 }
 
-.domain-items {
+.subject-items {
   margin-top: 0.5rem;
   display: flex;
   flex-direction: column;

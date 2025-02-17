@@ -19,9 +19,9 @@ function KanbanBoard () {
   const handleSearch = (filters: SearchFilters) => {
     let results = questions
 
-    if (filters.domain) {
+    if (filters.subject) {
       results = results.filter((q) =>
-        q.domain?.toLowerCase().includes(filters.domain!.toLowerCase())
+        q.subject?.toLowerCase().includes(filters.subject!.toLowerCase())
       )
     }
 
@@ -42,7 +42,7 @@ function KanbanBoard () {
       results = results.filter(
         (q) =>
           q.title.toLowerCase().includes(searchTerm) ||
-          q.domain?.toLowerCase().includes(searchTerm) ||
+          q.subject?.toLowerCase().includes(searchTerm) ||
           q.topic?.toLowerCase().includes(searchTerm)
       )
     }
@@ -77,16 +77,16 @@ function KanbanBoard () {
   // 将问题按状态和域名分组
   const groupedQuestions = filteredQuestions.reduce((acc, question) => {
     const status = doneKeys.some(key => question.link?.includes(key)) ? 'Done' : (question.status || 'Todo')
-    const domain = question.domain || '未分类'
+    const subject = question.subject || '未分类'
 
     if (!acc[status]) {
       acc[status] = {}
     }
-    if (!acc[status][domain]) {
-      acc[status][domain] = []
+    if (!acc[status][subject]) {
+      acc[status][subject] = []
     }
 
-    acc[status][domain].push(question)
+    acc[status][subject].push(question)
     return acc
   }, {} as Record<string, Record<string, Question[]>>)
 
@@ -111,8 +111,8 @@ function KanbanBoard () {
     }
   ]
 
-  const toggleGroup = (status: string, domain: string) => {
-    const key = `${status}-${domain}`
+  const toggleGroup = (status: string, subject: string) => {
+    const key = `${status}-${subject}`
     setCollapsedGroups((prev) => ({
       ...prev,
       [key]: !prev[key]
@@ -146,21 +146,21 @@ function KanbanBoard () {
 
             <div className="task-list">
               {Object.entries(groupedQuestions[column.id] || {}).map(
-                ([domain, items]) => (
-                  <div key={domain} className="domain-group">
+                ([subject, items]) => (
+                  <div key={subject} className="subject-group">
                     <div
-                      className="domain-header"
-                      onClick={() => toggleGroup(column.id, domain)}
+                      className="subject-header"
+                      onClick={() => toggleGroup(column.id, subject)}
                     >
                       <span className="collapse-icon">
-                        {collapsedGroups[`${column.id}-${domain}`] ? '▶' : '▼'}
+                        {collapsedGroups[`${column.id}-${subject}`] ? '▶' : '▼'}
                       </span>
-                      <span className="domain-name">{domain}</span>
-                      <span className="domain-count">{items.length}</span>
+                      <span className="subject-name">{subject}</span>
+                      <span className="subject-count">{items.length}</span>
                     </div>
 
-                    {!collapsedGroups[`${column.id}-${domain}`] && (
-                      <div className="domain-items">
+                    {!collapsedGroups[`${column.id}-${subject}`] && (
+                      <div className="subject-items">
                         {items.map((question, index) => (
                           <div key={index} className="task-card">
                             <div className="task-title">

@@ -5,7 +5,7 @@ import fastGlob from 'fast-glob'
 import type { NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 
 export interface Question {
-  domain: string;
+  subject: string;
   topic: string;
   title: string;
   priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
@@ -13,7 +13,7 @@ export interface Question {
 }
 
 export interface GroupedQuestion {
-  [domain: string]: {
+  [subject: string]: {
     [topic: string]: Question[];
   };
 }
@@ -70,7 +70,7 @@ export default function extractQuestionsPlugin (
           files.map(async (filePath) => {
             const content = await fs.promises.readFile(filePath, 'utf-8')
             const matches = content.match(/^## (.+)$/gm) || []
-            const domain = numberPrefixParser(path.basename(path.dirname(filePath))).filename // 获取一级目录名并移除前缀数字
+            const subject = numberPrefixParser(path.basename(path.dirname(filePath))).filename // 获取一级目录名并移除前缀数字
             const topic = numberPrefixParser(path.basename(path.basename(filePath, path.extname(filePath)))).filename // 获取文件名作为 topic，并移除前缀数字
 
             return matches.map(match => {
@@ -79,10 +79,10 @@ export default function extractQuestionsPlugin (
               const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
               const priority = anchorMatch?.toUpperCase?.() || 'P4'
               const fragments = anchorMatch ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1] : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-              const link = `/web-interview/docs/${domain}/${topic}${fragments}`
+              const link = `/web-interview/docs/${subject}/${topic}${fragments}`
               return {
                 title,
-                domain: domain || 'Other',
+                subject: subject || 'Other',
                 topic,
                 priority,
                 link

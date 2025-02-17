@@ -3,7 +3,7 @@ import { usePluginData } from '@docusaurus/useGlobalData'
 import './HomeQuestionsSummary.css'
 
 interface Question {
-  domain: string;
+  subject: string;
   topic: string;
   title: string;
   link: string;
@@ -20,24 +20,24 @@ const HomeQuestionsSummary: React.FC = () => {
     questions: Question[];
   }
 
-  // 按 domain 和 topic 组织数据，并计算每个 topic 的问题数量
+  // 按 subject 和 topic 组织数据，并计算每个 topic 的问题数量
   const organizedQuestions = questions.reduce((acc, question) => {
-    const { domain, topic } = question
+    const { subject, topic } = question
 
-    if (!acc[domain]) {
-      acc[domain] = {
+    if (!acc[subject]) {
+      acc[subject] = {
         number: Object.keys(acc).length + 1,
-        name: domain,
+        name: subject,
         topics: {}
       }
     }
 
-    if (!acc[domain].topics[topic]) {
-      acc[domain].topics[topic] = { count: 0, questions: [] }
+    if (!acc[subject].topics[topic]) {
+      acc[subject].topics[topic] = { count: 0, questions: [] }
     }
 
-    acc[domain].topics[topic].count += 1
-    acc[domain].topics[topic].questions.push(question) // 保存问题以便后续使用
+    acc[subject].topics[topic].count += 1
+    acc[subject].topics[topic].questions.push(question) // 保存问题以便后续使用
 
     return acc
   }, {} as Record<string, NumberedDomain>)
@@ -46,11 +46,11 @@ const HomeQuestionsSummary: React.FC = () => {
     <div className="home-questions-summary">
       {Object.entries(organizedQuestions)
         .sort((a, b) => a[1].number - b[1].number)
-        .map(([domainKey, domain]) => (
-          <div key={domainKey} className="domain-card">
-            <h2 className="domain-title">{domain.name}</h2>
+        .map(([domainKey, subject]) => (
+          <div key={domainKey} className="subject-card">
+            <h2 className="subject-title">{subject.name}</h2>
             <div className="wi-topics-container">
-              {Object.entries(domain.topics).map(([topicKey, topic]) => (
+              {Object.entries(subject.topics).map(([topicKey, topic]) => (
                 <a
                   key={topicKey}
                   className="topic-tag"

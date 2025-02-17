@@ -3,7 +3,7 @@ import './QuestionList.css'
 import { usePluginData } from '@docusaurus/useGlobalData'
 
 interface Question {
-  domain: string;
+  subject: string;
   topic: string;
   title: string;
   link: string;
@@ -24,33 +24,33 @@ interface NumberedDomain {
 function QuestionList () {
   const { questions = [] } = usePluginData('extract-questions-plugin') as { questions: Question[] }
 
-  // 按 domain 和 topic 组织数据，并添加编号
+  // 按 subject 和 topic 组织数据，并添加编号
   const organizedQuestions = questions.reduce((acc, question) => {
-    const { domain, topic } = question
+    const { subject, topic } = question
 
-    // 如果是新的 domain，添加到最后面
-    if (!acc[domain]) {
+    // 如果是新的 subject，添加到最后面
+    if (!acc[subject]) {
       const existingDomains = Object.values(acc)
       const nextNumber = existingDomains.length + 1
-      acc[domain] = {
+      acc[subject] = {
         number: nextNumber,
-        name: domain,
+        name: subject,
         topics: {}
       }
     }
 
     // 如果是新的 topic，添加到最后面
-    if (!acc[domain].topics[topic]) {
-      const existingTopics = Object.values(acc[domain].topics)
+    if (!acc[subject].topics[topic]) {
+      const existingTopics = Object.values(acc[subject].topics)
       const nextNumber = existingTopics.length + 1
-      acc[domain].topics[topic] = {
+      acc[subject].topics[topic] = {
         number: nextNumber,
         name: topic,
         questions: []
       }
     }
 
-    acc[domain].topics[topic].questions.push(question)
+    acc[subject].topics[topic].questions.push(question)
     return acc
   }, {} as Record<string, NumberedDomain>)
 
@@ -134,13 +134,13 @@ function QuestionList () {
     <div className="api-reference">
       {Object.entries(organizedQuestions)
         .sort((a, b) => a[1].number - b[1].number)
-        .map(([domainKey, domain]) => (
-          <div key={domainKey} className="domain-section">
-            <h1 className="domain-title">
-              {domain.number}.{domain.name}
+        .map(([domainKey, subject]) => (
+          <div key={domainKey} className="subject-section">
+            <h1 className="subject-title">
+              {subject.number}.{subject.name}
             </h1>
             <div className="topics-container">
-              {distributeTopics(domain.topics).map((columnTopics, columnIndex) => (
+              {distributeTopics(subject.topics).map((columnTopics, columnIndex) => (
                 <div key={columnIndex} className="topics-column">
                   {columnTopics.map(([topicKey, topic]) => (
                     <div key={topicKey} className="topic-block">

@@ -3,7 +3,7 @@ import { useHistory, useLocation } from '@docusaurus/router'
 import './KanbanSearch.css'
 
 export interface SearchFilters {
-  domain?: string;
+  subject?: string;
   title?: string;
   topic?: string;
   priority?: string;
@@ -15,8 +15,8 @@ interface SearchProps {
 
 const SearchExamples = [
   {
-    search: 'domain:js',
-    explain: '搜索特定领域'
+    search: 'subject:js',
+    explain: '搜索特定科目'
   },
   {
     search: 'title:问题',
@@ -35,7 +35,7 @@ const SearchExamples = [
     explain: '等效于 title:问题'
   },
   {
-    search: 'domain:js topic:type priority:p0',
+    search: 'subject:js topic:type priority:p0',
     explain: '支持复合搜索，多个条件之间用空格分隔。匹配所有条件'
   }
 ]
@@ -134,7 +134,7 @@ function KanbanSearch ({ onSearch }: SearchProps) {
               setIsFocused(false)
             }, 100)
           }}
-          placeholder="Filter by keyword or field (e.g. domain:js title:问题)"
+          placeholder="Filter by keyword or field (e.g. subject:js title:问题)"
         />
         {searchText && (
           <button
