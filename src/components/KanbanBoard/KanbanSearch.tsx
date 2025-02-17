@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useHistory, useLocation } from '@docusaurus/router'
 import './KanbanSearch.css'
+import { search } from '_draft/system/jerry/rotated-search'
 
 export interface SearchFilters {
   subject?: string;
@@ -37,6 +38,10 @@ const SearchExamples = [
   {
     search: 'subject:js topic:type priority:p0',
     explain: '支持复合搜索，多个条件之间用空格分隔。匹配所有条件'
+  },
+  {
+    search: 'subject:algorithm  priority:p0',
+    explain: 'p0'
   }
 ]
 
