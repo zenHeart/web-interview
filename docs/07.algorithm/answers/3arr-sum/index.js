@@ -35,12 +35,24 @@ function arr3Sum (arr, target) {
 
       if (sum === target) {
         result.push([fixEle, leftEle, rightEle])
-        searLeftIndex++
-        searchRightIndex--
+        // Skip duplicate values for left pointer
+        while (searLeftIndex < searchRightIndex && arr[searLeftIndex] === leftEle) {
+          searLeftIndex++
+        }
+        // Skip duplicate values for right pointer
+        while (searLeftIndex < searchRightIndex && arr[searchRightIndex] === rightEle) {
+          searchRightIndex--
+        }
       } else if (sum < target) {
-        searLeftIndex++
+        // Skip duplicate values for left pointer
+        while (searLeftIndex < searchRightIndex && arr[searLeftIndex] === leftEle) {
+          searLeftIndex++
+        }
       } else {
-        searchRightIndex--
+        // Skip duplicate values for right pointer
+        while (searLeftIndex < searchRightIndex && arr[searchRightIndex] === rightEle) {
+          searchRightIndex--
+        }
       }
     }
 
@@ -53,4 +65,6 @@ function arr3Sum (arr, target) {
 
 console.log(arr3Sum([1, 2, 3, 4, 5, 6, 7], 10)) // [[1, 2, 7], [1, 3, 6], [1, 4, 5], [2, 3, 5]]
 console.log(arr3Sum([1, 2, 3, 4, 5, 6, 7], 0)) // []
+// 当出现多个重复 0 的时候没法正确去重需分析原因
+console.log(arr3Sum([-4, -2, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7], 0)) // []
 console.log(arr3Sum([-8, -4, -2, 0, 1, 2, 3, 4, 5], 0)) // [[-8,3,5],[-4,0,4],[-4,1,3],[-2,0,2]]
