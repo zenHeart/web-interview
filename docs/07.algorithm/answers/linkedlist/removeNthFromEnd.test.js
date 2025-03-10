@@ -1,5 +1,5 @@
 const { arrayToLinkList } = require('./arrayToList')
-const removeNthFromEnd = require('./removeNthFromEnd').default
+const removeNthFromEnd = require('./removeNthFromEnd')
 
 describe('删除链表倒数第N个节点', () => {
   test('删除倒数第2个节点', () => {

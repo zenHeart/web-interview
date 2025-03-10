@@ -4,6 +4,7 @@ function removeNthFromEnd (head, n) {
   // 快慢指针
   let first = dummy
   let second = dummy
+  if (head === null) return null
   for (let i = 1; i <= n + 1; i++) {
     first = first?.next
   }
@@ -15,4 +16,4 @@ function removeNthFromEnd (head, n) {
   return dummy.next
 }
 
-exports.default = removeNthFromEnd
+module.exports = removeNthFromEnd
