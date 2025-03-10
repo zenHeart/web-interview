@@ -1,0 +1,21 @@
+{
+   "version": "0.2.0",
+   "configurations": [
+     {
+       "name": "jest",
+       "type": "node",
+       "request": "launch",
+       "runtimeExecutable": "/Users/gufeng/.nvm/versions/node/v18.19.1/bin/npm",
+       "runtimeArgs": [
+         "test",
+         "--inspect-brk",
+       ],
+       "skipFiles": [
+         "<node_internals>/**"
+       ],
+       "console": "integratedTerminal",
+       "internalConsoleOptions": "neverOpen",
+     }
+   ]
+ }
+ 

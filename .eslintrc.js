@@ -2,12 +2,13 @@ module.exports = {
   root: true,
   env: {
     browser: true,
-    es2020: true
+    es2020: true,
+    'jest/globals': true // 添加 jest 环境
   },
   extends: [
     'eslint:recommended',
     'standard',
-    'plugin:mocha/recommended',
+    'plugin:jest/recommended',
     'plugin:mdx/recommended',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime'
@@ -31,7 +32,7 @@ module.exports = {
   },
   plugins: [
     'markdown',
-    'mocha'
+    'jest'
   ],
   overrides: [
     {
@@ -49,7 +50,6 @@ module.exports = {
     }
   ],
   rules: {
-    'mocha/no-setup-in-describe': 'off',
     'react/prop-types': 'off'
   },
   settings: {

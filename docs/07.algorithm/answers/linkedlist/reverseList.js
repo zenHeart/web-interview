@@ -23,5 +23,3 @@ function reverseLinkedList (list) {
   }
   return list
 }
-
-// console.dir(reverseLinkedList(new LinkedList([1, 2, 3, 4, 5])), { depth: 5 });

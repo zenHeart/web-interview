@@ -4,7 +4,7 @@
  * k = 2, you should return: 2->1->4->3->5
  * k = 3, you should return: 3->2->1->4->5
  */
-const { LinkedList } = require('./linked-list')
+const { LinkedList } = require('./LinkedList')
 
 module.exports = reverseKGroup
 

@@ -1,6 +1,5 @@
-const { expect } = require('chai')
-const testData = require('./fixture/testData.js')
-const cycle = require('./linked-list-cycle.js')
+const testData = require('./fixture/cycle.js')
+const cycle = require('./cycleCheck.js')
 
 describe('循环链表测试用例', function () {
   describe('链表循环检测 hasCycle', function () {
@@ -10,7 +9,7 @@ describe('循环链表测试用例', function () {
         const data = testData.cycle[unitTestName]
         const res = cycle.hasCycle(data.input)
 
-        expect(res).to.deep.equal(data.expectHasCycle)
+        expect(res).toEqual(data.expectHasCycle)
       })
     }
   })
@@ -22,7 +21,7 @@ describe('循环链表测试用例', function () {
         const data = testData.cycle[unitTestName]
         const res = cycle.detectCycle(data.input)
 
-        expect(res).to.equal(data.expectPos)
+        expect(res).toEqual(data.expectPos)
       })
     }
   })

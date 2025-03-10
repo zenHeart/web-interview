@@ -5,6 +5,7 @@
 
 exports.hasCycle = hasCycle
 exports.detectCycle = detectCycle
+
 function hasCycle (list) {
   const hashMap = new Map()
   // 按顺序提取链表的值
@@ -41,5 +42,3 @@ function detectCycle (list) {
   // 如果循环推出说明无环
   return null
 }
-
-// console.log(getCycleIndex(testData.cycle.没有循环.input));

@@ -1,0 +1,12 @@
+module.exports = {
+  testEnvironment: 'node',
+  roots: ['<rootDir>/docs'],
+  testMatch: ['**/docs/**/linkedlist/*.test.js'], // 更改为你想要的测试文件模式
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov'],
+  moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+  testTimeout: 10000, // 对应 Mocha 的 -t 10000
+  watchPathIgnorePatterns: ['<rootDir>/node_modules/'], // watch 模式忽略的文件
+  verbose: true
+}
