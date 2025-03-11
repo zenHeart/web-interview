@@ -21,4 +21,4 @@ git init
 git add -A
 git commit -m 'deploy'
 
-git push -f ${rep_url} master:gh-pages
+git push -f ${rep_url} main:gh-pages
