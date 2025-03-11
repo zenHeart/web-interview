@@ -1,9 +1,3 @@
-module.exports = {
-  preOrderTree,
-  inOrderTree,
-  postOrderTree
-}
-
 /**
  * 先序遍历,
  * 1. 根节点
@@ -72,3 +66,11 @@ function postOrderTree (tree) {
   res.push(tree.value)
   return res
 }
+
+
+module.exports = {
+   preOrderTree,
+   inOrderTree,
+   postOrderTree
+ }
+ 
