@@ -50,7 +50,8 @@ module.exports = {
     }
   ],
   rules: {
-    'react/prop-types': 'off'
+    'react/prop-types': 'off',
+    'jest/valid-title': 'off'
   },
   settings: {
     'mdx/code-blocks': true
