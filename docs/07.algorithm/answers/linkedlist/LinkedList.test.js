@@ -12,7 +12,7 @@ describe('LinkedList', () => {
       const list = new LinkedList(1)
       expect(list.head.val).toBe(1)
       expect(list.tail.val).toBe(1)
-      expect(list.head.next).toBeNull()
+      expect(list.head.nexlinkt).toBeNull()
     })
 
     test('使用数组创建链表', () => {
