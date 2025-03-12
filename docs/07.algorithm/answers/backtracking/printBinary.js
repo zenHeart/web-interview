@@ -1,4 +1,4 @@
-function printBanary (n) {
+function printBinary (n) {
   if (n === 0) return []
 
   const result = []
@@ -14,4 +14,4 @@ function printBanary (n) {
   return result
 }
 
-module.exports = printBanary
+module.exports = printBinary

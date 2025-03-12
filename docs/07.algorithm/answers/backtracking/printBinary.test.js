@@ -1,4 +1,4 @@
-const printBanary = require('./printBanary')
+const printBinary = require('./printBinary')
 const testData = {
   empty: {
     input: 0,
@@ -22,7 +22,7 @@ describe('permute', () => {
   for (const unitTestName in testData) {
     it(unitTestName, function () {
       const data = testData[unitTestName]
-      const res = printBanary(data.input)
+      const res = printBinary(data.input)
 
       expect(res).toEqual(data.expect)
     })
