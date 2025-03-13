@@ -1,11 +1,16 @@
-function knapsack(weights, values, capacity) {
-    const dp = Array(capacity + 1).fill(0);
-    for (let i = 0; i < weights.length; i++) {
-        for (let j = capacity; j >= weights[i]; j--) {
-            dp[j] = Math.max(dp[j], dp[j - weights[i]] + values[i]);
-        }
+function knapsack (weights, values, capacity) {
+  const n = weights.length
+  const dp = Array.from({ length: n + 1 }, () => Array(capacity + 1).fill(0))
+  for (let i = 1; i <= n; i++) {
+    for (let w = 1; w <= capacity; w++) {
+      if (weights[i - 1] <= w) {
+        dp[i][w] = Math.max(dp[i - 1][w], dp[i - 1][w - weights[i - 1]] + values[i - 1])
+      } else {
+        dp[i][w] = dp[i - 1][w]
+      }
     }
-    return dp[capacity];
+  }
+  return dp[n][capacity]
 }
 
-export default knapsack;
+module.exports = knapsack
