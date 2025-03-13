@@ -1,106 +1,80 @@
 # 杂项
 
-## 397 了解哪些基础算法 {#p0-basic}
+## 大数字符串相加 大数字符串相乘 {#p0-big-number}
 
-6 种基础算法思想
+计算两个非负大整数(字符串形式的) num1 和 num2 的和
+你不能使用任何內建的用于处理大整数的库（比如 BigInteger）， 也不能直接将输入的字符串转换为整数形式。
 
-* 递归算法
-* 分治算法
-* 贪心算法
-* 回溯算法
-* 动态规划
-* 枚举算法
+```js
+/**
+ * 字符串相加
+ * 思路：双指针倒序遍历，逐位相加，有余数加在高一位
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
+ */
+function addTwoString (num1, num2) {
+  const res = []
+  let carry = 0
+  let i = num1.length - 1
+  let j = num2.length - 1
+  while (i >= 0 || j >= 0 || carry) {
+    const sum = Number(num1[i] || 0) + Number(num2[j] || 0) + carry
+    const mod = sum % 10
+    res.unshift(mod)
+    carry = Math.floor(sum / 10)
+    i--
+    j--
+  }
+  return res.join('')
+}
 
-**参考文档**: [资料](https://www.toutiao.com/article/7199435823970828857)
+/**
+ * 字符串相乘
+ * @param {string} num1
+ * @param {string} num2
+ */
+function multiplyManyToMany (num1, num2) {
+  let res = ''
+  for (let i = num2.length - 1; i >= 0; i--) {
+    let tempRes = ''
+    // 末尾补进位0
+    for (let j = 0; j < num2.length - 1 - i; j++) {
+      tempRes += '0'
+    }
+    tempRes = multiplyManyToOne(num1, num2[i]) + tempRes
+    res = addTwoString(res, tempRes)
+  }
+  return res
+}
 
-## treemap和hashmap的实现以及区别？
+/**
+ * 字符串 多乘一
+ * @param {string} num1
+ * @param {char} x
+ * @return {string}
+ */
+function multiplyManyToOne (num1, x) {
+  const res = []
+  let carry = 0
+  for (let i = num1.length - 1; i >= 0; i--) {
+    const product = Number(num1[i]) * Number(x) + carry
+    const mod = product % 10
+    res.unshift(mod)
+    carry = Math.floor(product / 10)
+  }
+  if (carry) {
+    res.unshift(carry)
+  }
+  return res.join('')
+}
 
-## 一致性哈希
-
-* 解决分布式缓存的扩展性问题
-* 环形哈希空间
-* 虚拟节点
-* 应用：分布式缓存、负载均衡
-
-## 双端队列的应用场景？
-
-* 滑动窗口问题
-* 任务调度系统（既可以从头部添加高优先级任务，也可以从尾部添加普通任务）
-
-## 单调栈的应用？
-
-* 寻找下一个更大/更小元素
-* 直方图中最大矩形面积
-* 接雨水问题
-* 股票跨度问题
-
-## 红黑树的平衡原理
-
-* 特性：
-  1. 节点是红色或黑色
-  2. 根节点是黑色
-  3. 所有叶子节点（NIL）是黑色
-  4. 红色节点的子节点必须是黑色
-  5. 从根到叶子的所有路径包含相同数量的黑色节点
-* 平衡手段：
-  * 变色
-  * 左旋
-  * 右旋
-* 时间复杂度：O(logN)
-
-## B树和B+树的区别
-
-* B树：
-  * 所有节点都可以存储数据
-  * 适合随机访问
-  * 常用于文件系统
-* B+树：
-  * 只有叶子节点存储数据
-  * 叶子节点通过链表相连
-  * 更适合范围查询
-  * 常用于数据库索引
-
-## AVL树与红黑树比较
-
-* AVL树：
-  * 更严格的平衡（左右子树高度差不超过1）
-  * 查询更快
-  * 插入删除代价更大
-* 红黑树：
-  * 平衡条件较宽松
-  * 插入删除操作更快
-  * 实际应用更广泛（如STL）
-
-## Trie树的应用场景
-
-* 字符串快速检索
-* 前缀匹配
-* 自动补全
-* 拼写检查
-* IP路由表查找
-
-## 跳表的原理和应用
-
-* 原理：
-  * 多层链表结构
-  * 每层是下层的子集
-  * 类似二分查找的思想
-
-* 应用：
-  * Redis的有序集合
-  * 替代平衡树的场景
-* 时间复杂度：平均O(logN)
-
-## HashMap的并发问题
-
-* 并发问题：
-  * 死循环（JDK1.7中的并发扩容问题）
-  * 数据丢失
-  * 数据覆盖
-* 解决方案：
-  * 使用Collections.synchronizedMap()
-  * 使用ConcurrentHashMap
-  * 使用HashTable（不推荐，性能差）
+// Test
+console.log(multiplyManyToOne('123', '5')) // '615'
+console.log(multiplyManyToOne('123', '4')) // '492'
+console.log(addTwoString('615', '4920')) // '5535'
+console.log(multiplyManyToMany('123', '45')) // '5535'
+```
 
 ## 海量数据下 topk 的问题？
 
@@ -117,71 +91,49 @@
 
 这种方法的时间复杂度为O(N*log(N/K))，其中N是所有数据的数量，K是每个小文件中的数据量。由于K相对较小，因此这种方法非常高效。
 
-## 排序算法
+bfs
 
-### 冒泡排序
+```typescript
+function numIslands (grid: string[][]): number {
+  if (grid.length === 0) return 0
 
-## 数据结构
+  const rows = grid.length
+  const cols = grid[0].length
+  let count = 0
 
-### 算法复杂度
+  // BFS遍历岛屿
+  const bfs = (row: number, col: number) => {
+    const queue = [[row, col]]
+    grid[row][col] = '0'
 
-查找 100 以内质数。
-排出 2,3,5 后的时间复杂度。
+    while (queue.length) {
+      const [currRow, currCol] = queue.shift()!
 
-### 单链表反转
+      // 四个方向
+      const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
+      for (const [dx, dy] of directions) {
+        const newRow = currRow + dx
+        const newCol = currCol + dy
 
-2.快排
-3.即时通信(除了Ajax和websocket)
+        if (newRow >= 0 && newRow < rows &&
+                    newCol >= 0 && newCol < cols &&
+                    grid[newRow][newCol] === '1') {
+          queue.push([newRow, newCol])
+          grid[newRow][newCol] = '0' // 入队时就标记
+        }
+      }
+    }
+  }
 
-### 二叉树遍历
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      if (grid[row][col] === '1') {
+        count++
+        bfs(row, col)
+      }
+    }
+  }
 
-## 算法
-
-### 各类排序算法以及复杂度计算
-
-1. 快排原理,复杂度计算
-
-### 二分法
-
-## 编程题
-
-### 台阶算法
-
-N 个台阶算法,一次可一步,两步或三步,总共的走法。
-
-x+2y+3z = n; // 求取所有解 m
-
-f(n) = f(n-1)+f(n-2)+f(n-3)
-n=1 1
-n=2 2
-n=3 3
-
-### 背包问题(动态规划)
-
-### 因数分解
-
-如下，实现 `calc` 方法，可以将输入的数拆解为尽可能多的乘数，所有数相乘等于输入数。
-```js
-/**
- * @param {number} n 乘积
- * @return {Array} 拆解后的乘数
- */
-
-function calc (n) { }
-console.log(calc(7))
-// [7]
-console.log(calc(8))
-// [2, 2, 2]
-
-console.log(calc(24))
-// [2, 2, 2, 3]
-
-console.log(calc(30))
-// [2, 3, 5]
+  return count
+}
 ```
-
-### 质数递归
-
-### 数组找公共元素
-
-### 最大子数组和

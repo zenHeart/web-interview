@@ -3570,3 +3570,65 @@ Promise.prototype.finally = function (callback) {
 这个实现方法中，使用了 `Promise.resolve()` 来返回一个新的 Promise 实例，因此可以避免了 Promise 链的状态改变。另外，由于 `finally()` 方法只是在 Promise 链的最后执行回调函数，因此不需要使用异步函数。
 
 ## 如何判断一个数值是整数，实现 isInteger {#p1-is-integer}
+
+## Promise.all
+
+```typescript
+function promiseAll<T> (promises: Promise<T>[]): Promise<T[]> {
+  return new Promise((resolve, reject) => {
+    if (promises.length === 0) {
+      resolve([])
+      return
+    }
+
+    const results: T[] = new Array(promises.length)
+    let completedCount = 0
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise)
+        .then(value => {
+          results[index] = value
+          completedCount++
+
+          if (completedCount === promises.length) {
+            resolve(results)
+          }
+        })
+        .catch(reject)
+    })
+  })
+}
+```
+
+## 限制并发的 Promise
+
+```typescript
+async function promiseLimit<T> (
+  promises: (() => Promise<T>)[],
+  limit: number
+): Promise<T[]> {
+  const results: T[] = []
+  const executing: Promise<void>[] = []
+
+  for (const [index, promiseFunc] of promises.entries()) {
+    const p = Promise.resolve()
+      .then(() => promiseFunc())
+      .then(result => {
+        results[index] = result
+      })
+      .finally(() => {
+        const i = executing.indexOf(p)
+        if (i !== -1) executing.splice(i, 1)
+      })
+
+    executing.push(p)
+
+    if (executing.length >= limit) {
+      await Promise.race(executing)
+    }
+  }
+
+  await Promise.all(executing)
+  return results
+}
+```
