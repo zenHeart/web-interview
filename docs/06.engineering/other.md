@@ -56,23 +56,23 @@
 
 1. **解析器（Parser）**：
 
-* 根据你使用的编程语言，可能需要指定一个解析器。例如，对于 TypeScript 项目，你可以使用`@typescript-eslint/parser`。
+* 根据你使用的编程语言，可能需要指定一个解析器。例如，对于 TypeScript 项目，你可以使用`@TypeScript-eslint/parser`。
 * 在`.eslintrc.*`文件中，可以这样配置：
 
  ```js
  module.exports = {
-   parser: '@typescript-eslint/parser'
+   parser: '@TypeScript-eslint/parser'
  }
  ```
 
 2. **插件（Plugins）**：
 
-* ESLint 插件可以提供额外的规则和功能。例如，`@typescript-eslint/eslint-plugin`是用于 TypeScript 的插件。
+* ESLint 插件可以提供额外的规则和功能。例如，`@TypeScript-eslint/eslint-plugin`是用于 TypeScript 的插件。
 * 配置插件如下：
 
  ```js
  module.exports = {
-   plugins: ['@typescript-eslint']
+   plugins: ['@TypeScript-eslint']
  }
  ```
 

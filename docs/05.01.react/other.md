@@ -336,7 +336,7 @@ Renderer根据Reconciler为虚拟DOM打的标记，同步执行对应的DOM操�
 批量处理是指 React 将多个状态更新分组到一个重新渲染中，以获得更好的性能。如果没有自动批量处理，我们只对 React 事件处理程序中的更新进行批量处理。默认情况下，React 不会对
 Promise、setTimeout、原生事件处理程序或任何其它事件中的更新进行批量处理。有了自动批量处理，这些更新将被自动的批量处理。
 
-```typescript jsx
+```TypeScript jsx
 // 之前：只对 React 事件执行批量处理
 setTimeout(() => {
   setCount(c => c + 1)
@@ -367,7 +367,7 @@ setTimeout(() => {
 
 通常情况下，为了获得最佳的用户体验，一个用户输入应该同时导致一个紧急更新和一个非紧急更新。你可以在输入事件中使用 startTransition API 来告知 React 哪些是紧急更新，哪些是“过渡”：
 
-```typescript jsx
+```TypeScript jsx
 import { startTransition } from 'react'
 
 // 紧急：显示输入的内容

@@ -93,7 +93,7 @@ console.log(multiplyManyToMany('123', '45')) // '5535'
 
 bfs
 
-```typescript
+```TypeScript
 function numIslands (grid: string[][]): number {
   if (grid.length === 0) return 0
 

@@ -6,13 +6,16 @@ import extractQuestionsPlugin, { numberPrefixParser } from './src/plugins/extrac
 import devProxy from './src/plugins/devProxy/index'
 
 const config: Config = {
+  markdown: {
+    mermaid: true
+  },
   customFields: {
     questions: []
   },
-  themes: ['@docusaurus/theme-live-codeblock'],
-  future: {
-    experimental_faster: true
-  },
+  themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
+  //   future: {
+  //     experimental_faster: true
+  //   },
   title: 'web-interview',
   url: 'https://blog.zenheart.site',
   baseUrl: '/web-interview/',

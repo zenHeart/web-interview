@@ -3573,7 +3573,7 @@ Promise.prototype.finally = function (callback) {
 
 ## Promise.all
 
-```typescript
+```TypeScript
 function promiseAll<T> (promises: Promise<T>[]): Promise<T[]> {
   return new Promise((resolve, reject) => {
     if (promises.length === 0) {
@@ -3602,7 +3602,7 @@ function promiseAll<T> (promises: Promise<T>[]): Promise<T[]> {
 
 ## 限制并发的 Promise
 
-```typescript
+```TypeScript
 async function promiseLimit<T> (
   promises: (() => Promise<T>)[],
   limit: number
