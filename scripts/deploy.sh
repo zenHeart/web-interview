@@ -21,4 +21,8 @@ git init
 git add -A
 git commit -m 'deploy'
 
-git push -f ${rep_url} main:gh-pages
+# get current branch name
+branch=$(git symbolic-ref --short HEAD)
+
+# git push -f ${rep_url} main:gh-pages
+git push -f ${rep_url} ${branch}:gh-pages
