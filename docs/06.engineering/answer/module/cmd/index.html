@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMD 模块示例</title>
+</head>
+<body>
+    <h1>CMD 模块示例</h1>
+    <div id="result"></div>
+
+    <!-- 引入 SeaJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/seajs/3.0.3/sea.js"></script>
+    
+    <!-- 使用示例 -->
+    <script>
+        seajs.use(['./math'], function(MathUtils) {
+            const result = document.getElementById('result');
+            
+            // 使用加法
+            result.innerHTML += `<p>5 + 3 = ${MathUtils.add(5, 3)}</p>`;
+            
+            // 使用乘法
+            result.innerHTML += `<p>4 × 6 = ${MathUtils.multiply(4, 6)}</p>`;
+            
+            // 使用 PI
+            result.innerHTML += `<p>PI = ${MathUtils.PI}</p>`;
+        });
+    </script>
+</body>
+</html> 

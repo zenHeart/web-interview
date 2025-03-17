@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMD 模块示例</title>
+</head>
+<body>
+    <h1>UMD 模块示例</h1>
+    <div id="result"></div>
+
+    <!-- 引入 UMD 模块 -->
+    <script src="./math.js"></script>
+    
+    <!-- 使用示例 -->
+    <script>
+        const result = document.getElementById('result');
+        
+        // 使用加法
+        result.innerHTML += `<p>5 + 3 = ${MathUtils.add(5, 3)}</p>`;
+        
+        // 使用乘法
+        result.innerHTML += `<p>4 × 6 = ${MathUtils.multiply(4, 6)}</p>`;
+        
+        // 使用 PI
+        result.innerHTML += `<p>PI = ${MathUtils.PI}</p>`;
+    </script>
+</body>
+</html>
