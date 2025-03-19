@@ -1,0 +1,21 @@
+{
+  "name": "babel-plugin-todo-collector",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "@babel/cli": "^7.26.4",
+    "@babel/core": "^7.x"
+  },
+  "devDependencies": {
+    "jest": "^29.x"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "babel src.js --out-dir dist"
+  },
+  "babel": {
+    "plugins": [
+      "./plugin.js"
+    ]
+  }
+}

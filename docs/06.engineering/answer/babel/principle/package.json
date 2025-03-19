@@ -1,0 +1,16 @@
+{
+  "name": "babel-principle-demo",
+  "version": "1.0.0",
+  "description": "演示 Babel 工作原理的三个主要步骤",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.24.0",
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0",
+    "@babel/generator": "^7.24.0",
+    "@babel/types": "^7.24.0"
+  }
+}
