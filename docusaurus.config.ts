@@ -77,7 +77,8 @@ const config: Config = {
             '**/questions/**', // 排除所有 questions 目录
             '**/quiz/**', // 排除所有例题目录
             '**/answers/**', // 排除所有 answers 目录
-            '**/*.question.{md,mdx}' // 排除所有 questions 目录
+            '**/*.question.{md,mdx}', // 排除所有 questions 目录
+            '**/node_modules/**' // 排除所有 questions 目录
           ]
         },
         theme: {
