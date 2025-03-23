@@ -40,10 +40,10 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'contributors',
-        path: 'contributors',
-        routeBasePath: 'contributors',
-        sidebarPath: './sidebarsContributors.ts',
+        id: 'company',
+        path: 'company',
+        routeBasePath: 'company',
+        sidebarPath: './sidebarsCompany.ts',
         breadcrumbs: true,
         // 添加其他必要的文档配置
         showLastUpdateAuthor: true,
@@ -53,10 +53,10 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        id: 'company',
-        path: 'company',
-        routeBasePath: 'company',
-        sidebarPath: './sidebarsCompany.ts',
+        id: 'contributors',
+        path: 'contributors',
+        routeBasePath: 'contributors',
+        sidebarPath: './sidebarsContributors.ts',
         breadcrumbs: true,
         // 添加其他必要的文档配置
         showLastUpdateAuthor: true,
@@ -97,13 +97,7 @@ const config: Config = {
           position: 'left',
           label: 'questions'
         },
-        {
-          type: 'doc',
-          docId: 'index',
-          docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
-          position: 'left',
-          label: 'contributors'
-        },
+
         {
           type: 'doc',
           docId: 'index',
@@ -111,6 +105,7 @@ const config: Config = {
           position: 'left',
           label: 'company'
         },
+
         {
           to: '/reference',
           label: 'reference',
@@ -125,6 +120,13 @@ const config: Config = {
           href: 'https://github.com/zenHeart/web-interview',
           label: 'GitHub',
           position: 'right'
+        },
+        {
+          type: 'doc',
+          docId: 'index',
+          docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
+          position: 'left',
+          label: 'contributors'
         }
       ]
     },
