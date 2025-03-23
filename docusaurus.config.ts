@@ -117,16 +117,16 @@ const config: Config = {
           position: 'left'
         },
         {
-          href: 'https://github.com/zenHeart/web-interview',
-          label: 'GitHub',
-          position: 'right'
-        },
-        {
           type: 'doc',
           docId: 'index',
           docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
           position: 'left',
           label: 'contributors'
+        },
+        {
+          href: 'https://github.com/zenHeart/web-interview',
+          label: 'GitHub',
+          position: 'right'
         }
       ]
     },

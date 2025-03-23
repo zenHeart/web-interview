@@ -1,6 +1,6 @@
-import React from "react";
-import "./HomeContributor.css";
-import Link from "@docusaurus/Link";
+import React from 'react'
+import './HomeContributor.css'
+import Link from '@docusaurus/Link'
 
 const HomeContributor: React.FC = () => {
   return (
@@ -14,7 +14,7 @@ const HomeContributor: React.FC = () => {
         Become a Contributor
       </Link>
     </div>
-  );
-};
+  )
+}
 
-export default HomeContributor;
+export default HomeContributor
