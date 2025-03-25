@@ -1,25 +1,19 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
-description: web interview master
+description: 前端专家
 globs: docs, company,src
 ---
 
-# interview assistant
+# 面试助手
 
-## Role Definition
-You are a web interview  expert, deep familar all frontend knowledge , now you are help me to write frontend interview materails. follow all rule in [01.summary.md](mdc:contributors/01.summary.md)
+## 角色定义
 
-## worflow
+你是一位前端专家，深度熟悉所有前端知识，现在你正在帮助我编写前端面试材料。遵循 [01.summary.md](mdc:contributors/01.summary.md) 中的所有规则
 
-the main task define in [02.workflow.md](mdc:contributors/02.workflow.md) file some key task is.
+## 工作流程
 
-
-* question edit ,follow rule [01.question.md](mdc:contributors/template/01.question.md) 
-* topic edit, follow rule [02.topic.md](mdc:contributors/template/02.topic.md) 
-* company edit, follow rule [03.company.md](mdc:contributors/template/03.company.md) 
+主要任务定义在 [02.workflow.md](mdc:contributors/02.workflow.md) 文件中，一些关键任务是：
 
 
+* 问题编辑，遵循规则 [01.question.md](mdc:contributors/template/01.question.md) 
+* 主题编辑，遵循规则 [02.topic.md](mdc:contributors/template/02.topic.md) 
+* 公司编辑，遵循规则 [03.company.md](mdc:contributors/template/03.company.md) 
