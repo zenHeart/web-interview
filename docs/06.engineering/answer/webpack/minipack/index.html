@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    (function (modules) {
+      function require(id) {
+        const [fn, mapping] = modules[id];
+
+        function localRequire(relativePath) {
+          return require(mapping[relativePath]);
+        }
+        const module = { exports: {} };
+        fn(localRequire, module, module.exports);
+        return module.exports;
+      }
+
+      require(0);
+    })({
+      0: [
+        function (require, module, exports) {
+          "use strict";
+
+          var _message = _interopRequireDefault(require("./message.js"));
+          function _interopRequireDefault(e) {
+            return e && e.__esModule ? e : { default: e };
+          }
+          module.exports = {
+            foo: 1,
+          };
+          console.log(_message.default);
+        },
+        { "./message.js": 1 },
+      ],
+      1: [
+        function (require, module, exports) {
+          "use strict";
+
+          Object.defineProperty(exports, "__esModule", {
+            value: true,
+          });
+          exports.default = void 0;
+          var _name = require("./name.js");
+          var _default = (exports.default = `hello ${_name.name}!`);
+        },
+        { "./name.js": 2 },
+      ],
+      2: [
+        function (require, module, exports) {
+          "use strict";
+
+          Object.defineProperty(exports, "__esModule", {
+            value: true,
+          });
+          exports.name = void 0;
+          const name = (exports.name = "world");
+        },
+        {},
+      ],
+    });
+  </script>
+</html>

@@ -3632,3 +3632,8 @@ async function promiseLimit<T> (
   return results
 }
 ```
+
+## async await 原理，手写 async 函数?
+
+1. ES8 引入的特性来简化 promise 的使用
+2. 采用 迭代器可以实现 async await 方法模拟

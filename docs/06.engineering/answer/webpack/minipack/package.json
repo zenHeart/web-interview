@@ -1,0 +1,17 @@
+{
+    "name": "fixture",
+    "version": "1.0.0",
+    "description": "",
+    "main": "entry.js",
+    "scripts": {
+        "start": "node minipack.js",
+        "start:beautify": "node minipack.js |  js-beautify | highlight"
+    },
+    "keywords": [],
+    "author": "zenheart <zenheart_register@163.com> (https://blog.zenheart.site/)",
+    "license": "ISC",
+    "dependencies": {
+        "@babel/core": "^7.26.10",
+        "@babel/preset-env": "^7.26.9"
+    }
+}
