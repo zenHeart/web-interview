@@ -1,0 +1,23 @@
+{
+  "name": "webpack-mini",
+  "version": "1.0.0",
+  "description": "A mini webpack implementation to demonstrate core concepts",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "webpack",
+    "bundler",
+    "compiler"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/parser": "^7.23.9",
+    "@babel/preset-env": "^7.26.9",
+    "@babel/traverse": "^7.23.9",
+    "@babel/types": "^7.23.9"
+  }
+}

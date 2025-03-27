@@ -77,7 +77,7 @@ function bundle (graph) {
   return result
 }
 
-const graph = createGraph('./fixture2/index.js')
+const graph = createGraph('./fixture/entry.js')
 const result = bundle(graph)
 
 console.log(result)

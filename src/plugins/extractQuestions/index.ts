@@ -103,7 +103,7 @@ export default function extractQuestionsPlugin (
 
       // console.log('Content loaded:', content)
 
-      await createData(
+      const info = await createData(
         'src/data/questions.json',
         JSON.stringify(content, null, 2)
       )
