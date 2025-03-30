@@ -172,3 +172,134 @@ devServer: {
    - 依赖关系决定了最终的执行顺序，而不是加载顺序
 
 这个交互式演示清晰地展示了 Webpack 的模块加载机制如何在不同的脚本加载顺序下保证应用的正确执行。通过实际操作和观察，可以直观地理解 Webpack 运行时是如何处理模块依赖和确保执行顺序的。
+
+# Webpack 如何实现模块加载顺序不影响主模块执行的原理
+
+Webpack 的运行时通过模块缓存、分块加载状态管理和延迟执行队列等机制，确保模块的加载顺序不会影响主模块（如 `main.js`）的正常执行。以下是对关键数据结构、算法流程的详细说明，以及对不同加载顺序的模拟。
+
+---
+
+## 核心数据结构
+
+1. **`moduleCache`**
+   - 用于缓存已加载的模块，避免重复加载。
+   - 结构：`{ [moduleId]: { exports: {} } }`
+
+2. **`modules`**
+   - 存储模块的定义，每个模块是一个函数。
+   - 结构：`{ [moduleId]: (require, exports, module) => void }`
+
+3. **`moduleStatus`**
+   - 跟踪模块的加载状态。
+   - 状态值：
+     - `false`：模块未加载。
+     - `true`：模块已加载。
+
+4. **`deferred`**
+   - 延迟执行队列，用于存储等待依赖加载完成的模块。
+   - 结构：`[moduleId, ...]`
+
+---
+
+## 核心算法流程
+
+### 1. **模块加载流程**
+
+#### 加载模块的主要步骤
+
+1. 检查模块是否已加载：
+   - 如果已加载，直接从 `moduleCache` 返回模块的 `exports`。
+   - 如果未加载，执行模块定义函数，并将结果存入 `moduleCache`。
+2. 如果模块依赖未加载，将模块推入 `deferred` 队列。
+
+---
+
+### 2. **延迟执行流程**
+
+#### 延迟执行的主要步骤
+
+1. 遍历 `deferred` 队列，检查模块的依赖是否已加载。
+2. 如果依赖已加载，执行模块代码，并从队列中移除。
+3. 重复上述步骤，直到没有模块可以执行。
+
+---
+
+## 模拟实现
+
+以下代码模拟了 Webpack 的模块加载机制，包括模块缓存、延迟执行队列和依赖管理。
+
+```javascript
+// 模拟模块缓存
+const moduleCache = {}
+
+// 模拟模块定义
+const modules = {
+  'main.js': (require) => {
+    const common = require('common.js')
+    console.log('Main module executed')
+    common()
+  },
+  'common.js': (require) => {
+    console.log('Common module executed')
+    return () => console.log('Common module function called')
+  }
+}
+
+// 模拟模块加载状态
+const moduleStatus = {
+  'main.js': false, // false 表示未加载，true 表示已加载
+  'common.js': false
+}
+
+// 模拟延迟执行队列
+const deferred = []
+
+// 模拟模块加载函数
+function require (moduleId) {
+  if (moduleCache[moduleId]) {
+    return moduleCache[moduleId].exports
+  }
+
+  const module = (moduleCache[moduleId] = { exports: {} })
+  modules[moduleId](require, module.exports, module)
+  return module.exports
+}
+
+// 模拟延迟执行函数
+function loadModule (moduleId) {
+  if (moduleStatus[moduleId]) {
+    // 如果模块已加载，直接执行
+    executeModule(moduleId)
+  } else {
+    // 如果模块未加载，推入延迟队列
+    deferred.push(moduleId)
+  }
+}
+
+// 模拟模块加载完成后执行
+function executeModule (moduleId) {
+  if (!moduleStatus[moduleId]) {
+    moduleStatus[moduleId] = true // 标记模块为已加载
+    require(moduleId) // 执行模块代码
+  }
+}
+
+// 模拟依赖加载完成后执行
+function executeDeferred () {
+  let executed = false
+  do {
+    executed = false
+    for (let i = 0; i < deferred.length; i++) {
+      const moduleId = deferred[i]
+      if (moduleId === 'main.js' && !moduleStatus['common.js']) {
+        // 如果 main.js 的依赖 common.js 未加载，跳过
+        continue
+      }
+      // 如果模块依赖已加载，执行模块
+      executeModule(moduleId)
+      deferred.splice(i--, 1) // 从队列中移除
+      executed = true
+    }
+  } while (executed) // 循环直到没有模块可以执行
+}
+```
