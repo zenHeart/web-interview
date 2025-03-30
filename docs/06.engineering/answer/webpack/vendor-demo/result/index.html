@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Webpack 加载顺序演示</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .order-switch {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f8f8f8;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-family: monospace;
+            min-height: 200px;
+        }
+        .output div {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .script-order {
+            margin: 20px 0;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 4px;
+        }
+        .script-order h3 {
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Webpack 代码分割演示</h1>
+        
+        <!-- 脚本加载顺序控制 -->
+        <div class="script-order">
+            <h3>脚本加载顺序控制：</h3>
+            <button onclick="window.loadScripts('normal')">正常顺序加载 (runtime -> vendor -> main)</button>
+            <button onclick="window.loadScripts('reverse')">反向顺序加载 (main -> vendor -> runtime)</button>
+            <div id="currentOrder"></div>
+        </div>
+
+        <!-- 计算器测试区域 -->
+        <div class="order-switch">
+            <h3>计算器测试：</h3>
+            <button onclick="window.testAdd(5, 3)">测试加法: 5 + 3</button>
+            <button onclick="window.testAdd(10, 20)">测试加法: 10 + 20</button>
+            <button onclick="window.testAdd(7, 8)">测试加法: 7 + 8</button>
+        </div>
+
+        <div id="output" class="output">
+            <!-- 日志输出区域 -->
+        </div>
+    </div>
+
+    <!-- 基础脚本加载器 -->
+    <script>
+        // 清理输出区域
+        function clearOutput() {
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+        }
+
+        // 更新当前加载顺序显示
+        function updateOrderDisplay(order) {
+            const display = document.getElementById('currentOrder');
+            display.textContent = '当前加载顺序: ' + 
+                (order === 'normal' ? 'runtime -> vendor -> main' : 'main -> vendor -> runtime');
+        }
+
+        // 动态加载脚本
+        window.loadScripts = function(order) {
+            // 清理现有脚本和输出
+            clearOutput();
+            document.querySelectorAll('script[data-dynamic]').forEach(script => script.remove());
+            
+            // 禁用测试按钮
+            document.querySelectorAll('.order-switch button').forEach(btn => {
+                btn.disabled = true;
+            });
+            
+            // 准备脚本列表
+            let scripts = [ 'main.js', 'runtime.js',  'commons.js'];
+            if (order === 'reverse') {
+                scripts.reverse();
+            }
+
+            // 更新显示
+            updateOrderDisplay(order);
+
+            // 按顺序加载脚本
+            function loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.setAttribute('data-dynamic', 'true');
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.body.appendChild(script);
+                });
+            }
+
+            // 顺序加载所有脚本
+            scripts.reduce((promise, script) => {
+                return promise.then(() => loadScript(script));
+            }, Promise.resolve()).then(() => {
+                // 启用测试按钮
+                document.querySelectorAll('.order-switch button').forEach(btn => {
+                    btn.disabled = false;
+                });
+            });
+        };
+
+        // 初始加载
+        window.loadScripts('normal');
+    </script>
+</body>
+</html> 
