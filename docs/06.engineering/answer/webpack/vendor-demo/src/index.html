@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Webpack 加载顺序演示</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .order-switch {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #f8f8f8;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            font-family: monospace;
+            min-height: 200px;
+        }
+        .output div {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Webpack 代码分割演示</h1>
+        <div class="order-switch">
+            <h3>测试功能：</h3>
+            <button onclick="window.testAdd(5, 3)">测试加法: 5 + 3</button>
+            <button onclick="window.testAdd(10, 20)">测试加法: 10 + 20</button>
+            <button onclick="window.testAdd(7, 8)">测试加法: 7 + 8</button>
+        </div>
+        <div id="output" class="output">
+            <!-- 日志输出区域 -->
+        </div>
+    </div>
+</body>
+</html> 
