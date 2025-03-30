@@ -118,7 +118,7 @@ devServer: {
 ## HTML 模板配置
 
 ```javascript
-plugins: [
+[
   new HtmlWebpackPlugin({
     template: './src/index.html',
     scriptLoading: 'blocking',

@@ -2,7 +2,7 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  mode: 'development',
+  mode: "development",
   entry: './src/main.js',
   output: {
     filename: '[name].js',
@@ -12,15 +12,15 @@ module.exports = {
   },
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: path.join(__dirname, 'dist')
     },
-    hot: true,
+    hot: false,
     open: true
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      inject: true,
+      inject: false,
       minify: false
     })
   ],
