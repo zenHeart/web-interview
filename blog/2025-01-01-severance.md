@@ -1,3 +1,22 @@
+---
+
+authors:
+  - name: zenheart
+    url: https://github.com/zenHeart
+    image_url: https://github.com/zenHeart.png
+    socials:
+      blog: https://blog.zenheart.site/
+      github: zenHeart
+      x: ZenHeartCL
+      zhihu: https://www.zhihu.com/people/locke.cheng
+tags: [Interview, Assessment]
+draft: true
+---
+
+概述
+
+<!-- truncate -->
+
 # 被辞退协商策略
 
 ## 基本概念

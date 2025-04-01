@@ -1,3 +1,18 @@
+---
+title: 应试技巧
+authors:
+  - name: zenheart
+    url: https://github.com/zenHeart
+    image_url: https://github.com/zenHeart.png
+    socials:
+      blog: https://blog.zenheart.site/
+      github: zenHeart
+      x: ZenHeartCL
+      zhihu: https://www.zhihu.com/people/locke.cheng
+tags: [Interview, Assessment]
+draft: true
+---
+
 # 应试技巧
 
 ## 知识点

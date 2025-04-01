@@ -128,6 +128,7 @@ const config: Config = {
           position: 'left',
           label: 'contributors'
         },
+        { to: 'blog', label: 'Blog', position: 'right' }, // or position: 'right'
         {
           href: 'https://github.com/zenHeart/web-interview',
           label: 'GitHub',
