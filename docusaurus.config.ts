@@ -60,7 +60,8 @@ const config: Config = {
         breadcrumbs: true,
         // 添加其他必要的文档配置
         showLastUpdateAuthor: true,
-        showLastUpdateTime: true
+        showLastUpdateTime: true,
+        numberPrefixParser
       } satisfies DocsOptions
     ]
   ],
