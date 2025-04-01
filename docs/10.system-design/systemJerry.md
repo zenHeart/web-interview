@@ -1,6 +1,4 @@
-## 系统设计
-
-## 题目一： 为 Youtube 用户设计出一个小时内 top 10 播放量的视频
+# 为 Youtube 用户设计出一个小时内 top 10 播放量的视频
 
 ### 基本需求分析
 
@@ -86,7 +84,7 @@
 
 1. **前后端交互**
    - 分页参数：page_size, cursor
-   - 返回数据：posts[], next_cursor
+   - 返回数据：posts, next_cursor
    - 状态码和错误处理
 
 2. **分页方案**
