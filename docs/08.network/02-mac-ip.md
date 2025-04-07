@@ -112,20 +112,20 @@
 
 ```mermaid
 packet-beta
-0-3: "Version (版本号，IPv4 为 4，IPv6 为 6)"
-4-7: "IHL (Internet Header Length，IP 头部长度)"
-8-15: "Type of Service (服务类型，用于区分数据包优先级)"
+0-3: "Version"
+4-7: "IHL"
+8-15: "Type of Service (服务类型)"
 16-31: "Total Length (总长度，包含头部和数据部分)"
 32-47: "Identification (标识，用于分片重组)"
-48: "Flags (标志位，控制分片行为)"
+48: "Flags"
 49-63: "Fragment Offset (片偏移，用于分片重组)"
-64-71: "Time to Live (生存时间，限制数据包的生命周期)"
-72-79: "Protocol (协议，指示上层协议类型，如 TCP/UDP)"
+64-71: "Time to Live (生存时间)"
+72-79: "Protocol (上层协议)"
 80-95: "Header Checksum (头部校验和，用于检测头部错误)"
 96-127: "Source IP Address (源 IP 地址)"
 128-159: "Destination IP Address (目标 IP 地址)"
 160-191: "Options and Padding (可选字段和填充，用于扩展功能)"
-192-...: "Data (实际传输的数据，长度可变)"
+192-223: "Data (实际传输的数据，长度可变)"
 ```
 
 **其他未标注字段含义如下**
