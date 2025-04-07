@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+title: 添加主题规则
+description: 指导如何在现有科目下添加新主题
+glob: docs/**/*.md
+---
+
+# 添加主题规则
+
+## 描述
+指导如何在现有科目下添加新主题，确保内容符合项目标准。
+
+## 标准
+- 主题必须属于特定科目范围
+- 主题命名必须遵循`xx.xx.topic-name.md`格式
+- 主题内容必须符合项目标准
+
+## 结构要求
+- 一级标题为主题名称
+- 问题部分使用二级标题，并带有问题ID
+- 问题ID格式为`{#p0-question-id}`，p0-p3表示难度级别
+- 答案使用`<Answer>`标签包裹
+
+## 添加步骤
+1. 确认该主题是否属于科目下的内容，详见 @01.summary.md#docs
+2. 确定当前科目目录下是否已经存在该主题的文件
+3. 如不存在，创建新主题文件，按照`xx.xx.topic-name.md`格式命名
+4. 对于复杂主题，可以拆分为多个子主题，如`03.02.bundler-webpack.md`, `03.03.vite.md`等
+5. 按照项目标准编写主题内容
+
+## 模板
+
+```md
+# 主题名称
+
+## 问题描述 {#p0-question-id}
+
+<Answer meta={{
+difficulty: "初级/中级/高级",
+duration: "预计回答时间"
+}}>
+
+[核心内容]
+
+
+```js
+// 示例代码
+```
+
+**延伸阅读**
+
+* [资源名称](mdc:资源链接) 资源描述
+
+</Answer>
+```
+
+
+## 参考示例
+[03.01.babel.md](mdc:docs/06.engineering/03.01.babel.md)
+[03.02.bundler-webpack.md](mdc:docs/06.engineering/03.02.bundler-webpack.md)
+
+
