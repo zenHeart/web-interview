@@ -44,7 +44,32 @@
 
 ## 网络的核心指标有哪些 {#p1-network-metrics}
 
+<Answer>
+
+| 指标名称 | 单位 | 公式与解释 | 备注（RFC/规范及出处） |
+|---------|-----|-----------|------------------------|
+| **往返延迟 (Round-Trip Delay, RTT)** | 毫秒 (ms) | **公式**：RTT = T<sub>response</sub> − T<sub>request</sub><br/>**说明**：衡量一个数据包从发送端发出，到目标返回响应所经历的总时间。 | 参见 RFC 2544 "Benchmarking Methodology for Network Interconnect Devices"具体见：[RFC 2544](https://www.rfc-editor.org/rfc/rfc2544)（第4.2节关于延迟的描述）。 |
+| **吞吐量/带宽 (Throughput/Bandwidth)** | 比特/秒 (bps) | **公式**：Throughput = (成功传输的总比特数) / (传输总时间)<br/>对于 TCP，还可近似使用：Throughput ≈ MSS / RTT<br/>**说明**：反映单位时间内传输的数据量。 | RFC 6349 "Framework for TCP Throughput Testing"提供了详细的 TCP 吞吐量测试方法，[RFC 6349](https://www.rfc-editor.org/rfc/rfc6349)；此外，TCP 吞吐量的经典数学模型（Mathis 公式）为：Throughput ≈ (MSS/(RTT×√(2p)))（其中 p 为丢包率），虽非 RFC 标准，但广泛引用。 |
+| **数据包丢失率 (Packet Loss Rate)** | 百分比 (%) | **公式**：Packet Loss Rate = (丢失的数据包数 / 发送的数据包总数) × 100%<br/>**说明**：反映传输过程中丢失的数据包比例，直接影响重传及整体连接质量。 | RFC 2544 中提供了测试设备时关于丢包率的测量方法，详见：[RFC 2544](https://www.rfc-editor.org/rfc/rfc2544)；同时在网络性能测试中也是常用的计算公式。 |
+| **抖动 (Jitter)** | 毫秒 (ms) | **公式**：Jitter(i) = `D(i) − D(i-1)`<br/>其中 D(i) 为第 i 个包的单向延迟<br/>**说明**：衡量连续数据包之间延迟的变化幅度，对实时应用（如 VoIP、视频会议）尤为关键。 | 定义参见 RFC 3393 "IP Packet Delay Variation"具体见：[RFC 3393](https://www.rfc-editor.org/rfc/rfc3393)；常用的一向延迟差公式就是上述绝对值差值。 |
+| **链路利用率 (Link Utilization)** | 百分比 (%) | **公式**：Utilization = (实际吞吐量 / 链路理论带宽) × 100%<br/>**说明**：描述网络链路当前的负载情况，高利用率可能引起拥塞和额外延迟。 | 该指标在 DiffServ 流量分类和优先级调度中常用，参见 RFC 2474 "Definition of the Differentiated Services Field (DS Field) in the IPv4 and IPv6 Headers"[RFC 2474](https://www.rfc-editor.org/rfc/rfc2474) |
+| **MTU (Maximum Transmission Unit)** | 字节 (bytes) | **公式**：若数据包大小 > MTU，则分片数 = ⎡(数据包大小 + 头部开销) / MTU⎤<br/>**说明**：MTU 为单个 IP 数据包在不分片前允许的最大字节数，直接影响分片情况。 | IPv4 的分片机制见 RFC 791：[RFC 791](https://www.rfc-editor.org/rfc/rfc791)；IPv6 的 MTU 要求见 RFC 8200：[RFC 8200](https://www.rfc-editor.org/rfc/rfc8200)；合理配置 MTU 可减少分片引起的额外延迟和丢包风险。 |
+| **误码率 (Bit Error Rate, BER)** | 无量纲 (比率) | **公式**：BER = (出错的比特数 / 总传输比特数)<br/>**说明**：衡量传输过程中每个比特出错的概率，是物理链路质量的重要指标。 | 误码率指标多由 IEEE 标准（如 IEEE 802.3、IEEE 802.11）规定，相关详细描述可参见相应标准文档；在 ITU-T 标准中也有类似定义。 |
+
+:::tip
+
+* **实时应用（如 VoIP、视频会议、在线游戏）**：重点关注 **RTT** 和 **Jitter**，因为延迟和延迟波动直接影响用户体验，同时丢包率也必须保持在较低水平`（建议 <1%）`。
+* **大流量数据传输（如文件下载、视频流）**：需重点确保 **吞吐量** 和 **链路利用率** 达到预期，同时合理配置 **MTU**，避免因分片造成的性能损失。
+* **物理链路及设备测试**：在设备基准测试（参见 RFC 2544）中，RTT、吞吐量、丢包率和误码率均为关键指标。
+* **多协议环境**：对于 TCP 流量，还可参考 Mathis 公式对吞吐量进行预估，而对于 UDP 及实时多媒体流，则应着重考虑丢包和抖动指标。
+
+:::
+
+</Answer>
+
 ## 常见网络协议有哪些 {#p2-protcols}
+
+<Answer>
 
 | 协议/技术    | 层级           | 具体协议及技术说明                                                                 |
 |--------------|----------------|----------------------------------------------------------------------------------|
@@ -65,3 +90,5 @@
 | **5G NR**    | 网络接口层     | **物理层（PHY）**：毫米波（24–100 GHz）、灵活 Numerology（子载波间隔）、Massive MIMO。**数据链路层**：- **MAC**：动态时隙调度、增强型 HARQ。- **RLC/PDCP**：低时延优化、冗余传输（数据复制）。 |
 | Ethernet     | 网络接口层     | **物理层**：IEEE 802.3（如 1000BASE-T）。**数据链路层**：MAC 地址寻址、CSMA/CD（传统以太网）。 |
 | PPP          | 网络接口层     | 点对点协议，支持身份验证（PAP/CHAP），常用于拨号连接。                            |
+
+</Answer>
