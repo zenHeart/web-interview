@@ -1,0 +1,7 @@
+{
+   "scripts": {
+      "udp:basic": "node basic.js",
+      "udp:multicast": "node multicast.js",
+      "udp:broadcast": "node broadcast.js"
+   }
+}
