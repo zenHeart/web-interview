@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML 标签统计</title>
+  </head>
+  <body>
+    <div id="app">
+      <button onclick="domCount()">点击统计</button>
+      <h1>HTML 标签统计</h1>
+      <p>这是一个段落。</p>
+      <ul>
+        <li>列表项 1</li>
+        <li>列表项 2</li>
+      </ul>
+      <iframe srcdoc="<h1>hello world</h1>"></iframe>
+    </div>
+
+    <script>
+      function countTags(rootElement) {
+        const tagCounts = {};
+
+        if (!rootElement) {
+          console.error("Root element is null or undefined.");
+          return tagCounts;
+        }
+
+        const stack = [rootElement];
+
+        while (stack.length > 0) {
+          const element = stack.pop();
+
+          if (element.nodeType === Node.ELEMENT_NODE) {
+            const tagName = element.tagName.toLowerCase();
+            tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
+
+            if (tagName === "iframe") {
+              try {
+                // Access contentDocument for same-origin iframes
+                const iframeDocument =
+                  element.contentDocument || element.contentWindow.document;
+                if (iframeDocument) {
+                  // iframeDocument.body is the root element of the iframe
+                  const iframeTagCounts = countTags(iframeDocument.body);
+
+                  // Merge iframe tag counts into the main counts
+                  for (const tag in iframeTagCounts) {
+                    if (iframeTagCounts.hasOwnProperty(tag)) {
+                      tagCounts[tag] =
+                        (tagCounts[tag] || 0) + iframeTagCounts[tag];
+                    }
+                  }
+                }
+              } catch (e) {
+                console.error("Cannot access cross-origin iframe content.");
+              }
+            } else {
+              for (let i = element.children.length - 1; i >= 0; i--) {
+                stack.push(element.children[i]);
+              }
+            }
+          }
+        }
+
+        return tagCounts;
+      }
+
+      function domCount() {
+         debugger
+        const root = document.documentElement
+        if (!root) {
+          console.error("Could not find element with id 'app'");
+        } else {
+          const counts = countTags(root);
+          console.log(counts);
+
+          const resultElement = document.createElement("pre");
+          resultElement.textContent = JSON.stringify(counts, null, 2);
+          document.body.appendChild(resultElement);
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      button {
+        margin-bottom: 20px;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      pre {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+      }
+    </style>
+  </body>
+</html>
