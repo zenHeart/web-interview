@@ -1,7 +1,5 @@
 # 编程题
 
-## 拖拽组件设计 ? {#p1-drag-component-design}
-
 ## 长列表渲染解决方案? {#p0-long-list-rendering}
 
 ## 写一个幻灯片效果 {#p0-slide-effect}
