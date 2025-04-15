@@ -12,7 +12,32 @@ UDP (用户数据包协议 user datagram protocol) 是一种无连接的传输�
 
 UDP 适用于 对实时性要求高的场景，如视频直播、在线游戏、语音通话等。
 
-<!-- 补充一个基本的 node socket udp 协议示例 -->
+<Tabs>
+<TabItem value="基础使用">
+
+import basic from '!!raw-loader!./answers/udp/basic.js'
+
+<CodeBlock language="js">{basic}</CodeBlock>
+
+</TabItem>
+
+<TabItem value="多播">
+
+import multicast from '!!raw-loader!./answers/udp/multicast.js'
+
+<CodeBlock language="js">{multicast}</CodeBlock>
+
+</TabItem>
+
+<TabItem value="广播">
+
+import broadcast from '!!raw-loader!./answers/udp/broadcast.js'
+
+<CodeBlock language="js">{broadcast}</CodeBlock>
+
+</TabItem>
+
+</Tabs>
 
 </Answer>
 
@@ -457,6 +482,8 @@ TCP 通过以下机制保证数据包传输的有序性和可靠性：
 
 ## TCP 状态机 {#TCP-state-machine}
 
+<Answer>
+
 ```mermaid
 stateDiagram
    [*] --> CLOSED
@@ -517,3 +544,5 @@ stateDiagram
 8. **CLOSING**：双方几乎同时关闭连接的状态。
 9. **LAST_ACK**：被动关闭方发送 FIN 报文后等待确认的状态。
 10. **TIME_WAIT**：主动关闭方等待 2MSL 时间以确保对方收到 ACK 的状态。
+
+</Answer>
