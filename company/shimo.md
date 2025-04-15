@@ -41,9 +41,8 @@
 
   ```js
   // 输出 // { //   'a.b': 1, //   'a.c': 2, //   'a.d.e': 5, //   'b[0]': 1, //   'b[1]': 3, //   'b[2].a': 2, //   'b[2].b': 3 //    c: 3 // }
-  const obj = {  a: {   b: 1,   c: 2,   d: {    e: 5   }  },   b: [1, 3, {a: 2, b: 3}],   c: 3 }
-
-  ```
+  const obj = { a: { b: 1, c: 2, d: { e: 5 } }, b: [1, 3, { a: 2, b: 3 }], c: 3 }
+```
 
 39. 说说对web worker的理解
 40. service worker和强缓存相比，有哪些优势？
@@ -64,7 +63,6 @@
 50. for in/for of的区别
 51. Promise值穿透
 52. 编程题】基于二面中的表达式包裹编程题，实现计算表达式的值
-53.
 
 ## 需求
 
@@ -72,3 +70,4 @@
 - [公司介绍](https://cn.100offer.com/companies/81968159)
 - [面试问题](https://juejin.cn/post/7270822872707252276)
 - [前端牛布斯-前端面试题](https://www.nowcoder.com/discuss/353158963195748352)
+- [石墨技术文档说明](https://static001.geekbang.org/con/31/pdf/629612949/file/GMTC2018-%E3%80%8ANode.js+%E5%85%A8%E6%A0%88%E5%BC%80%E5%8F%91%E7%9A%84%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%BC%8F%E6%8E%A2%E7%A9%B6%E3%80%8B-%E6%9D%8E%E5%AD%90%E9%AA%85.pdf)
