@@ -1,4 +1,4 @@
-# WebSocket
+# WebSocket✅
 
 ## 什么是 WebSocket？它与 HTTP 的主要区别是什么？ {#p0-websocket-vs-http}
 
