@@ -54,10 +54,6 @@ function KanbanBoard () {
       )
     }
 
-    // 新增逻辑：根据 record.json 中的 Done 项目移动问题
-
-    console.log('doneKeys', doneKeys)
-
     const completedQuestions = questions.filter((q) =>
       doneKeys.some(key => q.link?.includes(key))
     )

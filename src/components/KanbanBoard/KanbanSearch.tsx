@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useHistory, useLocation } from '@docusaurus/router'
 import './KanbanSearch.css'
-import { search } from '_draft/system/jerry/rotated-search'
 
 export interface SearchFilters {
   subject?: string;

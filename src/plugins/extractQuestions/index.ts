@@ -10,6 +10,9 @@ export interface Question {
   title: string;
   priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
   link: string;
+  meta: {
+    fileH1: string;
+  };
 }
 
 export interface GroupedQuestion {
@@ -24,9 +27,7 @@ interface PluginOptions {
 const numberPrefixPattern =
   /^(?<numberPrefix>\d+(\.\d+)?)\s*[-_.]+\s*(?<suffix>[^-_.\s].*)$/
 
-export const numberPrefixParser: NumberPrefixParser = (
-  filename: string
-) => {
+export const numberPrefixParser: NumberPrefixParser = (filename: string) => {
   const match = numberPrefixPattern.exec(filename)
   if (!match) {
     return { filename, numberPrefix: undefined }
@@ -35,7 +36,10 @@ export const numberPrefixParser: NumberPrefixParser = (
 
   const res = {
     filename: match.groups!.suffix!,
-    numberPrefix: numberPrefix.length === 1 ? numberPrefix[0] : parseFloat(numberPrefix.join('.'))
+    numberPrefix:
+      numberPrefix.length === 1
+        ? numberPrefix[0]
+        : parseFloat(numberPrefix.join('.'))
   }
   console.log(match.groups!.numberPrefix, res)
   return res
@@ -65,31 +69,44 @@ export default function extractQuestionsPlugin (
           absolute: true,
           dot: true
         })
+        const questions = (
+          await Promise.all(
+            files.map(async (filePath) => {
+              const content = await fs.promises.readFile(filePath, 'utf-8')
+              const matches = content.match(/^## (.+)$/gm) || []
+              const subject = numberPrefixParser(
+                path.basename(path.dirname(filePath))
+              ).filename // 获取一级目录名并移除前缀数字
+              const topic = numberPrefixParser(
+                path.basename(path.basename(filePath, path.extname(filePath)))
+              ).filename // 获取文件名作为 topic，并移除前缀数字
+              const fileH1 = content.match(/^# (.+)$/m)?.[1] // 获取文件的 H1 标题
 
-        const questions = (await Promise.all(
-          files.map(async (filePath) => {
-            const content = await fs.promises.readFile(filePath, 'utf-8')
-            const matches = content.match(/^## (.+)$/gm) || []
-            const subject = numberPrefixParser(path.basename(path.dirname(filePath))).filename // 获取一级目录名并移除前缀数字
-            const topic = numberPrefixParser(path.basename(path.basename(filePath, path.extname(filePath)))).filename // 获取文件名作为 topic，并移除前缀数字
-
-            return matches.map(match => {
-              const titleWithAnchor = match.slice(3).trim()
-              const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
-              const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
-              const priority = anchorMatch?.toUpperCase?.() || 'P4'
-              const fragments = anchorMatch ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1] : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-              const link = `/web-interview/docs/${subject}/${topic}${fragments}`
-              return {
-                title,
-                subject: subject || 'Other',
-                topic,
-                priority,
-                link
-              }
+              return matches.map((match) => {
+                const titleWithAnchor = match.slice(3).trim()
+                const anchorMatch =
+                  titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
+                const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
+                const priority = anchorMatch?.toUpperCase?.() || 'P4'
+                const fragments = anchorMatch
+                  ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
+                  : `#${title.toLowerCase().replace(/\s+/g, '-')}`
+                const link = `/web-interview/docs/${subject}/${topic}${fragments}`
+                return {
+                  title,
+                  subject: subject || 'Other',
+                  topic,
+                  priority,
+                  link,
+                  meta: {
+                    fileH1
+                  }
+                }
+              })
             })
-          })
-        )).flat()
+          )
+        ).flat()
+        console.table(questions)
 
         return questions
       } catch (error) {

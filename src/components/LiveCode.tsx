@@ -13,7 +13,6 @@ const LiveCode: React.FC<LiveCodeProps> = ({ filePath }) => {
     const loadCode = async () => {
       setLoading(true)
       try {
-        // Dynamically import the code file using raw-loader
         const codeModule = await import(`!!raw-loader!${filePath}`)
         console.log('codeModule', codeModule)
         setCode(codeModule.default) // Set the code content
