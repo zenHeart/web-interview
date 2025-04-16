@@ -71,6 +71,7 @@ const config: Config = {
       {
         docs: {
           path: 'docs',
+          sidebarCollapsed: false,
           sidebarPath: './sidebars.ts',
           numberPrefixParser,
           exclude: [
