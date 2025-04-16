@@ -57,3 +57,7 @@ details[open] summary {
   color: var(--ifm-color-primary);
   font-size: 1.5rem;
 }
+
+.codeBlockLines_TRxh {
+   max-height: 500px;
+}
