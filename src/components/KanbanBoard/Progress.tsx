@@ -1,10 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './Progress.css'
 import type { Question } from '@site/src/plugins/extractQuestions'
 import record from './record.json'
 
 interface ProgressProps {
   questions: Question[];
+}
+
+function calculateLeftTime (deadline: string) {
+  const leftTime = (new Date(deadline).getTime() - Date.now())
+  if (leftTime <= 0) return '已到截止时间'
+  const days = Math.floor(leftTime / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((leftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((leftTime % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((leftTime % (1000 * 60)) / 1000)
+  return `剩余 ${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`
+}
+
+function formatDuration (ms: number) {
+  if (ms <= 0) return '0秒'
+  const days = Math.floor(ms / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((ms % (1000 * 60)) / 1000)
+  let str = ''
+  if (days > 0) str += `${days}天`
+  if (hours > 0) str += `${hours}小时`
+  if (minutes > 0) str += `${minutes}分钟`
+  if (seconds > 0 || !str) str += `${seconds}秒`
+  return str
 }
 
 const getColorByIndex = (idx: number, total: number) => {
@@ -37,11 +61,49 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
     }
   })
 
+  const [leftTime, setLeftTime] = useState(() => calculateLeftTime(record.DeadLine))
+  const [leftMs, setLeftMs] = useState(() => (new Date(record.DeadLine).getTime() - Date.now()))
+  const [avgTimePer, setAvgTimePer] = useState(() => {
+    const leftCount = total - completed
+    return leftCount > 0 && leftMs > 0 ? formatDuration(Math.floor(leftMs / leftCount)) : '0秒'
+  })
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const ms = new Date(record.DeadLine).getTime() - Date.now()
+      setLeftTime(calculateLeftTime(record.DeadLine))
+      setLeftMs(ms)
+      const leftCount = total - completed
+      setAvgTimePer(leftCount > 0 && ms > 0 ? formatDuration(Math.floor(ms / leftCount)) : '0秒')
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [total, completed])
+
+  const leftCount = total - completed
+
   return (
     <div className="progress-container">
       <div className="progress-bar" style={{ width: `${progress}%` }}></div>
       <div className="progress-text">
         {completed}/{total} 已完成 ({progress.toFixed(2)}%)
+        <span style={{
+          color: '#d32f2f',
+          fontWeight: 'bold',
+          marginLeft: 16,
+          fontSize: 15
+        }}>
+          {leftTime}
+        </span>
+        {leftCount > 0 && leftMs > 0 && (
+          <span style={{
+            color: '#1976d2',
+            fontWeight: 'bold',
+            marginLeft: 16,
+            fontSize: 14
+          }}>
+            剩余{leftCount}题，平均每题 {avgTimePer}
+          </span>
+        )}
       </div>
       {/* 新增：各学科进度条 */}
       <div className="subject-progress-list">
