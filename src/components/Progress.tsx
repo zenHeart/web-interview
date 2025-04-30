@@ -115,13 +115,44 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
 
   return (
     <>
-      {/* 悬浮圆形按钮 */}
+      {/* 悬浮环形进度按钮 */}
       <div
         className="progress-fab"
         onClick={handleToggleDetail}
         title="查看学习进度"
       >
+      <svg width="64" height="64" viewBox="0 0 64 64" style={{ position: 'absolute', left: 0, top: 0 }}>
+        <circle
+          cx="32"
+          cy="32"
+          r="30"
+          fill="none"
+          stroke="#f3f5f7"
+          strokeWidth="4"
+        />
+        <circle
+          cx="32"
+          cy="32"
+          r="30"
+          fill="none"
+          stroke="#42a5f5"
+          strokeWidth="4"
+          strokeDasharray={2 * Math.PI * 28}
+          strokeDashoffset={2 * Math.PI * 28 * (1 - progress / 100)}
+          strokeLinecap="round"
+          transform="rotate(-90 32 32)"
+          style={{ transition: 'stroke-dashoffset 0.4s' }}
+        />
+      </svg>
+      <span style={{
+        position: 'relative',
+        zIndex: 1,
+        fontSize: 22,
+        fontWeight: 500,
+        color: '#888'
+      }}>
         {Math.round(progress)}%
+      </span>
       </div>
       {/* 详细进度弹窗 */}
       {showDetail && (
