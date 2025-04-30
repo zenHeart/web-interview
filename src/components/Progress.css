@@ -1,0 +1,98 @@
+.subject-progress-list {
+  margin-top: 12px;
+  max-height: 300px;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+}
+.subject-progress-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.subject-progress-label {
+  width: 80px;
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #555;
+  font-weight: bold;
+}
+.subject-progress-text {
+   width: 60px;
+  margin-left: 8px;
+  color: #888;
+  font-size: 13px;
+}
+
+.progress-fab {
+  /* 主要样式已内联，仅做补充 */
+  transition: box-shadow 0.2s;
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1001;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  user-select: none;
+}
+.progress-fab:hover {
+  box-shadow: 0 4px 24px rgba(76, 175, 80, 0.25);
+  background: #43a047;
+}
+
+.progress-detail-popup {
+  animation: progress-popup-fadein 0.18s;
+  position: fixed;
+  right: 0;
+  bottom: 32px;
+  z-index: 1002;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  padding: 28px 32px 20px 32px;
+  min-width: 320px;
+  max-width: 360px;
+  min-height: 220px;
+  font-size: 16px;
+}
+.close-button {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  font-size: 20px;
+  color: #888;
+  cursor: pointer;
+  font-weight: 400;
+}
+@keyframes progress-popup-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 适配弹窗内的进度条和文本 */
+.progress-bar {
+  /* 主要样式已内联 */
+}
+.progress-text {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 8px;
+}

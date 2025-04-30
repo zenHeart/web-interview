@@ -1,5 +1,8 @@
 .subject-progress-list {
   margin-top: 12px;
+  max-height: 140px;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* 防止内部滚动冒泡到文档 */
 }
 .subject-progress-row {
   display: flex;
@@ -17,4 +20,37 @@
   margin-left: 8px;
   color: #888;
   font-size: 13px;
+}
+
+.progress-fab {
+  /* 主要样式已内联，仅做补充 */
+  transition: box-shadow 0.2s;
+}
+.progress-fab:hover {
+  box-shadow: 0 4px 24px rgba(76,175,80,0.25);
+  background: #43a047;
+}
+
+.progress-detail-popup {
+  animation: progress-popup-fadein 0.18s;
+  max-height: 300px;
+  overflow-y: visible;
+  overscroll-behavior: contain; /* 防止弹窗滚动影响外层 */
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes progress-popup-fadein {
+  from { opacity: 0; transform: translateY(30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* 适配弹窗内的进度条和文本 */
+.progress-bar {
+  /* 主要样式已内联 */
+}
+.progress-text {
+  font-size: 15px;
+  color: #333;
+  margin-bottom: 8px;
 }

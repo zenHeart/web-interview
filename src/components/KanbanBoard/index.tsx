@@ -5,7 +5,7 @@ import type { Question } from '@site/src/plugins/extractQuestions'
 import KanbanSearch, { SearchFilters } from './KanbanSearch'
 import PriorityTag from '../PriorityTag'
 import record from './record.json'
-import Progress from './Progress' // 引入 Progress 组件
+import Progress from '../Progress' // 引入 Progress 组件
 const doneKeys = record.Done
 
 function KanbanBoard () {
@@ -123,7 +123,7 @@ function KanbanBoard () {
   return (
     <div className="kanban-container">
       <KanbanSearch onSearch={handleSearch} />
-      <Progress questions={questions} /> {/* 插入 Progress 组件 */}
+      <Progress/> {/* 插入 Progress 组件 */}
       <div className="kanban-board">
         {columns.map((column) => (
           <div key={column.id} className="kanban-column">
