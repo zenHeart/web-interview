@@ -12,5 +12,22 @@
       "p0-react-react-dom",
       "p0-react-element-component",
       "p0-engineering"
+   ],
+   "SubjectPriority": [
+      "vue",
+      "react",
+      "js",
+      "network",
+      "html",
+      "css",
+      "engineering",
+      "algorithm",
+      "typescript",
+      "operate-system",
+      "node",
+      "paradigm",
+      "coding",
+      "interview",
+      "hybird"
    ]
 }
