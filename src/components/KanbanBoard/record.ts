@@ -1,0 +1,38 @@
+export default {
+  Done: [
+    'p0-types',
+    'p0-primitive-reference',
+    'p0-react-lifecycle',
+    'p0-controlled-uncontrolled-component',
+    'p0-hoc',
+    'p0-react-component-communication',
+    'p0-react-key',
+    'p0-createPortal',
+    'p1-setState',
+    'p0-react-react-dom',
+    'p0-react-element-component',
+    'p0-engineering',
+
+    //  vue
+    'p0-vue-component'
+
+  ],
+  SubjectPriority: [
+    'vue',
+    'react',
+    'js',
+    'network',
+    'html',
+    'css',
+    'engineering',
+    'algorithm',
+    'typescript',
+    'operate-system',
+    'node',
+    'paradigm',
+    'coding',
+    'interview',
+    'hybird'
+  ],
+  DeadLine: '2025-06-30 23:59:59'
+}

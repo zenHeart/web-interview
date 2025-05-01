@@ -4,7 +4,7 @@ import { usePluginData } from '@docusaurus/useGlobalData'
 import type { Question } from '@site/src/plugins/extractQuestions'
 import KanbanSearch, { SearchFilters } from './KanbanSearch'
 import PriorityTag from '../PriorityTag'
-import record from './record.json'
+import record from './record'
 import Progress from '../Progress' // 引入 Progress 组件
 const doneKeys = record.Done
 

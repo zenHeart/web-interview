@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './Progress.css'
 import type { Question } from '@site/src/plugins/extractQuestions'
-import record from './KanbanBoard/record.json'
+import record from './KanbanBoard/record'
 import { usePluginData } from '@docusaurus/useGlobalData'
 
 interface ProgressProps {
@@ -48,7 +48,7 @@ const getColorByIndex = (idx: number, total: number) => {
 const Progress: React.FC<ProgressProps> = ({ questions }) => {
   const total = questions.length
   const completed = questions.filter((q) =>
-    q.meta?.fileH1?.includes?.('✅')
+    q.meta?.fileH1?.includes?.('✅') || record.Done.some(key => q.link?.includes(key))
   ).length
   const progress = total > 0 ? (completed / total) * 100 : 0
 
@@ -58,7 +58,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
     const subjectQuestions = questions.filter((q) => q.subject === subject)
     const subjectTotal = subjectQuestions.length
     const subjectCompleted = subjectQuestions.filter((q) =>
-      q.meta?.fileH1?.includes?.('✅')
+      q.meta?.fileH1?.includes?.('✅') || record.Done.some(key => q.link?.includes(key))
     ).length
     return {
       subject,
