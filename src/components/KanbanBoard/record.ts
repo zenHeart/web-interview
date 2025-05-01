@@ -14,8 +14,11 @@ export default {
     'p0-engineering',
 
     //  vue
-    'p0-vue-component'
-
+    'p0-vue-component',
+    'p0-component-type',
+    'p0-vue-lifecycle',
+    'p0-component-options',
+    'p0-composition-api'
   ],
   SubjectPriority: [
     'vue',
