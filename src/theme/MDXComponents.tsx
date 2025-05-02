@@ -8,10 +8,12 @@ import CodeBlock from '@theme/CodeBlock'
 import Tabs from '@theme/Tabs'
 import TabItem from '@theme/TabItem'
 import { Sandpack } from '@codesandbox/sandpack-react'
+import * as LayoutComponent from '@site/src/components/Layout'
 
 export default {
   // Re-use the default mapping
   ...MDXComponents,
+  ...LayoutComponent,
   Tabs,
   TabItem,
   LiveCode,
