@@ -1,0 +1,53 @@
+<script src="https://unpkg.com/vue@3"></script>
+
+<div id="app">
+   <h2>Teleport 属性功能演示</h2>
+   <label>
+      <input type="checkbox" v-model="disabled" />
+      禁用 teleport（disabled）
+   </label>
+   <label style="margin-left:16px;">
+      <input type="checkbox" v-model="defer" />
+      延后挂载（defer, 仅 Vue 3.5+）
+   </label>
+   <div id="teleport-target" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
+      Teleport 目标区域
+   </div>
+   <teleport :to="disabled ? '#app' : '#teleport-target'" :disabled="disabled" :defer="defer">
+      <button @click="onButtonClick" style="margin-top: 10px;">
+         Teleport 按钮（点击会冒泡到目标区域）
+      </button>
+   </teleport>
+   <div style="margin-top: 10px;">
+      <em>当前 teleport 属性：to="#teleport-target" | disabled={{ disabled }} | defer={{ defer }}</em>
+   </div>
+   <div style="margin-top: 10px; color: gray;">
+      <p><strong>说明：</strong></p>
+      <ul>
+         <li>当 <code>defer</code> 为 <code>true</code> 时，Teleport 的内容会延后挂载到目标区域，直到目标区域存在为止。</li>
+         <li>这在目标区域可能动态生成的场景中非常有用。</li>
+         <li>例如：如果目标区域是通过异步加载或条件渲染生成的，启用 <code>defer</code> 可以确保 Teleport 的内容不会丢失。</li>
+      </ul>
+   </div>
+</div>
+
+<script>
+   const { createApp, ref } = Vue;
+
+   createApp({
+      setup() {
+         const disabled = ref(false);
+         const defer = ref(false);
+
+         function onButtonClick() {
+            alert('按钮点击事件触发（事件会冒泡到 teleport 目标区域）');
+         }
+
+         return {
+            disabled,
+            defer,
+            onButtonClick
+         };
+      }
+   }).mount('#app');
+</script>
