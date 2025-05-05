@@ -37,5 +37,5 @@ export default {
     'interview',
     'hybird'
   ],
-  DeadLine: '2025-06-30 23:59:59'
+  DeadLine: '2025-05-31 23:59:59'
 }
