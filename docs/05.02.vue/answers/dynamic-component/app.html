@@ -1,0 +1,90 @@
+<script src="https://unpkg.com/vue@3"></script>
+<script type="text/x-template" id="ComponentA">
+  <div>
+     <p>组件 A</p>
+     <p>计数器：{{ counter }}</p>
+     <button @click="increment">增加计数</button>
+  </div>
+</script>
+<script>
+  const ComponentA = {
+    template: "#ComponentA",
+    data() {
+      return {
+        counter: 0,
+      };
+    },
+    methods: {
+      increment() {
+        this.counter++;
+      },
+    },
+  }
+</script>
+<script type="text/x-template" id="ComponentB">
+  <div>
+     <p>组件 B</p>
+     <p>计数器：{{ counter }}</p>
+     <button @click="increment">增加计数</button>
+  </div>
+</script>
+<script>
+  const ComponentB = {
+    template: "#ComponentB",
+    data() {
+      return {
+        counter: 0,
+      };
+    },
+    methods: {
+      increment() {
+        this.counter++;
+      },
+    },
+  }
+</script>
+
+<div id="app">
+  <h2>Dynamic Component 示例</h2>
+  <ul
+    style="
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-bottom: 1px solid #ccc;
+    "
+  >
+    <li
+      v-for="tabName in tabs"
+      :key="tabName"
+      @click="tab = tabName"
+      :style="{
+            padding: '8px 16px',
+            cursor: 'pointer',
+            borderBottom: tab === tabName ? '2px solid blue' : 'none',
+            fontWeight: tab === tabName ? 'bold' : 'normal'
+         }"
+    >
+      {{ tabName === 'ComponentA' ? '组件 A' : '组件 B' }}
+    </li>
+  </ul>
+  <component :is="tab"></component>
+</div>
+
+<script>
+  const { createApp, ref } = Vue;
+
+  createApp({
+    components: { ComponentA, ComponentB },
+    setup() {
+      const tab = ref("ComponentA"); // 动态切换的组件名称
+      const tabs = ["ComponentA", "ComponentB"]; // 可切换的组件列表
+
+      return {
+        tab,
+        tabs,
+      };
+    },
+  }).mount("#app");
+</script>

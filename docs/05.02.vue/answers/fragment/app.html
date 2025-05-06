@@ -1,0 +1,38 @@
+<script src="https://unpkg.com/vue@3"></script>
+<script type="text/x-template" id="ComponentA">
+    <div>list1</div>
+    <div>list2</div>
+    <button @click="increment">{{counter}}</button>
+</script>
+<script>
+  const ComponentA = {
+    template: "#ComponentA",
+    beforeCreate() {
+      debugger
+    },
+    data() {
+      return {
+        counter: 0,
+      };
+    },
+    methods: {
+      increment() {
+        this.counter++;
+      },
+    },
+  }
+</script>
+
+
+<div id="app">
+  <h2>Fragment 示例</h2>
+  <component-a/>
+</div>
+
+<script>
+  const { createApp } = Vue;
+
+  createApp({
+    components: { ComponentA },
+  }).mount("#app");
+</script>

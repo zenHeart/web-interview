@@ -1,0 +1,83 @@
+<script src="https://unpkg.com/vue@3"></script>
+<div id="app">
+  <h2>插槽演示</h2>
+
+  <slot-demo>
+    <!-- 默认插槽内容 -->
+    <template #default>
+      <p>这是默认插槽的内容。</p>
+    </template>
+
+    <!-- 具名插槽 -->
+    <template #header>
+      <h3>具名插槽：header</h3>
+    </template>
+
+    <!-- 条件插槽 -->
+    <template #conditional>
+      <p v-if="showConditional">这是条件插槽的内容。</p>
+    </template>
+
+    <!-- 动态插槽 -->
+    <template v-slot:[dynamicName]>
+      <p>这是动态插槽 [{{ dynamicName }}] 的内容。</p>
+    </template>
+
+    <!-- 作用域插槽 -->
+    <template #scoped="{ message }">
+      <p>作用域插槽传入的 message：{{ message }}</p>
+    </template>
+  </slot-demo>
+
+  <button @click="toggle">切换条件插槽显示</button>
+  <button @click="toggleName">切换动态插槽名称</button>
+</div>
+
+<script>
+  const { createApp, ref, defineComponent, h } = Vue;
+
+  const SlotDemo = defineComponent({
+    template: `
+        <div style="border: 1px solid #ccc; padding: 10px; margin-top: 20px;">
+          <slot name="header"></slot>
+
+          <hr />
+          <slot></slot>
+
+          <hr />
+          <slot name="conditional"></slot>
+
+          <hr />
+          <slot name="dynamic1"></slot>
+          <slot name="dynamic2"></slot>
+
+          <hr />
+          <slot name="scoped" :message="'来自子组件的数据'"></slot>
+        </div>
+      `,
+  });
+
+  createApp({
+    components: { SlotDemo },
+    setup() {
+      const showConditional = ref(true);
+      const dynamicName = ref("dynamic1");
+
+      function toggle() {
+        showConditional.value = !showConditional.value;
+      }
+
+      function toggleName() {
+        dynamicName.value =
+          dynamicName.value === "dynamic1" ? "dynamic2" : "dynamic1";
+      }
+
+      return {
+        showConditional,
+        dynamicName,
+        toggle,
+        toggleName,
+      };
+    },
+  }).mount("#app");
+</script>
