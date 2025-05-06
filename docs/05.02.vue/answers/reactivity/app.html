@@ -1,0 +1,56 @@
+<script src="https://unpkg.com/vue@3"></script>
+
+<div id="app">
+   <h2>Data 和 Computed 示例</h2>
+   <p>原始数字：{{ number }}</p>
+   <p>计算后的数字（乘以 2）：{{ doubledNumber }}</p>
+   <button @click="increment">增加数字</button>
+</div>
+
+<script>
+   const { createApp } = Vue;
+   devtools$1 = true
+
+   createApp({
+      befocreCreate() {
+         debugger; // 这里可以设置断点
+      },
+      created() {
+         debugger; // 这里可以设置断点
+      },
+      data() {
+         debugger
+         return {
+            number: 0, // 原始数据
+         };
+      },
+      onBeforeUpdate() {
+         debugger
+         // 组件更新前的钩子函数
+      },
+      onUpdated() {
+         debugger
+         // 组件更新后的钩子函数
+      },
+      onRenderTracked() {
+         debugger
+         // 组件渲染时的钩子函数
+      },
+      onRenderTriggered() {
+         debugger
+         // 组件重新渲染时的钩子函数
+      },
+      computed: {
+         doubledNumber() {
+            debugger
+            // 计算属性，返回 number 的两倍
+            return this.number * 2;
+         },
+      },
+      methods: {
+         increment() {
+            this.number++; // 增加原始数字
+         },
+      },
+   }).mount("#app");
+</script>
