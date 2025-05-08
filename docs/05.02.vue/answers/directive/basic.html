@@ -1,0 +1,54 @@
+<script src="https://unpkg.com/vue@3"></script>
+<div id="app">
+   <button @click="toggleColor">切换颜色</button>
+   <select v-model="styletype" style="margin-left:10px;">
+      <option value="backgroundColor">背景色</option>
+      <option value="color">文字色</option>
+   </select>
+   <!-- 注意这里是在 html 中使用，参数不要用驼峰不然无法找到 -->
+   <div
+      v-my-style:[styletype].color="currentColor"
+   >
+      这是自定义指令演示
+   </div>
+</div>
+<script>
+const { createApp, ref } = Vue;
+
+createApp({
+   setup() {
+      const currentColor = ref('orange');
+      const styletype = ref('color');
+      function toggleColor() {
+         currentColor.value = currentColor.value === 'orange' ? 'skyblue' : 'orange';
+      }
+      return { currentColor, styletype, toggleColor };
+   }
+})
+.directive('my-style', {
+   mounted(el, binding) {
+      // 动态参数：binding.arg
+      if (binding.arg === 'backgroundColor') {
+         el.style.backgroundColor = binding.value;
+      } else if (binding.arg === 'color') {
+         el.style.color = binding.value;
+      }
+      // 修饰符：binding.modifiers.color
+      if (binding.modifiers.color) {
+         el.style.fontWeight = 'bold';
+      }
+   },
+   updated(el, binding) {
+      // 只清除当前未选中的样式
+      if (binding.arg === 'backgroundColor') {
+         el.style.backgroundColor = binding.value;
+      } else if (binding.arg === 'color') {
+         el.style.color = binding.value;
+      }
+   }
+})
+.mount('#app');
+</script>
+<style>
+
+</style>
