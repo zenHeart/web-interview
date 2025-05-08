@@ -1,0 +1,72 @@
+<script src="https://unpkg.com/vue@3"></script>
+<style>
+  .scroll-area {
+    width: 300px;
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+  .content {
+    height: 600px;
+    background: linear-gradient(#fff, #eee);
+  }
+</style>
+
+<div id="app">
+  <h3>未使用 .passive（可以阻止滚动）</h3>
+  <div class="scroll-area" @wheel="onWheelNormal">
+    <div class="content">
+      <p>滚动鼠标滚轮，页面不会滚动（因为调用了 preventDefault）。</p>
+      <p v-if="normalPrevented" style="color: red">preventDefault 已调用！</p>
+    </div>
+  </div>
+
+  <h3>使用 .passive（无法阻止滚动）</h3>
+  <div class="scroll-area" @wheel.passive="onWheelPassive">
+    <div class="content">
+      <p>滚动鼠标滚轮，页面会滚动（即使调用了 preventDefault 也无效）。</p>
+      <p v-if="passivePrevented" style="color: red">
+        调用 preventDefault 失败！
+      </p>
+    </div>
+  </div>
+</div>
+<script type="module">
+  const { ref } = Vue;
+
+  Vue.createApp({
+    setup() {
+      const normalPrevented = ref(false);
+      const passivePrevented = ref(false);
+
+      // 普通监听器，可以阻止默认滚动
+      function onWheelNormal(e) {
+        let i = 5*1e8;
+        while (i--);
+        normalPrevented.value = true;
+        setTimeout(() => (normalPrevented.value = false), 1000);
+      }
+
+      // .passive 修饰符监听器，无法阻止默认滚动
+      function onWheelPassive(e) {
+        let i = 5*1e8; // Updated to increase the loop count
+        while (i--);
+        try {
+          e.preventDefault();
+          passivePrevented.value = true;
+        } catch {
+          passivePrevented.value = true;
+        }
+        setTimeout(() => (passivePrevented.value = false), 1000);
+      }
+
+      return {
+        onWheelNormal,
+        onWheelPassive,
+        normalPrevented,
+        passivePrevented,
+      };
+    },
+  }).mount("#app");
+</script>
