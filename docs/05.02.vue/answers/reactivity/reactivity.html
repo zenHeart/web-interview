@@ -1,0 +1,99 @@
+<script>
+// 全员变量用来追踪变化
+const trackMap = new WeakMap()
+let activeEffect = null
+// 自动追踪响应式
+function effect (fn) {
+  activeEffect = fn
+  fn()
+  activeEffect = null
+}
+
+// 依赖追踪
+function track (target, key) {
+  // 如果某个副作用函数触发了 get 方法，则将其添加到 trackMap 中
+  if (activeEffect) {
+    // 没有此 target 对应的追踪则直接添加
+    if (!trackMap.has(target)) {
+      trackMap.set(target, new Map())
+    }
+    // 没有对应该 key 的追踪直接添加
+    if (!trackMap.get(target).has(key)) {
+      trackMap.get(target).set(key, new Set())
+    }
+    // 添加这个副作用函数
+    trackMap.get(target).get(key).add(activeEffect)
+  }
+}
+
+// 依赖触发
+function trigger (target, key) {
+  // 如果存在对应的副作用函数，则触发它
+  if (trackMap.has(target) && trackMap.get(target).has(key)) {
+    // 触发这个 key 的副作用函数
+    trackMap.get(target).get(key).forEach(fn => fn())
+  }
+}
+
+// 一个简单的深层对象代理
+function createProxy (data) {
+  const proxy = new Proxy(data, {
+    has (target, key) {
+      track(target, key)
+      return key in target
+    },
+    get (target, key) {
+      track(target, key)
+      return target[key]
+    },
+    set (target, key, value) {
+      target[key] = value
+      trigger(target, key)
+      return true
+    },
+    deleteProperty (target, key) {
+      delete target[key]
+      trigger(target, key)
+      return true
+    }
+  })
+  for (const key in data) {
+    const val = data[key]
+    if (typeof val === 'object' && val !== null) {
+      proxy[key] = createProxy(val)
+    }
+  }
+  return proxy
+}
+
+// 返回响应式数据
+function reactive (data) {
+  return createProxy(data)
+}
+
+// 1. 创建响应式数据
+const data = reactive({
+  count: 0,
+  demo: {
+    count: 0
+  }
+})
+
+function log () {
+  console.log('count:', data.demo.count, data.count)
+}
+
+function logHas () {
+  console.log('count has:', 'count' in data)
+}
+
+// 2. 追踪数据变化
+effect(log) // 追踪   data.demo.count  data.count
+effect(logHas) //  in 操作也能触发追踪
+
+// 3. 触发数据变化, 自动触发副作用
+data.demo.count++ // 深层属性修改
+data.count++ // 浅层修改
+delete data.demo.count // 删除触发响应
+
+</script>

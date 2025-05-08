@@ -1,0 +1,25 @@
+<script src="https://unpkg.com/vue@3"></script>
+<script>
+   const { reactive, watch, watchEffect } = Vue
+   // wacth 默认行为
+   const data = reactive({
+      count: 0
+   })
+
+   watch(
+      () => data.count,
+      (newValue, oldValue) => {
+         debugger
+         console.log('watch:', newValue, oldValue)
+      }
+   )
+   watchEffect(() => {
+      debugger
+      console.log('watchEffect:', data.count)
+   }) 
+
+
+   data.count++ // 触发 watch 和 watchEffect
+   data.count++ // 触发 watch 和 watchEffect
+   data.count++ // 触发 watch 和 watchEffect
+</script>
