@@ -1,5 +1,34 @@
 # 编码题
 
+## 实现一个 ErrorBoundary 组件，捕获子组件的错误并可自定义错误组件 {#p1-vue-errorboundary}
+
+<Answer>
+
+import appErrorBoundary from '!!raw-loader!./answers/ErrorBoundary/app.vue';
+import VDefaultFallback from '!!raw-loader!./answers/ErrorBoundary/VDefaultFallback.vue';
+import VueErrorBoundary from '!!raw-loader!./answers/ErrorBoundary/VueErrorBoundary.vue';
+
+<Sandpack
+  template="vue-ts"
+  options={{
+     editorHeight: 600
+  }}
+  files={{
+    "/src/App.vue": appErrorBoundary,
+    "/src/VueErrorBoundary.vue": VueErrorBoundary,
+    "/src/VDefaultFallback.vue": VDefaultFallback,
+  }}
+/>
+
+**答案解析**
+
+该题考察如下知识点
+
+1. 是否知道 Vue 组件错误处理的 hook onErrorCaptured, 参考问题 [组件生命周期](./02.01.component.md#p0-vue-lifecycle)
+2. 是否知道作用域插槽来抛出 Vue 内部错误给自定义组件消费, 参考问题 [讲解一下插槽的使用](./02.01.component.mdp2-introduce-conditional-slots)
+
+</Answer>
+
 ## 使用Proxy实现简易的vue双向数据绑定
 
 可以直接看这个链接： [资料](https://github.com/pro-collection/interview-question/issues/8)
@@ -243,33 +272,3 @@ function Dropdown() {
 ```
 
 这种方法可以在组件内部处理点击事件，不需要将事件处理函数传递给父组件。但是相对而言代码会比较繁琐，需要手动处理事件绑定和解绑。
-
-## redux 日志记录插件
-
-1. 创建日志插件函数：
-
-```js
-const loggerMiddleware = (store) => (next) => (action) => {
-  console.log('prev state', store.getState())
-  console.log('action', action)
-  const result = next(action)
-  console.log('next state', store.getState())
-  return result
-}
-```
-
-这个函数接收一个 Redux store 对象，返回一个中间件函数。这个中间件函数接收下一个中间件的调用函数`next`和当前的动作`action`。
-
-2. 将日志插件添加到 Redux store：
-
-```js
-import { createStore, applyMiddleware } from 'redux'
-import rootReducer from './reducers'
-import loggerMiddleware from './loggerMiddleware'
-
-const store = createStore(rootReducer, applyMiddleware(loggerMiddleware))
-```
-
-在创建 Redux store 的时候，使用`applyMiddleware`函数将日志插件中间件添加到 store 中。
-
-这样，每当有动作被派发时，日志插件就会在控制台打印出当前的状态、动作和下一个状态，从而实现记录状态变更的目的。

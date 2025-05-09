@@ -1,0 +1,51 @@
+<script src="https://unpkg.com/vue@3"></script>
+<script type="text/x-template" id="ComponentA">
+  <div>
+     <p>组件 A</p>
+     <p>计数器：{{ counter }}</p>
+     <button @click="increment">增加计数</button>
+  </div>
+</script>
+<script>
+  const ComponentA = {
+   name: 'ComponentA',
+    template: "#ComponentA",
+    data() {
+      return {
+        counter: 0,
+      };
+    },
+    methods: {
+      increment() {
+        this.counter++;
+      },
+    },
+    mounted() {
+      console.log("ComponentA mounted");
+    },
+  };
+</script>
+
+<div id="app">
+  <component-a/>
+</div>
+<script>
+  const { createApp } = Vue;
+  const app = createApp({
+    components: { ComponentA },
+    name: "app",
+    data() {
+      return {};
+    },
+  });
+  app.mixin({
+    log() {
+      console.log("component name", this);
+    },
+    mounted() {
+       this.$options.log.call(this)
+    },
+  });
+  debugger
+  app.mount("#app");
+</script>

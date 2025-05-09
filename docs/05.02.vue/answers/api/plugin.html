@@ -1,0 +1,35 @@
+<script src="https://unpkg.com/vue@3"></script>
+<div id="app">
+   <p>{{ message }}</p>
+   <button @click="sayHello">Say Hello</button>
+</div>
+<script>
+// 定义一个最简单的 Vue 插件
+const MyPlugin = {
+   install(app, options) {
+      // 添加全局方法
+      app.config.globalProperties.$hello = function() {
+         alert('Hello from plugin!');
+      };
+   }
+};
+
+const { createApp } = Vue;
+const app = createApp({
+   data() {
+      return {
+         message: 'Vue Plugin 示例'
+      };
+   },
+   methods: {
+      sayHello() {
+         this.$hello();
+      }
+   }
+});
+
+// 使用插件
+app.use(MyPlugin);
+
+app.mount('#app');
+</script>

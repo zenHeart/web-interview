@@ -1,0 +1,118 @@
+<script src="https://unpkg.com/vue@3"></script>
+
+<!-- 1. 捕获任意层级组件错误 -->
+<script type="text/x-template" id="ErrorChild">
+   <div>
+      <p>子组件（会抛出错误）</p>
+      <button @click="throwError">抛出错误</button>
+   </div>
+</script>
+<script>
+const ErrorChild = {
+   template: "#ErrorChild",
+   methods: {
+      throwError() {
+         throw new Error("Error from ErrorChild");
+      }
+   }
+};
+</script>
+
+<script type="text/x-template" id="ErrorParent">
+   <div>
+      <p>父组件</p>
+      <error-child />
+   </div>
+</script>
+<script>
+const ErrorParent = {
+   template: "#ErrorParent",
+   components: { ErrorChild }
+};
+</script>
+
+<!-- 2. 捕获 setup 异步错误 -->
+<script type="text/x-template" id="AsyncErrorComponent">
+   <div>
+      <h2>2. errorHandler 捕获 setup 异步错误</h2>
+      <p>setup 异步错误组件</p>
+   </div>
+</script>
+<script>
+const AsyncErrorComponent = {
+   template: "#AsyncErrorComponent",
+   async setup() {
+      await new Promise((_, reject) => setTimeout(() => reject(new Error("Async error in setup")), 500));
+      return {};
+   }
+};
+</script>
+
+<!-- 3. errorCaptured 捕获后不会透出 -->
+<script type="text/x-template" id="CapturedErrorChild">
+   <div>
+      <p>被 errorCaptured 捕获的子组件</p>
+      <button @click="throwError">抛出错误</button>
+   </div>
+</script>
+<script>
+const CapturedErrorChild = {
+   template: "#CapturedErrorChild",
+   methods: {
+      throwError() {
+         throw new Error("Error captured by errorCaptured");
+      }
+   }
+};
+</script>
+
+<script type="text/x-template" id="CapturedErrorParent">
+   <div>
+      <h2>3. errorHandler 不会捕获已被 errorCaptured 捕获的错误</h2>
+      <p>父组件（内部 errorCaptured）</p>
+      <captured-error-child />
+      <p v-if="error">捕获到的错误: {{ error.message }}</p> <!-- Display the captured error -->
+   </div>
+</script>
+<script>
+const CapturedErrorParent = {
+   template: "#CapturedErrorParent",
+   components: { CapturedErrorChild },
+   data() {
+      return {
+         error: null
+      };
+   },
+   errorCaptured(err, vm, info) {
+      this.error = err; // Store the error in the data property
+      return false; // 返回 false 阻止错误继续向上传播
+   }
+};
+</script>
+
+<div id="app">
+   <h2>1. errorHandler 捕获任意层级组件错误</h2>
+   <error-parent />
+
+   <!-- <async-error-component /> -->
+   <captured-error-parent />
+</div>
+
+<script>
+const { createApp } = Vue;
+
+const app = createApp({
+   components: {
+      ErrorParent,
+      AsyncErrorComponent,
+      CapturedErrorParent
+   }
+});
+
+// 全局 errorHandler
+app.config.errorHandler = (err, vm, info) => {
+   console.log("errorHandler 捕获到错误: " + err.message + "\ninfo: " + info);
+};
+
+app.mount("#app");
+</script>
