@@ -25,7 +25,7 @@ import VueErrorBoundary from '!!raw-loader!./answers/ErrorBoundary/VueErrorBound
 该题考察如下知识点
 
 1. 是否知道 Vue 组件错误处理的 hook onErrorCaptured, 参考问题 [组件生命周期](./02.01.component.md#p0-vue-lifecycle)
-2. 是否知道作用域插槽来抛出 Vue 内部错误给自定义组件消费, 参考问题 [讲解一下插槽的使用](./02.01.component.mdp2-introduce-conditional-slots)
+2. 是否知道作用域插槽来抛出 Vue 内部错误给自定义组件消费, 参考问题 [讲解一下插槽的使用](./02.01.component.md#p2-introduce-conditional-slots)
 
 </Answer>
 
