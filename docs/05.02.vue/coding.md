@@ -1,5 +1,7 @@
 # 编码题
 
+## 实现一个文件夹树组件，支持拖拽排序 {#p0-vue-file-tree}
+
 ## 实现一个 ErrorBoundary 组件，捕获子组件的错误并可自定义错误组件 {#p1-vue-errorboundary}
 
 <Answer>
@@ -29,148 +31,7 @@ import VueErrorBoundary from '!!raw-loader!./answers/ErrorBoundary/VueErrorBound
 
 </Answer>
 
-## 使用Proxy实现简易的vue双向数据绑定
-
-可以直接看这个链接： [资料](https://github.com/pro-collection/interview-question/issues/8)
-
-使用proxy实现数据劫持
-
-```js
-const data = {
-  name: YoLinDeng,
-  height: '176cm'
-}
-
-const p = new Proxy(data, {
-  get (target, prop) {
-    return Reflect.get(...arguments)
-  },
-  set (target, prop, newValue) {
-    return Reflect.set(...arguments)
-  }
-})
-```
-
- 关于vue中数据响应式的原理
-
- 对数据进行侦测
-
-* 在vue2.X中，实现一个`observe`类，对于对象数据，通过`Object.defineProperty`来劫持对象的属性，实现`getter`和`setter`方法，这样就可以在getter的时候知道谁（订阅者）读取了数据，即谁依赖了当前的数据，将它通过`Dep类`（订阅器）收集统一管理，在setter的时候调用Dep类中的`notify`方法通知所以相关的订阅者进行更新视图。如果对象的属性也是一个对象的话，则需要递归调用`observe`进行处理。
-* 对于数组则需要另外处理，通过实现一个拦截器类，并将它挂载到数组数据的原型上，当调用`push/pop/shift/unshift/splice/sort/reverse`修改数组数据时候，相当于调用的是拦截器中重新定义的方法，这样在拦截器中就可以侦测到数据改变了，并通知订阅者更新视图。
-* vue3中使用Proxy替代了Object.defineProperty，优点在于可以直接监听对象而非属性、可以直接监听数组的变化、多达13种拦截方法。缺点是兼容性还不够好。Proxy作为新标准将受到浏览器厂商重点持续的性能优化。
-
- 对模板字符串进行编译
-
-* 实现Compile解析器类，将`template`中的模板字符串通过正则等方式进行处理生成对应的ast（抽象语法树），通过调用定义的不同钩子函数进行处理，包括开始标签（`start`）并判断是否自闭和以及解析属性、结束标签（`end`）、文本（`chars`）、注释（`comment`）
-* 将通过html解析与文本解析的ast进行优化处理，在静态节点上打标记，为后面`dom-diff`算法中性能优化使用，即在对比前后vnode的时候会跳过静态节点不作对比。
-* 最后根据处理好的ast生产`render`函数，在组件挂载的时候调用`render`函数就可以得到虚拟dom。
-
- 虚拟dom
-
-* vnode的类型包括注释节点、文本节点、元素节点、组件节点、函数式组件节点、克隆节点，`VNode`可以描述的多种节点类型，它们本质上都是`VNode`类的实例，只是在实例化的时候传入的属性参数不同而已。
-* 通过将模板字符串编译生成虚拟dom并缓存起来，当数据发生变化时，通过对比变化前后虚拟dom，以变化后的虚拟dom为基准，更新旧的虚拟dom，使它和新的一样。把dom-diff过程叫做`patch`的过程，其主要做了三件事，分别是创建/删除/更新节点。
-* 对于子节点的更新策略，vue中为了避免双重循环数据量大时候造成时间复杂度高带来的性能问题，而选择先从子节点数组中4个特殊位置进行对比，分别是：新前与旧前，新后与旧后，新后与旧前，新前与旧后。如果四种情况都没有找到相同的节点，则再通过循环方式查找。
-
- 实现简易的vue双向数据绑定
-
-vue的双向数据绑定主要是指，数据变化更新视图变化，视图变化更新数据。
-
-**实现代码如下**
-
-```handlebars
-<!DOCTYPE html>
-<html lang="en">
-<head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width= , initial-scale=1.0">
- <title>Document</title>
- <script src="myVue.js"></script>
-</head>
-<body>
- <div id="app">
- {{name}}
- <div>{{message}}</div>
- <input type="text" v-model="test">
- <span>{{test}}</span>
- </div>
- <script>
- let vm = new vue({
- el: '#app',
- data: {
- name: 'YoLinDeng',
- message: '打篮球',
- test: '双向绑定数据'
- }
- })
- // console.log(vm._data)
- </script>
-</body>
-</html>
-```
-
-```js
-class vue extends EventTarget {
-  constructor (option) {
-    super()
-    this.option = option
-    this._data = this.option.data
-    this.el = document.querySelector(this.option.el)
-    this.compileNode(this.el)
-    this.observe(this._data)
-  }
-
-  // 实现监听器方法
-  observe (data) {
-    const context = this
-    // 使用proxy代理，劫持数据
-    this._data = new Proxy(data, {
-      set (target, prop, newValue) {
-        // 自定义事件
-        const event = new CustomEvent(prop, {
-          detail: newValue
-        })
-        // 发布自定义事件
-        context.dispatchEvent(event)
-        return Reflect.set(...arguments)
-      }
-    })
-  }
-
-  // 实现解析器方法，解析模板
-  compileNode (el) {
-    const child = el.childNodes
-    const childArr = [...child]
-    childArr.forEach(node => {
-      if (node.nodeType === 3) {
-        const text = node.textContent
-        if (reg.test(text)) {
-          const $1 = RegExp.$1
-          this._data[$1] && (node.textContent = text.replace(reg, this._data[$1]))
-          // 监听数据更改事件
-          this.addEventListener($1, e => {
-            node.textContent = text.replace(reg, e.detail)
-          })
-        }
-      } else if (node.nodeType === 1) { // 如果是元素节点
-        const attr = node.attributes
-        // 判断属性中是否含有v-model
-        // eslint-disable-next-line
-        if (attr.hasOwnProperty('v-model')) {
-          const keyName = attr['v-model'].nodeValue
-          node.value = this._data[keyName]
-          node.addEventListener('input', e => {
-            this._data[keyName] = node.value
-          })
-        }
-        // 递归调用解析器方法
-        this.compileNode(node)
-      }
-    })
-  }
-}
-```
-
-## react 中是如何实现 下拉菜单场景， 点击区域外关闭下拉组件？ {#p1-react}
+## 实现下拉菜单，支持点击区域外关闭下拉组件？ {#p1-react}
 
 在 React 中，要实现点击区域外关闭下拉组件，一般可以使用以下几种方法：
 
@@ -272,3 +133,70 @@ function Dropdown() {
 ```
 
 这种方法可以在组件内部处理点击事件，不需要将事件处理函数传递给父组件。但是相对而言代码会比较繁琐，需要手动处理事件绑定和解绑。
+
+## 实现一个简单的 i18n (国际化 (Internationalization) 的缩写) 插件 {#p3-implement-a-simple-i18n-internationalization-plugin}
+
+实现下面的这样的一个插件 `<h1>{{ $translate('greetings.hello') }}</h1>`
+
+以下是一个简单的 Vue 3 的国际化插件实现：
+
+1. 创建一个名为`i18nPlugin.js`的文件：
+
+```js
+const i18nPlugin = {
+  install (app, options) {
+    const translations = options.translations
+    app.config.globalProperties.$translate = (key) => {
+      const parts = key.split('.')
+      let value = translations[parts[0]]
+      for (let i = 1; i < parts.length && value; i++) {
+        value = value[parts[i]]
+      }
+      return value || key
+    }
+  }
+}
+
+export default i18nPlugin
+```
+
+2. 在你的 Vue 3 项目中使用这个插件：
+
+假设你有以下的语言翻译对象：
+
+```ts
+// en.js
+const enTranslations = {
+  greetings: {
+    hello: 'Hello!'
+  }
+}
+
+// export default enTranslations
+
+// zh.js
+const zhTranslations = {
+  greetings: {
+    hello: '你好！'
+  }
+}
+
+// export default zhTranslations
+```
+
+在项目的入口文件（通常是`main.js`或`main.ts`）中：
+
+```js
+import { createApp } from 'vue'
+import App from './App.vue'
+import enTranslations from './locales/en'
+import i18nPlugin from './i18nPlugin'
+
+const app = createApp(App)
+
+app.use(i18nPlugin, { translations: enTranslations })
+
+app.mount('#app')
+```
+
+这样，在你的组件中就可以使用`{{ $translate('greetings.hello') }}`来获取翻译后的文本，并且可以通过修改传入插件的翻译对象来切换不同的语言。
