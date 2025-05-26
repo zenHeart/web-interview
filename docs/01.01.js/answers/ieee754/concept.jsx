@@ -1,9 +1,14 @@
+import { useState } from 'react'
 // 引入ieee754工具
 import { getNumberIEEE754Components } from './ieee754.js'
 
 const Ieee754ConceptCard = ({ value = 32.375 }) => {
+  // 新增：本地输入状态
+  const [inputValue, setInputValue] = useState(value)
+  const [displayValue, setDisplayValue] = useState(value)
+
   // 动态获取IEEE 754结构
-  const comp = getNumberIEEE754Components(value, 'double')
+  const comp = getNumberIEEE754Components(displayValue, 'double')
 
   const bodyStyle = {
     fontFamily: "'Inter', sans-serif",
@@ -107,6 +112,15 @@ const Ieee754ConceptCard = ({ value = 32.375 }) => {
   // 十六进制
   const hex = BigInt('0b' + comp.binaryString).toString(16).padStart(16, '0')
 
+  // 新增：输入框事件
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value)
+    const num = Number(e.target.value)
+    if (!Number.isNaN(num)) {
+      setDisplayValue(num)
+    }
+  }
+
   return (
     <div style={bodyStyle}>
       <div style={infoCardStyle}>
@@ -136,7 +150,25 @@ const Ieee754ConceptCard = ({ value = 32.375 }) => {
         </div>
 
         <div style={infoSectionStyle}>
-          <h4 style={infoSectionH4Style}>示例：十进制数 {String(value)}</h4>
+          <h4 style={infoSectionH4Style}>示例：十进制数 {String(displayValue)}</h4>
+          <div style={{ marginBottom: '0.75rem' }}>
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              style={{
+                fontFamily: 'monospace',
+                fontSize: '1rem',
+                padding: '0.25rem 0.5rem',
+                border: '1px solid #bae6fd',
+                borderRadius: '0.25rem',
+                marginRight: '0.5rem',
+                width: '60%'
+              }}
+              placeholder="输入任意数值"
+            />
+            <span style={{ color: '#888', fontSize: '0.9rem' }}>输入后自动转换</span>
+          </div>
           <ul style={infoSectionUlStyle}>
             <li style={commonTextStyles}><strong style={infoSectionUlLiStrongStyle}>符号 (S):</strong> {comp.sign.bit}</li>
             <li style={commonTextStyles}><strong style={infoSectionUlLiStrongStyle}>实际指数:</strong> {exponentActual}</li>
