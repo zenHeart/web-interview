@@ -1,6 +1,7 @@
 export default {
   Done: [
     'p0-types',
+    'p0-ieee754',
     'p0-primitive-reference',
     'p0-react-lifecycle',
     'p0-controlled-uncontrolled-component',

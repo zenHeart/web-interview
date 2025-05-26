@@ -70,7 +70,7 @@ function numberToIEEE754Binary (num, precision = 'single') {
  * @returns {object} 包含数字的 IEEE 754 各组成部分及其解释的对象。
  *                   例如: { originalNumber, precision, binaryString, sign, exponent, mantissa, interpretation }
  */
-function getNumberIEEE754Components (num, precision = 'single') {
+export function getNumberIEEE754Components (num, precision = 'single') {
   const binaryRepresentation = numberToIEEE754Binary(num, precision)
   let exponentBitsCount, mantissaBitsCount, bias
 
