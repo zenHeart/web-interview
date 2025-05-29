@@ -1,5 +1,9 @@
 export default {
   Done: [
+    'p0-object',
+    'p0-type-check',
+    'p0-prototype-chain',
+    'p0-new',
     'p0-operator-equal',
     'p0-types',
     'p0-ieee754',
