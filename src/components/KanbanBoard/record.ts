@@ -1,5 +1,6 @@
 export default {
   Done: [
+    'p0-operator-equal',
     'p0-types',
     'p0-ieee754',
     'p0-primitive-reference',
