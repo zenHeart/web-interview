@@ -39,8 +39,8 @@ const SearchExamples = [
     explain: '支持复合搜索，多个条件之间用空格分隔。匹配所有条件'
   },
   {
-    search: 'subject:algorithm  priority:p0',
-    explain: 'p0'
+    search: 'subject:js  priority:p0',
+    explain: 'js p0'
   }
 ]
 

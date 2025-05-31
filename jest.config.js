@@ -4,7 +4,8 @@ module.exports = {
   //   testMatch: ['**/docs/**/backtracking/*.test.js'], // 更改为你想要的测试文件模式
   //   testMatch: ['**/docs/**/tree/*.test.js'], // 更改为你想要的测试文件模式
   //   testMatch: ['**/docs/**/sort/*.test.js'], // 更改为你想要的测试文件模式
-  testMatch: ['**/docs/**/dynamic-programing/*.test.js'], // 更改为你想要的测试文件模式
+  testMatch: ['**/docs/**/01.01.js/**/*.test.js'], // 更改为你想要的测试文件模式
+  //   testMatch: ['**/docs/**/dynamic-programing/*.test.js'], // 更改为你想要的测试文件模式
   //   testMatch: ['**/docs/11.paradigm/**/*.test.js'], // 更改为你想要的测试文件模式
   collectCoverage: true,
   coverageDirectory: 'coverage',
