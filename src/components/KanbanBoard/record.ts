@@ -1,5 +1,7 @@
 export default {
   Done: [
+    'p0-execute-context',
+    'p0-promise',
     'p0-instanceof',
     'p0-object',
     'p0-type-check',
