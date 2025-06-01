@@ -1,5 +1,6 @@
 export default {
   Done: [
+    'p0-instanceof',
     'p0-object',
     'p0-type-check',
     'p0-prototype-chain',
