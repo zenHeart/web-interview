@@ -1,5 +1,9 @@
 export default {
   Done: [
+    // js
+    'p0-v8',
+    'p0-explain-compile',
+    'p0-async-programing',
     'p0-cps',
     'p0-let-const-var',
     'p0-call-apply-bind',
