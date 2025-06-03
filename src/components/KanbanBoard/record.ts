@@ -1,5 +1,9 @@
 export default {
   Done: [
+    'p0-call-apply-bind',
+    'p0-arrow-function',
+    'p0-create-function',
+    'p0-constructor-call',
     'p0-this',
     'p0-closure',
     'p0-scope',
