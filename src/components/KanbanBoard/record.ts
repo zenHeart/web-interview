@@ -1,5 +1,6 @@
 export default {
   Done: [
+    'p0-scope',
     'p0-execute-context',
     'p0-promise',
     'p0-instanceof',
@@ -46,5 +47,5 @@ export default {
     'interview',
     'hybird'
   ],
-  DeadLine: '2025-05-31 23:59:59'
+  DeadLine: '2025-06-30 23:59:59'
 }
