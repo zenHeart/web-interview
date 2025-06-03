@@ -1,5 +1,7 @@
 export default {
   Done: [
+    'p0-cps',
+    'p0-let-const-var',
     'p0-call-apply-bind',
     'p0-arrow-function',
     'p0-create-function',
@@ -34,7 +36,10 @@ export default {
     'p0-component-type',
     'p0-vue-lifecycle',
     'p0-component-options',
-    'p0-composition-api'
+    'p0-composition-api',
+
+    // paradigm function
+    'p0-effecitve'
   ],
   SubjectPriority: [
     'vue',
