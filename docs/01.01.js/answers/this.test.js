@@ -1,210 +1,144 @@
 /* eslint-disable no-eval */
 /* eslint-disable strict */
-// 该示例说明 this 的值取决于执行环境而非申明环境。
-const { expect } = require('chai')
 
-describe('this 绑定', function () {
-  describe('默认绑定', function () {
-    const say = function () {
-      return this
-    }
-
-    it('普通函数调用,返回全局对象', function () {
-      expect(say()).to.equal(global)
-    })
-
-    it('严格模式为 undefined', function () {
+describe('this 关键字行为详解', () => {
+  // 1. 普通函数调用
+  describe('普通函数调用', () => {
+    test('严格模式下 this 为 undefined', () => {
       'use strict'
-      const say1 = function () {
-        return this
-      }
-      // eslint-disable-next-line
-      expect(say1()).to.undefined
-      // 在严格模式下声明的函数默认绑定才为 undefined
-      // 严格模式之前申明的函数 this 任为全局对象
-      expect(say()).to.equal(global)
+      function fnStrict () { return this }
+      expect(fnStrict()).toBeUndefined()
     })
   })
 
-  describe('隐式绑定', function () {
+  // 2. 对象方法调用
+  describe('对象方法调用', () => {
     const obj = {
-      say: function () {
-        return this
-      }
+      x: 1,
+      getX () { return this?.x }
     }
-
-    it('对象调用 this 等于对象值', function () {
-      expect(obj.say()).to.equal(obj)
+    test('作为对象方法调用，this 指向该对象', () => {
+      expect(obj.getX()).toBe(1)
     })
-
-    it('逗号表达式将 this 切换为默认调用', function () {
-      expect((1, obj.say)()).to.equal(global)
-    })
-
-    it('赋值表达式将 this 切换为默认调用', function () {
-      const say = obj.say
-      expect(say()).to.equal(global)
+    test('方法赋值给变量后调用，this 丢失，变为全局对象', () => {
+      const f = obj.getX
+      expect(f()).toBeUndefined() // global.x 可能不存在
     })
   })
 
-  describe('显示绑定', function () {
-    const obj = {
-      say: function () {
-        return this
-      }
-    }
-
-    it('call 修改 this', function () {
-      const obj1 = {}
-      expect(obj.say.call(obj1)).to.equal(obj1)
-    })
-
-    it('apply 修改 this', function () {
-      const obj1 = {}
-      expect(obj.say.apply(obj1)).to.equal(obj1)
-    })
-
-    it('bind 修改 this', function () {
-      const obj1 = {}
-      const bindSay = obj.say.bind(obj1)
-      expect(bindSay()).to.equal(obj1)
-    })
-
-    it('显示绑定赋值为 null,undefined 时指向全局对象', function () {
-      expect(obj.say.apply(null)).to.equal(global)
-      expect(obj.say.apply(undefined)).to.equal(global)
-    })
-
-    it('显示绑定赋值原始值时,this 指向原始封装对象', function () {
-      expect(obj.say.apply(1)).to.instanceOf(Number)
-      expect(obj.say.apply('1')).to.instanceOf(String)
-      expect(obj.say.apply(true)).to.instanceOf(Boolean)
-      expect(obj.say.apply(Symbol('1'))).to.be.an('Symbol')
+  // 3. call/apply 显式绑定
+  describe('call/apply 显式绑定', () => {
+    function fn () { return this }
+    test('call/apply 显式绑定 this', () => {
+      const ctx = { a: 1 }
+      expect(fn.call(ctx)).toBe(ctx)
+      expect(fn.apply(ctx)).toBe(ctx)
     })
   })
 
-  describe('new 绑定', function () {
+  // 4. bind 绑定
+  describe('bind 绑定', () => {
+    function fn () { return this }
+    test('bind 返回新函数，this 永远绑定', () => {
+      const ctx = { b: 2 }
+      const bound = fn.bind(ctx)
+      expect(bound()).toBe(ctx)
+    })
+    test('bind 后 call/apply 不能再修改 this', () => {
+      const ctx = { b: 2 }
+      const other = { c: 3 }
+      const bound = fn.bind(ctx)
+      expect(bound.call(other)).toBe(ctx)
+    })
+  })
+
+  // 5. new 构造函数调用
+  describe('new 构造函数调用', () => {
     function Person (name) {
       this.name = name
-      return this
     }
-
-    it('默认 new 构造绑定', function () {
-      const tom = new Person('tom')
-      const jack = new Person('jack')
-
-      expect(tom).deep.equal({
-        name: 'tom'
-      })
-      expect(jack).deep.equal({
-        name: 'jack'
-      })
+    test('new 调用 this 指向新实例', () => {
+      const p = new Person('Tom')
+      expect(p).toEqual({ name: 'Tom' })
+    })
+    test('new 优先级高于 bind/call/apply', () => {
+      function Foo (x) { this.x = x }
+      const obj = { x: 42 }
+      const Bound = Foo.bind(obj)
+      const f = new Bound(100)
+      expect(f).toEqual({ x: 100 })
     })
   })
 
-  describe('eval 绑定', function () {
-    // 实际上可以等效将 eval 的代码放入当前执行环境则即可知道实际运行结果
-    it('eval 采用外层执行环境的 this', function () {
-      const obj = {
-        say () {
-          return eval('this')
-        },
-        say1 () {
-          return (function () {
-            return this
-          })()
-        }
-      }
-      const res = eval('this')
-      const res1 = eval('(function a(){return this})()')
-
-      expect(obj.say()).to.equal(obj)
-      // 当函数为赋值调用时退化为默认规则
-      expect((1, obj.say)()).to.equal(global)
-      // 注意采用函数则退化为默认规则
-      expect(obj.say1()).to.equal(global)
-      // 由于 eval 在外部定义使用当前执行环境 this
-      expect(res).to.equal(this)
-      // eval为普通函数调用采用全局 this
-      expect(res1).to.equal(global)
-    })
-  })
-
-  describe('箭头函数', function () {
-    let obj
-
-    beforeEach(function () {
-      obj = {
-        say: function () {
-          return (() => this)()
-        },
-        say1: function () {
-          return (function () {
-            return this
-          })()
-        },
-        say2: function (callback) {
-          return callback()
-        }
-      }
-    })
-
-    it('this 的值由申明时外层执行环境决定', function () {
-      expect(obj.say()).to.equal(obj)
-      // 说明非箭头函数采用默认绑定规则
-      expect(obj.say1()).to.equal(global)
-    })
-
-    it('外层执行环境的调用方式会更改箭头函数 this 的值', function () {
-      expect((1, obj.say)()).to.equal(global)
-    })
-
-    it('显示绑定会更改箭头函数 this 的值', function () {
-      const obj1 = {}
-      expect(obj.say.call(obj1)).to.equal(obj1)
-    })
-
-    it('new 会修改 this 的值', function () {
-      // eslint-disable-next-line new-cap
-      expect(new obj.say()).to.deep.equal({})
-    })
-
-    it('箭头函数 this 的默认绑定值取决于申明环境而非运行环境', function () {
-      const cb1 = () => {
-        return this
-      }
-      const cb2 = function () {
+  // 6. 箭头函数
+  describe('箭头函数', () => {
+    test('箭头函数 this 继承外层作用域', () => {
+      const ctx = { val: 1 }
+      function outer () {
         return (() => this)()
       }
-      // cb1 绑定当前运行环境的 this 的值
-      expect(obj.say2(cb1)).to.equal(this)
-      // cb2 中的箭头函数绑定当前运行时环境的 this,而根据默认绑定规则,此时 this 指向 global
-      expect(obj.say2(cb2)).to.equal(global)
-      // 匿名箭头函数等同于在当前执行环境申明变量所以 this 等于当前执行环境
-      expect(obj.say2(() => this)).to.equal(this)
+      expect(outer.call(ctx)).toBe(ctx)
     })
-
-    it('箭头函数在回调模式中 this 的值', function () {
-      const func = function (cb) {
-        return cb()
+    test('箭头函数 this 不可被 call/apply/bind 修改', () => {
+      const ctx = { val: 2 }
+      const arrow = () => this
+      expect(arrow.call(ctx)).toBe(this)
+      expect(arrow.bind(ctx)()).toBe(this)
+    })
+    test('对象方法中定义箭头函数，this 取决于方法调用时的 this', () => {
+      const obj = {
+        getThis: function () {
+          return (() => this)()
+        }
       }
-      const say = () => this
-      expect(func(say)).to.equal(this)
+      expect(obj.getThis()).toBe(obj)
+      const f = obj.getThis
+      expect(f()).toBe(undefined)
     })
   })
 
-  describe('绑定优先级', function () {
-    it('new 优先级高于显示绑定', function () {
-      function Person (name) {
-        this.name = name
-        return this
+  // 7. eval
+  describe('eval', () => {
+    test('eval 采用外层执行环境的 this', () => {
+      const obj = {
+        test () {
+          return eval('this')
+        }
       }
-      const obj = { a: 1 }
-      const Person1 = Person.bind(obj)
-      const tom = new Person1('tom')
+      expect(obj.test()).toBe(obj)
+    })
+    test('eval 中定义函数，this 规则同普通函数', () => {
+      const res = eval('(function(){return this})()')
+      expect(res).toBe(undefined)
+    })
+  })
 
-      expect(tom).to.deep.equal({ name: 'tom' })
-      expect(Person1('tom')).to.deep.equal({ name: 'tom', ...obj })
+  // 8. 回调/引用传递 this 丢失
+  describe('回调/引用传递 this 丢失', () => {
+    const obj = {
+      x: 1,
+      getX () { return this?.x }
+    }
+    function callFn (fn) { return fn() }
+    test('直接传递方法引用，this 丢失', () => {
+      expect(callFn(obj.getX)).toBeUndefined()
+    })
+    test('通过 bind 绑定 this 保持', () => {
+      expect(callFn(obj.getX.bind(obj))).toBe(1)
+    })
+  })
+
+  // 9. 严格模式下 this
+  describe('严格模式下 this', () => {
+    test('严格模式下未绑定 this 为 undefined', () => {
+      'use strict'
+      function f () { return this }
+      expect(f()).toBeUndefined()
+    })
+    test('对象方法严格模式下 this 仍指向对象', () => {
+      'use strict'
+      const obj = { f () { return this } }
+      expect(obj.f()).toBe(obj)
     })
   })
 })

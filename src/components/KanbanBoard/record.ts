@@ -1,5 +1,7 @@
 export default {
   Done: [
+    'p0-this',
+    'p0-closure',
     'p0-scope',
     'p0-execute-context',
     'p0-promise',
