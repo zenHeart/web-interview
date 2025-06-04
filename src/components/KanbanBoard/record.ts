@@ -1,6 +1,8 @@
 export default {
   Done: [
     // js
+    'p0-memory',
+    'P0-jit',
     'p0-v8',
     'p0-explain-compile',
     'p0-async-programing',

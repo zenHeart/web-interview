@@ -13,9 +13,6 @@ const config: Config = {
     questions: []
   },
   themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
-  //   future: {
-  //     experimental_faster: true
-  //   },
   title: 'web-interview',
   url: 'https://blog.zenheart.site',
   baseUrl: '/web-interview/',
@@ -91,6 +88,16 @@ const config: Config = {
     ]
   ],
   themeConfig: {
+   zoom: {
+      selector: '.markdown img',
+      background: {
+          light: 'rgb(255, 255, 255)',
+          dark: 'rgb(50, 50, 50)'
+      },
+      config: {
+        // options you can specify via https://github.com/francoischalifour/medium-zoom#usage
+      }
+    },
     docs: {
       sidebar: {
         hideable: true

@@ -1,0 +1,40 @@
+---
+config:
+  layout: dagre
+---
+flowchart LR
+  subgraph Loading["Loading"]
+    B["Script Text"]
+    A["Network / Cache"]
+  end
+  subgraph Parsing["Parsing"]
+    D["AST"]
+    C["Parser"]
+  end
+  subgraph Interpreter["Interpreter"]
+    F["Bytecode"]
+    E["Ignition"]
+  end
+  subgraph Execution["Execution"]
+    H["Type Feedback"]
+    G["Execution"]
+    I["Object Shapes"]
+  end
+  subgraph Optimization["Optimization"]
+    K["Optimized Code"]
+    J["TurboFan"]
+  end
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    I --> H
+    H --> G
+    H -.-> J
+    J -.-> K
+    K -.-> F
+    K -- deopt --> F
