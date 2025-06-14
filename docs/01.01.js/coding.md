@@ -30,6 +30,20 @@ module.exports = function debounce (func, wait = 0, options = {}) {
 
 debounce 用于限制函数的执行频率，避免在短时间内多次触发同一事件。参考 [lodash debounce](https://lodash.com/docs/4.17.15#debounce) 函数，实现如下：
 
+import debounceTest from '!!raw-loader!./answers/debounce/debounce.test.js';
+import debounce from '!!raw-loader!./answers/debounce/debounce.js';
+
+<TestCode
+   options={{
+      showConsole: true,
+      editorHeight: 800
+   }}
+   files={{
+      "/debounce.js": debounce,
+      "/debounce.test.js": debounceTest,
+   }}
+/>
+
 :::tip
 
 这个概念实际上来源单片机开发中常见的按键防抖，因为在按下物理按键时，可能由于键盘内部弹簧的机械抖动，导致按键状态在短时间内多次变化，这会导致程序误判为多次按键事件。所以单片机中会通过延时来忽略短时间内的多次按键事件。
@@ -37,212 +51,46 @@ debounce 用于限制函数的执行频率，避免在短时间内多次触发�
 答案中包含了 lodash 的全量用例，实现中注意如下细节
 
 1. lodash 的 debounce 会返回前一次执行的结果
+2. lodash 的返回函数支持 cancel, 和 flush 函数
+   - cancel 用于取消防抖函数的执行
+   - flush 用于立即执行防抖函数
+3. maxWait 参数用于设置最大等待时间，注意 maxWait 的执行是同步
+4. this 延迟执行后的指向问题
 
 :::
 
 </Answer>
 
-## throttle {#p0-throttle}
-
-* debounce 阻止函数的高频执行,只有当频率小于等于限定频率是才延迟触发
-* throttle 按照固定的频率触发函数,当函数执行频率高于设定频率是忽略执行
-
-[https://blog.csdn.net/beijiyang999/article/details/79836463](https://blog.csdn.net/beijiyang999/article/details/79836463)
-
- 函数节流是什么
-
-**对于持续触发的事件，规定一个间隔时间（n秒），每隔一段只能执行一次。**
-函数防抖（debounce）与本篇说的函数节流（throttle）相似又不同。
-函数防抖一般是指对于**在事件被触发n秒后再执行的回调，如果在这n秒内又重新被触发，则重新开始计时。**
-二者都能防止函数过于频繁的调用。
-区别在于，当事件持续被触发，如果触发时间间隔短于规定的等待时间（n秒），那么
-
-* 函数防抖的情况下，函数将一直推迟执行，造成不会被执行的效果；
-* 函数节流的情况下，函数将每个 n 秒执行一次。
-
- 函数节流的实现
-
-函数节流的实现有不同的思路，可以通过**时间戳实现**，也可以通过**定时器实现**。
-
- 时间戳
-
- 思路
-
-只要触发，就用 Date 获取现在的时间，与上一次的时间比较。
-如果时间差大于了规定的等待时间，就可以执行一次；
-目标函数执行以后，就更新 previous 值，确保它是“上一次”的时间。
-否则就等下一次触发时继续比较。
-
- 代码如下
+## 实现 lodash throttle {#p0-throttle}
 
 ```js
-function throttle (func, wait) {
-  let previous = 0
-  return function () {
-    const now = +new Date()
-    const context = this
-    if (now - previous >= wait) {
-      func.apply(context, arguments)
-      previous = now // 执行后更新 previous 值
-    }
-  }
-}
-container.onmousemove = throttle(doSomething, 1000)
-```
+/**
+ * 实现 loadash 的 throttle 函数
+ * @param {Function} func 要 throttle 的函数
+ * @param {number} wait 等待时间，单位毫秒
+ * @param {Object} options 可选参数
+ * @param {boolean} options.leading 是否在开始时调用函数
+ * @param {boolean} options.trailing 是否在结束时调用函数
+ * @returns {Function} 返回一个新的节流函数
+ * @example
+ *
+ * const throttledFunc = throttle(() => {
+ *   console.log('Function executed');
+ * }, 1000, { leading: true, trailing: false });
+ * throttledFunc(); // 立即执行
+ * setTimeout(throttledFunc, 500); // 不会执行
+ * setTimeout(throttledFunc, 1000); // 会执行
+ */
+module.exports = function throttle (func, wait = 0, options = {}) {
 
- 定时器
-
- 思路
-
-用定时器实现时间间隔。
-当定时器不存在，说明可以执行函数，于是定义一个定时器来向任务队列注册目标函数
-目标函数执行后设置保存定时器ID变量为空
-当定时器已经被定义，说明已经在等待过程中。则等待下次触发事件时再进行查看。
-
- 代码
-
-```js
-function throttle (func, wait) {
-  let time, context
-  return function () {
-    context = this
-    if (!time) {
-      time = setTimeout(function () {
-        func.apply(context, arguments)
-        time = null
-      }, wait)
-    }
-  }
 }
 ```
 
- 效果差异
+<Answer>
 
-一个周期内：
-时间戳实现的：先执行目标函数，后等待规定的时间段；
-计时器实现的：先等待够规定时间，再执行。 即停止触发后，若定时器已经在任务队列里注册了目标函数，它也会执行最后一次。
+throttle 用于限制函数的执行频率，对高频执行的函数稳定频率执行。参考 [lodash throttle](https://lodash.com/docs/4.17.15#throttle) 函数，实现如下：
 
- 优化：二者结合
-
-结合二者，实现一次触发，两次执行（先立即执行，结尾也有执行）
-
-```js
-function throttle (func, wait) {
-  let previous = 0
-  let context, args, time
-  return function () {
-    const now = +new Date()
-    context = this
-    args = arguments
-    if (now - previous >= wait) { // 当距上一次执行的间隔大于规定，可以直接执行
-      func.apply(context, args)
-      previous = now
-    } else { // 否则继续等待，结尾执行一次
-      if (time) clearTimeout(time)
-      time = setTimeout(
-        () => {
-          func.apply(context, args)
-          time = null
-        }
-        , wait)
-    }
-  }
-}
-```
-
- 问题
-
-已经实现了一次触发，两次执行，有头有尾的效果。
-问题是，上一个周期的“尾”和下一个周期的“头”之间，失去了对时间间隔的控制。
-
- 修复
-
-仔细查看，发现问题出在了 previous 的设置上。
-仅仅在“可直接执行”的情况下更新了 previous 值，在通过计时器注册入任务队列后执行的情况下，忽略了 previous 的更新。
-导致了 previous 的值不再是“上一次执行”时的时间，而是“上一次直接可执行情况下执行”的时间。
-同时，引入变量 remaining 表示还需要等待的时间，来让尾部那一次的执行也符合时间间隔。
-
- 完善后代码
-
-```js
-function throttle (func, wait) {
-  let previous = 0
-  let context, args, time, remaining
-
-  return function () {
-    const now = +new Date()
-    context = this
-    args = arguments
-    remaining = wait - (now - previous) // 剩余的还需要等待的时间
-    if (remaining <= 0) {
-      func.apply(context, args)
-      previous = now // 重置“上一次执行”的时间
-    } else {
-      if (time) {
-        clearTimeout(time)
-      }
-      time = setTimeout(() => {
-        func.apply(context, args)
-        time = null
-        previous = +new Date() // 重置“上一次执行”的时间
-      }, remaining) // 等待还需等待的时间
-    }
-  }
-}
-```
-
- 更进一步的优化
-
-参考 underscore 与 mqyqingfeng ，实现是否启用第一次 / 尾部最后一次计时回调的执行。
-设置 options 作为第三个参数，然后根据传的值判断到底哪种效果，约定:
-
-* leading：false 表示禁用第一次执行
-* trailing: false 表示禁用停止触发的回调
-
-```js
-function throttle (func, wait, options) {
-  let time, context, args, result
-  let previous = 0
-  if (!options) options = {}
-
-  const later = function () {
-    previous = options.leading === false ? 0 : new Date().getTime()
-    time = null
-    func.apply(context, args)
-    if (!time) context = args = null
-  }
-
-  const throttled = function () {
-    const now = new Date().getTime()
-    if (!previous && options.leading === false) previous = now
-    const remaining = wait - (now - previous)
-    context = this
-    args = arguments
-    if (remaining <= 0 || remaining > wait) {
-      if (time) {
-        clearTimeout(time)
-        time = null
-      }
-      previous = now
-      func.apply(context, args)
-      if (!time) context = args = null
-    } else if (!time && options.trailing !== false) {
-      time = setTimeout(later, remaining)
-    }
-  }
-  return throttled
-}
-```
-
-如果想添加一个取消功能：
-
-```js
-throttled.cancel = function () {
-  clearTimeout(time)
-  time = null
-  previous = 0
-}
-```
+</Answer>
 
 ## 实现 call 或 apply 方法?
 
@@ -972,9 +820,9 @@ console.log(sayHello.bind(obj, 24)())// 完美输出{name: "jawil", age: 24}
 
 语法格式 `function.bind(thisArg[, arg1[, arg2[, ...]]])`
 
-* `thisArg`
-  * 如果使用 new 运算符构造绑定函数
-  * thisArg 传递的任何原始值都将转换为 object
+- `thisArg`
+  - 如果使用 new 运算符构造绑定函数
+  - thisArg 传递的任何原始值都将转换为 object
 
 ## 实现 bind
 
@@ -1155,10 +1003,10 @@ github有开源模块专门解决这个问题的： [https://github.com/unclechu
 
 ## 实现一个处理长字符串的函数 {#p2-process-long-string}
 
-* created_at: 2024-11-06T15:53:43Z
-* updated_at: 2024-11-06T15:53:44Z
-* labels: 代码实现/算法
-* milestone: 初
+- created_at: 2024-11-06T15:53:43Z
+- updated_at: 2024-11-06T15:53:44Z
+- labels: 代码实现/算法
+- milestone: 初
 
 > 描述
 >
@@ -1188,11 +1036,11 @@ function processString (str) {
 
 1. 在发送请求前记录当前时间戳：
 
-* `const startTime = performance.now();`
+- `const startTime = performance.now();`
 
 2. 使用`fetch`发送请求：
 
-* `fetch('your-api-url')`
+- `fetch('your-api-url')`
 
 3. 在请求的`.then()`或`.catch()`中记录结束时间戳并计算耗时：
 
@@ -1221,7 +1069,7 @@ const startTime = performance.now()
 
 2. 配置请求并发送：
 
-* `xhr.open('GET', 'your-api-url'); xhr.send();`
+- `xhr.open('GET', 'your-api-url'); xhr.send();`
 
 3. 在请求的`onload`、`onerror`等事件处理函数中记录结束时间并计算耗时：
 
@@ -1242,7 +1090,7 @@ xhr.onerror = function () {
 
 1. 如果使用`axios`或类似的库，可以设置请求拦截器和响应拦截器：
 
-* 在请求拦截器中记录开始时间，在响应拦截器中记录结束时间并计算耗时。
+- 在请求拦截器中记录开始时间，在响应拦截器中记录结束时间并计算耗时。
 
 ```js
 axios.interceptors.request.use((config) => {
@@ -1277,13 +1125,13 @@ Performance API 提供了一系列的性能测量工具，可以测量网页加�
 
 1. 使用`performance.timing`：
 
-* `performance.timing`对象包含了网页加载过程中的各个时间点信息。可以通过计算不同时间点之间的差值来得到特定阶段的耗时。
-* 例如，可以计算`responseEnd`（服务器响应结束的时间）和`requestStart`（开始请求的时间）之间的差值来得到请求的耗时。
+- `performance.timing`对象包含了网页加载过程中的各个时间点信息。可以通过计算不同时间点之间的差值来得到特定阶段的耗时。
+- 例如，可以计算`responseEnd`（服务器响应结束的时间）和`requestStart`（开始请求的时间）之间的差值来得到请求的耗时。
 
 2. 使用`performance.getEntriesByType('resource')`：
 
-* 这个方法可以获取所有资源加载的性能条目。对于每个资源条目，可以获取其`startTime`（开始时间）和`responseEnd`（响应结束时间）等属性，从而计算出资源加载的耗时。
-* 可以遍历这些条目，找到特定的网络请求资源，并计算其耗时。
+- 这个方法可以获取所有资源加载的性能条目。对于每个资源条目，可以获取其`startTime`（开始时间）和`responseEnd`（响应结束时间）等属性，从而计算出资源加载的耗时。
+- 可以遍历这些条目，找到特定的网络请求资源，并计算其耗时。
 
 以下是一个示例代码：
 
@@ -1353,8 +1201,8 @@ worker.onmessage = function (event) {
 
 1. 方法介绍：
 
-* `hasOwnProperty()`是 JavaScript 对象的一个方法，用于判断一个对象自身是否具有指定的属性。
-* 它不会检查原型链上的属性，只关注对象本身是否拥有该属性。
+- `hasOwnProperty()`是 JavaScript 对象的一个方法，用于判断一个对象自身是否具有指定的属性。
+- 它不会检查原型链上的属性，只关注对象本身是否拥有该属性。
 
 2. 示例代码：
 
@@ -1375,8 +1223,8 @@ console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在�
 
 1. 方法介绍：
 
-* `in`操作符用于检查一个对象及其原型链中是否具有指定的属性。
-* 可以结合`hasOwnProperty()`来判断属性的来源。
+- `in`操作符用于检查一个对象及其原型链中是否具有指定的属性。
+- 可以结合`hasOwnProperty()`来判断属性的来源。
 
 2. 示例代码：
 
@@ -1402,8 +1250,8 @@ console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在�
 
 1. 方法介绍：
 
-* `Object.getOwnPropertyDescriptor()`方法返回指定对象上一个自有属性的属性描述符。
-* 如果对象没有指定的自有属性，则返回`undefined`。
+- `Object.getOwnPropertyDescriptor()`方法返回指定对象上一个自有属性的属性描述符。
+- 如果对象没有指定的自有属性，则返回`undefined`。
 
 2. 示例代码：
 
@@ -1500,7 +1348,7 @@ console.log(obj.address.info) // 'chongqing'
 
 1. **基本原理**：
 
-* JavaScript 的数组`sort`方法可以接受一个比较函数作为参数。通过提供一个随机的比较函数，可以实现对数组的随机排序，从而打乱数组的顺序。
+- JavaScript 的数组`sort`方法可以接受一个比较函数作为参数。通过提供一个随机的比较函数，可以实现对数组的随机排序，从而打乱数组的顺序。
 
 2. **示例代码**：
 
@@ -1518,7 +1366,7 @@ console.log(array)
 
 1. **基本原理**：
 
-* Fisher-Yates 洗牌算法是一种经典的随机打乱数组的算法。它的基本思想是从数组的最后一个元素开始，随机选择一个位置与当前元素交换，然后逐步向前移动，重复这个过程，直到处理完第一个元素。
+- Fisher-Yates 洗牌算法是一种经典的随机打乱数组的算法。它的基本思想是从数组的最后一个元素开始，随机选择一个位置与当前元素交换，然后逐步向前移动，重复这个过程，直到处理完第一个元素。
 
 2. **示例代码**：
 
@@ -3074,9 +2922,9 @@ perlCopy code{ '2': 1, '3': 2, length: 4, splice: [Function: splice], push: [Fun
 
 在代码中，我们创建了一个名为 `obj` 的对象，它包含了一些属性和方法：
 
-* `2` 和 `3` 是对象的属性名，对应的属性值分别为 `3` 和 `4`。
-* `length` 属性的值为 `2`。
-* `splice` 和 `push` 是对象的两个方法，它们均继承自 `Array.prototype`。
+- `2` 和 `3` 是对象的属性名，对应的属性值分别为 `3` 和 `4`。
+- `length` 属性的值为 `2`。
+- `splice` 和 `push` 是对象的两个方法，它们均继承自 `Array.prototype`。
 
 接下来，我们先调用了 `obj.push(1)` 方法，将值 `1` 加入到了 `obj` 对象中，此时 `obj` 对象的状态如下所示：
 
@@ -3237,9 +3085,9 @@ class EventEmitter {
 
 这个实现包括三个方法：
 
-* `on(event, listener)`：订阅事件，当事件被触发时执行监听器 `listener`；
-* `emit(event, ...args)`：触发事件，并将参数 `...args` 传递给监听器；
-* `off(event, listener)`：取消订阅事件，不再执行监听器 `listener`。
+- `on(event, listener)`：订阅事件，当事件被触发时执行监听器 `listener`；
+- `emit(event, ...args)`：触发事件，并将参数 `...args` 传递给监听器；
+- `off(event, listener)`：取消订阅事件，不再执行监听器 `listener`。
 
 使用方法如下：
 
@@ -3284,9 +3132,9 @@ csharpCopy codeevent: hello, world
 
 这是因为 `map` 方法会传入三个参数：当前遍历到的元素、当前遍历到的索引、原数组本身。而 `parseInt` 函数则接受两个参数：需要被解析的值、用于解析的进制数。在执行 `['1', '2', '3'].map(parseInt)` 时，实际传入 `parseInt` 的参数如下：
 
-* `'1'`、`0`（表示解析为十进制）：解析后得到数字 `1`。
-* `'2'`、`1`（表示解析为一进制）：解析后得到 `NaN`。
-* `'3'`、`2`（表示解析为二进制）：解析后得到 `NaN`。
+- `'1'`、`0`（表示解析为十进制）：解析后得到数字 `1`。
+- `'2'`、`1`（表示解析为一进制）：解析后得到 `NaN`。
+- `'3'`、`2`（表示解析为二进制）：解析后得到 `NaN`。
 
 所以结果为 `[1, NaN, NaN]`。
 
@@ -3418,10 +3266,10 @@ setObjectValue(user, ['address', 'city'], 'New York')
 
 ## Promise finally 怎么实现的？
 
-* created_at: 2023-03-26T08:11:20Z
-* updated_at: 2023-03-26T08:11:20Z
-* labels: JavaScript
-* milestone: 高
+- created_at: 2023-03-26T08:11:20Z
+- updated_at: 2023-03-26T08:11:20Z
+- labels: JavaScript
+- milestone: 高
 
 `Promise.finally()` 方法是在 ES2018 中引入的，用于指定不管 Promise 状态如何都要执行的回调函数。与 `Promise.then()` 和 `Promise.catch()` 不同的是，`Promise.finally()` 方法不管 Promise 是成功还是失败都会执行回调函数，而且不会改变 Promise 的状态。如果返回的值是一个 Promise，那么 `Promise.finally()` 方法会等待该 Promise 执行完毕后再继续执行。
 

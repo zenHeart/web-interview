@@ -5,6 +5,7 @@ const debounce = require('./debounce')
 function identity (x) {
   return x
 }
+function noop () {}
 
 describe('debounce', () => {
   test('应该防抖一个函数', done => {
@@ -268,6 +269,173 @@ describe('debounce', () => {
     setTimeout(() => {
       expect(callCount).toBe(2)
       expect(actual).toEqual([object, 'a'])
+      done()
+    }, 64)
+  })
+})
+
+// debounce/throttle 公共用例，仅保留 debounce 部分
+describe('debounce 防抖函数', () => {
+  const func = debounce
+
+  test('debounce 对非对象 options 不应报错', () => {
+    expect(() => func(noop, 32, 1)).not.toThrow()
+  })
+
+  test('debounce 默认 wait 应为 0', done => {
+    expect.assertions(1)
+
+    let callCount = 0
+    const funced = func(() => { callCount++ })
+
+    funced()
+
+    setTimeout(() => {
+      funced()
+      expect(callCount).toBe(1)
+      done()
+    }, 32)
+  })
+
+  test('debounce 应用正确的 this 绑定', done => {
+    expect.assertions(1)
+
+    const actual = []
+    const object = { funced: func(function () { actual.push(this) }, 32) }
+    const expected = [object]
+
+    object.funced()
+
+    setTimeout(() => {
+      expect(actual).toEqual(expected)
+      done()
+    }, 64)
+  })
+
+  test('debounce 支持递归调用', done => {
+    expect.assertions(2)
+
+    const actual = []
+    const args = [['a'], ['b'], ['c']].map(chr => [{}, chr[0]])
+    const expected = args.slice()
+    const queue = args.slice()
+
+    const funced = func(function () {
+      const current = [this]
+      Array.prototype.push.apply(current, arguments)
+      actual.push(current)
+
+      const next = queue.shift()
+      if (next) {
+        funced.call(next[0], next[1])
+      }
+    }, 32)
+
+    const next = queue.shift()
+    funced.call(next[0], next[1])
+    expect(actual).toEqual(expected.slice(0, 0))
+
+    setTimeout(() => {
+      expect(actual).toEqual(expected.slice(0, actual.length))
+      done()
+    }, 256)
+  })
+
+  test('debounce 系统时间倒退时应能正常工作', done => {
+    expect.assertions(1)
+
+    let callCount = 0
+    let dateCount = 0
+    const realNow = Date.now
+    // 模拟 Date.now 倒退
+    Date.now = function () {
+      return ++dateCount === 4
+        ? +new Date(2012, 3, 23, 23, 27, 18)
+        : realNow()
+    }
+
+    const funced = debounce(() => {
+      callCount++
+    }, 32)
+
+    funced()
+
+    setTimeout(() => {
+      funced()
+      expect(callCount).toBe(1)
+      Date.now = realNow // 恢复原始 Date.now
+      done()
+    }, 64)
+  })
+
+  test('debounce 支持取消延迟调用', done => {
+    expect.assertions(1)
+
+    let callCount = 0
+
+    const funced = func(() => {
+      callCount++
+    }, 32, { leading: false })
+
+    funced()
+    funced.cancel()
+
+    setTimeout(() => {
+      expect(callCount).toBe(0)
+      done()
+    }, 64)
+  })
+
+  test('debounce 取消后应重置 lastCalled', done => {
+    expect.assertions(3)
+
+    let callCount = 0
+
+    const funced = func(() => {
+      return ++callCount
+    }, 32, { leading: true })
+
+    expect(funced()).toBe(1)
+    funced.cancel()
+
+    expect(funced()).toBe(2)
+    funced()
+
+    setTimeout(() => {
+      expect(callCount).toBe(3)
+      done()
+    }, 64)
+  })
+
+  test('debounce 支持 flush', done => {
+    expect.assertions(2)
+
+    let callCount = 0
+
+    const funced = func(() => {
+      return ++callCount
+    }, 32, { leading: false })
+
+    funced()
+    expect(funced.flush()).toBe(1)
+
+    setTimeout(() => {
+      expect(callCount).toBe(1)
+      done()
+    }, 64)
+  })
+
+  test('debounce 在无队列时 cancel 和 flush 应为 noop', done => {
+    expect.assertions(2)
+
+    let callCount = 0
+    const funced = func(() => { callCount++ }, 32)
+
+    funced.cancel()
+    expect(funced.flush()).toBeUndefined()
+
+    setTimeout(() => {
+      expect(callCount).toBe(0)
       done()
     }, 64)
   })

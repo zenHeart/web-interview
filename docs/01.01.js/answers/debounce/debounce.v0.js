@@ -20,15 +20,13 @@ module.exports = function debounce (func, wait = 0, options = {}) {
   let maxTimeoutId
   let result
   let startTriggerTime
-  let thisArg
   const mergeOptions = {
     leading: false,
     trailing: true,
     ...options
   }
 
-  function ReturnDebounce (...args) {
-    thisArg = this
+  return function (...args) {
     const canCallNow = timeoutId === undefined && mergeOptions.leading
     // 记录首次触发的时间
     if (startTriggerTime === undefined) {
@@ -39,7 +37,7 @@ module.exports = function debounce (func, wait = 0, options = {}) {
     clearTimeout(timeoutId)
     timeoutId = setTimeout(() => {
       if (mergeOptions.trailing) {
-        result = func.apply(thisArg, args)
+        result = func.apply(this, args)
         clearTimeout(maxTimeoutId)
         maxTimeoutId = undefined
         startTriggerTime = undefined
@@ -54,7 +52,7 @@ module.exports = function debounce (func, wait = 0, options = {}) {
        * 则可以触发
        */
     if (canCallNow) {
-      result = func.apply(thisArg, args)
+      result = func.apply(this, args)
       clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
         timeoutId = undefined
@@ -63,31 +61,11 @@ module.exports = function debounce (func, wait = 0, options = {}) {
 
     // 注意 maxWait
     if (mergeOptions.maxWait !== undefined && maxTimeoutId === undefined && (Date.now() - startTriggerTime) >= mergeOptions.maxWait) {
-      result = func.apply(thisArg, args)
+      result = func.apply(this, args)
       clearTimeout(timeoutId)
       timeoutId = undefined
     }
 
     return result
   }
-  ReturnDebounce.cancel = function () {
-    clearTimeout(timeoutId)
-    clearTimeout(maxTimeoutId)
-    timeoutId = undefined
-    maxTimeoutId = undefined
-    startTriggerTime = undefined
-  }
-
-  ReturnDebounce.flush = function () {
-    if (timeoutId !== undefined) {
-      clearTimeout(timeoutId)
-      timeoutId = undefined
-      if (mergeOptions.trailing) {
-        result = func.apply(thisArg, arguments)
-      }
-    }
-    return result
-  }
-
-  return ReturnDebounce
 }

@@ -1,12 +1,11 @@
-
 /**
  * 节流,当函数高频次触发时,
  * 按照固定的时间间隔执行函数
  */
-exports.throttling = function throttling (func, time) {
+exports.throttle = function throttle (func, time) {
   const runQueue = []
   let isRunning = false
-  function throttlingFunc () {
+  function throttleFunc () {
     if (isRunning) {
       runQueue.push(arguments)
     } else {
@@ -19,10 +18,10 @@ exports.throttling = function throttling (func, time) {
       setTimeout(() => {
         isRunning = false
         if (runQueue.length) {
-          throttlingFunc()
+          throttleFunc()
         }
       }, time)
     }
   }
-  return throttlingFunc
+  return throttleFunc
 }

@@ -1,6 +1,7 @@
 export default {
   Done: [
     // js
+    'p0-debounce',
     'p0-hidden-class',
     'p0-memory',
     'P0-jit',
