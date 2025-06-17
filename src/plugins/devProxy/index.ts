@@ -16,9 +16,9 @@ export default function devProxy (context: LoadContext, options: any): Plugin {
               changeOrigin: true,
               logLevel: 'debug',
               onProxyRes: (proxyRes: any, req: { method: string; url: string }, res: any) => {
-                console.log(
-                          `[Proxy] ${req.method} ${req.url} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path}`
-                )
+                //  console.log(
+                //            `[Proxy] ${req.method} ${req.url} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path}`
+                //  )
               }
             }
           }

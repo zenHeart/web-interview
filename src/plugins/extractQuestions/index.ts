@@ -41,7 +41,7 @@ export const numberPrefixParser: NumberPrefixParser = (filename: string) => {
         ? numberPrefix[0]
         : parseFloat(numberPrefix.join('.'))
   }
-  console.log(match.groups!.numberPrefix, res)
+  //   console.log(match.groups!.numberPrefix, res)
   return res
 }
 
@@ -55,6 +55,7 @@ export default function extractQuestionsPlugin (
     name: 'extract-questions-plugin',
     async loadContent () {
       const { siteDir, siteConfig } = context
+      console.log('siteConfig', siteConfig)
       const exclude: string[] =
         siteConfig.presets.find((preset) =>
           (preset as unknown[]).includes?.('classic')
@@ -91,7 +92,7 @@ export default function extractQuestionsPlugin (
                 const fragments = anchorMatch
                   ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
                   : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-                const link = `/web-interview/docs/${subject}/${topic}${fragments}`
+                const link = `${siteConfig.baseUrl}docs/${subject}/${topic}${fragments}`
                 return {
                   title,
                   subject: subject || 'Other',
@@ -106,7 +107,8 @@ export default function extractQuestionsPlugin (
             })
           )
         ).flat()
-        console.table(questions)
+        // 打印问题表格
+        //   console.table(questions)
 
         return questions
       } catch (error) {

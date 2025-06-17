@@ -4,6 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic'
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
 import extractQuestionsPlugin, { numberPrefixParser } from './src/plugins/extractQuestions/index'
 import devProxy from './src/plugins/devProxy/index'
+const isLocal = process.env.NODE_ENV === 'development'
 
 const config: Config = {
   markdown: {
@@ -15,8 +16,7 @@ const config: Config = {
   themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
   title: 'web-interview',
   url: 'https://blog.zenheart.site',
-  baseUrl: '/web-interview/',
-
+  baseUrl: isLocal ? '' : '/web-interview/',
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
   projectName: 'wweb-interview', // Usually your repo name.
 
