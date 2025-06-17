@@ -14,11 +14,11 @@ const config: Config = {
     questions: []
   },
   themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
-  title: 'web-interview',
+  title: '前端面试',
   url: 'https://blog.zenheart.site',
   baseUrl: isLocal ? '' : '/web-interview/',
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
-  projectName: 'wweb-interview', // Usually your repo name.
+  projectName: 'web-interview', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -104,13 +104,13 @@ const config: Config = {
       }
     },
     navbar: {
-      title: 'web interview',
+      title: '前端面试',
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'questions'
+          label: '题库'
         },
 
         {
@@ -118,17 +118,17 @@ const config: Config = {
           docId: 'index',
           docsPluginId: 'company', // 确保这里指向正确的插件 ID
           position: 'left',
-          label: 'company'
+          label: '公司'
         },
 
         {
           to: '/reference',
-          label: 'reference',
+          label: '索引',
           position: 'left'
         },
         {
           to: '/kanban',
-          label: 'kanban',
+          label: '看板',
           position: 'left'
         },
         {
@@ -136,7 +136,7 @@ const config: Config = {
           docId: 'index',
           docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
           position: 'left',
-          label: 'contributors'
+          label: '贡献指南'
         },
         //   { to: 'blog', label: 'Blog', position: 'right' }, // or position: 'right'
         {
