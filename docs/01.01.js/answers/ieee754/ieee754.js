@@ -70,7 +70,7 @@ function numberToIEEE754Binary (num, precision = 'single') {
  * @returns {object} 包含数字的 IEEE 754 各组成部分及其解释的对象。
  *                   例如: { originalNumber, precision, binaryString, sign, exponent, mantissa, interpretation }
  */
-export function getNumberIEEE754Components (num, precision = 'single') {
+function getNumberIEEE754Components (num, precision = 'single') {
   const binaryRepresentation = numberToIEEE754Binary(num, precision)
   let exponentBitsCount, mantissaBitsCount, bias
 
@@ -191,7 +191,6 @@ function interpretIEEE754Parts (signBit, exponentBitsStr, mantissaBitsStr, bias,
  */
 function ieee754BinaryToNumber (binaryString, precision = 'single') {
   let buffer, view, expectedLength
-  const bitsInByte = 8
 
   if (!/^[01]+$/.test(binaryString)) {
     throw new Error("二进制字符串包含无效字符 (只允许 '0' 和 '1')。")
@@ -301,3 +300,9 @@ function runExamples() {
 
 runExamples();
 */
+
+module.exports = {
+  numberToIEEE754Binary,
+  getNumberIEEE754Components,
+  ieee754BinaryToNumber
+}

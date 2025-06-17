@@ -1,7 +1,7 @@
 /* eslint-disable jest/no-done-callback */
 
-// const throttle = require('./throttle')
-const throttle = require('lodash/throttle')
+const throttle = require('./throttle')
+// const throttle = require('lodash/throttle')
 
 // 工具函数
 function identity (v) { return v }

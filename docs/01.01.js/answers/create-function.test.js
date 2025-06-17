@@ -27,7 +27,7 @@ describe('函数创建方法及区别', () => {
     } catch (e) {
       error = e
     }
-    expect(error).toBeInstanceOf(TypeError)
+    expect(error).toBeInstanceOf(ReferenceError)
     const funcExprBefore = function () {}
   })
 

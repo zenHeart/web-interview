@@ -17,7 +17,6 @@
  */
 module.exports = function debounce (func, wait = 0, options = {}) {
   let timeoutId
-  let maxTimeoutId
   let result
   let startTriggerTime
   let thisArg
@@ -40,8 +39,6 @@ module.exports = function debounce (func, wait = 0, options = {}) {
     timeoutId = setTimeout(() => {
       if (mergeOptions.trailing) {
         result = func.apply(thisArg, args)
-        clearTimeout(maxTimeoutId)
-        maxTimeoutId = undefined
         startTriggerTime = undefined
       }
       timeoutId = undefined
@@ -62,7 +59,7 @@ module.exports = function debounce (func, wait = 0, options = {}) {
     }
 
     // 注意 maxWait
-    if (mergeOptions.maxWait !== undefined && maxTimeoutId === undefined && (Date.now() - startTriggerTime) >= mergeOptions.maxWait) {
+    if (mergeOptions.maxWait !== undefined && (Date.now() - startTriggerTime) >= mergeOptions.maxWait) {
       result = func.apply(thisArg, args)
       clearTimeout(timeoutId)
       timeoutId = undefined
@@ -72,9 +69,7 @@ module.exports = function debounce (func, wait = 0, options = {}) {
   }
   ReturnDebounce.cancel = function () {
     clearTimeout(timeoutId)
-    clearTimeout(maxTimeoutId)
     timeoutId = undefined
-    maxTimeoutId = undefined
     startTriggerTime = undefined
   }
 

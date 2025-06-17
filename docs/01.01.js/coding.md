@@ -74,12 +74,6 @@ import debounce from '!!raw-loader!./answers/debounce/debounce.js';
  * @returns {Function} 返回一个新的节流函数
  * @example
  *
- * const throttledFunc = throttle(() => {
- *   console.log('Function executed');
- * }, 1000, { leading: true, trailing: false });
- * throttledFunc(); // 立即执行
- * setTimeout(throttledFunc, 500); // 不会执行
- * setTimeout(throttledFunc, 1000); // 会执行
  */
 module.exports = function throttle (func, wait = 0, options = {}) {
 
@@ -89,6 +83,26 @@ module.exports = function throttle (func, wait = 0, options = {}) {
 <Answer>
 
 throttle 用于限制函数的执行频率，对高频执行的函数稳定频率执行。参考 [lodash throttle](https://lodash.com/docs/4.17.15#throttle) 函数，实现如下：
+
+import throttleTest from '!!raw-loader!./answers/throttle/throttle.test.js';
+import throttle from '!!raw-loader!./answers/throttle/throttle.js';
+
+<TestCode
+   options={{
+      showConsole: true,
+      editorHeight: 800
+   }}
+   files={{
+      "/throttle.js": throttle,
+      "/throttle.test.js": throttleTest,
+   }}
+/>
+
+:::tip
+
+在 lodash 内部，实际上 throttle 是基于 debounce 实现的，主要区别在于 throttle 默认配置会在开始和结束时调用函数，同时 maxWait 参数的值会被设置为 wait 的值。
+
+:::
 
 </Answer>
 
@@ -997,8 +1011,6 @@ github有开源模块专门解决这个问题的： [https://github.com/unclechu
 
 ## 实现 loadash get
 
-## async await 原理， 手写 async 函数？{#p0-async-await-implementation}
-
 ## 检测对象循环引用
 
 ## 实现一个处理长字符串的函数 {#p2-process-long-string}
@@ -1192,86 +1204,6 @@ worker.onmessage = function (event) {
 ```
 
 在这个例子中，Web Worker 负责发送请求并计算耗时，然后将结果发送回主页面。这样可以在不阻塞主页面 UI 线程的情况下进行请求耗时统计。
-
-## 1如何判定一个属性来自于对象本身， 还是来自于原型链 {#p0-check-property}
-
-在 JavaScript 中，可以通过以下几种方式来判断一个属性是来自对象本身还是来自原型链：
-
-**一、使用 `hasOwnProperty()` 方法**
-
-1. 方法介绍：
-
-- `hasOwnProperty()`是 JavaScript 对象的一个方法，用于判断一个对象自身是否具有指定的属性。
-- 它不会检查原型链上的属性，只关注对象本身是否拥有该属性。
-
-2. 示例代码：
-
-```js
-function Person () {}
-Person.prototype.name = 'prototype name'
-
-const person = new Person()
-person.age = 30
-
-// eslint-disable-next-line no-prototype-builtins
-console.log(person.hasOwnProperty('age')) // true，说明 age 属性是对象本身的属性
-// eslint-disable-next-line no-prototype-builtins
-console.log(person.hasOwnProperty('name')) // false，说明 name 属性不在对象本身，而是在原型链上
-```
-
-**二、使用 `in` 操作符结合 `hasOwnProperty()`**
-
-1. 方法介绍：
-
-- `in`操作符用于检查一个对象及其原型链中是否具有指定的属性。
-- 可以结合`hasOwnProperty()`来判断属性的来源。
-
-2. 示例代码：
-
- ```js
- function Person () {}
- Person.prototype.name = 'prototype name'
- 
- const person = new Person()
- person.age = 30
- 
- const propertyName = 'name'
- // eslint-disable-next-line
- if (person.hasOwnProperty(propertyName)) {
-   console.log(`${propertyName} is an own property of the object.`)
- } else if (propertyName in person) {
-   console.log(`${propertyName} is inherited from the prototype.`)
- } else {
-   console.log(`${propertyName} is not found in the object or its prototype.`)
- }
- ```
-
-**三、使用 `Object.getOwnPropertyDescriptor()` 方法**
-
-1. 方法介绍：
-
-- `Object.getOwnPropertyDescriptor()`方法返回指定对象上一个自有属性的属性描述符。
-- 如果对象没有指定的自有属性，则返回`undefined`。
-
-2. 示例代码：
-
- ```js
- function Person () {}
- Person.prototype.name = 'prototype name'
- 
- const person = new Person()
- person.age = 30
- 
- const ageDescriptor = Object.getOwnPropertyDescriptor(person, 'age')
- const nameDescriptor = Object.getOwnPropertyDescriptor(person, 'name')
- 
- if (ageDescriptor) {
-   console.log('age is an own property of the object.')
- }
- if (!nameDescriptor) {
-   console.log('name is not an own property of the object.')
- }
- ```
 
 ## 创建一个禁止修改的对象， 只能通过指定方法去修改属性 {#p2-create-object}
 
@@ -3364,7 +3296,8 @@ async function promiseLimit<T> (
 }
 ```
 
-## async await 原理，手写 async 函数?
+## 实现 async 函数 {#p0-async}
 
-1. ES8 引入的特性来简化 promise 的使用
-2. 采用 迭代器可以实现 async await 方法模拟
+**参考资料**
+
+- [手写async await的最简实现](https://juejin.cn/post/6844904102053281806)

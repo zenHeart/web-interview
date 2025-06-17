@@ -1,6 +1,9 @@
 export default {
   Done: [
     // js
+    'p0-check-property',
+    'p0-async-promise',
+    'p0-throttle',
     'p0-debounce',
     'p0-hidden-class',
     'p0-memory',

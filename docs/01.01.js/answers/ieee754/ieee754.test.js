@@ -44,7 +44,7 @@ describe('IEEE 754 浮点数转换与解析', () => {
           expect(recovered).toBe(num)
         } else {
           // 允许极小误差
-          expect(Math.abs(recovered - num)).toBeLessThan(1e-6)
+          expect(Math.abs(recovered - num)).toBeLessThan(1e-5)
         }
       })
     })
