@@ -1681,34 +1681,13 @@ console.log(sum(1)(2)(3, 4)) // 10
 console.log(sum(1, 2, 3, 4)) // 10
 ```
 
-## 实现日期格式化 format 函数{#p0-time-format}
+## 实现 dayjs format 函数{#p1-time-format}
 
-**关键词**：日期format函数、日期format实现
-
-**问题**
-
-```ts
-// js 实现日期的 format 函数
-//
-// YYYY 对应年
-// MM 对应月
-// DD 对应日
-//
-// HH 对应 24 小时制度
-// hh 对应 12 小时制度
-// mm 对应分钟
-// ss 对应秒
-
-const date = new Date()
-const formattedDate = date.format('YYYY-MM-DD HH:mm:ss')
-console.log(formattedDate) // 输出结果为当前日期和时间的格式化字符串
-```
-
-**解答**
-以下是使用JavaScript实现日期格式化的`format`函数：
+<Answer>
 
 ```js
-const format = function (format) {
+// dayjs format 函数实现
+function format (format) {
   const date = this
 
   const year = date.getFullYear()
@@ -1735,36 +1714,46 @@ const formattedDate = date.format('YYYY-MM-DD HH:mm:ss')
 console.log(formattedDate) // 输出结果为当前日期和时间的格式化字符串
 ```
 
-上述代码中，我们通过在`Date`对象的原型上定义`format`函数，使得所有的`Date`对象都可以调用`format`函数进行日期格式化。在函数内部，我们使用`getFullYear`、`getMonth`、`getDate`等方法获取日期的年、月、日、时、分、秒的值，并将其替换到传入的`format`字符串中对应的占位符。最后返回格式化后的字符串。
+<!-- TODO: 补充答案 -->
 
-## 实现一个函数， 计算两个日期之间的天数差 {#p0-time-diff}
+</Answer>
 
-以下是使用JavaScript实现计算两个日期之间的天数差的函数：
+## 实现类似 dayjs [difference](https://day.js.org/docs/en/display/difference) 函数 {#p1-time-diff}
+
+<Answer>
+
+<!-- TODO: 补充答案 -->
 
 ```js
-function calculateDateDifference (date1, date2) {
-  // 将日期字符串转换为 Date 对象
-  const d1 = new Date(date1)
-  const d2 = new Date(date2)
+// dayjs difference 函数实现
+function difference (date1, date2, unit = 'day') {
+  const diffInMs = date2 - date1
 
-  // 计算两个日期的时间差（毫秒数）
-  const timeDiff = Math.abs(d2.getTime() - d1.getTime())
-
-  // 将时间差转换为天数
-  const daysDiff = Math.ceil(timeDiff / (1000360024))
-
-  return daysDiff
+  switch (unit) {
+    case 'year':
+      return diffInMs / (1000 * 60 * 60 * 24 * 365)
+    case 'month':
+      return diffInMs / (1000 * 60 * 60 * 24 * 30)
+    case 'day':
+      return diffInMs / (1000 * 60 * 60 * 24)
+    case 'hour':
+      return diffInMs / (1000 * 60 * 60)
+    case 'minute':
+      return diffInMs / (1000 * 60)
+    case 'second':
+      return diffInMs / 1000
+    default:
+      throw new Error('Unsupported unit for difference calculation')
+  }
 }
-
 // 示例用法
-const date1 = '2022-01-01'
-const date2 = '2022-01-10'
-
-const difference = calculateDateDifference(date1, date2)
-console.log(difference) // 输出结果为 9
+const date1 = new Date('2023-01-01')
+const date2 = new Date('2024-01-01')
+const diffInDays = difference(date1, date2, 'day')
+console.log(`Difference in days: ${diffInDays}`) // 输出结果为 365
 ```
 
-上述函数首先将两个日期字符串转换为Date对象，然后计算两个日期对象之间的时间差（以毫秒表示），最后将时间差转换为天数。通过调用`calculateDateDifference`函数，可以获取两个日期之间的天数差。
+</Answer>
 
 ## 实现 map 函数
 
