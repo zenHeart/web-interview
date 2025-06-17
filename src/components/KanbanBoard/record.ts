@@ -53,11 +53,11 @@ export default {
     'p0-effecitve'
   ],
   SubjectPriority: [
+    'js',
+    'html',
     'vue',
     'react',
-    'js',
     'network',
-    'html',
     'css',
     'engineering',
     'algorithm',
