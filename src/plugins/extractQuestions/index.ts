@@ -55,7 +55,6 @@ export default function extractQuestionsPlugin (
     name: 'extract-questions-plugin',
     async loadContent () {
       const { siteDir, siteConfig } = context
-      console.log('siteConfig', siteConfig)
       const exclude: string[] =
         siteConfig.presets.find((preset) =>
           (preset as unknown[]).includes?.('classic')

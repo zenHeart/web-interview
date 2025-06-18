@@ -19,6 +19,7 @@ const config: Config = {
   baseUrl: isLocal ? '' : '/web-interview/',
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
   projectName: 'web-interview', // Usually your repo name.
+  favicon: 'img/logo.svg',
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -105,6 +106,10 @@ const config: Config = {
     },
     navbar: {
       title: '前端面试',
+      logo: {
+        alt: 'Web Interview Logo',
+        src: 'img/logo.svg'
+      },
       items: [
         {
           type: 'docSidebar',
