@@ -1,0 +1,71 @@
+graph LR
+    %% ECMAScript Spec
+    subgraph ES["ECMAScript Specification"]
+        EC["Execution\nContext"]
+        ER["Environment\nRecord"]
+        SC["Scope Chain\n(Outer Env\nReference)"]
+        EC --> ER --> SC
+    end
+
+    %% Context Mapping
+    subgraph Mapping["Context Types & Env Record Mapping"]
+        direction TB
+        FUNC_SCOPE["FUNCTION_SCOPE\n→ Function Env Record"]
+        EVAL_SCOPE["EVAL_SCOPE\n→ Eval Env Record"]
+        BLOCK_SCOPE["Block Context\n→ Declarative Env Record"]
+        WITH_SCOPE["With Context\n→ Object Env Record"]
+        MODULE_SCOPE["Module Context\n→ Module Env Record"]
+    end
+
+    %% Storage Types
+    subgraph Storage["Variable Storage Types"]
+        direction TB
+        CONTEXT_VAR["CONTEXT\nHeap context slot"]
+        LOOKUP_VAR["LOOKUP\nDynamic lookup"]
+        LOCAL_VAR["LOCAL\nStack frame slot"]
+        PARAM_VAR["PARAMETER\nParameter slot"]
+        MODULE_VAR["MODULE\nModule export"]
+    end
+
+    %% Compilation Time
+    subgraph Compile["Compilation Time"]
+        ContextScope["BytecodeGenerator::\nContextScope"]
+        VarLocation["VariableLocation\nenum"]
+        BytecodeOps["Bytecode\nOperations"]
+        ContextScope --> VarLocation --> BytecodeOps
+    end
+
+    %% Runtime
+    subgraph Runtime["Runtime Objects"]
+        Context["Context Object"]
+        ScopeInfo["ScopeInfo\nObject"]
+        ContextChain["Context Chain\n(previous field)"]
+        Context --> ScopeInfo
+        Context --> ContextChain
+    end
+
+    %% ES -> V8 Impl mapping
+    EC -.->|Implemented by| ContextScope
+    ER -.->|Implemented by| Context
+    SC -.->|Implemented by| ContextChain
+
+    %% Compile-time -> Runtime
+    ContextScope --> Context
+
+    %% Context Object -> Variable Storage
+    Context --> CONTEXT_VAR
+    Context --> LOOKUP_VAR
+
+    %% Context -> Mapping
+    Context --> FUNC_SCOPE
+    Context --> EVAL_SCOPE
+    Context --> BLOCK_SCOPE
+    Context --> WITH_SCOPE
+    Context --> MODULE_SCOPE
+
+    %% VariableLocation enum -> Storage
+    VarLocation --> CONTEXT_VAR
+    VarLocation --> LOOKUP_VAR
+    VarLocation --> LOCAL_VAR
+    VarLocation --> PARAM_VAR
+    VarLocation --> MODULE_VAR

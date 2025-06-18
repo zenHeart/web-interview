@@ -17,7 +17,8 @@
     "test": "jest --watch",
     "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
     "prepare": "husky",
-    "demo:tfo": "node docs/network/tcp/examples/tfo.js"
+    "demo:tfo": "node docs/network/tcp/examples/tfo.js",
+    "topics": "./scripts/topics.sh"
   },
   "repository": {
     "type": "git",
