@@ -23,6 +23,8 @@ const HomeQuestionsSummary: React.FC = () => {
   // 按 subject 和 topic 组织数据，并计算每个 topic 的问题数量
   const organizedQuestions = questions.reduce((acc, question) => {
     const { subject, topic } = question
+    // 兼容 topic 为数组
+    const topicKey = Array.isArray(topic) ? topic.join('/') : topic
 
     if (!acc[subject]) {
       acc[subject] = {
@@ -32,12 +34,12 @@ const HomeQuestionsSummary: React.FC = () => {
       }
     }
 
-    if (!acc[subject].topics[topic]) {
-      acc[subject].topics[topic] = { count: 0, questions: [] }
+    if (!acc[subject].topics[topicKey]) {
+      acc[subject].topics[topicKey] = { count: 0, questions: [] }
     }
 
-    acc[subject].topics[topic].count += 1
-    acc[subject].topics[topic].questions.push(question) // 保存问题以便后续使用
+    acc[subject].topics[topicKey].count += 1
+    acc[subject].topics[topicKey].questions.push(question) // 保存问题以便后续使用
 
     return acc
   }, {} as Record<string, NumberedDomain>)
@@ -58,7 +60,10 @@ const HomeQuestionsSummary: React.FC = () => {
                   rel="noreferrer"
                   href={topic.questions[0]?.link} // 确保链接指向第一个问题
                 >
-                  {`${topicKey} (${topic.count})`}
+                  {Array.isArray(topic.questions[0]?.topic)
+                    ? topic.questions[0].topic.join(' / ')
+                    : topic.questions[0]?.topic}
+                  {` (${topic.count})`}
                 </a>
               ))}
             </div>

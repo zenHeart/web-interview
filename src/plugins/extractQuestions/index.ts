@@ -6,7 +6,8 @@ import type { NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 
 export interface Question {
   subject: string;
-  topic: string;
+  // 主题可能是一个数组，为嵌套关系，索引 0 为 1 级主题，索引 1 为 2 级主题，以此类推
+  topic: string | string[];
   title: string;
   priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
   link: string;
@@ -74,12 +75,26 @@ export default function extractQuestionsPlugin (
             files.map(async (filePath) => {
               const content = await fs.promises.readFile(filePath, 'utf-8')
               const matches = content.match(/^## (.+)$/gm) || []
-              const subject = numberPrefixParser(
-                path.basename(path.dirname(filePath))
-              ).filename // 获取一级目录名并移除前缀数字
-              const topic = numberPrefixParser(
-                path.basename(path.basename(filePath, path.extname(filePath)))
-              ).filename // 获取文件名作为 topic，并移除前缀数字
+
+              // 计算相对 docs 目录的路径
+              const relativePath = path.relative(docsDir, filePath)
+              const pathParts = relativePath.split(path.sep)
+              // 主题为第一级目录
+              const subject = numberPrefixParser(pathParts[0]).filename
+
+              // 解析 topics（去除文件名后缀和前缀数字）
+              const topicParts = pathParts
+                .slice(1, -1) // 目录部分
+                .map((dir) => numberPrefixParser(dir).filename)
+              // 文件名部分
+              const fileTopic = numberPrefixParser(
+                path.basename(filePath, path.extname(filePath))
+              ).filename
+              // 合并目录和文件名作为 topics
+              const topics = topicParts.length > 0
+                ? [...topicParts, fileTopic]
+                : fileTopic
+
               const fileH1 = content.match(/^# (.+)$/m)?.[1] // 获取文件的 H1 标题
 
               return matches.map((match) => {
@@ -91,11 +106,17 @@ export default function extractQuestionsPlugin (
                 const fragments = anchorMatch
                   ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
                   : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-                const link = `${siteConfig.baseUrl}docs/${subject}/${topic}${fragments}`
+
+                // 构建链接路径
+                const topicPath = Array.isArray(topics)
+                  ? topics.join('/')
+                  : topics
+                const link = `${siteConfig.baseUrl}docs/${subject}/${topicPath}${fragments}`
+
                 return {
                   title,
                   subject: subject || 'Other',
-                  topic,
+                  topic: topics,
                   priority,
                   link,
                   meta: {
@@ -107,7 +128,7 @@ export default function extractQuestionsPlugin (
           )
         ).flat()
         // 打印问题表格
-        //   console.table(questions)
+        console.table(questions)
 
         return questions
       } catch (error) {

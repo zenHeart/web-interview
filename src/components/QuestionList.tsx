@@ -27,6 +27,8 @@ function QuestionList () {
   // 按 subject 和 topic 组织数据，并添加编号
   const organizedQuestions = questions.reduce((acc, question) => {
     const { subject, topic } = question
+    // 兼容 topic 为数组
+    const topicKey = Array.isArray(topic) ? topic.join('/') : topic
 
     // 如果是新的 subject，添加到最后面
     if (!acc[subject]) {
@@ -40,17 +42,17 @@ function QuestionList () {
     }
 
     // 如果是新的 topic，添加到最后面
-    if (!acc[subject].topics[topic]) {
+    if (!acc[subject].topics[topicKey]) {
       const existingTopics = Object.values(acc[subject].topics)
       const nextNumber = existingTopics.length + 1
-      acc[subject].topics[topic] = {
+      acc[subject].topics[topicKey] = {
         number: nextNumber,
-        name: topic,
+        name: topicKey,
         questions: []
       }
     }
 
-    acc[subject].topics[topic].questions.push(question)
+    acc[subject].topics[topicKey].questions.push(question)
     return acc
   }, {} as Record<string, NumberedDomain>)
 
@@ -146,7 +148,9 @@ function QuestionList () {
                     <div key={topicKey} className="topic-block">
                       <h2 className="topic-title">
                         <a target="_blank" href={topic.questions[0]?.link?.split('#')[0]} rel="noreferrer">
-                          {topic.number}.{topic.name}
+                          {topic.number}.{Array.isArray(topic.questions[0]?.topic)
+                            ? topic.questions[0].topic.join(' / ')
+                            : topic.questions[0]?.topic}
                         </a>
                       </h2>
                       <div className="question-list-container">

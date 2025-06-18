@@ -33,9 +33,10 @@ function KanbanBoard () {
     }
 
     if (filters.topic) {
-      results = results.filter((q) =>
-        q.topic?.toLowerCase().includes(filters.topic!.toLowerCase())
-      )
+      results = results.filter((q) => {
+        const topicStr = Array.isArray(q.topic) ? q.topic.join('/') : q.topic
+        return topicStr?.toLowerCase().includes(filters.topic!.toLowerCase())
+      })
     }
 
     if (filters.raw) {
@@ -44,7 +45,9 @@ function KanbanBoard () {
         (q) =>
           q.title.toLowerCase().includes(searchTerm) ||
           q.subject?.toLowerCase().includes(searchTerm) ||
-          q.topic?.toLowerCase().includes(searchTerm)
+          (Array.isArray(q.topic)
+            ? q.topic.join('/').toLowerCase().includes(searchTerm)
+            : q.topic?.toLowerCase().includes(searchTerm))
       )
     }
 
@@ -170,7 +173,9 @@ function KanbanBoard () {
                             <div className="task-meta">
                               <span className="task-topic">
                                 <a href={question.link?.split('#')[0]}>
-                                  {question.topic}
+                                  {Array.isArray(question.topic)
+                                    ? question.topic.join(' / ')
+                                    : question.topic}
                                 </a>
                               </span>
                             </div>
