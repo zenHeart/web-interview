@@ -4,6 +4,19 @@ import type { Plugin, LoadContext } from '@docusaurus/types'
 import fastGlob from 'fast-glob'
 import type { NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 
+export interface Topic {
+   name: string;
+   children: {
+      [topic: string]: Topic
+   }
+}
+export interface KnowledgeMap {
+   [subject: string]: {
+      name: string;
+      topics: Topic[];
+   };
+}
+
 export interface Question {
   subject: string;
   // 主题可能是一个数组，为嵌套关系，索引 0 为 1 级主题，索引 1 为 2 级主题，以此类推
