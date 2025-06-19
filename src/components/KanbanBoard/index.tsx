@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './KanbanBoard.css'
 import { usePluginData } from '@docusaurus/useGlobalData'
-import type { Question } from '@site/src/plugins/extractQuestions'
+import type { Question, KnowledgeMap } from '@site/src/plugins/extractQuestions'
 import KanbanSearch, { SearchFilters } from './KanbanSearch'
 import PriorityTag from '../PriorityTag'
 import record from './record'
@@ -9,8 +9,9 @@ import Progress from '../Progress' // 引入 Progress 组件
 const doneKeys = record.Done
 
 function KanbanBoard () {
-  const { questions = [] } = usePluginData('extract-questions-plugin') as {
+  const { questions = [], knowledgeMap = {} } = usePluginData('extract-questions-plugin') as {
     questions: Question[];
+    knowledgeMap: KnowledgeMap;
   }
   const [filteredQuestions, setFilteredQuestions] = useState(questions)
   const [collapsedGroups, setCollapsedGroups] = useState<
@@ -22,20 +23,24 @@ function KanbanBoard () {
 
     if (filters.subject) {
       results = results.filter((q) =>
-        q.subject?.toLowerCase().includes(filters.subject!.toLowerCase())
+        q.subject?.toLowerCase().includes(filters.subject.toLowerCase())
       )
     }
 
     if (filters.title) {
       results = results.filter((q) =>
-        q.title.toLowerCase().includes(filters.title!.toLowerCase())
+        q.title.toLowerCase().includes(filters.title.toLowerCase())
       )
     }
 
     if (filters.topic) {
+      // 支持基于 name 的 topic 搜索
+      const searchTerm = filters.topic.toLowerCase()
       results = results.filter((q) => {
-        const topicStr = Array.isArray(q.topic) ? q.topic.join('/') : q.topic
-        return topicStr?.toLowerCase().includes(filters.topic!.toLowerCase())
+        const names = Array.isArray(q.topic)
+          ? getTopicNames(q.subject, q.topic)
+          : getTopicNames(q.subject, [q.topic])
+        return names.some((n) => n && n.toLowerCase().includes(searchTerm))
       })
     }
 
@@ -47,7 +52,9 @@ function KanbanBoard () {
           q.subject?.toLowerCase().includes(searchTerm) ||
           (Array.isArray(q.topic)
             ? q.topic.join('/').toLowerCase().includes(searchTerm)
-            : q.topic?.toLowerCase().includes(searchTerm))
+            : q.topic?.toLowerCase().includes(searchTerm)) ||
+          // 新增：raw 支持 topic name 搜索
+          (getTopicNames(q.subject, q.topic).some((n) => n && n.toLowerCase().includes(searchTerm)))
       )
     }
 
@@ -123,6 +130,32 @@ function KanbanBoard () {
     return Object.values(groupedQuestions[status] || {}).flat().length
   }
 
+  // 新增：根据 topic 数组和 knowledgeMap 获取主题 name
+  function getTopicNames (subject: string, topic: string | string[]) {
+    const names: string[] = []
+    const node = knowledgeMap[subject]
+    if (!node) return []
+    if (Array.isArray(topic)) {
+      let cur = node
+      for (const t of topic) {
+        if (cur.children && cur.children[t]) {
+          names.push(cur.children[t].name)
+          cur = cur.children[t]
+        } else {
+          names.push(t)
+          break
+        }
+      }
+    } else {
+      if (node.children && node.children[topic]) {
+        names.push(node.children[topic].name)
+      } else {
+        names.push(topic)
+      }
+    }
+    return names
+  }
+
   return (
     <div className="kanban-container">
       <KanbanSearch onSearch={handleSearch} />
@@ -156,7 +189,7 @@ function KanbanBoard () {
                       <span className="collapse-icon">
                         {collapsedGroups[`${column.id}-${subject}`] ? '▶' : '▼'}
                       </span>
-                      <span className="subject-name">{subject}</span>
+                      <span className="subject-name">{knowledgeMap[subject]?.name || subject}</span>
                       <span className="subject-count">{items.length}</span>
                     </div>
 
@@ -174,8 +207,8 @@ function KanbanBoard () {
                               <span className="task-topic">
                                 <a href={question.link?.split('#')[0]}>
                                   {Array.isArray(question.topic)
-                                    ? question.topic.join(' / ')
-                                    : question.topic}
+                                    ? getTopicNames(question.subject, question.topic).join(' / ')
+                                    : getTopicNames(question.subject, [question.topic]).join(' / ')}
                                 </a>
                               </span>
                             </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import './QuestionList.css'
 import { usePluginData } from '@docusaurus/useGlobalData'
+import type { KnowledgeMap } from '@site/src/plugins/extractQuestions'
 
 interface Question {
   subject: string;
@@ -22,7 +23,7 @@ interface NumberedDomain {
 }
 
 function QuestionList () {
-  const { questions = [] } = usePluginData('extract-questions-plugin') as { questions: Question[] }
+  const { questions = [], knowledgeMap = {} } = usePluginData('extract-questions-plugin') as { questions: Question[], knowledgeMap: KnowledgeMap }
 
   // 按 subject 和 topic 组织数据，并添加编号
   const organizedQuestions = questions.reduce((acc, question) => {
@@ -55,6 +56,32 @@ function QuestionList () {
     acc[subject].topics[topicKey].questions.push(question)
     return acc
   }, {} as Record<string, NumberedDomain>)
+
+  // 新增：根据 topic 数组和 knowledgeMap 获取主题 name
+  function getTopicNames (subject: string, topic: string | string[]) {
+    const names: string[] = []
+    const node = knowledgeMap[subject]
+    if (!node) return []
+    if (Array.isArray(topic)) {
+      let cur = node
+      for (const t of topic) {
+        if (cur.children && cur.children[t]) {
+          names.push(cur.children[t].name)
+          cur = cur.children[t]
+        } else {
+          names.push(t)
+          break
+        }
+      }
+    } else {
+      if (node.children && node.children[topic]) {
+        names.push(node.children[topic].name)
+      } else {
+        names.push(topic)
+      }
+    }
+    return names
+  }
 
   // 优化的瀑布流分配算法
   const distributeTopics = (topics: Record<string, NumberedTopic>) => {
@@ -139,7 +166,7 @@ function QuestionList () {
         .map(([domainKey, subject]) => (
           <div key={domainKey} className="subject-section">
             <h1 className="subject-title">
-              {subject.number}.{subject.name}
+              {subject.number}.{knowledgeMap[domainKey]?.name || subject.name}
             </h1>
             <div className="topics-container">
               {distributeTopics(subject.topics).map((columnTopics, columnIndex) => (
@@ -148,9 +175,7 @@ function QuestionList () {
                     <div key={topicKey} className="topic-block">
                       <h2 className="topic-title">
                         <a target="_blank" href={topic.questions[0]?.link?.split('#')[0]} rel="noreferrer">
-                          {topic.number}.{Array.isArray(topic.questions[0]?.topic)
-                            ? topic.questions[0].topic.join(' / ')
-                            : topic.questions[0]?.topic}
+                          {topic.number}.{getTopicNames(domainKey, Array.isArray(topic.questions[0]?.topic) ? topic.questions[0].topic : [topic.questions[0]?.topic]).join(' / ')}
                         </a>
                       </h2>
                       <div className="question-list-container">

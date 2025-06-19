@@ -6,14 +6,16 @@ import type { NumberPrefixParser } from '@docusaurus/plugin-content-docs'
 
 export interface Topic {
    name: string;
-   children: {
+   children?: {
       [topic: string]: Topic
    }
 }
 export interface KnowledgeMap {
    [subject: string]: {
       name: string;
-      topics: Topic[];
+      children: {
+         [topic: string]: Topic;
+      }
    };
 }
 
@@ -22,7 +24,7 @@ export interface Question {
   // 主题可能是一个数组，为嵌套关系，索引 0 为 1 级主题，索引 1 为 2 级主题，以此类推
   topic: string | string[];
   title: string;
-  priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
+  priority?: 'P0' | 'P1' | 'P2' | 'P3' | 'P4' | string
   link: string;
   meta: {
     fileH1: string;
@@ -64,7 +66,7 @@ export default function extractQuestionsPlugin (
   options: PluginOptions = {
     exclude: ['issueData']
   }
-): Plugin<Question[]> {
+): Plugin<{ questions: Question[]; knowledgeMap: KnowledgeMap }> {
   return {
     name: 'extract-questions-plugin',
     async loadContent () {
@@ -83,83 +85,172 @@ export default function extractQuestionsPlugin (
           absolute: true,
           dot: true
         })
-        const questions = (
-          await Promise.all(
-            files.map(async (filePath) => {
-              const content = await fs.promises.readFile(filePath, 'utf-8')
-              const matches = content.match(/^## (.+)$/gm) || []
-
-              // 计算相对 docs 目录的路径
-              const relativePath = path.relative(docsDir, filePath)
-              const pathParts = relativePath.split(path.sep)
-              // 主题为第一级目录
-              const subject = numberPrefixParser(pathParts[0]).filename
-
-              // 解析 topics（去除文件名后缀和前缀数字）
-              const topicParts = pathParts
-                .slice(1, -1) // 目录部分
-                .map((dir) => numberPrefixParser(dir).filename)
-              // 文件名部分
-              const fileTopic = numberPrefixParser(
-                path.basename(filePath, path.extname(filePath))
-              ).filename
-              // 合并目录和文件名作为 topics
-              const topics = topicParts.length > 0
-                ? [...topicParts, fileTopic]
-                : fileTopic
-
-              const fileH1 = content.match(/^# (.+)$/m)?.[1] // 获取文件的 H1 标题
-
-              return matches.map((match) => {
-                const titleWithAnchor = match.slice(3).trim()
-                const anchorMatch =
-                  titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
-                const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
-                const priority = anchorMatch?.toUpperCase?.() || 'P4'
-                const fragments = anchorMatch
-                  ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
-                  : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-
-                // 构建链接路径
-                const topicPath = Array.isArray(topics)
-                  ? topics.join('/')
-                  : topics
-                const link = `${siteConfig.baseUrl}docs/${subject}/${topicPath}${fragments}`
-
-                return {
-                  title,
-                  subject: subject || 'Other',
-                  topic: topics,
-                  priority,
-                  link,
-                  meta: {
-                    fileH1
-                  }
-                }
-              })
+        // 1. 预读取所有 subject 的 index.md H1
+        const subjectH1Map: Record<string, string> = {}
+        const h1Cache: Record<string, string> = {}
+        const subjectSet = new Set<string>()
+        await Promise.all(files.map(async (filePath) => {
+          const relativePath = path.relative(docsDir, filePath)
+          const pathParts = relativePath.split(path.sep)
+          const subject = numberPrefixParser(pathParts[0]).filename
+          subjectSet.add(subject)
+          const noExt = relativePath.replace(/\.(md|mdx)$/, '')
+          const content = await fs.promises.readFile(filePath, 'utf-8')
+          let h1 = content.match(/^# (.+)$/m)?.[1] || ''
+          h1 = h1.replace(/✅+$/, '').trim()
+          h1Cache[noExt] = h1
+        }))
+        // 2. questions 收集 + knowledgeMap 构建
+        const questions: Question[] = []
+        const knowledgeMap: KnowledgeMap = {}
+        // 构建 subject 根节点，顺序与 subjectSet 保持一致
+        // subjectArr 用原始目录名（带标号）
+        const subjectArr = Array.from(new Set(files.map(f => path.relative(docsDir, f).split(path.sep)[0])))
+        subjectArr.sort((a, b) => {
+          const aNum = parseFloat(a.match(/^\d+(\.\d+)?/)?.[0] || '0')
+          const bNum = parseFloat(b.match(/^\d+(\.\d+)?/)?.[0] || '0')
+          return aNum - bNum
+        })
+        for (const subjectDirName of subjectArr) {
+          // 优先查找 subject 目录下 index.md 的 H1
+          const indexMd = path.join(docsDir, subjectDirName, 'index.md')
+          let name = subjectDirName
+          if (fs.existsSync(indexMd)) {
+            const rel = path.relative(docsDir, indexMd).replace(/\.(md|mdx)$/, '')
+            name = h1Cache[rel] || numberPrefixParser(subjectDirName).filename
+          } else {
+            name = numberPrefixParser(subjectDirName).filename
+          }
+          const subjectKey = numberPrefixParser(subjectDirName).filename
+          knowledgeMap[subjectKey] = { name, children: {} }
+        }
+        // 遍历所有文件，questions 逻辑保持不变，同时递归 knowledgeMap，顺序与文件顺序一致
+        for (const filePath of files) {
+          const content = await fs.promises.readFile(filePath, 'utf-8')
+          const matches = content.match(/^## (.+)$/gm) || []
+          const relativePath = path.relative(docsDir, filePath)
+          const pathParts = relativePath.split(path.sep)
+          // 用原始 subject 目录名和去标号 key
+          const subjectDirName = pathParts[0]
+          const subjectKey = numberPrefixParser(subjectDirName).filename
+          // topicParts: [{raw, key}]
+          const topicPartsRaw = pathParts.slice(1, -1)
+          const topicParts = topicPartsRaw.map(dir => ({ raw: dir, key: numberPrefixParser(dir).filename }))
+          const fileRaw = path.basename(filePath, path.extname(filePath))
+          const fileKey = numberPrefixParser(fileRaw).filename
+          // topics: [{raw, key}]
+          const topics = topicParts.length > 0 ? [...topicParts, { raw: fileRaw, key: fileKey }] : [{ raw: fileRaw, key: fileKey }]
+          const fileH1 = content.match(/^# (.+)$/m)?.[1]
+          // === questions 逻辑保持不变 ===
+          const topicPathArr = topics.map(t => t.key)
+          // 修正 subject/topic 变量作用域
+          const subject = subjectKey
+          const topicForQuestion = Array.isArray(topics) ? topics.map(t => t.key) : topics[0].key
+          for (const match of matches) {
+            const titleWithAnchor = match.slice(3).trim()
+            const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
+            const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
+            const priority = anchorMatch?.toUpperCase?.() || 'P4'
+            const fragments = anchorMatch
+              ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
+              : `#${title.toLowerCase().replace(/\s+/g, '-')}`
+            const topicPath = Array.isArray(topicForQuestion) ? topicForQuestion.join('/') : topicForQuestion
+            const link = `${siteConfig.baseUrl}docs/${subject}/${topicPath}${fragments}`
+            questions.push({
+              title,
+              subject: subject || 'Other',
+              topic: topicForQuestion,
+              priority,
+              link,
+              meta: { fileH1 }
             })
-          )
-        ).flat()
+          }
+          // === knowledgeMap 递归构建 ===
+          if (topicPathArr.length === 1 && (fileKey === 'index')) continue
+          let node = knowledgeMap[subjectKey].children
+          let parentRawPath = subjectDirName // 用于拼接原始路径
+          for (let i = 0; i < topics.length; i++) {
+            const { raw, key } = topics[i]
+            const isLast = i === topics.length - 1
+            let name = key
+            if (!isLast) {
+              // 嵌套目录，优先查找该目录下 index.md 的 H1
+              const dirPath = parentRawPath + '/' + raw
+              const indexMdPath = path.join(docsDir, dirPath, 'index.md')
+              if (fs.existsSync(indexMdPath)) {
+                const rel = path.relative(docsDir, indexMdPath).replace(/\.(md|mdx)$/, '')
+                name = h1Cache[rel] || key
+              } else {
+                name = key
+              }
+              parentRawPath = dirPath
+            } else {
+              // 最后一级，优先查找同名文件 H1
+              const filePathTry = path.join(docsDir, parentRawPath, raw + '.md')
+              if (fs.existsSync(filePathTry)) {
+                const rel = path.relative(docsDir, filePathTry).replace(/\.(md|mdx)$/, '')
+                name = h1Cache[rel] || key
+              } else {
+                // 也可能是目录 index.md
+                const dirPath = parentRawPath + '/' + raw
+                const indexMdPath = path.join(docsDir, dirPath, 'index.md')
+                if (fs.existsSync(indexMdPath)) {
+                  const rel = path.relative(docsDir, indexMdPath).replace(/\.(md|mdx)$/, '')
+                  name = h1Cache[rel] || key
+                } else {
+                  name = key
+                }
+              }
+              // 剔除末尾 ✅
+              name = name.replace(/✅+$/, '').trim()
+            }
+            if (!node[key]) node[key] = { name }
+            if (!isLast) {
+              if (!node[key].children) node[key].children = {}
+              node = node[key].children
+            }
+          }
+        }
         // 打印问题表格
         console.table(questions)
-
-        return questions
+        return { questions, knowledgeMap }
       } catch (error) {
         console.error('Error extracting questions:', error)
-        return []
+        return { questions: [], knowledgeMap: {} }
+      }
+      // 辅助函数
+      function addTopicNode (tree: any, topicPath: string[], name: string) {
+        if (!topicPath.length) return
+        const [head, ...rest] = topicPath
+        if (!tree[head]) {
+          tree[head] = { name: head, children: {} }
+        }
+        if (rest.length === 0) {
+          tree[head].name = name || head
+        }
+        addTopicNode(tree[head].children, rest, name)
+      }
+      function treeToArr (tree: any): Topic[] {
+        // @ts-ignore
+        return Object.entries(tree).map(([_, v]: [string, any]) => ({
+          name: v.name,
+          children: treeToArr(v.children)
+        }))
       }
     },
-
     async contentLoaded ({ content, actions }) {
       const { createData, setGlobalData } = actions
-
-      // console.log('Content loaded:', content)
-
-      const info = await createData(
+      const questions = content.questions
+      const knowledgeMap = content.knowledgeMap
+      await createData(
         'src/data/questions.json',
-        JSON.stringify(content, null, 2)
+        JSON.stringify(questions, null, 2)
       )
-      setGlobalData({ questions: content })
+      await createData(
+        'src/data/knowledgeMap.json',
+        JSON.stringify(knowledgeMap, null, 2)
+      )
+      setGlobalData({ questions, knowledgeMap })
     }
   }
 }
