@@ -212,7 +212,7 @@ export default function extractQuestionsPlugin (
           }
         }
         // 打印问题表格
-        console.table(questions)
+        //   console.table(questions)
         return { questions, knowledgeMap }
       } catch (error) {
         console.error('Error extracting questions:', error)
