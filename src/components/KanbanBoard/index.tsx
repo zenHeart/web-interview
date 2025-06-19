@@ -22,9 +22,15 @@ function KanbanBoard () {
     let results = questions
 
     if (filters.subject) {
-      results = results.filter((q) =>
-        q.subject?.toLowerCase().includes(filters.subject.toLowerCase())
-      )
+      const searchTerm = filters.subject.toLowerCase()
+      results = results.filter((q) => {
+        // 支持 subject key 和 name 搜索
+        const subjectName = knowledgeMap[q.subject]?.name?.toLowerCase() || ''
+        return (
+          q.subject?.toLowerCase().includes(searchTerm) ||
+          subjectName.includes(searchTerm)
+        )
+      })
     }
 
     if (filters.title) {
@@ -34,13 +40,18 @@ function KanbanBoard () {
     }
 
     if (filters.topic) {
-      // 支持基于 name 的 topic 搜索
+      // 支持基于 name 和 key 的 topic 搜索
       const searchTerm = filters.topic.toLowerCase()
       results = results.filter((q) => {
         const names = Array.isArray(q.topic)
           ? getTopicNames(q.subject, q.topic)
           : getTopicNames(q.subject, [q.topic])
-        return names.some((n) => n && n.toLowerCase().includes(searchTerm))
+        // 主题 key 字符串
+        const topicKeyStr = Array.isArray(q.topic) ? q.topic.join('/') : q.topic
+        return (
+          names.some((n) => n && n.toLowerCase().includes(searchTerm)) ||
+          (topicKeyStr && topicKeyStr.toLowerCase().includes(searchTerm))
+        )
       })
     }
 
@@ -50,6 +61,7 @@ function KanbanBoard () {
         (q) =>
           q.title.toLowerCase().includes(searchTerm) ||
           q.subject?.toLowerCase().includes(searchTerm) ||
+          (knowledgeMap[q.subject]?.name?.toLowerCase() || '').includes(searchTerm) ||
           (Array.isArray(q.topic)
             ? q.topic.join('/').toLowerCase().includes(searchTerm)
             : q.topic?.toLowerCase().includes(searchTerm)) ||
