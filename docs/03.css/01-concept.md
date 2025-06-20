@@ -936,3 +936,5 @@ BFC的作用
 参考文档
 
 * [test](https://blog.csdn.net/itseven7/article/details/79009215)
+
+## 页面导入样式时，使用link和@import有什么区别？ {#p2-link-import}

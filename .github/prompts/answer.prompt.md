@@ -6,6 +6,12 @@ description: 生成高质量、结构化的前端面试题答案，遵循项目�
 
 你是一名前端专家。你的任务是使用以下模板和最佳实践，回答指定的前端面试题：
 
+
+示例答案参考
+
+1. [01.js/01.type-value.md](../../docs/01.js/01.type-value.md)
+2. [05.02.vue/00.core-concepts](../../docs/05.02.vue/00.core-concepts.md)
+
 要求：
 * 遵循 [copilot-instructions](../copilot-instructions.md) 定义的规则
 * 遵循答案结构，详见 [quesitons.md](../../contributors/template/01.question.md)
@@ -17,25 +23,6 @@ description: 生成高质量、结构化的前端面试题答案，遵循项目�
 * 如有相关，参考项目文档和设计系统。
 * 延伸阅读以列表形式，包含多样资源（如视频、书籍、源码、工具），并附简要说明。
 * 特殊提示使用 :::tip:::、:::warning:::、:::note:::，并举例说明何时使用。
-* 支持插入自定义组件（如 <Ieee754ConceptCard/>），可在“答案解析”或“知识卡片”区块插入。
-* 鼓励用自然语言解释代码输出结果，并可穿插“常见面试陷阱”或“实际开发建议”小节。
 
 如未提供问题，请提示用户补充。
 
-示例结构：
-
-## [问题标题] {#p0-question-id}
-
-<Answer meta="difficulty:medium; time:10min">
-
-### 核心概念
-简要说明主要思想。
-
-### 详细解释
-清晰深入地解释该概念，补充底层原理、标准出处、常见误区或实际开发建议。
-
-### 代码示例
-
-```js
-//
-```
