@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+   <meta charset="UTF-8">
+   <title>捕获 FCP 示例</title>
+</head>
+<body>
+   <h1>捕获 FCP（First Contentful Paint）示例</h1>
+   <script>
+      // 使用 PerformanceObserver 监听 FCP
+      if ('PerformanceObserver' in window) {
+         const observer = new PerformanceObserver((list) => {
+            for (const entry of list.getEntries()) {
+               if (entry.name === 'first-contentful-paint') {
+                  // FCP 时间以毫秒为单位
+                  console.log('FCP 时间:', entry.startTime.toFixed(2) + ' ms');
+               }
+            }
+         });
+         observer.observe({ type: 'paint', buffered: true });
+      }
+   </script>
+</body>
+</html>
