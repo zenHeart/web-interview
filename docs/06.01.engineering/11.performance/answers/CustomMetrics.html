@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Custom Performance Metrics Demo</title>
+   <style>
+      body { font-family: sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+      button { margin: 5px; padding: 8px 16px; }
+      #results { margin-top: 20px; border: 1px solid #ddd; padding: 15px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background-color: #f2f2f2; }
+   </style>
+</head>
+<body>
+   <h1>自定义性能指标采集示例</h1>
+   
+   <div>
+      <button id="loadData">加载数据</button>
+      <button id="renderUI">渲染界面</button>
+      <button id="processData">处理数据</button>
+      <button id="viewMetrics">查看性能指标</button>
+      <button id="clearMetrics">清除指标</button>
+   </div>
+
+   <div id="results">
+      <h3>性能测量结果:</h3>
+      <table id="metricsTable">
+         <thead>
+            <tr>
+               <th>操作</th>
+               <th>耗时 (ms)</th>
+               <th>开始时间</th>
+               <th>结束时间</th>
+            </tr>
+         </thead>
+         <tbody><!-- 数据将被插入到这里 --></tbody>
+      </table>
+   </div>
+
+   <script>
+      // 设置 PerformanceObserver 自动收集测量结果
+      const perfObserver = new PerformanceObserver((list) => {
+         list.getEntries().forEach(entry => {
+            if (entry.entryType === 'measure') {
+               console.log(`[性能观察器] ${entry.name}: ${entry.duration.toFixed(2)}ms`);
+            }
+         });
+      });
+      perfObserver.observe({ entryTypes: ['measure'] });
+
+      // 使用命名空间避免冲突
+      const PERF_NS = 'app-metrics';
+
+      // 自定义性能跟踪工具
+      const PerformanceTracker = {
+         start(operationName) {
+            const markName = `${PERF_NS}.${operationName}.start`;
+            performance.mark(markName);
+            return markName;
+         },
+         
+         end(operationName) {
+            const startMark = `${PERF_NS}.${operationName}.start`;
+            const endMark = `${PERF_NS}.${operationName}.end`;
+            const measureName = `${PERF_NS}.${operationName}`;
+            
+            performance.mark(endMark);
+            performance.measure(measureName, startMark, endMark);
+            
+            // 清理不再需要的标记
+            performance.clearMarks(startMark);
+            performance.clearMarks(endMark);
+            
+            return measureName;
+         },
+         
+         getMeasurements() {
+            return performance.getEntriesByType('measure')
+               .filter(entry => entry.name.startsWith(PERF_NS));
+         },
+         
+         clearMeasurements() {
+            const measures = this.getMeasurements();
+            measures.forEach(measure => {
+               performance.clearMeasures(measure.name);
+            });
+         }
+      };
+
+      // 模拟API请求
+      function simulateAPIRequest() {
+         return new Promise(resolve => {
+            setTimeout(() => {
+               resolve({ data: [1, 2, 3, 4, 5] });
+            }, Math.random() * 800 + 200);
+         });
+      }
+
+      // 模拟操作
+      async function loadData() {
+         PerformanceTracker.start('data-loading');
+         try {
+            const result = await simulateAPIRequest();
+            window.appData = result.data;
+         } finally {
+            PerformanceTracker.end('data-loading');
+         }
+      }
+
+      function renderUI() {
+         PerformanceTracker.start('ui-rendering');
+         
+         // 模拟UI渲染工作
+         const start = performance.now();
+         while (performance.now() - start < 150) { /* 模拟复杂渲染 */ }
+         
+         PerformanceTracker.end('ui-rendering');
+      }
+
+      function processData() {
+         if (!window.appData) {
+            alert('请先加载数据!');
+            return;
+         }
+         
+         PerformanceTracker.start('data-processing');
+         const result = window.appData.map(x => x * x);
+         console.log('处理后的数据:', result);
+         PerformanceTracker.end('data-processing');
+      }
+
+      function updateMetricsTable() {
+         const measurements = PerformanceTracker.getMeasurements();
+         const tbody = document.querySelector('#metricsTable tbody');
+         tbody.innerHTML = '';
+         
+         measurements.forEach(entry => {
+            const row = document.createElement('tr');
+            const operationName = entry.name.replace(`${PERF_NS}.`, '');
+            
+            row.innerHTML = `
+               <td>${operationName}</td>
+               <td>${entry.duration.toFixed(2)} ms</td>
+               <td>${new Date(entry.startTime + performance.timeOrigin).toLocaleTimeString()}</td>
+               <td>${new Date(entry.startTime + entry.duration + performance.timeOrigin).toLocaleTimeString()}</td>
+            `;
+            
+            tbody.appendChild(row);
+         });
+      }
+
+      // 事件监听
+      document.getElementById('loadData').addEventListener('click', loadData);
+      document.getElementById('renderUI').addEventListener('click', renderUI);
+      document.getElementById('processData').addEventListener('click', processData);
+      document.getElementById('viewMetrics').addEventListener('click', updateMetricsTable);
+      document.getElementById('clearMetrics').addEventListener('click', () => {
+         PerformanceTracker.clearMeasurements();
+         updateMetricsTable();
+      });
+   </script>
+</body>
+</html>

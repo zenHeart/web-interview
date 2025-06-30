@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>长任务检测演示</title>
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         max-width: 800px;
+         margin: 0 auto;
+         padding: 20px;
+      }
+      .container {
+         border: 1px solid #ddd;
+         padding: 20px;
+         border-radius: 5px;
+      }
+      button {
+         padding: 10px 15px;
+         background-color: #4CAF50;
+         color: white;
+         border: none;
+         border-radius: 4px;
+         cursor: pointer;
+         margin-right: 10px;
+      }
+      #results {
+         background-color: #f9f9f9;
+         padding: 10px;
+         border-radius: 4px;
+         min-height: 100px;
+         margin-top: 20px;
+      }
+      .task-entry {
+         border-bottom: 1px solid #ddd;
+         padding: 5px 0;
+      }
+   </style>
+</head>
+<body>
+   <h1>长任务检测演示</h1>
+   
+   <div class="container">
+      <h2>什么是长任务？</h2>
+      <p>长任务是指任何执行时间超过50毫秒的任务，它会阻塞主线程并可能导致UI卡顿。</p>
+      
+      <h2>亲自试试！</h2>
+      <button id="createLongTask">创建长任务</button>
+      <button id="clearResults">清除结果</button>
+      
+      <h3>检测到的长任务：</h3>
+      <div id="results"></div>
+   </div>
+
+   <script>
+      // 设置长任务观察器
+      const observer = new PerformanceObserver((list) => {
+         list.getEntries().forEach((entry) => {
+            // 将长任务详情记录到控制台
+            console.log('检测到长任务', entry);
+            
+            // 在页面上显示长任务详情
+            const resultsDiv = document.getElementById('results');
+            const taskDiv = document.createElement('div');
+            taskDiv.className = 'task-entry';
+            
+            const duration = entry.duration.toFixed(2);
+            const startTime = entry.startTime.toFixed(2);
+            
+            taskDiv.innerHTML = `
+               <p><strong>检测到长任务：</strong></p>
+               <p>持续时间: ${duration}毫秒</p>
+               <p>开始时间: ${startTime}毫秒</p>
+            `;
+            
+            resultsDiv.appendChild(taskDiv);
+         });
+      });
+      
+      // 注册观察器以接收长任务通知
+      observer.observe({ entryTypes: ["longtask"] });
+      
+      // 创建长任务的按钮
+      const LongTaskInterval = 51; // 设置一个 50 ms 的长任务
+      document.getElementById('createLongTask').addEventListener('click', () => {
+         // 执行一个会阻塞主线程的繁重计算
+         const startTime = performance.now();
+         
+         // 这个循环将运行一段时间，阻塞主线程
+
+         while (performance.now() - startTime < LongTaskInterval);
+
+         const endTime = performance.now();
+         console.log(`繁重计算耗时 ${(endTime - startTime).toFixed(2)}毫秒`);
+      });
+      
+      // 清除结果的按钮
+      document.getElementById('clearResults').addEventListener('click', () => {
+         document.getElementById('results').innerHTML = '';
+      });
+   </script>
+</body>
+</html>
