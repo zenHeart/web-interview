@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CSS 阻塞验证测试</title>
+    <style>
+      body {
+        font-family: Arial;
+      }
+      .test-box {
+        width: 200px;
+        height: 100px;
+        background: red;
+        margin: 10px 0;
+      }
+      .log {
+        background: #f0f0f0;
+        padding: 10px;
+        margin: 5px 0;
+        border-left: 3px solid #333;
+      }
+    </style>
+
+    <!-- 模拟慢加载的 CSS -->
+    <link rel="stylesheet" href="https://httpbin.org/delay/3" />
+
+    <script>
+      // 记录脚本开始执行时间
+      const scriptStartTime = performance.now();
+      console.log("1. Script in <head> 开始执行:", scriptStartTime);
+      const domElements = document.querySelectorAll("*");
+      console.log("2. DOM 元素数量:", domElements.length);
+      console.log("3. body 元素是否存在:", !!document.body);
+    </script>
+  </head>
+  <body>
+    <h1>CSS 阻塞测试</h1>
+    <div class="test-box">测试盒子</div>
+
+    <div class="log">
+      <strong>观察现象：</strong>
+      <ul>
+        <li>页面内容会延迟显示（等待 CSS 加载）</li>
+        <li>但 DOM 结构已经解析完成</li>
+        <li>控制台会显示执行顺序</li>
+      </ul>
+    </div>
+
+    <script>
+      // 尝试获取样式（会等待 CSS 加载）
+      if (document.body) {
+        const bodyStyle = getComputedStyle(document.body);
+        console.log("4. body 字体:", bodyStyle.fontFamily);
+      }
+      // 验证 DOM 解析不被阻塞
+      console.log("5. Body 中的 script 执行时间:", performance.now());
+      console.log(
+        "6. 此时 DOM 已解析，元素数量:",
+        document.querySelectorAll("*").length
+      );
+
+      // 监听页面加载完成
+      window.addEventListener("load", () => {
+        console.log("7. 页面完全加载完成（包括 CSS）");
+      });
+
+      // 监听 DOMContentLoaded
+      document.addEventListener("DOMContentLoaded", () => {
+        console.log("8. DOMContentLoaded 触发");
+      });
+    </script>
+
+    <script>
+      // 更详细的测试：CSS 加载状态检测
+      function checkCSSLoaded() {
+        const links = document.getElementsByTagName("link");
+        for (let link of links) {
+          if (link.rel === "stylesheet") {
+            console.log("CSS 链接状态:", {
+              href: link.href,
+              loaded: link.sheet !== null,
+            });
+          }
+        }
+      }
+
+      // 定期检查 CSS 加载状态
+      const checkInterval = setInterval(() => {
+        checkCSSLoaded();
+
+        // 如果所有 CSS 都加载完成，停止检查
+        const allLoaded = Array.from(document.getElementsByTagName("link"))
+          .filter((link) => link.rel === "stylesheet")
+          .every((link) => link.sheet !== null);
+
+        if (allLoaded) {
+          console.log("9. 所有 CSS 加载完成，脚本继续执行");
+          clearInterval(checkInterval);
+        }
+      }, 100);
+    </script>
+
+  </body>
+</html>
