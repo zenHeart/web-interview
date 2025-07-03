@@ -3,6 +3,8 @@ import MDXComponents from '@theme-original/MDXComponents'
 import Answer from '@site/src/components/templates/Answer.mdx'
 import Analysis from '@site/src/components/templates/Analysis.mdx'
 import TestCode from '@site/src/components/templates/TestCode'
+import CustomSandPack from '@site/src/components/templates/CustomSandPack'
+
 import LiveCode from '@site/src/components/LiveCode'
 import CodeBlock from '@theme/CodeBlock'
 import Tabs from '@theme/Tabs'
@@ -23,5 +25,6 @@ export default {
   // `Highlight` will receive all props that were passed to `<Highlight>` in MDX
   Answer,
   Analysis,
-  TestCode
+  TestCode,
+  CustomSandPack
 }
