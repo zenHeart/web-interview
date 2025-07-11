@@ -5,6 +5,7 @@ import {
   Link
 } from '@react-router/dev'
 
+
 const Layout = ({ children }) => (
   <div>
     <nav style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>

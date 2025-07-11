@@ -1,0 +1,58 @@
+<script type="module">
+   import { createStore } from "https://unpkg.com/redux@5.0.1/dist/redux.mjs"
+
+   // 1. 定义初始状态，必须
+   const initialState = {
+      count: 0,
+   }
+
+   // 2. 定义动作类型，可选
+   const Actions = {
+      INCREMENT: "INCREMENT",
+      DECREMENT: "DECREMENT",
+   }
+
+   // 3. 定义动作创建函数 Action Creators，可选
+   const increment = () => ({ type: Actions.INCREMENT })
+   const decrement = () => ({ type: Actions.DECREMENT })
+
+   // 4. 定义 reducer 函数， 必须
+   const reducer = (state, action) => {
+      console.log("Reducer 接收到动作:", action)
+      switch (action.type) {
+         case Actions.INCREMENT:
+            return { ...state, count: state.count + 1 }
+         case Actions.DECREMENT:
+            return { ...state, count: state.count - 1 }
+         default:
+            return state
+      }
+   }
+
+   // 5. 创建 Redux store，必须
+   const store = createStore(reducer, initialState)
+
+   // 6. 订阅状态变化，必须
+   const unsubscribe = store.subscribe((...args) => {
+      console.log("状态变化:", store.getState(), args)
+   })
+
+
+   // 7. 分发动作，必须
+   store.dispatch(increment()) // 增加计数
+   store.dispatch(decrement()) // 减少计数
+
+   // 也可直接分发对象
+   store.dispatch({ type: Actions.INCREMENT })
+
+   // 取消订阅
+   unsubscribe();
+   // 不会再打印状态变化
+   store.dispatch(increment()) // 增加计数
+
+
+
+
+
+</script>
+
