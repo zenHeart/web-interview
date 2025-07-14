@@ -1,80 +1,26 @@
 # 编码
 
-## 如何实现vue 中 keep-alive 的功能？{#p0-keep-alive}
+## 如何实现 Vue 中 keep-alive 的功能？{#p0-keep-alive}
 
-**keep-alive 原理**
-可以参考这个文章： [资料](https://github.com/pro-collection/interview-question/issues/119)
+## 如何实现转场动画？
 
-**实现**
-当使用函数式组件时，可以使用React的Hooks来实现类似Vue的`<keep-alive>`功能。下面是一个使用React函数式组件和Hooks实现类似Vue的`<keep-alive>`功能的示例：
+这个问题非常复杂， 我这边用白话文解释一下原理， 若有不对的地方， 请大家更正：
 
-```jsx
-import React, { useEffect, useRef } from 'react';
+如果没有专场动画， 那么在路由切换的一瞬间， 加载下一个路由页面的组件， 注销上一个路由页面的组件；
 
-const withKeepAlive = (WrappedComponent) => {
- const cache = new Map(); // 使用Map来存储缓存的组件实例
+但是如果加上专场动画， 比如专场动画时间为 500ms， 那么， 在咋合格 500ms 过程中， 首先要加载下一个路由页面的组件， 然后加载上一个渐进的动画。
+同时不能注销掉当前路由， 需要给当前路由加载一个渐出的动画。
+需要当两个页面完成动画时间， 完成页面覆盖切换之后， 然后注销上一个路由页面的组件；
 
- return (props) => {
- const { id } = props;
- const componentRef = useRef(null);
+所以涉及到的知识点：
 
- useEffect(() => {
- if (!cache.has(id)) {
- cache.set(id, componentRef.current); // 缓存组件实例
- }
+1. 如何做页面跳转拦截；
+2. 如何在页面路由组件不跳转的同时， 加载下一个页面的组件；
+3. 配置页面层级；
+4. 如何执行、加载、完成专场动画；
+5. 动画结束的时候手动注销组件；
 
- return () => {
- cache.delete(id); // 组件销毁时从缓存中移除
- };
- }, [id]);
+具体实现， 可以参考以下两个文档：
 
- const cachedInstance = cache.get(id); // 获取缓存的组件实例
-
- if (cachedInstance) {
- return React.cloneElement(cachedInstance.props.children, props); // 渲染缓存的组件实例的子组件
- }
-
- return <WrappedComponent ref={componentRef} {...props} />; // 初次渲染时渲染原始组件
- };
-};
-```
-
-使用这个高阶函数组件来包裹需要缓存的函数式组件：
-
-```jsx
-const SomeComponent = (props) => {
- return (
- <div>
- <h1>Some Component</h1>
- <p>{props.message}</p>
- </div>
- );
-};
-
-const KeepAliveSomeComponent = withKeepAlive(SomeComponent);
-```
-
-在父组件中使用`KeepAliveSomeComponent`来实现缓存功能：
-
-```jsx
-const ParentComponent = () => {
- const [showComponent, setShowComponent] = useState(false);
-
- const toggleComponent = () => {
- setShowComponent(!showComponent);
- };
-
- return (
- <div>
- <button onClick={toggleComponent}>Toggle Component</button>
- {showComponent && (
- <KeepAliveSomeComponent id="some-component" message="Hello, World!" />
- )}
- </div>
- );
-};
-```
-
-在上述示例中，`ParentComponent`包含一个按钮，点击按钮时切换`KeepAliveSomeComponent`的显示与隐藏。每次切换时，`KeepAliveSomeComponent`的状态将保留，因为它被缓存并在需要时重新渲染。
-
-同样地，这个示例只实现了最基本的缓存功能，并没有处理更复杂的场景。如果需要更复杂的缓存功能，可以考虑使用状态管理库来管理组件的状态和缓存。
+* [资料](https://github.com/SmallStoneSK/Blog/issues/8)
+* [资料](https://juejin.cn/post/6887471865720209415)
