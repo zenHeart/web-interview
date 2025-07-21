@@ -1,0 +1,334 @@
+---
+title: 问题管理规则
+description: 指导如何完善现有问题或增加新问题
+glob: docs/**/*.md
+---
+
+# 添加答案规则
+
+## 概述
+
+本规则提供添加和完善面试问题答案的综合指导，确保答案符合贡献者文档中定义的质量标准。
+
+## 问题结构要求
+
+### 问题标题和ID格式
+
+- **格式**: `## 问题标题 {#p<优先级>-<问题ID>}`
+- **优先级级别**: P0 (必考), P1 (高频), P2 (常规), P3 (进阶), P4 (前沿)
+- **ID要求**:
+  - 必须使用kebab-case格式（小写字母加连字符）
+  - 应该具有描述性且唯一
+  - 必须包含优先级前缀
+  - 示例: `{#p0-closure-concept}`
+
+### 问题质量标准
+
+在添加问题之前，确保满足以下标准（每个维度至少6分以上）：
+
+1. **技术相关性** (9-10分): 与岗位要求保持一致
+2. **知识点深度与广度** (8分以上): 深入覆盖核心概念
+3. **实际应用** (8分以上): 与实际开发场景相关
+4. **复杂度与开放性** (7分以上): 具有多种解决方案
+5. **可解性与明确性** (9分以上): 描述清晰明确
+
+## 答案结构模板
+
+### 标准答案格式
+
+```markdown
+<Answer meta={{
+difficulty: "初级/中级/高级",
+duration: "预计回答时间"
+}}>
+
+**核心概念**
+- 要点1
+- 要点2
+- 要点3
+
+**详细解释**
+[包含实际示例的详细解释]
+
+**代码示例**
+```js
+// 示例代码
+```
+
+**面试官视角**
+
+- **差**: [差答案的特征]
+- **良**: [一般答案的特征]
+- **优**: [优秀答案的特征]
+
+**延伸阅读**
+
+- [资源名称](mdc:资源链接) 资源描述
+
+</Answer>
+```
+
+### 答案内容指导
+
+#### 1. **核心概念部分**
+
+- 提供3-5个直接回答问题的要点
+- 使用项目符号以提高清晰度
+- 专注于核心知识
+
+#### 2. **详细解释**
+
+- 控制在200-300字以内
+- 包含实际示例
+- 解释概念背后的"为什么"
+- 联系实际场景
+
+#### 3. **代码示例**
+
+- 根据问题类型使用适当的组件：
+  - `<TestCode>` 用于可执行代码和测试
+  - `<Sandpack>` 用于交互式演示
+  - 普通代码块用于简单示例
+- 确保代码可运行且注释良好
+- 保持示例简洁（编写时间<20分钟）
+
+#### 4. **面试官视角**
+
+- 提供清晰的评估标准
+- 包含构成差、一般和优秀答案的特征
+- 专注于实际评估而非理论知识
+
+#### 5. **延伸阅读**
+
+- 包含2-3个相关资源
+- 为每个资源提供简要描述
+- 链接到官方文档、书籍或文章
+
+## 问题类型和模板
+
+### 1. **概念性问题** (JavaScript、CSS基础)
+
+```markdown
+<Answer>
+
+**核心概念**
+- [核心概念要点]
+
+**示例说明**
+import exampleCode from '!!raw-loader!./answers/example.js';
+
+<TestCode
+   options={{
+      showConsole: true,
+      editorHeight: 400
+   }}
+   files={{
+      "/example.js": exampleCode,
+   }}
+/>
+
+**面试官视角**
+[不同答案水平的评估标准]
+
+**延伸阅读**
+- [资源链接及描述]
+
+</Answer>
+```
+
+### 2. **编程问题** (算法、编程挑战)
+
+```markdown
+<Answer>
+
+import solutionCode from '!!raw-loader!./answers/solution.js';
+import solutionTest from '!!raw-loader!./answers/solution.test.js';
+
+<TestCode
+   files={{
+      "/solution.js": solutionCode,
+      "/solution.test.js": solutionTest,
+   }}
+/>
+
+**解题思路**
+[逐步解决方案]
+
+**复杂度分析**
+- 时间复杂度: O(n)
+- 空间复杂度: O(1)
+
+**优化策略**
+[额外的优化方法]
+
+</Answer>
+```
+
+### 3. **对比问题** (技术选择、方案对比)
+
+```markdown
+<Answer>
+
+| 方案 | 优点 | 缺点 | 适用场景 |
+|:---- |:---- |:--- |:--- |
+| 方案A | [优点] | [缺点] | [使用场景] |
+| 方案B | [优点] | [缺点] | [使用场景] |
+
+**实际应用场景**
+[实际应用示例]
+
+**选择建议**
+[何时选择每种方法的指导]
+
+</Answer>
+```
+
+### 4. **设计问题** (系统设计、架构)
+
+```markdown
+<Answer>
+
+**设计思路**
+1. 需求分析：[核心需求]
+2. 技术选型：[技术选择]
+3. 架构设计：[架构概述]
+4. 实现细节：[关键实现细节]
+
+**示例实现**
+import designCode from '!!raw-loader!./answers/design.js';
+
+<TestCode
+   options={{
+      showConsole: true,
+      editorHeight: 600
+   }}
+   files={{
+      "/design.js": designCode,
+   }}
+/>
+
+**优化考虑**
+- [性能优化点]
+- [可扩展性考虑]
+- [可维护性因素]
+
+</Answer>
+```
+
+## 文件组织
+
+### 目录结构
+
+```
+docs/
+├── <subject>/
+│   ├── <topic>.md
+│   └── answers/
+│       ├── <question-id>.js
+│       ├── <question-id>.test.js
+│       └── <question-id>/
+│           ├── README.md
+│           └── [额外文件]
+```
+
+### 文件命名约定
+
+- **问题文件**: 使用kebab-case格式并包含优先级前缀
+- **答案文件**: 与问题ID完全匹配
+- **测试文件**: 添加`.test.js`后缀
+- **目录**: 复杂答案使用问题ID作为目录名
+
+## 质量检查清单
+
+### 添加问题前
+
+- [ ] 问题符合质量标准（所有维度至少6分以上）
+- [ ] 问题属于适当的主题/科目
+- [ ] 不存在重复问题
+- [ ] 问题ID唯一且具有描述性
+- [ ] 优先级级别适当
+
+### 添加答案前
+
+- [ ] 答案结构遵循模板
+- [ ] 核心概念解释清晰
+- [ ] 代码示例可运行
+- [ ] 提供面试官视角
+- [ ] 延伸阅读资源相关
+- [ ] 答案长度适当（200-300字）
+- [ ] 代码复杂度合理（编写时间<20分钟）
+
+### 答案质量标准
+
+- [ ] **清晰性**: 答案易于理解
+- [ ] **完整性**: 涵盖问题的所有方面
+- [ ] **实用性**: 包含实际示例
+- [ ] **深度**: 提供足够的技术细节
+- [ ] **广度**: 联系相关概念
+- [ ] **准确性**: 信息在技术上正确
+- [ ] **吸引力**: 保持读者兴趣
+
+## 常用模式
+
+### 导入语句
+
+```markdown
+import exampleCode from '!!raw-loader!./answers/example.js';
+import testCode from '!!raw-loader!./answers/example.test.js';
+```
+
+### TestCode组件使用
+
+```markdown
+<TestCode
+   options={{
+      showConsole: true,
+      editorHeight: 400,
+      showLineNumbers: true
+   }}
+   files={{
+      "/example.js": exampleCode,
+      "/example.test.js": testCode,
+   }}
+/>
+```
+
+### Sandpack组件使用
+
+```markdown
+<Sandpack 
+   template="react" 
+   options={{
+      showNavigator: true,
+      showTabs: true
+   }}
+   files={{
+      "/App.js": appCode,
+      "/styles.css": styleCode
+   }}
+/>
+```
+
+## 参考文件
+
+- [问题模板](mdc:contributors/template/01.question.md)
+- [主题模板](mdc:contributors/template/02.topic.md)
+- [优秀面试问题指南](mdc:contributors/03.good_interview_question.md)
+- [工作流程指南](mdc:contributors/02.workflow.md)
+- [项目概述](mdc:contributors/01.summary.md)
+
+## 成功技巧
+
+1. **从核心概念开始** - 始终从基本答案开始
+2. **提供实际示例** - 包含实际场景
+3. **考虑多个视角** - 针对不同技能水平
+4. **保持简洁** - 解释控制在200-300字
+5. **测试代码** - 确保所有示例可运行
+6. **链接资源** - 提供深入学习路径
+7. **定期更新** - 保持内容与技术发展同步
+
+```
+
+## 参考示例
+@file docs/06.engineering/03.01.babel.md#p1-babel
+@file docs/06.engineering/03.02.bundler-webpack.md#p0-webpack-config
