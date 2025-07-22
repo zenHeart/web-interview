@@ -1,0 +1,23 @@
+<style>
+  div {
+    border: 1px solid #000;
+  }
+  img {
+    float: left;
+    height: 60px;
+  }
+  input[type="checkbox"]:checked ~ div > p {
+    display: flow-root;
+  }
+</style>
+阻止文字环绕：
+<input type="checkbox" />
+<div>
+  <img src="https://blog.zenheart.site/web-interview/img/logo.svg" alt="" />
+  <p>
+    这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案
+    这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案
+    这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案
+    这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案这是一段测试文案
+  </p>
+</div>

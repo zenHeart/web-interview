@@ -1,0 +1,54 @@
+<style>
+  .container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    width: 300px;
+  }
+  
+  .normal-text {
+    font-size: 16px;
+    background: lightblue;
+  }
+  
+  .tall-text {
+    font-size: 32px;
+    background: lightgreen;
+    line-height: 1.2;
+  }
+  
+  .image {
+    width: 50px;
+    height: 50px;
+    background: lightcoral;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+  .highlight {
+    background: yellow;
+    padding: 2px;
+  }
+</style>
+
+行框高度由最高元素决定：
+<div class="container">
+  <span class="normal-text">普通文本</span>
+  <span class="tall-text">高文本</span>
+  <span class="normal-text">普通文本</span>
+</div>
+
+包含图片的行框：
+<div class="container">
+  <span class="normal-text">文本内容</span>
+  <div class="image"></div>
+  <span class="normal-text">更多文本</span>
+</div>
+
+多行文本的行框：
+<div class="container">
+  <span class="normal-text">第一行文本</span>
+  <span class="tall-text">第二行高文本</span>
+  <span class="normal-text">第三行文本</span>
+  <span class="highlight">高亮文本</span>
+</div> 

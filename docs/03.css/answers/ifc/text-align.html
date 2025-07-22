@@ -1,0 +1,115 @@
+<style>
+  .container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    width: 400px;
+  }
+  
+  .text {
+    font-size: 16px;
+    background: lightblue;
+    margin: 2px;
+  }
+  
+  .small-text {
+    font-size: 12px;
+    background: lightgreen;
+    margin: 2px;
+  }
+  
+  .large-text {
+    font-size: 24px;
+    background: lightcoral;
+    margin: 2px;
+  }
+  
+  .left-align {
+    text-align: left;
+  }
+  
+  .center-align {
+    text-align: center;
+  }
+  
+  .right-align {
+    text-align: right;
+  }
+  
+  .justify-align {
+    text-align: justify;
+  }
+  
+  .start-align {
+    text-align: start;
+  }
+  
+  .end-align {
+    text-align: end;
+  }
+  
+  .rtl {
+    direction: rtl;
+  }
+</style>
+
+左对齐（默认）：
+<div class="container left-align">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+居中对齐：
+<div class="container center-align">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+右对齐：
+<div class="container right-align">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+两端对齐：
+<div class="container justify-align">
+  <span class="text">这是一段很长的文本内容，用来演示两端对齐的效果。当文本内容足够长时，会自动调整字间距来实现两端对齐。</span>
+</div>
+
+起始对齐（LTR）：
+<div class="container start-align">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+结束对齐（LTR）：
+<div class="container end-align">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+RTL 环境下的起始对齐：
+<div class="container start-align rtl">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div>
+
+RTL 环境下的结束对齐：
+<div class="container end-align rtl">
+  <span class="text">第一个</span>
+  <span class="small-text">第二个</span>
+  <span class="large-text">第三个</span>
+  <span class="text">第四个</span>
+</div> 

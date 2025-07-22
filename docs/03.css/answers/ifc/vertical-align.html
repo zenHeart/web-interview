@@ -1,0 +1,86 @@
+<style>
+  .container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    line-height: 2;
+  }
+  
+  .baseline {
+    vertical-align: baseline;
+    background: lightblue;
+  }
+  
+  .top {
+    vertical-align: top;
+    background: lightgreen;
+  }
+  
+  .middle {
+    vertical-align: middle;
+    background: lightcoral;
+  }
+  
+  .bottom {
+    vertical-align: bottom;
+    background: lightyellow;
+  }
+  
+  .text-top {
+    vertical-align: text-top;
+    background: lightpink;
+  }
+  
+  .text-bottom {
+    vertical-align: text-bottom;
+    background: lightcyan;
+  }
+  
+  .super {
+    vertical-align: super;
+    background: lightgray;
+  }
+  
+  .sub {
+    vertical-align: sub;
+    background: lightsteelblue;
+  }
+  
+  .box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+  }
+</style>
+
+不同垂直对齐方式：
+<div class="container">
+  <span class="baseline">基线</span>
+  <span class="top">顶部</span>
+  <span class="middle">中间</span>
+  <span class="bottom">底部</span>
+  <span class="text-top">文本顶部</span>
+  <span class="text-bottom">文本底部</span>
+  <span class="super">上标</span>
+  <span class="sub">下标</span>
+</div>
+
+包含块级元素的 IFC：
+<div class="container">
+  <span class="baseline">文本</span>
+  <div class="box"></div>
+  <span class="middle">文本</span>
+  <div class="box"></div>
+  <span class="bottom">文本</span>
+</div>
+
+数学公式示例：
+<div class="container">
+  <span>X</span>
+  <span class="super">2</span>
+  <span>+ Y</span>
+  <span class="sub">2</span>
+  <span>= Z</span>
+  <span class="super">2</span>
+</div> 

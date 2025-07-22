@@ -1,0 +1,22 @@
+<style>
+  .box {
+    background-color: #f0f0f0;
+    padding: 10px;
+  }
+
+  .float-box {
+    float: left;
+    border: 1px solid #000;
+  }
+
+  input[type="checkbox"]:checked ~ .box {
+    display: flow-root;
+  }
+</style>
+<div class="container">
+  清除浮动
+  <input type="checkbox" />
+  <div class="box">
+    <div class="float-box">浮动元素</div>
+  </div>
+</div>

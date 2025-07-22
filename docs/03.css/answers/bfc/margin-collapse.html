@@ -1,0 +1,20 @@
+<style>
+  .box {
+    margin: 20px 0;
+    background: lightgreen;
+  }
+
+  .bfc {
+    padding-top: 1px; /* 👈 阻止父子 margin 合并的关键 */
+  }
+
+  input[type="checkbox"]:checked ~ .bfc {
+    display: flow-root;
+  }
+</style>
+阻止外边距合并：
+<input type="checkbox" />
+<div class="bfc">
+  <div class="box">Box 1</div>
+</div>
+<div class="box">Box 2</div>
