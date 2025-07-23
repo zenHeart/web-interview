@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 常见布局演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .layout-container {
+            margin: 20px 0;
+            border: 2px solid #333;
+            min-height: 200px;
+        }
+        
+        .layout-title {
+            background: #333;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+        }
+        
+        .left, .right {
+            background: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .center {
+            background: #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        /* Flexbox 三栏布局 */
+        .flex-layout {
+            display: flex;
+            min-height: 200px;
+        }
+        
+        .flex-layout .left,
+        .flex-layout .right {
+            width: 200px;
+            flex-shrink: 0;
+        }
+        
+        .flex-layout .center {
+            flex: 1;
+        }
+        
+        /* Grid 三栏布局 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            min-height: 200px;
+        }
+        
+        /* 圣杯布局 */
+        .holy-grail {
+            padding: 0 200px;
+        }
+        
+        .holy-grail .center {
+            float: left;
+            width: 100%;
+        }
+        
+        .holy-grail .left,
+        .holy-grail .right {
+            float: left;
+            width: 200px;
+            margin-left: -100%;
+            position: relative;
+            left: -200px;
+        }
+        
+        .holy-grail .right {
+            left: 200px;
+            margin-left: -200px;
+        }
+        
+        .holy-grail::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        
+        /* 居中布局 */
+        .center-demo {
+            height: 150px;
+            border: 2px solid #333;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .text-center {
+            text-align: center;
+            padding: 20px;
+            background: #e8f5e8;
+        }
+        
+        .block-center {
+            width: 200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #ffe8e8;
+            text-align: center;
+        }
+        
+        .flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .flex-center .item {
+            background: #fff3cd;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .absolute-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #e8f4fd;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS 常见布局演示</h1>
+        
+        <div class="demo-section">
+            <h2>三栏布局 - Flexbox 方法</h2>
+            <div class="layout-container">
+                <div class="layout-title">Flexbox 三栏布局</div>
+                <div class="flex-layout">
+                    <div class="left">左侧栏<br>固定宽度 200px</div>
+                    <div class="center">中间栏<br>自适应宽度</div>
+                    <div class="right">右侧栏<br>固定宽度 200px</div>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <h3>Flexbox 三栏布局代码：</h3>
+                <pre><code>.container {
+  display: flex;
+  min-height: 200px;
+}
+
+.left, .right {
+  width: 200px;
+  flex-shrink: 0;
+}
+
+.center {
+  flex: 1;
+}</code></pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>三栏布局 - Grid 方法</h2>
+            <div class="layout-container">
+                <div class="layout-title">Grid 三栏布局</div>
+                <div class="grid-layout">
+                    <div class="left">左侧栏<br>固定宽度 200px</div>
+                    <div class="center">中间栏<br>自适应宽度</div>
+                    <div class="right">右侧栏<br>固定宽度 200px</div>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <h3>Grid 三栏布局代码：</h3>
+                <pre><code>.container {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  min-height: 200px;
+}</code></pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>圣杯布局</h2>
+            <div class="layout-container">
+                <div class="layout-title">圣杯布局（中间栏优先渲染）</div>
+                <div class="holy-grail">
+                    <div class="center">中间栏<br>优先渲染，自适应宽度</div>
+                    <div class="left">左侧栏<br>固定宽度 200px</div>
+                    <div class="right">右侧栏<br>固定宽度 200px</div>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <h3>圣杯布局代码：</h3>
+                <pre><code>.container {
+  padding: 0 200px;
+}
+
+.center {
+  float: left;
+  width: 100%;
+}
+
+.left, .right {
+  float: left;
+  width: 200px;
+  margin-left: -100%;
+  position: relative;
+  left: -200px;
+}
+
+.right {
+  left: 200px;
+  margin-left: -200px;
+}</code></pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>居中布局方法</h2>
+            
+            <h3>1. 行内元素水平居中</h3>
+            <div class="center-demo">
+                <div class="text-center">
+                    <span>这是行内元素</span>
+                    <a href="#">链接元素</a>
+                    <span>文本居中显示</span>
+                </div>
+            </div>
+            
+            <h3>2. 块状元素水平居中</h3>
+            <div class="center-demo">
+                <div class="block-center">
+                    块状元素居中<br>
+                    margin: 0 auto
+                </div>
+            </div>
+            
+            <h3>3. Flexbox 居中</h3>
+            <div class="center-demo">
+                <div class="flex-center">
+                    <div class="item">
+                        Flexbox 居中<br>
+                        justify-content: center<br>
+                        align-items: center
+                    </div>
+                </div>
+            </div>
+            
+            <h3>4. 绝对定位居中</h3>
+            <div class="center-demo">
+                <div class="absolute-center">
+                    绝对定位居中<br>
+                    top: 50%; left: 50%<br>
+                    transform: translate(-50%, -50%)
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h3>布局特点对比</h3>
+            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                <thead>
+                    <tr style="background: #f0f0f0;">
+                        <th style="border: 1px solid #ddd; padding: 10px;">布局方法</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">优点</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">缺点</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">兼容性</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px;">Flexbox</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">简单易用，响应式好</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">IE9 以下不支持</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">现代浏览器</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px;">Grid</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">功能强大，二维布局</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">IE 不支持</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">现代浏览器</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px;">圣杯布局</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">兼容性好，中间优先</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">代码复杂，维护困难</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">所有浏览器</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html> 

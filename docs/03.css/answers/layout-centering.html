@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 居中布局演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-container {
+            height: 200px;
+            border: 2px dashed #007bff;
+            margin: 15px 0;
+            position: relative;
+            background: #f8f9fa;
+        }
+        
+        .centered-box {
+            width: 100px;
+            height: 60px;
+            background: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .method-title {
+            color: #495057;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .method-desc {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        /* 1. Flexbox 居中 */
+        .flex-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 2. Grid 居中 */
+        .grid-center {
+            display: grid;
+            place-items: center;
+        }
+        
+        /* 3. 绝对定位 + transform */
+        .absolute-center {
+            position: relative;
+        }
+        
+        .absolute-center .centered-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 4. 绝对定位 + margin auto */
+        .margin-auto-center {
+            position: relative;
+        }
+        
+        .margin-auto-center .centered-box {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            width: 100px;
+            height: 60px;
+        }
+        
+        /* 5. 行内元素居中 */
+        .inline-center {
+            text-align: center;
+        }
+        
+        .inline-center .centered-box {
+            display: inline-block;
+        }
+        
+        /* 6. 表格居中 */
+        .table-center {
+            display: table;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .table-center .centered-box {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            width: 100px;
+            height: 60px;
+        }
+        
+        /* 7. 垂直居中 - line-height */
+        .line-height-center {
+            line-height: 200px;
+            text-align: center;
+        }
+        
+        .line-height-center .centered-box {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: normal;
+        }
+        
+        /* 8. 未知尺寸元素居中 */
+        .unknown-size-center {
+            position: relative;
+        }
+        
+        .unknown-size-center .centered-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: auto;
+            min-width: 100px;
+            min-height: 60px;
+            padding: 10px;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #dee2e6;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .pros {
+            color: #28a745;
+        }
+        
+        .cons {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS 居中布局演示</h1>
+    
+    <div class="demo-section">
+        <h2>水平垂直居中方法</h2>
+        
+        <!-- Flexbox 居中 -->
+        <div class="method-title">1. Flexbox 居中（推荐）</div>
+        <div class="method-desc">使用 display: flex 配合 align-items 和 justify-content 实现居中</div>
+        <div class="demo-container flex-center">
+            <div class="centered-box">Flexbox<br>居中</div>
+        </div>
+        <div class="code-example">
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+        </div>
+        
+        <!-- Grid 居中 -->
+        <div class="method-title">2. Grid 居中</div>
+        <div class="method-desc">使用 display: grid 配合 place-items 实现居中</div>
+        <div class="demo-container grid-center">
+            <div class="centered-box">Grid<br>居中</div>
+        </div>
+        <div class="code-example">
+.container {
+  display: grid;
+  place-items: center;
+}
+        </div>
+        
+        <!-- 绝对定位 + transform -->
+        <div class="method-title">3. 绝对定位 + Transform</div>
+        <div class="method-desc">使用绝对定位配合 transform: translate(-50%, -50%) 实现居中</div>
+        <div class="demo-container absolute-center">
+            <div class="centered-box">绝对定位<br>+ Transform</div>
+        </div>
+        <div class="code-example">
+.container {
+  position: relative;
+}
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+        </div>
+        
+        <!-- 绝对定位 + margin auto -->
+        <div class="method-title">4. 绝对定位 + Margin Auto</div>
+        <div class="method-desc">使用绝对定位配合 margin: auto 实现居中（需要固定尺寸）</div>
+        <div class="demo-container margin-auto-center">
+            <div class="centered-box">绝对定位<br>+ Margin Auto</div>
+        </div>
+        <div class="code-example">
+.centered {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100px;
+  height: 60px;
+}
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>水平居中方法</h2>
+        
+        <!-- 行内元素居中 -->
+        <div class="method-title">5. 行内元素居中</div>
+        <div class="method-desc">使用 text-align: center 实现行内元素的水平居中</div>
+        <div class="demo-container inline-center">
+            <div class="centered-box">行内元素<br>居中</div>
+        </div>
+        <div class="code-example">
+.container {
+  text-align: center;
+}
+.centered {
+  display: inline-block;
+}
+        </div>
+        
+        <!-- 表格居中 -->
+        <div class="method-title">6. 表格居中</div>
+        <div class="method-desc">使用 display: table 配合 vertical-align 实现居中</div>
+        <div class="demo-container table-center">
+            <div class="centered-box">表格<br>居中</div>
+        </div>
+        <div class="code-example">
+.container {
+  display: table;
+}
+.centered {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+        </div>
+        
+        <!-- Line-height 居中 -->
+        <div class="method-title">7. Line-height 居中</div>
+        <div class="method-desc">使用 line-height 实现单行文本的垂直居中</div>
+        <div class="demo-container line-height-center">
+            <div class="centered-box">Line-height<br>居中</div>
+        </div>
+        <div class="code-example">
+.container {
+  line-height: 200px;
+  text-align: center;
+}
+.centered {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: normal;
+}
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>未知尺寸元素居中</h2>
+        
+        <div class="method-title">8. 未知尺寸元素居中</div>
+        <div class="method-desc">使用绝对定位 + transform 实现未知尺寸元素的居中</div>
+        <div class="demo-container unknown-size-center">
+            <div class="centered-box">未知尺寸<br>元素居中<br>自适应内容</div>
+        </div>
+        <div class="code-example">
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
+  height: auto;
+  min-width: 100px;
+  min-height: 60px;
+}
+        </div>
+    </div>
+    
+    <div class="demo-section">
+        <h2>方法对比</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>方法</th>
+                    <th>优点</th>
+                    <th>缺点</th>
+                    <th>适用场景</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Flexbox</td>
+                    <td class="pros">语法简洁、浏览器支持好、响应式友好</td>
+                    <td class="cons">需要容器支持</td>
+                    <td>现代布局首选方案</td>
+                </tr>
+                <tr>
+                    <td>Grid</td>
+                    <td class="pros">语法最简洁、功能强大</td>
+                    <td class="cons">浏览器支持相对较新</td>
+                    <td>复杂布局、现代项目</td>
+                </tr>
+                <tr>
+                    <td>绝对定位 + Transform</td>
+                    <td class="pros">兼容性好、支持未知尺寸</td>
+                    <td class="cons">脱离文档流、代码相对复杂</td>
+                    <td>弹窗、工具提示</td>
+                </tr>
+                <tr>
+                    <td>绝对定位 + Margin</td>
+                    <td class="pros">兼容性最好</td>
+                    <td class="cons">需要固定尺寸、代码复杂</td>
+                    <td>固定尺寸元素</td>
+                </tr>
+                <tr>
+                    <td>行内元素居中</td>
+                    <td class="pros">简单易用</td>
+                    <td class="cons">只支持水平居中</td>
+                    <td>文本、按钮等行内元素</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="demo-section">
+        <h2>最佳实践建议</h2>
+        <ul>
+            <li><strong>现代项目</strong>：优先使用 Flexbox 或 Grid</li>
+            <li><strong>兼容性要求高</strong>：使用绝对定位 + transform</li>
+            <li><strong>未知尺寸元素</strong>：使用绝对定位 + transform</li>
+            <li><strong>行内元素</strong>：使用 text-align: center</li>
+            <li><strong>单行文本</strong>：使用 line-height</li>
+        </ul>
+    </div>
+    
+    <script>
+        // 添加交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const boxes = document.querySelectorAll('.centered-box');
+            
+            boxes.forEach(box => {
+                box.addEventListener('mouseenter', function() {
+                    this.style.transform = this.style.transform ? 
+                        this.style.transform + ' scale(1.1)' : 
+                        'scale(1.1)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                box.addEventListener('mouseleave', function() {
+                    this.style.transform = this.style.transform.replace(' scale(1.1)', '');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

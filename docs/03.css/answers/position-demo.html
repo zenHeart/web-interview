@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Position 属性演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            background: #fff;
+            border: 2px solid #333;
+            margin: 20px 0;
+            padding: 20px;
+        }
+        
+        .demo-box {
+            width: 100px;
+            height: 60px;
+            background: #007bff;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        .static {
+            position: static;
+            background: #28a745;
+        }
+        
+        .relative {
+            position: relative;
+            top: 20px;
+            left: 20px;
+            background: #ffc107;
+            color: #333;
+        }
+        
+        .absolute {
+            position: absolute;
+            top: 50px;
+            right: 50px;
+            background: #dc3545;
+        }
+        
+        .fixed {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #6f42c1;
+            z-index: 1000;
+        }
+        
+        .sticky {
+            position: sticky;
+            top: 0;
+            background: #fd7e14;
+            z-index: 100;
+        }
+        
+        .sticky-container {
+            height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        
+        .sticky-content {
+            height: 400px;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            padding: 10px;
+        }
+        
+        .z-index-demo {
+            position: relative;
+            height: 150px;
+            margin: 20px 0;
+        }
+        
+        .z-box {
+            position: absolute;
+            width: 80px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .z-1 {
+            background: #007bff;
+            z-index: 1;
+            top: 10px;
+            left: 10px;
+        }
+        
+        .z-2 {
+            background: #28a745;
+            z-index: 2;
+            top: 30px;
+            left: 30px;
+        }
+        
+        .z-3 {
+            background: #dc3545;
+            z-index: 3;
+            top: 50px;
+            left: 50px;
+        }
+        
+        .info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .info h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Position 属性演示</h1>
+    
+    <div class="info">
+        <h3>Position 属性说明：</h3>
+        <ul>
+            <li><strong>static（默认）</strong>：元素按照正常文档流定位</li>
+            <li><strong>relative</strong>：相对于元素原本位置进行偏移，不脱离文档流</li>
+            <li><strong>absolute</strong>：相对于最近的定位祖先元素定位，脱离文档流</li>
+            <li><strong>fixed</strong>：相对于视口定位，脱离文档流</li>
+            <li><strong>sticky</strong>：在正常流和固定定位之间切换</li>
+        </ul>
+    </div>
+    
+    <h2>1. 基本 Position 值演示</h2>
+    <div class="container">
+        <div class="demo-box static">static<br>默认定位</div>
+        <div class="demo-box relative">relative<br>相对定位<br>top: 20px<br>left: 20px</div>
+        <div class="demo-box absolute">absolute<br>绝对定位<br>top: 50px<br>right: 50px</div>
+    </div>
+    
+    <h2>2. Fixed 定位演示</h2>
+    <p>滚动页面查看右下角的固定元素：</p>
+    <div class="demo-box fixed">fixed<br>固定定位<br>始终在右下角</div>
+    
+    <h2>3. Sticky 定位演示</h2>
+    <div class="sticky-container">
+        <div class="sticky-content">
+            <div class="demo-box sticky">sticky<br>粘性定位<br>滚动时固定在顶部</div>
+            <p>这是粘性定位的演示内容。当你滚动这个容器时，蓝色的 sticky 元素会在到达顶部时固定在那里。</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+            <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+    </div>
+    
+    <h2>4. Z-index 层级演示</h2>
+    <div class="z-index-demo">
+        <div class="z-box z-1">z-index: 1</div>
+        <div class="z-box z-2">z-index: 2</div>
+        <div class="z-box z-3">z-index: 3</div>
+    </div>
+    
+    <div class="info">
+        <h3>关键要点：</h3>
+        <ul>
+            <li><strong>文档流</strong>：static 和 relative 保持在文档流中，absolute 和 fixed 脱离文档流</li>
+            <li><strong>定位参考</strong>：relative 相对于自身，absolute 相对于最近的定位祖先，fixed 相对于视口</li>
+            <li><strong>层级控制</strong>：使用 z-index 控制元素的堆叠顺序</li>
+            <li><strong>实际应用</strong>：absolute 常用于下拉菜单、tooltip，fixed 用于固定导航栏，sticky 用于吸顶效果</li>
+        </ul>
+    </div>
+    
+    <script>
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const boxes = document.querySelectorAll('.demo-box');
+            
+            boxes.forEach(box => {
+                box.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                box.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

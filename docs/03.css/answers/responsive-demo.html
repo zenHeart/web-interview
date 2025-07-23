@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>响应式设计演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 响应式导航栏 */
+        .navbar {
+            background: #007bff;
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            opacity: 0.8;
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+        
+        /* 响应式网格布局 */
+        .grid-demo {
+            margin: 2rem 0;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .grid-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .grid-item h3 {
+            color: #007bff;
+            margin-bottom: 1rem;
+        }
+        
+        /* 响应式图片 */
+        .image-demo {
+            margin: 2rem 0;
+        }
+        
+        .responsive-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        /* 响应式表格 */
+        .table-demo {
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        
+        .responsive-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .responsive-table th,
+        .responsive-table td {
+            border: 1px solid #dee2e6;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        .responsive-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        /* 响应式文本 */
+        .text-demo {
+            margin: 2rem 0;
+        }
+        
+        .responsive-text {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            line-height: 1.6;
+        }
+        
+        /* 响应式按钮 */
+        .button-demo {
+            margin: 2rem 0;
+        }
+        
+        .responsive-button {
+            display: inline-block;
+            padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-size: clamp(0.875rem, 2vw, 1rem);
+        }
+        
+        .responsive-button:hover {
+            background: #0056b3;
+        }
+        
+        /* 媒体查询断点 */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .grid-item {
+                padding: 1rem;
+            }
+        }
+        
+        /* 设备信息显示 */
+        .device-info {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+        
+        .demo-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-section h2 {
+            color: #495057;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 0.5rem;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- 响应式导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">响应式设计演示</div>
+                <ul class="nav-menu">
+                    <li><a href="#grid">网格布局</a></li>
+                    <li><a href="#images">响应式图片</a></li>
+                    <li><a href="#table">响应式表格</a></li>
+                    <li><a href="#text">响应式文本</a></li>
+                </ul>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- 设备信息 -->
+        <div class="device-info">
+            <strong>当前视口宽度：</strong><span id="viewport-width"></span>px<br>
+            <strong>设备类型：</strong><span id="device-type"></span>
+        </div>
+        
+        <!-- 网格布局演示 -->
+        <section class="demo-section" id="grid">
+            <h2>响应式网格布局</h2>
+            <p>使用 CSS Grid 的 auto-fit 和 minmax 实现响应式网格：</p>
+            
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h3>网格项目 1</h3>
+                    <p>这是一个响应式网格项目，会根据屏幕宽度自动调整列数。</p>
+                </div>
+                <div class="grid-item">
+                    <h3>网格项目 2</h3>
+                    <p>在桌面端显示多列，在移动端自动变为单列布局。</p>
+                </div>
+                <div class="grid-item">
+                    <h3>网格项目 3</h3>
+                    <p>使用 CSS Grid 的 auto-fit 功能实现自适应列数。</p>
+                </div>
+            </div>
+            
+            <div class="code-example">
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+            </div>
+        </section>
+        
+        <!-- 响应式图片演示 -->
+        <section class="demo-section" id="images">
+            <h2>响应式图片</h2>
+            <p>图片会根据容器宽度自动缩放，保持宽高比：</p>
+            
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwMCIgaGVpZ2h0PSI2MDAiIHZpZXdCb3g9IjAgMCAxMDAwIDYwMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjEwMDAiIGhlaWdodD0iNjAwIiBmaWxsPSIjMDA3YmZmIi8+Cjx0ZXh0IHg9IjUwMCIgeT0iMzAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDgiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+5Y2g5L2N5p2h5Lu2PC90ZXh0Pgo8L3N2Zz4K" 
+                 alt="响应式图片演示" 
+                 class="responsive-image">
+            
+            <div class="code-example">
+.responsive-image {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+            </div>
+        </section>
+        
+        <!-- 响应式表格演示 -->
+        <section class="demo-section" id="table">
+            <h2>响应式表格</h2>
+            <p>表格在小屏幕上可以水平滚动：</p>
+            
+            <div class="table-demo">
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th>设备类型</th>
+                            <th>屏幕宽度</th>
+                            <th>布局方式</th>
+                            <th>特点</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>手机</td>
+                            <td>&lt; 768px</td>
+                            <td>单列布局</td>
+                            <td>垂直堆叠，触摸友好</td>
+                        </tr>
+                        <tr>
+                            <td>平板</td>
+                            <td>768px - 1024px</td>
+                            <td>双列布局</td>
+                            <td>中等屏幕优化</td>
+                        </tr>
+                        <tr>
+                            <td>桌面</td>
+                            <td>&gt; 1024px</td>
+                            <td>多列布局</td>
+                            <td>充分利用屏幕空间</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="code-example">
+.table-demo {
+  overflow-x: auto;
+}
+
+.responsive-table {
+  width: 100%;
+  min-width: 600px;
+}
+            </div>
+        </section>
+        
+        <!-- 响应式文本演示 -->
+        <section class="demo-section" id="text">
+            <h2>响应式文本</h2>
+            <p>使用 clamp() 函数实现响应式字体大小：</p>
+            
+            <p class="responsive-text">
+                这是一段响应式文本，字体大小会根据视口宽度自动调整。
+                在桌面端显示较大字体，在移动端显示较小字体，确保良好的可读性。
+            </p>
+            
+            <div class="code-example">
+.responsive-text {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  line-height: 1.6;
+}
+            </div>
+        </section>
+        
+        <!-- 响应式按钮演示 -->
+        <section class="demo-section">
+            <h2>响应式按钮</h2>
+            <p>按钮的内边距会根据屏幕大小自动调整：</p>
+            
+            <div class="button-demo">
+                <a href="#" class="responsive-button">响应式按钮</a>
+                <a href="#" class="responsive-button">另一个按钮</a>
+            </div>
+            
+            <div class="code-example">
+.responsive-button {
+  padding: clamp(0.5rem, 2vw, 1rem) clamp(1rem, 4vw, 2rem);
+  font-size: clamp(0.875rem, 2vw, 1rem);
+}
+            </div>
+        </section>
+        
+        <!-- 媒体查询演示 -->
+        <section class="demo-section">
+            <h2>媒体查询断点</h2>
+            <p>常用的响应式断点设置：</p>
+            
+            <div class="code-example">
+/* 手机端 */
+@media (max-width: 768px) {
+  .nav-menu { display: none; }
+  .grid-container { grid-template-columns: 1fr; }
+}
+
+/* 小屏手机 */
+@media (max-width: 480px) {
+  .container { padding: 0 10px; }
+}
+
+/* 平板端 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* 桌面端 */
+@media (min-width: 1025px) {
+  .grid-container { grid-template-columns: repeat(3, 1fr); }
+}
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        // 更新设备信息
+        function updateDeviceInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            document.getElementById('viewport-width').textContent = width;
+            
+            let deviceType = '桌面端';
+            if (width <= 480) {
+                deviceType = '小屏手机';
+            } else if (width <= 768) {
+                deviceType = '手机';
+            } else if (width <= 1024) {
+                deviceType = '平板';
+            }
+            
+            document.getElementById('device-type').textContent = deviceType;
+        }
+        
+        // 初始化
+        updateDeviceInfo();
+        
+        // 监听窗口大小变化
+        window.addEventListener('resize', updateDeviceInfo);
+        
+        // 汉堡菜单交互
+        document.querySelector('.hamburger').addEventListener('click', function() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

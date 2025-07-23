@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display vs Visibility 区别演示</title>
+    <style>
+        .container {
+            border: 2px solid #333;
+            margin: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: #ff6b6b;
+            margin: 10px;
+            display: inline-block;
+            text-align: center;
+            line-height: 100px;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .display-none {
+            display: none;
+        }
+        
+        .visibility-hidden {
+            visibility: hidden;
+        }
+        
+        .controls {
+            margin: 20px;
+            padding: 10px;
+            background-color: #e8f4fd;
+            border-radius: 5px;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .explanation {
+            margin: 20px;
+            padding: 15px;
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Display: none vs Visibility: hidden 区别演示</h1>
+    
+    <div class="explanation">
+        <h3>关键区别：</h3>
+        <ul>
+            <li><strong>Display: none</strong> - 元素完全从渲染树中消失，不占据空间</li>
+            <li><strong>Visibility: hidden</strong> - 元素仍然占据空间，只是不可见</li>
+        </ul>
+    </div>
+    
+    <div class="controls">
+        <button onclick="toggleDisplay()">切换 Display: none</button>
+        <button onclick="toggleVisibility()">切换 Visibility: hidden</button>
+        <button onclick="resetAll()">重置所有</button>
+    </div>
+    
+    <div class="container">
+        <h3>原始状态：</h3>
+        <div class="box">Box 1</div>
+        <div class="box">Box 2</div>
+        <div class="box">Box 3</div>
+        <div class="box">Box 4</div>
+    </div>
+    
+    <div class="container">
+        <h3>Display: none 效果：</h3>
+        <div class="box">Box 1</div>
+        <div class="box display-none" id="display-box">Box 2 (display: none)</div>
+        <div class="box">Box 3</div>
+        <div class="box">Box 4</div>
+    </div>
+    
+    <div class="container">
+        <h3>Visibility: hidden 效果：</h3>
+        <div class="box">Box 1</div>
+        <div class="box visibility-hidden" id="visibility-box">Box 2 (visibility: hidden)</div>
+        <div class="box">Box 3</div>
+        <div class="box">Box 4</div>
+    </div>
+    
+    <script>
+        function toggleDisplay() {
+            const box = document.getElementById('display-box');
+            if (box.classList.contains('display-none')) {
+                box.classList.remove('display-none');
+            } else {
+                box.classList.add('display-none');
+            }
+        }
+        
+        function toggleVisibility() {
+            const box = document.getElementById('visibility-box');
+            if (box.classList.contains('visibility-hidden')) {
+                box.classList.remove('visibility-hidden');
+            } else {
+                box.classList.add('visibility-hidden');
+            }
+        }
+        
+        function resetAll() {
+            document.getElementById('display-box').classList.remove('display-none');
+            document.getElementById('visibility-box').classList.remove('visibility-hidden');
+        }
+    </script>
+</body>
+</html> 

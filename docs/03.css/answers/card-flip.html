@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS3 卡片翻转演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .card-container {
+            perspective: 1000px;
+            width: 200px;
+            height: 300px;
+        }
+        
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .card-front {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+        
+        .card-back {
+            background: linear-gradient(45deg, #45b7d1, #96ceb4);
+            transform: rotateY(180deg);
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .card-content {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .flip-direction {
+            margin-top: 10px;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS3 卡片翻转演示</h1>
+        
+        <div class="demo-section">
+            <h2>基本翻转效果</h2>
+            <p>点击卡片查看翻转效果：</p>
+            
+            <div class="cards-container">
+                <div class="card-container">
+                    <div class="card" onclick="toggleFlip(this)">
+                        <div class="card-front">
+                            <div class="card-title">正面</div>
+                            <div class="card-content">
+                                这是卡片的正面内容<br>
+                                点击查看背面
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-title">背面</div>
+                            <div class="card-content">
+                                这是卡片的背面内容<br>
+                                再次点击返回正面
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-direction">Y轴翻转</div>
+                </div>
+                
+                <div class="card-container">
+                    <div class="card" onclick="toggleFlipX(this)">
+                        <div class="card-front">
+                            <div class="card-title">正面</div>
+                            <div class="card-content">
+                                这是卡片的正面内容<br>
+                                点击查看背面
+                            </div>
+                        </div>
+                        <div class="card-back">
+                            <div class="card-title">背面</div>
+                            <div class="card-content">
+                                这是卡片的背面内容<br>
+                                再次点击返回正面
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-direction">X轴翻转</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h3>控制面板</h3>
+            <button onclick="flipAll()">翻转所有卡片</button>
+            <button onclick="resetAll()">重置所有卡片</button>
+            <button onclick="showCode()">显示代码</button>
+        </div>
+        
+        <div class="demo-section" id="code-section" style="display: none;">
+            <h2>实现代码</h2>
+            <div class="code-block">
+                <h3>HTML 结构：</h3>
+                <pre><code>&lt;div class="card-container"&gt;
+  &lt;div class="card"&gt;
+    &lt;div class="card-front"&gt;正面内容&lt;/div&gt;
+    &lt;div class="card-back"&gt;背面内容&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                
+                <h3>CSS 样式：</h3>
+                <pre><code>.card-container {
+  perspective: 1000px;
+  width: 200px;
+  height: 300px;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+}
+
+.card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+}</code></pre>
+                
+                <h3>JavaScript 控制：</h3>
+                <pre><code>function toggleFlip(card) {
+  card.classList.toggle('flipped');
+}</code></pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>关键属性说明</h2>
+            <ul>
+                <li><strong>perspective</strong>：设置 3D 视角距离，值越小效果越明显</li>
+                <li><strong>transform-style: preserve-3d</strong>：保持 3D 变换效果</li>
+                <li><strong>backface-visibility: hidden</strong>：隐藏元素背面</li>
+                <li><strong>transition</strong>：添加过渡动画效果</li>
+                <li><strong>transform: rotateY(180deg)</strong>：Y轴旋转180度</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        function toggleFlip(card) {
+            card.classList.toggle('flipped');
+        }
+        
+        function toggleFlipX(card) {
+            if (card.classList.contains('flipped')) {
+                card.style.transform = 'rotateX(0deg)';
+                card.classList.remove('flipped');
+            } else {
+                card.style.transform = 'rotateX(180deg)';
+                card.classList.add('flipped');
+            }
+        }
+        
+        function flipAll() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.add('flipped');
+            });
+        }
+        
+        function resetAll() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.remove('flipped');
+                card.style.transform = '';
+            });
+        }
+        
+        function showCode() {
+            const codeSection = document.getElementById('code-section');
+            if (codeSection.style.display === 'none') {
+                codeSection.style.display = 'block';
+            } else {
+                codeSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 

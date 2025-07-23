@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Header 吸顶演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+        }
+        
+        .demo-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .table-wrapper {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th {
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #45a049;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* 方法一：position: sticky */
+        .sticky-table th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        /* 方法二：JavaScript 控制 */
+        .js-sticky-table {
+            position: relative;
+        }
+        
+        .js-sticky-table thead {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: #4CAF50;
+            display: none;
+        }
+        
+        .js-sticky-table.sticky thead {
+            display: table-header-group;
+        }
+        
+        .js-sticky-table.sticky tbody {
+            margin-top: 60px;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        .scroll-hint {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            text-align: center;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Table Header 吸顶演示</h1>
+        
+        <div class="scroll-hint">
+            <strong>提示：</strong>向下滚动页面查看吸顶效果
+        </div>
+        
+        <div class="demo-section">
+            <h2>方法一：CSS position: sticky</h2>
+            <p>使用 CSS 的 <code>position: sticky</code> 属性实现吸顶效果：</p>
+            
+            <div class="table-wrapper">
+                <table class="sticky-table">
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>年龄</th>
+                            <th>职位</th>
+                            <th>部门</th>
+                            <th>入职时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>张三</td><td>28</td><td>前端工程师</td><td>技术部</td><td>2020-01-15</td></tr>
+                        <tr><td>李四</td><td>32</td><td>产品经理</td><td>产品部</td><td>2019-03-20</td></tr>
+                        <tr><td>王五</td><td>25</td><td>UI设计师</td><td>设计部</td><td>2021-06-10</td></tr>
+                        <tr><td>赵六</td><td>30</td><td>后端工程师</td><td>技术部</td><td>2018-09-05</td></tr>
+                        <tr><td>钱七</td><td>27</td><td>测试工程师</td><td>技术部</td><td>2020-11-12</td></tr>
+                        <tr><td>孙八</td><td>29</td><td>运营专员</td><td>运营部</td><td>2021-02-28</td></tr>
+                        <tr><td>周九</td><td>31</td><td>市场经理</td><td>市场部</td><td>2019-07-15</td></tr>
+                        <tr><td>吴十</td><td>26</td><td>数据分析师</td><td>数据部</td><td>2020-08-20</td></tr>
+                        <tr><td>郑十一</td><td>33</td><td>技术总监</td><td>技术部</td><td>2017-12-01</td></tr>
+                        <tr><td>王十二</td><td>28</td><td>产品助理</td><td>产品部</td><td>2021-04-05</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="code-block">
+                <h3>CSS 代码：</h3>
+                <pre><code>th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #4CAF50;
+  color: white;
+}</code></pre>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>方法二：JavaScript + CSS</h2>
+            <p>使用 JavaScript 监听滚动事件，动态添加 CSS 类：</p>
+            
+            <div class="table-wrapper js-sticky-table" id="js-sticky-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>年龄</th>
+                            <th>职位</th>
+                            <th>部门</th>
+                            <th>入职时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>张三</td><td>28</td><td>前端工程师</td><td>技术部</td><td>2020-01-15</td></tr>
+                        <tr><td>李四</td><td>32</td><td>产品经理</td><td>产品部</td><td>2019-03-20</td></tr>
+                        <tr><td>王五</td><td>25</td><td>UI设计师</td><td>设计部</td><td>2021-06-10</td></tr>
+                        <tr><td>赵六</td><td>30</td><td>后端工程师</td><td>技术部</td><td>2018-09-05</td></tr>
+                        <tr><td>钱七</td><td>27</td><td>测试工程师</td><td>技术部</td><td>2020-11-12</td></tr>
+                        <tr><td>孙八</td><td>29</td><td>运营专员</td><td>运营部</td><td>2021-02-28</td></tr>
+                        <tr><td>周九</td><td>31</td><td>市场经理</td><td>市场部</td><td>2019-07-15</td></tr>
+                        <tr><td>吴十</td><td>26</td><td>数据分析师</td><td>数据部</td><td>2020-08-20</td></tr>
+                        <tr><td>郑十一</td><td>33</td><td>技术总监</td><td>技术部</td><td>2017-12-01</td></tr>
+                        <tr><td>王十二</td><td>28</td><td>产品助理</td><td>产品部</td><td>2021-04-05</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="code-block">
+                <h3>JavaScript 代码：</h3>
+                <pre><code>window.onscroll = function() {
+  var table = document.querySelector(".js-sticky-table");
+  var rect = table.getBoundingClientRect();
+  
+  if (rect.top <= 0) {
+    table.classList.add("sticky");
+  } else {
+    table.classList.remove("sticky");
+  }
+};</code></pre>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <h3>控制面板</h3>
+            <button onclick="toggleSticky()">切换吸顶效果</button>
+            <button onclick="scrollToTable()">滚动到表格</button>
+            <button onclick="resetScroll()">重置滚动</button>
+        </div>
+        
+        <div class="demo-section">
+            <h2>实现方法对比</h2>
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f0f0f0;">
+                        <th style="border: 1px solid #ddd; padding: 10px;">方法</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">优点</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">缺点</th>
+                        <th style="border: 1px solid #ddd; padding: 10px;">兼容性</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px;">position: sticky</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">简单易用，性能好</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">IE 不支持</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">现代浏览器</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 10px;">JavaScript + CSS</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">兼容性好，控制灵活</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">需要 JavaScript，性能稍差</td>
+                        <td style="border: 1px solid #ddd; padding: 10px;">所有浏览器</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- 添加一些内容来增加页面高度 -->
+        <div style="height: 1000px; background: linear-gradient(to bottom, #f0f0f0, #e0e0e0); padding: 20px; margin: 20px 0;">
+            <h3>页面内容区域</h3>
+            <p>向下滚动查看表格吸顶效果...</p>
+            <p>这个区域用于增加页面高度，让滚动效果更明显。</p>
+        </div>
+    </div>
+    
+    <script>
+        let stickyEnabled = true;
+        
+        function toggleSticky() {
+            stickyEnabled = !stickyEnabled;
+            const button = event.target;
+            if (stickyEnabled) {
+                button.textContent = "禁用吸顶效果";
+                window.onscroll = handleScroll;
+            } else {
+                button.textContent = "启用吸顶效果";
+                window.onscroll = null;
+                document.querySelector('.js-sticky-table').classList.remove('sticky');
+            }
+        }
+        
+        function handleScroll() {
+            if (!stickyEnabled) return;
+            
+            const table = document.querySelector(".js-sticky-table");
+            const rect = table.getBoundingClientRect();
+            
+            if (rect.top <= 0) {
+                table.classList.add("sticky");
+            } else {
+                table.classList.remove("sticky");
+            }
+        }
+        
+        function scrollToTable() {
+            document.querySelector('.js-sticky-table').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        
+        function resetScroll() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // 初始化
+        window.onscroll = handleScroll;
+    </script>
+</body>
+</html> 

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 精灵图演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .sprite-demo {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .icon {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            margin: 10px;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjEyOCIgdmlld0JveD0iMCAwIDEyOCAxMjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjgiIGhlaWdodD0iMTI4IiBmaWxsPSIjRkY2QjZCIi8+CjxyZWN0IHg9IjMyIiB5PSIzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNENDRENDIi8+CjxyZWN0IHg9IjY0IiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNDVCN0QxIi8+CjxyZWN0IHg9IjMyIiB5PSI2NCIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjOTZDRUI0Ii8+Cjwvc3ZnPgo=');
+            background-repeat: no-repeat;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .icon-home {
+            background-position: 0 0;
+        }
+        
+        .icon-user {
+            background-position: -32px 0;
+        }
+        
+        .icon-settings {
+            background-position: -64px 0;
+        }
+        
+        .icon-search {
+            background-position: -96px 0;
+        }
+        
+        .icon-heart {
+            background-position: 0 -32px;
+        }
+        
+        .icon-star {
+            background-position: -32px -32px;
+        }
+        
+        .icon-bell {
+            background-position: -64px -32px;
+        }
+        
+        .icon-mail {
+            background-position: -96px -32px;
+        }
+        
+        .sprite-explanation {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+        
+        .benefits {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .benefits h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        
+        .benefits ul {
+            margin: 10px 0;
+        }
+        
+        .benefits li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS 精灵图（Sprites）演示</h1>
+        
+        <div class="sprite-explanation">
+            <h3>什么是精灵图？</h3>
+            <p>精灵图是一种网页图片应用处理方式，将多个小图标合并成一张大图片，通过 CSS 的 <code>background-position</code> 来显示特定部分，从而减少 HTTP 请求数量。</p>
+        </div>
+        
+        <div class="sprite-demo">
+            <h2>精灵图效果演示</h2>
+            <p>以下图标都来自同一张精灵图，通过不同的 <code>background-position</code> 显示不同图标：</p>
+            
+            <div>
+                <span class="icon icon-home" title="首页"></span>
+                <span class="icon icon-user" title="用户"></span>
+                <span class="icon icon-settings" title="设置"></span>
+                <span class="icon icon-search" title="搜索"></span>
+                <span class="icon icon-heart" title="喜欢"></span>
+                <span class="icon icon-star" title="星标"></span>
+                <span class="icon icon-bell" title="通知"></span>
+                <span class="icon icon-mail" title="邮件"></span>
+            </div>
+        </div>
+        
+        <div class="code-block">
+            <h3>CSS 实现代码：</h3>
+            <pre><code>.icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  background-image: url('sprite.png');
+  background-repeat: no-repeat;
+}
+
+.icon-home {
+  background-position: 0 0;
+}
+
+.icon-user {
+  background-position: -32px 0;
+}
+
+.icon-settings {
+  background-position: -64px 0;
+}</code></pre>
+        </div>
+        
+        <div class="benefits">
+            <h3>精灵图的优势：</h3>
+            <ul>
+                <li><strong>减少 HTTP 请求</strong>：多个图片合并为一张，减少网络请求次数</li>
+                <li><strong>提高加载速度</strong>：减少请求次数，提升页面加载性能</li>
+                <li><strong>减少图片体积</strong>：合并后的图片通常比多个小图片的总体积更小</li>
+                <li><strong>便于维护</strong>：统一管理图标资源</li>
+            </ul>
+        </div>
+        
+        <div class="sprite-explanation">
+            <h3>注意事项：</h3>
+            <ul>
+                <li>精灵图不宜过大，建议控制在 200KB 以内</li>
+                <li>需要精确计算每个图标的位置坐标</li>
+                <li>适合图标类图片，不适合大图片</li>
+                <li>现代开发中可以考虑使用 SVG 图标或字体图标作为替代方案</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
