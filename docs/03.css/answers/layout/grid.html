@@ -1,0 +1,110 @@
+<style>
+   .grid-container {
+      display: grid;
+      background: #f5f5f5;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      gap: 10px;
+   }
+   .grid-item {
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      padding: 15px;
+      text-align: center;
+   }
+   .basic-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+   }
+   .fraction-grid {
+      grid-template-columns: 1fr 2fr 1fr;
+   }
+   .fixed-grid {
+      grid-template-columns: 200px 1fr 100px;
+   }
+   .area-grid {
+      grid-template-areas:
+         "header header header"
+         "sidebar main aside"
+         "footer footer footer";
+      grid-template-columns: 150px 1fr 150px;
+      grid-template-rows: auto 1fr auto;
+      height: 300px;
+   }
+   .header { grid-area: header; background: #ffebee; }
+   .sidebar { grid-area: sidebar; background: #e8f5e8; }
+   .main { grid-area: main; background: #fff3e0; }
+   .aside { grid-area: aside; background: #f3e5f5; }
+   .footer { grid-area: footer; background: #e1f5fe; }
+   .span-item {
+      grid-column: span 2;
+      background: #fff3e0;
+   }
+   .responsive-grid {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+   }
+</style>
+
+<h1>网格布局(Grid)示例</h1>
+
+<h2>基础3x2网格</h2>
+<div class="grid-container basic-grid">
+   <div class="grid-item">1</div>
+   <div class="grid-item">2</div>
+   <div class="grid-item">3</div>
+   <div class="grid-item">4</div>
+   <div class="grid-item">5</div>
+   <div class="grid-item">6</div>
+</div>
+
+<h2>比例网格(1:2:1)</h2>
+<div class="grid-container fraction-grid">
+   <div class="grid-item">小列</div>
+   <div class="grid-item">大列(2倍)</div>
+   <div class="grid-item">小列</div>
+</div>
+
+<h2>固定+自适应</h2>
+<div class="grid-container fixed-grid">
+   <div class="grid-item">200px</div>
+   <div class="grid-item">自适应</div>
+   <div class="grid-item">100px</div>
+</div>
+
+<h2>跨列显示</h2>
+<div class="grid-container basic-grid">
+   <div class="grid-item span-item">跨2列</div>
+   <div class="grid-item">单列</div>
+   <div class="grid-item">项目4</div>
+   <div class="grid-item">项目5</div>
+</div>
+
+<h2>命名网格区域</h2>
+<div class="grid-container area-grid">
+   <div class="header">页眉</div>
+   <div class="sidebar">侧边栏</div>
+   <div class="main">主内容区</div>
+   <div class="aside">辅助区</div>
+   <div class="footer">页脚</div>
+</div>
+
+<h2>响应式网格</h2>
+<div class="grid-container responsive-grid">
+   <div class="grid-item">响应1</div>
+   <div class="grid-item">响应2</div>
+   <div class="grid-item">响应3</div>
+   <div class="grid-item">响应4</div>
+   <div class="grid-item">响应5</div>
+</div>
+
+<p>
+   <strong>Grid特点：</strong>
+   <ul>
+      <li>二维布局模型，同时控制行和列</li>
+      <li>容器设置 display: grid</li>
+      <li>可以创建复杂的网格布局</li>
+      <li>支持命名网格区域</li>
+      <li>适合页面整体布局设计</li>
+   </ul>
+</p>

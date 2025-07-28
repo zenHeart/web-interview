@@ -1,0 +1,99 @@
+<style>
+   .flex-container {
+      display: flex;
+      background: #f5f5f5;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      min-height: 80px;
+   }
+   .flex-item {
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      padding: 15px;
+      margin: 5px;
+   }
+   .horizontal {
+      flex-direction: row;
+      justify-content: space-between;
+   }
+   .vertical {
+      flex-direction: column;
+      height: 200px;
+   }
+   .center {
+      justify-content: center;
+      align-items: center;
+      height: 120px;
+   }
+   .grow-item {
+      flex-grow: 1;
+   }
+   .fixed-item {
+      flex-shrink: 0;
+      width: 100px;
+   }
+   .wrap {
+      flex-wrap: wrap;
+      width: 300px;
+   }
+   .wrap .flex-item {
+      width: 80px;
+      flex-shrink: 0;
+   }
+</style>
+
+<h1>弹性布局(Flexbox)示例</h1>
+
+<h2>水平排列（默认）</h2>
+<div class="flex-container">
+   <div class="flex-item">项目1</div>
+   <div class="flex-item">项目2</div>
+   <div class="flex-item">项目3</div>
+</div>
+
+<h2>两端对齐</h2>
+<div class="flex-container horizontal">
+   <div class="flex-item">左侧</div>
+   <div class="flex-item">中间</div>
+   <div class="flex-item">右侧</div>
+</div>
+
+<h2>垂直排列</h2>
+<div class="flex-container vertical">
+   <div class="flex-item">顶部项目</div>
+   <div class="flex-item">中间项目</div>
+   <div class="flex-item">底部项目</div>
+</div>
+
+<h2>居中对齐</h2>
+<div class="flex-container center">
+   <div class="flex-item">完全居中</div>
+</div>
+
+<h2>弹性伸缩</h2>
+<div class="flex-container">
+   <div class="flex-item fixed-item">固定宽度</div>
+   <div class="flex-item grow-item">自动伸展</div>
+   <div class="flex-item fixed-item">固定宽度</div>
+</div>
+
+<h2>换行显示</h2>
+<div class="flex-container wrap">
+   <div class="flex-item">项目1</div>
+   <div class="flex-item">项目2</div>
+   <div class="flex-item">项目3</div>
+   <div class="flex-item">项目4</div>
+   <div class="flex-item">项目5</div>
+</div>
+
+<p>
+   <strong>Flexbox特点：</strong>
+   <ul>
+      <li>一维布局模型，适合组件内部布局</li>
+      <li>容器设置 display: flex</li>
+      <li>主轴和交叉轴概念</li>
+      <li>灵活的对齐和分布方式</li>
+      <li>子元素可以自动伸缩</li>
+   </ul>
+</p>

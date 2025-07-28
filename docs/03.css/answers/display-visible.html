@@ -1,0 +1,76 @@
+<style>
+  body {
+    display: flex;
+    gap: 50px;
+    font-family: sans-serif;
+  }
+
+  .column {
+    flex: 1;
+  }
+
+  .title {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .box {
+    width: 200px;
+    margin-bottom: 10px;
+    line-height: 50px;
+    text-align: center;
+    color: white;
+  }
+
+  .parent {
+    background-color: steelblue;
+  }
+
+  .child {
+    background-color: orange;
+  }
+
+  .sibling {
+    background-color: seagreen;
+  }
+
+  /* 特殊样式 */
+  .display-none {
+    display: none;
+  }
+
+  .visibility-hidden {
+    visibility: hidden;
+  }
+
+  .visibility-visible {
+    visibility: visible;
+  }
+</style>
+<body>
+  <!-- 左侧：display: none -->
+  <div class="column">
+    <div class="title">display: none</div>
+
+    <div class="box parent display-none">
+      父元素
+      <!-- 子元素无法显示 -->
+      <div class="box child">子元素</div>
+    </div>
+
+    <div class="box sibling">后续元素</div>
+  </div>
+
+  <!-- 右侧：visibility: hidden -->
+  <div class="column">
+    <div class="title">visibility: hidden</div>
+
+    <div class="box parent visibility-hidden">
+      父元素
+      <!-- 子元素可以显示 -->
+      <div class="box child visibility-visible">子元素</div>
+    </div>
+
+    <div class="box sibling">后续元素</div>
+  </div>
+</body>

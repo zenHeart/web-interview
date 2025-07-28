@@ -1,0 +1,39 @@
+<style>
+   .container {
+      display: flex;
+      gap: 10px;
+   }
+   .parent {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      background: cadetblue;
+   }
+   .child {
+      width: 30px;
+      height: 30px;
+      background: coral;
+      margin-top: 10px;
+   }
+
+   .block-start {
+      /* 使用 margin-block-start 代替 magin-top，适应不同书写模式 */
+      margin-block-start: 10px;
+   }
+   
+   #toggle:checked ~ .container .parent {
+      writing-mode: vertical-rl;
+   }
+</style>
+开启 writing-mode: vertical-rl
+<input type="checkbox" id="toggle" />
+<div class="container">
+   <div class="parent">
+      parent
+      <div class="child"></div>
+   </div>
+   <div class="parent">
+      parent
+      <div class="child block-start"></div>
+   </div>
+</div>

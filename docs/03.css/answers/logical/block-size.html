@@ -1,0 +1,45 @@
+<style>
+  .container {
+    display: flex;
+    gap: 10px;
+  }
+  .parent {
+    width: 200px;
+    height: 200px;
+    display: flex;
+    background: cadetblue;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  .child {
+    height: 30px;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background: coral;
+  }
+
+  .block-size {
+    /* 采用 block-size 设置逻辑高度，不受物理坐标系影响 */
+    block-size: 30px;
+    /* 注意必须重置 height, 不然最终还是覆盖 block-size */
+    height: unset;
+  }
+  
+  #toggle:checked ~ .container .parent {
+    writing-mode: vertical-rl;
+  }
+</style>
+开启 write-mode: vertical-rtl
+<input type="checkbox" id="toggle" />
+<div class="container">
+  <div class="parent">
+    parent
+    <div class="child">children</div>
+  </div>
+  <div class="parent">
+    parent
+    <div class="child block-size">children</div>
+  </div>
+</div>

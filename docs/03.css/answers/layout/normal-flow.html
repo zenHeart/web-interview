@@ -1,0 +1,51 @@
+
+   <style>
+      .block {
+         display: block;
+         width: 200px;
+         padding: 12px;
+         margin: 8px 0;
+         background: #e3f2fd;
+         border: 1px solid #90caf9;
+      }
+      .inline {
+         display: inline;
+         padding: 4px 8px;
+         background: #ffe0e0;
+         border: 1px solid #ef9a9a;
+      }
+      .inline-block {
+         display: inline-block;
+         width: 120px;
+         padding: 12px;
+         margin: 4px;
+         background: #fff3e0;
+         border: 1px solid #ffb74d;
+         vertical-align: top;
+      }
+   </style>
+
+   <h1>Block、Inline、Inline-block 综合示例</h1>
+   <h2>Block 元素</h2>
+   <div class="block">我是 block 元素（div）</div>
+   <div class="block">每个 block 元素独占一行</div>
+   <h2>Inline 元素</h2>
+   <p>
+      <span class="inline">我是 inline 元素（span）</span>
+      <span class="inline">不会换行</span>
+      <span class="inline">width/height 无法设置宽高，采用行内元素的高度</span>
+   </p>
+   <h2>Inline-block 元素</h2>
+   <p>
+      <span class="inline-block">inline-block 1</span>
+      <span class="inline-block">inline-block 2</span>
+      <span class="inline-block">inline-block 3</span>
+   </p>
+   <p>
+      <strong>说明：</strong>
+      <ul>
+         <li>Block 元素独占一行，可设置宽高。</li>
+         <li>Inline 元素在一行内排列，宽高不可设置。</li>
+         <li>Inline-block 元素在一行内排列，也可设置宽高。</li>
+      </ul>
+   </p>

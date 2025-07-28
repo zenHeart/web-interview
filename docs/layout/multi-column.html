@@ -1,0 +1,104 @@
+<style>
+   .multi-column {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+   }
+   .two-columns {
+      column-count: 2;
+      column-gap: 30px;
+      column-rule: 2px solid #90caf9;
+   }
+   .three-columns {
+      column-count: 3;
+      column-gap: 20px;
+      column-rule: 1px dotted #666;
+   }
+   .width-columns {
+      column-width: 200px;
+      column-gap: 25px;
+      column-rule: 2px solid #ffb74d;
+   }
+   .span-element {
+      column-span: all;
+      background: #e3f2fd;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: center;
+      font-weight: bold;
+   }
+   .avoid-break {
+      break-inside: avoid;
+      background: #fff3e0;
+      padding: 15px;
+      margin: 10px 0;
+      border: 1px solid #ffb74d;
+   }
+   .text-content {
+      line-height: 1.6;
+      text-align: justify;
+   }
+</style>
+
+<h1>多列布局(Multi-column)示例</h1>
+
+<h2>双列布局</h2>
+<div class="multi-column two-columns">
+   <p class="text-content">
+      这是多列布局的示例文本。多列布局允许我们将长文本内容分成多个列来显示，
+      就像报纸和杂志的排版一样。文本会自动从一列流到下一列。
+   </p>
+   <p class="text-content">
+      当内容超过第一列的高度时，会自动换到第二列继续显示。
+      这种布局方式特别适合显示文章、新闻等长文本内容。
+   </p>
+</div>
+
+<h2>三列布局</h2>
+<div class="multi-column three-columns">
+   <p class="text-content">
+      三列布局提供了更紧凑的文本显示方式。每列的宽度会自动调整，
+      以适应容器的总宽度。
+   </p>
+   <p class="text-content">
+      列之间可以设置间距和分隔线，提高可读性。
+      文本会按照从左到右、从上到下的顺序在各列中流动。
+   </p>
+   <p class="text-content">
+      这种布局在移动设备上可能不太适用，因为列宽会变得很窄。
+   </p>
+</div>
+
+<h2>固定列宽布局</h2>
+<div class="multi-column width-columns">
+   <p class="text-content">
+      使用 column-width 属性可以设置每列的理想宽度。
+      浏览器会根据容器宽度自动决定列数。
+   </p>
+   <div class="span-element">跨所有列的标题</div>
+   <p class="text-content">
+      当容器宽度足够时，会显示更多列；
+      当容器变窄时，列数会自动减少。
+   </p>
+   <div class="avoid-break">
+      <h4>不会被打断的内容块</h4>
+      这个div设置了 break-inside: avoid，
+      确保内容不会在列之间被打断显示。
+   </div>
+   <p class="text-content">
+      多列布局还支持控制内容在列之间的断点，
+      可以避免标题或重要内容被分割到不同列中。
+   </p>
+</div>
+
+<p>
+   <strong>多列布局特点：</strong>
+   <ul>
+      <li>适合长文本内容的排版</li>
+      <li>可设置列数或列宽</li>
+      <li>支持列间距和分隔线</li>
+      <li>可控制内容跨列和断点</li>
+      <li>响应式调整列数</li>
+   </ul>
+</p>

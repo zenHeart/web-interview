@@ -1,0 +1,82 @@
+<style></style>
+   .container {
+      background: #f5f5f5;
+      padding: 20px;
+      margin: 10px 0;
+      overflow: hidden; /* 清除浮动 */
+   }
+   .float-left {
+      float: left;
+      width: 200px;
+      height: 120px;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      padding: 10px;
+      margin: 10px;
+   }
+   .float-right {
+      float: right;
+      width: 200px;
+      height: 120px;
+      background: #fff3e0;
+      border: 1px solid #ffb74d;
+      padding: 10px;
+      margin: 10px;
+   }
+   .text-content {
+      background: #f3e5f5;
+      padding: 15px;
+      border: 1px solid #ce93d8;
+      line-height: 1.6;
+   }
+   .clearfix::after {
+      content: '';
+      display: table;
+      clear: both;
+   }
+   .no-float {
+      background: #e8f5e8;
+      padding: 10px;
+      border: 1px solid #81c784;
+      margin: 10px 0;
+   }
+</style>
+
+<h1>浮动(Floating)布局示例</h1>
+
+<h2>左浮动示例</h2>
+<div class="container">
+   <div class="float-left">左浮动元素</div>
+   <div class="text-content">
+      这是普通文本内容，会环绕在浮动元素周围。浮动元素脱离了文档流，
+      其他元素会填充浮动元素原来的位置，形成文字环绕效果。
+   </div>
+</div>
+
+<h2>右浮动示例</h2>
+<div class="container">
+   <div class="float-right">右浮动元素</div>
+   <div class="text-content">
+      这是右浮动示例，浮动元素向右移动，文本内容从左侧开始，
+      遇到浮动元素时会环绕显示。
+   </div>
+</div>
+
+<h2>多个浮动元素</h2>
+<div class="container clearfix">
+   <div class="float-left" style="background: #ffebee;">浮动1</div>
+   <div class="float-left" style="background: #e8f5e8;">浮动2</div>
+   <div class="float-right" style="background: #fff8e1;">右浮动</div>
+</div>
+
+<div class="no-float">这是正常文档流中的元素，不受浮动影响</div>
+
+<p>
+   <strong>浮动特点：</strong>
+   <ul>
+      <li>元素脱离文档流，向左或右移动</li>
+      <li>其他元素会环绕浮动元素</li>
+      <li>需要清除浮动防止父容器高度塌陷</li>
+      <li>浮动元素会水平排列</li>
+   </ul>
+</p>
