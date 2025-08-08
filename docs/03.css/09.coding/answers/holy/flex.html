@@ -1,0 +1,43 @@
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header,
+  footer {
+    height: 40px;
+    background: lightgray;
+    min-width: 500px;
+  }
+  .main {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  nav {
+    width: 200px;
+    background: lightcoral;
+    flex-shrink: 0;
+  }
+  article {
+    flex: 1;
+    min-width: 100px;
+    background: lightblue;
+    min-height: 0;
+  }
+  aside {
+    width: 200px;
+    background: lightgreen;
+    flex-shrink: 0;
+  }
+</style>
+<div class="container">
+  <header></header>
+  <div class="main">
+    <nav></nav>
+    <article></article>
+    <aside></aside>
+  </div>
+  <footer></footer>
+</div>

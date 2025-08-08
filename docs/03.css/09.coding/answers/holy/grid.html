@@ -1,0 +1,33 @@
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 40px 1fr 40px;
+    height: 100vh;
+  }
+  header,footer {
+    grid-column: 1 / -1;
+    background: lightgray;
+  }
+
+  nav {
+    grid-column: 1;
+    background: lightcoral;
+  }
+  article {
+    grid-column: 2;
+    min-width: 100px;
+    background: lightblue;
+  }
+  aside {
+    grid-column: 3;
+    background: lightgreen;
+  }
+</style>
+<div class="container">
+  <header></header>
+  <nav></nav>
+  <article></article>
+  <aside></aside>
+  <footer></footer>
+</div>

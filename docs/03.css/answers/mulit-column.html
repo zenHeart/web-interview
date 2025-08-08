@@ -1,0 +1,38 @@
+<style>
+  .multi-column-demo {
+    width: 600px;
+    column-count: 3;
+    column-gap: 24px;
+    column-rule: 2px solid #bbb;
+    column-fill: balance;
+    background: #fafafa;
+    padding: 16px;
+    margin: 32px auto;
+  }
+  .multi-column-demo h3 {
+    column-span: all;
+    margin-top: 0;
+    background-color: #bbb;
+  }
+  .multi-column-demo .break {
+    break-inside: avoid;
+    background: #e3f2fd;
+    padding: 4px;
+    margin: 8px 0;
+  }
+</style>
+
+<div class="multi-column-demo">
+  <h3>多列布局示例</h3>
+  <p>
+    Multi-column 布局允许内容像报纸一样分为多列。常用属性有
+    <code>column-count</code
+    >（列数）、<code>column-width</code>（列宽）、<code>column-gap</code>（列间距）、<code>column-rule</code>（分隔线）、<code>column-span</code>（跨列）、<code>column-fill</code>（填充方式）、<code>break-inside</code>（断行控制）等。
+  </p>
+  <div class="break">
+    这个块元素设置了 <code>break-inside: avoid</code>，不会被拆分到多列。
+  </div>
+  <p>
+    多列布局适合用于新闻、杂志等需要分栏展示内容的场景。你可以灵活组合上述属性，实现丰富的排版效果。
+  </p>
+</div>

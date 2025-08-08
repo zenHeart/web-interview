@@ -17,7 +17,7 @@
       "MD034": false,
       "no-bare-urls": false
    },
-   "editor.tabSize": 3,
+   "editor.tabSize": 2,
    "editor.insertSpaces": true,
    "editor.detectIndentation": false
 }

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP 性能指标采集验证</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .controls h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-get {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-post {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+        }
+
+        .btn-large {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+            color: white;
+        }
+
+        .btn-error {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .metrics-display {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .metrics-display h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .results {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .results h2 {
+            margin-bottom: 20px;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        .results-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            border: 1px solid #e9ecef;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-style: italic;
+        }
+
+        .performance-entry {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .performance-entry.error {
+            border-left-color: #f44336;
+        }
+
+        .performance-entry.slow {
+            border-left-color: #FF9800;
+        }
+
+        .entry-header {
+            font-weight: bold;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .entry-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .detail-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 HTTP 性能指标采集验证</h1>
+            <p>验证 GET 和 POST 请求的全链路性能指标采集</p>
+        </div>
+
+        <div class="controls">
+            <h2>📡 发送请求测试</h2>
+            <div class="button-grid">
+                <button class="btn btn-get" onclick="sendRequest('/api/fast', 'GET')">快速 GET 请求</button>
+                <button class="btn btn-get" onclick="sendRequest('/api/slow', 'GET')">慢速 GET 请求</button>
+                <button class="btn btn-large" onclick="sendRequest('/api/large', 'GET')">大数据 GET</button>
+                <button class="btn btn-post" onclick="sendPostRequest('/api/upload')">POST 上传</button>
+                <button class="btn btn-post" onclick="sendPostRequest('/api/login')">POST 登录</button>
+                <button class="btn btn-error" onclick="sendRequest('/api/error', 'GET')">错误请求</button>
+                <button class="btn btn-clear" onclick="clearResults()">清空结果</button>
+            </div>
+        </div>
+
+        <div class="metrics-display">
+            <h2>📊 性能指标统计</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="totalRequests">0</div>
+                    <div class="metric-label">总请求数</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgDns">0ms</div>
+                    <div class="metric-label">平均 DNS</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgTcp">0ms</div>
+                    <div class="metric-label">平均 TCP</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgTtfb">0ms</div>
+                    <div class="metric-label">平均 TTFB</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="avgTotal">0ms</div>
+                    <div class="metric-label">平均总时间</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results">
+            <h2>📈 性能指标详情</h2>
+            <div class="results-content" id="resultsDisplay">
+                <div class="loading">等待请求...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let performanceData = [];
+        let requestCounter = 0;
+
+        // 性能观察器
+        const po = new PerformanceObserver(list => {
+            list.getEntries().forEach(entry => {
+                if (entry.initiatorType === 'fetch' || entry.initiatorType === 'xmlhttprequest') {
+                    processPerformanceEntry(entry);
+                }
+            });
+        });
+        po.observe({ type: 'resource', buffered: true });
+
+        // 处理性能条目
+        function processPerformanceEntry(entry) {
+            const dns = entry.domainLookupEnd - entry.domainLookupStart;
+            const tcp = entry.connectEnd - entry.connectStart;
+            const ssl = entry.secureConnectionStart > 0 
+                ? entry.connectEnd - entry.secureConnectionStart 
+                : 0;
+            const ttfb = entry.responseStart - entry.requestStart;
+            const content = entry.responseEnd - entry.responseStart;
+            const total = entry.duration;
+
+            const metrics = {
+                url: entry.name,
+                dns: dns.toFixed(2),
+                tcp: tcp.toFixed(2),
+                ssl: ssl.toFixed(2),
+                ttfb: ttfb.toFixed(2),
+                content: content.toFixed(2),
+                total: total.toFixed(2),
+                timestamp: new Date().toLocaleString(),
+                transferSize: entry.transferSize || 0,
+                encodedBodySize: entry.encodedBodySize || 0
+            };
+
+            performanceData.push(metrics);
+            updateDisplay();
+            updateStatistics();
+        }
+
+        // 发送 GET 请求
+        async function sendRequest(url, method = 'GET') {
+            try {
+                performance.clearResourceTimings();
+                requestCounter++;
+                
+                const startTime = performance.now();
+                const response = await fetch(url, { method });
+                const endTime = performance.now();
+                const data = await response.json();
+                
+                console.log(`${method} 请求完成:`, {
+                    url,
+                    status: response.status,
+                    clientTime: (endTime - startTime).toFixed(2) + 'ms',
+                    response: data
+                });
+
+                // 等待 PerformanceObserver 处理
+                setTimeout(() => {
+                    if (performanceData.length === 0) {
+                        // 如果没有捕获到性能数据，添加基本信息
+                        performanceData.push({
+                            url,
+                            dns: '0.00',
+                            tcp: '0.00',
+                            ssl: '0.00',
+                            ttfb: (endTime - startTime).toFixed(2),
+                            content: '0.00',
+                            total: (endTime - startTime).toFixed(2),
+                            timestamp: new Date().toLocaleString(),
+                            transferSize: 0,
+                            encodedBodySize: 0,
+                            note: '本地请求，无网络延迟'
+                        });
+                        updateDisplay();
+                        updateStatistics();
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('请求失败:', error);
+                performanceData.push({
+                    url,
+                    error: error.message,
+                    timestamp: new Date().toLocaleString(),
+                    dns: '0.00',
+                    tcp: '0.00',
+                    ssl: '0.00',
+                    ttfb: '0.00',
+                    content: '0.00',
+                    total: '0.00'
+                });
+                updateDisplay();
+            }
+        }
+
+        // 发送 POST 请求
+        async function sendPostRequest(url) {
+            const testData = url.includes('upload') 
+                ? { size: Math.floor(Math.random() * 10000), filename: 'test.jpg' }
+                : { username: 'testuser', password: '123456' };
+
+            try {
+                performance.clearResourceTimings();
+                requestCounter++;
+                
+                const startTime = performance.now();
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testData)
+                });
+                const endTime = performance.now();
+                const data = await response.json();
+                
+                console.log('POST 请求完成:', {
+                    url,
+                    status: response.status,
+                    clientTime: (endTime - startTime).toFixed(2) + 'ms',
+                    response: data
+                });
+
+                // 等待 PerformanceObserver 处理
+                setTimeout(() => {
+                    if (performanceData.length === 0 || 
+                        !performanceData.some(p => p.url === url && p.timestamp === new Date().toLocaleString())) {
+                        performanceData.push({
+                            url,
+                            dns: '0.00',
+                            tcp: '0.00',
+                            ssl: '0.00',
+                            ttfb: (endTime - startTime).toFixed(2),
+                            content: '0.00',
+                            total: (endTime - startTime).toFixed(2),
+                            timestamp: new Date().toLocaleString(),
+                            transferSize: 0,
+                            encodedBodySize: 0,
+                            note: '本地请求，无网络延迟',
+                            postData: testData
+                        });
+                        updateDisplay();
+                        updateStatistics();
+                    }
+                }, 100);
+
+            } catch (error) {
+                console.error('POST 请求失败:', error);
+                performanceData.push({
+                    url,
+                    error: error.message,
+                    timestamp: new Date().toLocaleString(),
+                    dns: '0.00',
+                    tcp: '0.00',
+                    ssl: '0.00',
+                    ttfb: '0.00',
+                    content: '0.00',
+                    total: '0.00'
+                });
+                updateDisplay();
+            }
+        }
+
+        // 更新显示
+        function updateDisplay() {
+            const resultsDiv = document.getElementById('resultsDisplay');
+            
+            if (performanceData.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading">等待请求...</div>';
+                return;
+            }
+
+            const html = performanceData.slice(-10).reverse().map((entry, index) => {
+                const isError = entry.error;
+                const isSlow = parseFloat(entry.total) > 200;
+                const cssClass = isError ? 'error' : (isSlow ? 'slow' : '');
+                
+                return `
+                    <div class="performance-entry ${cssClass}">
+                        <div class="entry-header">
+                            ${entry.url} - ${entry.timestamp}
+                            ${isError ? ' ❌' : (isSlow ? ' 🐌' : ' ✅')}
+                        </div>
+                        ${entry.error ? `<div style="color: #f44336;">错误: ${entry.error}</div>` : ''}
+                        ${entry.note ? `<div style="color: #666; font-style: italic;">${entry.note}</div>` : ''}
+                        <div class="entry-details">
+                            <div class="detail-item">
+                                <span class="detail-label">DNS:</span> ${entry.dns}ms
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">TCP:</span> ${entry.tcp}ms
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">SSL:</span> ${entry.ssl}ms
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">TTFB:</span> ${entry.ttfb}ms
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">内容:</span> ${entry.content}ms
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">总计:</span> ${entry.total}ms
+                            </div>
+                            ${entry.transferSize ? `
+                            <div class="detail-item">
+                                <span class="detail-label">传输:</span> ${entry.transferSize} bytes
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // 更新统计信息
+        function updateStatistics() {
+            const validEntries = performanceData.filter(entry => !entry.error);
+            
+            if (validEntries.length === 0) {
+                document.getElementById('totalRequests').textContent = performanceData.length;
+                return;
+            }
+
+            const avgDns = validEntries.reduce((sum, entry) => sum + parseFloat(entry.dns), 0) / validEntries.length;
+            const avgTcp = validEntries.reduce((sum, entry) => sum + parseFloat(entry.tcp), 0) / validEntries.length;
+            const avgTtfb = validEntries.reduce((sum, entry) => sum + parseFloat(entry.ttfb), 0) / validEntries.length;
+            const avgTotal = validEntries.reduce((sum, entry) => sum + parseFloat(entry.total), 0) / validEntries.length;
+
+            document.getElementById('totalRequests').textContent = performanceData.length;
+            document.getElementById('avgDns').textContent = avgDns.toFixed(1) + 'ms';
+            document.getElementById('avgTcp').textContent = avgTcp.toFixed(1) + 'ms';
+            document.getElementById('avgTtfb').textContent = avgTtfb.toFixed(1) + 'ms';
+            document.getElementById('avgTotal').textContent = avgTotal.toFixed(1) + 'ms';
+        }
+
+        // 清空结果
+        function clearResults() {
+            performanceData = [];
+            requestCounter = 0;
+            performance.clearResourceTimings();
+            updateDisplay();
+            updateStatistics();
+            console.clear();
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 HTTP 性能指标采集验证工具已就绪');
+            console.log('点击按钮发送请求，查看性能指标采集结果');
+        });
+    </script>
+</body>
+</html>

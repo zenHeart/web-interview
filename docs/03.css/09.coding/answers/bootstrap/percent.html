@@ -1,0 +1,41 @@
+<style>
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  .row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .col-1 { width: 8.3333%; }
+  .col-2 { width: 16.6667%; }
+  .col-3 { width: 25%; }
+  .col-4 { width: 33.3333%; }
+  .col-6 { width: 50%; }
+  .col-12 { width: 100%; }
+  .box {
+    background: #e3e3e3;
+    border-radius: 4px;
+    padding: 24px;
+    text-align: center;
+    font-weight: bold;
+    box-sizing: border-box;
+  }
+</style>
+<h1>Percent 实现 Bootstrap 栅格系统</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-4 box">.col-4</div>
+    <div class="col-4 box">.col-4</div>
+    <div class="col-4 box">.col-4</div>
+  </div>
+  <div class="row">
+    <div class="col-6 box">.col-6</div>
+    <div class="col-6 box">.col-6</div>
+  </div>
+  <div class="row">
+    <div class="col-12 box">.col-12</div>
+  </div>
+</div>

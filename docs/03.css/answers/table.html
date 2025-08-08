@@ -1,0 +1,64 @@
+<style>
+  .table-container {
+    display: table;
+    width: 400px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border: 1px solid #ccc;
+  }
+  .table-caption {
+    display: table-caption;
+    caption-side: top;
+    font-weight: bold;
+    padding: 8px;
+    text-align: center;
+  }
+  .table-header {
+    display: table-header-group;
+    background: #f5f5f5;
+  }
+  .table-row {
+    display: table-row;
+  }
+  .table-cell,
+  .table-header-cell {
+    display: table-cell;
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .table-header-cell {
+    font-weight: bold;
+  }
+  .table-footer {
+    display: table-footer-group;
+    background: #fafafa;
+  }
+</style>
+
+<div class="table-container">
+  <div class="table-caption">基本表格布局示例</div>
+  <div class="table-header">
+    <div class="table-row">
+      <div class="table-header-cell">姓名</div>
+      <div class="table-header-cell">年龄</div>
+      <div class="table-header-cell">城市</div>
+    </div>
+  </div>
+  <div class="table-row">
+    <div class="table-cell">张三</div>
+    <div class="table-cell">28</div>
+    <div class="table-cell">北京</div>
+  </div>
+  <div class="table-row">
+    <div class="table-cell">李四</div>
+    <div class="table-cell">32</div>
+    <div class="table-cell">上海</div>
+  </div>
+  <div class="table-footer">
+    <div class="table-row">
+      <div class="table-cell" colspan="3">表格尾部</div>
+    </div>
+  </div>
+</div>
