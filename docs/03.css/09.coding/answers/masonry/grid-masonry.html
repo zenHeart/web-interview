@@ -1,0 +1,22 @@
+<style>
+  .masonry {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: masonry;
+    gap: 16px;
+  }
+  .masonry-item {
+    background: #f2f2f2;
+    padding: 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+</style>
+<div class="masonry">
+  <div class="masonry-item">内容1<br />高度不一</div>
+  <div class="masonry-item">内容2<br />更高一些<br />再多一行</div>
+  <div class="masonry-item">内容3</div>
+  <div class="masonry-item">内容4<br />高度不一</div>
+  <div class="masonry-item">内容5<br />更高一些<br />再多一行</div>
+  <div class="masonry-item">内容6</div>
+</div>
