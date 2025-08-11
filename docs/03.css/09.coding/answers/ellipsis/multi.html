@@ -1,0 +1,17 @@
+<style>
+  .ellipsis {
+    width: 200px;
+    border: 1px solid #ccc;
+
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+
+    overflow: hidden;
+    white-space: normal; /* 确保允许运行断行 */
+    word-break: break-word; /* 或 overflow-wrap: break-word; 两者选其一 */
+  }
+</style>
+<div class="ellipsis">
+  这是一个很长的文本内容，当内容超出容器宽度时会在末尾显示省略号。支持多行显示，超出指定行数自动截断并显示省略号。
+</div>

@@ -1,0 +1,28 @@
+<style>
+  .demo-section {
+    background: #ffe8e8;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+  }
+</style>
+<div class="demo-section">
+  <h2>实现代码</h2>
+  <pre><code>
+/* JavaScript 阻止复制 */
+document.addEventListener("copy", function (e) {
+  e.preventDefault();
+});</code></pre>
+</div>
+
+<script>
+  let protectionEnabled = true;
+
+  function preventCopy(e) {
+    if (protectionEnabled) {
+      e.preventDefault();
+      alert("复制操作已被阻止！");
+    }
+  }
+  document.addEventListener("copy", preventCopy);
+</script>
