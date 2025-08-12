@@ -1,0 +1,14 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+    {
+      "type": "shell",
+      "label": "cleanup-thread-shared",
+      "command": "git rm -r --ignore-unmatch docs/04.nodejs/answers/thread/_shared",
+      "args": [],
+      "group": "build",
+      "isBackground": false,
+      "problemMatcher": []
+    }
+  ]
+}
