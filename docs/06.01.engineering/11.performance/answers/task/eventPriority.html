@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>浏览器事件优先级与事件循环演示</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding:16px; line-height:1.5; }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    table { border-collapse: collapse; margin:12px 0; width:100%; font-size:14px; }
+    th, td { border:1px solid #ccc; padding:4px 6px; text-align:left; }
+    code { background:#f5f5f5; padding:2px 4px; border-radius:3px; }
+    button { margin:4px 8px 4px 0; }
+    #log { background:#111; color:#ddd; font:12px/1.4 Menlo,monospace; padding:8px; height:220px; overflow:auto; border-radius:4px; }
+    .tag { display:inline-block; padding:0 6px; border-radius:3px; background:#444; margin-right:4px; }
+    .micro { background:#6a4; } .macro { background:#36c; } .render { background:#b65; } .input { background:#c63; } .raf { background:#693; } .idle { background:#555; }
+  </style>
+</head>
+<body>
+  <h1>浏览器常见事件在事件循环中的相对顺序（示意）</h1>
+  <p>备注：HTML 标准并未为所有事件定义 <strong>硬编码的数值优先级</strong>，而是通过“任务源”与“事件循环阶段”间接决定执行时机。下表是主流浏览器（Chromium / WebKit / Gecko）常见、可观察到的典型顺序示意。</p>
+
+  <table>
+    <thead>
+      <tr><th>阶段/类别(概念)</th><th>典型来源</th><th>触发时机（相对）</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="tag macro">宏任务(Task)</span></td><td>script(初始)、setTimeout / setInterval、postMessage、MessageChannel、部分事件回调</td><td>事件循环每轮开始时取 1 个</td><td>执行完后会刷新微任务队列</td></tr>
+      <tr><td><span class="tag micro">微任务(Microtask)</span></td><td>Promise.then / queueMicrotask / MutationObserver</td><td>当前宏任务结束后、渲染前；若产生新微任务会继续清空</td><td>不要长时间阻塞，影响渲染/输入</td></tr>
+      <tr><td><span class="tag input">用户输入事件</span></td><td>click / pointer / key / wheel</td><td>通常在上轮渲染后，下轮脚本前被派发；部分实现为减少输入延迟会提早处理</td><td>高优先级感知，可能打断空闲回调</td></tr>
+      <tr><td><span class="tag raf">requestAnimationFrame</span></td><td>rAF 回调</td><td>渲染前一帧合成阶段</td><td>对动画/测量布局友好</td></tr>
+      <tr><td><span class="tag render">渲染/合成</span></td><td>样式计算、布局、绘制、合成</td><td>宏任务 & 微任务清空后</td><td>若主线程长任务阻塞会延迟</td></tr>
+      <tr><td><span class="tag idle">requestIdleCallback</span></td><td>rIC 回调</td><td>一帧渲染完成且有剩余空闲片段</td><td>可能被饿死，不保证执行</td></tr>
+    </tbody>
+  </table>
+
+  <h2>关键要点</h2>
+  <ul>
+    <li>事件循环一轮：取一个 <strong>宏任务</strong> → 执行 → 清空全部 <strong>微任务</strong> → 可能进行渲染（若需要）→ rAF → rIC。</li>
+    <li><code>Promise.then</code> / <code>queueMicrotask</code> / <code>MutationObserver</code> 都在微任务阶段，内部先入先出（同源队列）。</li>
+    <li><code>requestAnimationFrame</code> 早于渲染提交，用于读取最新布局并写入动画。</li>
+    <li>输入事件常在渲染后派发，但浏览器会为低延迟输入作策略调整（不保证严格顺序）。</li>
+    <li><code>requestIdleCallback</code> 仅在帧剩余时间大于阈值（典型 50ms 预算之剩余）才执行。</li>
+  </ul>
+
+  <h2>交互演示</h2>
+  <p>点击按钮后观察日志中不同任务的排队与执行顺序。</p>
+  <div>
+    <button id="btn-seq">调度一组任务</button>
+    <button id="btn-input">触发一次点击(本身也是事件回调)</button>
+    <button id="btn-block">模拟长任务(阻塞 60ms)</button>
+  </div>
+  <pre id="log"></pre>
+
+  <script>
+    const logEl = document.getElementById('log')
+    function log (tag, msg) {
+      const t = performance.now().toFixed(2)
+      logEl.textContent += `[${t}] ${tag.padEnd(10)} ${msg}\n`
+      logEl.scrollTop = logEl.scrollHeight
+    }
+
+    function scheduleAll () {
+      log('macro','(button handler start)')
+
+      setTimeout(()=>log('timeout','宏任务(setTimeout)'),0)
+      queueMicrotask(()=>log('micro','微任务(queueMicrotask 1)'))
+      Promise.resolve().then(()=>log('micro','微任务(Promise.then 1)'))
+      Promise.resolve().then(()=>{
+        log('micro','微任务(Promise.then 2)')
+        queueMicrotask(()=>log('micro','微任务(嵌套 queueMicrotask)'))
+      })
+      const moTarget = document.createElement('div')
+      new MutationObserver(()=>log('micro','微任务(MutationObserver)')).observe(moTarget,{attributes:true})
+      moTarget.setAttribute('data-x','1')
+
+      requestAnimationFrame(()=>log('rAF','动画帧回调'))
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(()=>log('idle','空闲回调'),{timeout:500})
+      }
+      log('macro','(button handler end)')
+    }
+
+    document.getElementById('btn-seq').addEventListener('click', scheduleAll)
+
+    document.getElementById('btn-input').addEventListener('click', () => {
+      log('input','用户点击事件回调')
+    })
+
+    document.getElementById('btn-block').addEventListener('click', () => {
+      const start = performance.now()
+      while (performance.now() - start < 60) { /* busy loop to block */ }
+      log('macro','长任务结束(阻塞 ~60ms) → 观察动画/输入/idle 延迟')
+    })
+  </script>
+
+  <h2>常见误区</h2>
+  <ul>
+    <li><strong>微任务不是“更高优先级的一类任务”</strong>，只是当前宏任务结束后<strong>立刻</strong>清空，它不会打断正在执行的宏任务。</li>
+    <li><code>requestAnimationFrame</code> 不是微任务；它在下一帧渲染前统一回调。</li>
+    <li>不同浏览器对输入事件提早派发、合并策略可能不一致，因此不要依赖“输入事件绝对早于 timeout”。</li>
+    <li><code>requestIdleCallback</code> 没有执行保证，低性能设备或主线程繁忙时可能长期不触发。</li>
+  </ul>
+
+  <h2>总结（面试表达示例）</h2>
+  <p>
+    简述：浏览器事件循环每轮取一个宏任务执行，期间排入的微任务在该宏任务结束后一次性清空，随后进行渲染前的 rAF 回调，再进入渲染/合成，最后若时间有余执行空闲回调。Promise/queueMicrotask 属于微任务；setTimeout 属于宏任务；rAF 在渲染前；用户输入事件通常在上一帧渲染后、下一帧脚本前注入。理解这一顺序有助于优化动画流畅度、避免长任务阻塞与微任务“饿死”渲染。
+  </p>
+</body>
+</html>

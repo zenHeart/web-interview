@@ -1,0 +1,31 @@
+<script>
+  Promise.resolve().then(() => {
+    console.log("Promise");
+  });
+
+  // MutationObserver 微任务
+  const observer = new MutationObserver(() => {
+    console.log("MutationObserver");
+  });
+  const target = document.createElement("div");
+  observer.observe(target, { attributes: true });
+  target.setAttribute("data-test", "1");
+  
+  queueMicrotask(() => {
+    console.log("queueMicrotask");
+  });
+
+  requestAnimationFrame(() => {
+    console.log("Animation Frame");
+  });
+
+  requestIdleCallback(() => {
+    console.log("Idle Callback");
+  });
+
+  setTimeout(() => {
+    console.log("Timeout");
+  }, 0);
+
+  console.log("sync code");
+</script>

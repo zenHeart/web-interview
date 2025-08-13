@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Frame 与事件循环关系示例</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding:16px; }
+    pre { background:#111; color:#eee; padding:8px; font:12px/1.4 Menlo,monospace; height:240px; overflow:auto; }
+    iframe { width:48%; height:200px; border:1px solid #999; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    button { margin-right:8px; }
+    h1 { font-size:18px; margin:0 0 12px; }
+    small { color:#666; }
+  </style>
+</head>
+<body>
+  <h1>Frame 是否有独立事件循环？</h1>
+  <p>
+    <strong>结论（浏览器模型）</strong>：同一 <em>浏览上下文组(Browsing Context Group)</em> 中的每个 iframe（同源或跨源）通常运行在 <strong>各自的 JavaScript 执行上下文</strong> 内，但是否拥有 <strong>独立线程/事件循环</strong> 取决于浏览器的进程/线程调度策略：
+  </p>
+  <ul>
+    <li><strong>同源 iframe（多数情况）</strong>：与父页面共享同一渲染进程与任务调度序列；脚本执行互相抢占一个主线程（复用事件循环队列集合）。</li>
+    <li><strong>跨源 iframe</strong>：可能被浏览器放入不同的渲染进程（站点隔离策略），拥有独立的任务队列集合，但仍遵循同一事件循环规范；不可直接访问彼此 DOM。</li>
+    <li><strong>Chrome Site Isolation</strong> 下：跨站点 iframe 更倾向运行在不同进程，因此宏/微任务调度彼此独立；但这属于实现层优化，不改变 Web 可见语义。</li>
+  </ul>
+  <p>下方实验分别在父页面与两个 iframe 内调度宏任务与微任务，并记录时间戳与来源。</p>
+  <div>
+    <button id="btn-run">运行一次对比</button>
+    <button id="btn-busy">父页面阻塞 120ms</button>
+    <button id="btn-clear">清空日志</button>
+  </div>
+  <div class="row">
+    <iframe id="f1"></iframe>
+    <iframe id="f2"></iframe>
+  </div>
+  <h3>日志</h3>
+  <pre id="log"></pre>
+  <script>
+    const logEl = document.getElementById('log')
+    const colorMap = { parent: '#4ea1f3', f1: '#9cdcfe', f2: '#f6d06f' }
+    function format (src, phase, msg) {
+      const t = performance.now().toFixed(2)
+      return `[${t}] ${src.padEnd(6)} ${phase.padEnd(9)} ${msg}`
+    }
+    function log (src, phase, msg) {
+      const line = format(src, phase, msg)
+      // 控制台输出（可用于 Performance 录制对比）
+      console.log(line)
+      // 页面输出（高亮不同来源）
+      const span = document.createElement('div')
+      span.textContent = line
+      span.style.color = colorMap[src] || '#ddd'
+      logEl.appendChild(span)
+      logEl.scrollTop = logEl.scrollHeight
+    }
+
+    const code = `<!DOCTYPE html><html><body><script>\n` +
+      `function l(phase,msg){const t=performance.now().toFixed(2);console.log('[frame FRAME_ID]',t,phase,msg);parent.postMessage({tag:'frame', id:'FRAME_ID', phase, msg, t:performance.now()}, '*')}\n` +
+      `Promise.resolve().then(()=>l('micro','Promise.then'))\n` +
+      `setTimeout(()=>l('macro','setTimeout(0)'),0)\n` +
+      `queueMicrotask(()=>l('micro','queueMicrotask'))\n` +
+      `l('sync','sync end')\n` + `let i = Date.now(); while(Date.now() - i < 1000){} // 模拟同步阻塞 1000ms\n` +
+      `</` + `script></body></html>`
+
+    document.getElementById('f1').srcdoc = code.replace(/FRAME_ID/g, 'f1')
+    document.getElementById('f2').srcdoc = code.replace(/FRAME_ID/g, 'f2')
+
+    window.addEventListener('message', e => {
+      if (e.data && e.data.tag === 'frame') {
+        log(e.data.id, e.data.phase, e.data.msg)
+      }
+    })
+
+    document.getElementById('btn-run').addEventListener('click', () => {
+      log('parent', 'sync', 'start sequence')
+      Promise.resolve().then(()=>log('parent','micro','Promise.then'))
+      queueMicrotask(()=>log('parent','micro','queueMicrotask'))
+      setTimeout(()=>log('parent','macro','setTimeout(0)'),0)
+      log('parent', 'sync', 'end sequence')
+    })
+
+    document.getElementById('btn-busy').addEventListener('click', () => {
+      const start = performance.now()
+      while (performance.now() - start < 120) {}
+      log('parent','macro','busy loop 120ms done')
+    })
+
+    document.getElementById('btn-clear').addEventListener('click', () => { logEl.textContent = '' })
+  </script>
+  <h3>如何解读</h3>
+  <ul>
+    <li>若父页面长任务阻塞（点击“阻塞”后），可观察到父页面的定时器延迟；iframe 的任务是否同步受阻取决于调度：同源 iframe 常一起延迟。</li>
+    <li>跨站点（若改为跨域 src）时，有可能看到 iframe 的任务序列与父页面脱钩（不同进程），但网络/进程切换引入调度差异。</li>
+    <li>规范角度：事件循环模型统一；实现角度：浏览器可多进程/多线程分隔不同 frame，提高稳定性与隔离。</li>
+  </ul>
+  <h3>面试总结用语示例</h3>
+  <p>一个 iframe 不必“创建新的标准事件循环规范”，而是浏览器实现可以为其分配独立的渲染进程与任务队列集合；同源大概率复用同一个进程与主线程，脚本互相阻塞；跨站点出于安全与稳定性可能拆分进程。判断复用还是独立，应从“站点隔离策略 + 任务调度表现”而非假设每个 frame 都固定独立。</p>
+</body>
+</html>

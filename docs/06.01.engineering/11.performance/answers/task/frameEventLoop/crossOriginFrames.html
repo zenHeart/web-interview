@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>同源 / 伪跨域 iframe 与事件循环影响对比</title>
+  <style>
+    body { font-family: system-ui,sans-serif; padding:16px; }
+    h1 { font-size:20px; margin:0 0 12px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+    iframe { width:48%; height:210px; border:1px solid #999; }
+    pre { background:#111; color:#eee; padding:8px; height:260px; overflow:auto; font:12px/1.4 Menlo,monospace; }
+    button { margin-right:8px; }
+    .legend span { display:inline-block; padding:2px 6px; border-radius:3px; margin-right:6px; font-size:12px; }
+    .same { background:#2d74da; color:#fff; }
+    .sandbox { background:#c77d1c; color:#fff; }
+    .parent { background:#6a4; color:#fff; }
+  </style>
+</head>
+<body>
+  <h1>不同“域上下文” iframe 对事件循环影响示例</h1>
+  <p>演示 <strong>同源 iframe</strong> 与一个 <strong>沙箱(opaque origin) iframe</strong>（通过 <code>sandbox</code> 去掉 <code>allow-same-origin</code>，模拟不可访问的跨源上下文）之间的调度与阻塞差异。真实浏览器中跨站点 iframe 可能运行在独立进程；此处用 sandbox + postMessage 近似说明：
+  </p>
+  <ul>
+    <li>两个 iframe 各自执行：同步代码 → 微任务(Promise/queueMicrotask) → 宏任务(setTimeout)</li>
+    <li>它们向父页面 <code>postMessage</code> 发送：内部时间戳、阶段类型</li>
+    <li>父页面可选择执行一次 <strong>长阻塞任务</strong>，比较“发送时间(sent)”与“接收时间(received)”的差值</li>
+  </ul>
+  <div class="legend">
+    <span class="parent">parent</span>
+    <span class="same">same-frame</span>
+    <span class="sandbox">sandbox-frame</span>
+  </div>
+  <div>
+    <button id="btn-run">运行一次</button>
+    <button id="btn-block">父页阻塞 200ms</button>
+    <button id="btn-clear">清空日志</button>
+  </div>
+  <div class="row">
+    <iframe id="same"></iframe>
+    <iframe id="sand" sandbox="allow-scripts"></iframe>
+  </div>
+  <h3>日志</h3>
+  <pre id="log"></pre>
+  <h3>解读</h3>
+  <ul>
+    <li>若看到 sandbox iframe 的 sent 时间早于父页面解除阻塞，但父页面的 received 时间延后，说明：iframe 自身线程(或任务队列)已完成调度，但父页面事件循环被阻塞，消息处理延迟。</li>
+    <li>真实跨站点 + 不同渲染进程时，父页面阻塞不影响 iframe 内部计时推进，但消息派发到父页面的回调仍需等待父页面主线程空闲。</li>
+    <li>这说明“是否独立进程”影响 <em>内部执行</em>；而 <code>postMessage</code> 的回调总在接收方事件循环空闲后执行。</li>
+  </ul>
+  <h3>面试要点</h3>
+  <p>跨域(跨站点) iframe 可能获得独立进程以隔离故障与提升并行，但不会改变 Web 事件循环语义：消息 / 回调在接收上下文排队等待。判断是否独立主要看：① 是否能访问 DOM ② 性能剖析里是否出现独立进程 / 线程 ③ 阻塞父页面时 iframe 内计时是否继续推进。</p>
+
+  <script>
+    const logEl = document.getElementById('log')
+    function log (src, phase, msg, extra='') {
+      const now = performance.now().toFixed(2)
+      const line = `[${now}] ${src.padEnd(8)} ${phase.padEnd(10)} ${msg} ${extra}`
+      console.log(line)
+      logEl.textContent += line + '\n'
+      logEl.scrollTop = logEl.scrollHeight
+    }
+
+    // frame 注入代码：发送不同阶段及内部时间
+    const frameCode = (label) => `<!DOCTYPE html><html><body><script>\n` +
+      `i = Date.now(); while(Date.now() - i < 1000){} // 模拟同步阻塞 1000ms\n` +
+      `function send(phase,msg){parent.postMessage({tag:'frame', frame:'${label}', phase, msg, sent:performance.now()}, '*')}\n` +
+      `send('sync','sync end');\n` +
+      `Promise.resolve().then(()=>send('micro','Promise.then'));\n` +
+      `queueMicrotask(()=>send('micro','queueMicrotask'));\n` +
+      `setTimeout(()=>send('macro','setTimeout(0)'),0);\n` +
+      `</`+`script></body></html>`
+
+    const same = document.getElementById('same')
+    const sand = document.getElementById('sand')
+
+
+
+    function loadFrames () {
+      same.srcdoc = frameCode('same')
+      sand.srcdoc = frameCode('sandbox')
+    }
+
+    loadFrames()
+
+    window.addEventListener('message', e => {
+      const d = e.data
+      if (!d || d.tag !== 'frame') return
+      const delay = (performance.now() - d.sent).toFixed(2)
+      log(d.frame === 'same' ? 'same' : 'sandbox', d.phase, d.msg, `(delay ${delay}ms)`)    
+    })
+
+    document.getElementById('btn-run').addEventListener('click', () => {
+      log('parent','sync','schedule start')
+      Promise.resolve().then(()=>log('parent','micro','Promise.then'))
+      queueMicrotask(()=>log('parent','micro','queueMicrotask'))
+      setTimeout(()=>log('parent','macro','setTimeout(0)'),0)
+      log('parent','sync','schedule end')
+      // 重新加载 iframe 以便每次 run 都重新触发其生命周期脚本
+      loadFrames()
+    })
+
+    document.getElementById('btn-block').addEventListener('click', () => {
+      const start = performance.now()
+      while (performance.now() - start < 200) { /* 阻塞主线程 200ms */ }
+      log('parent','macro','parent block 200ms done')
+    })
+
+    document.getElementById('btn-clear').addEventListener('click', () => { logEl.textContent = '' })
+  </script>
+</body>
+</html>

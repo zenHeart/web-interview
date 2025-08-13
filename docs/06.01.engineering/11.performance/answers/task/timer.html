@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>定时器 vs 用户事件 优先级竞赛</title>
+</head>
+<body>
+    <h1>定时器 vs 用户事件 优先级竞赛</h1>
+    <p>页面加载后会卡顿几秒钟，请在卡顿期间点击按钮，然后观察控制台。</p>
+    <button id="userBtn">在页面卡顿时点击我</button>
+
+    <script>
+        // 1. 设置一个0毫秒的定时器。
+        // 它的回调函数会几乎立刻被放入“宏任务队列”中，等待被执行。
+        setTimeout(() => {
+            console.log('✅ 定时器回调执行');
+        }, 0);
+
+        // 2. 为按钮添加点击事件监听。
+        document.getElementById('userBtn').addEventListener('click', () => {
+            console.log('🏆 用户点击事件回调执行 (优先!)');
+        });
+
+
+        // 3. 立即执行一段非常耗时的同步代码来阻塞主线程。
+        // 这将确保在它执行期间，上面的定时器已经到期，回调已入队。
+        // 同时，也给了我们充足的时间去点击按钮，让点击事件也入队。
+        console.log('...主线程开始执行耗时任务...');
+        const startTime = Date.now();
+        // 执行一个持续3秒的循环来模拟阻塞
+        while (Date.now() - startTime < 2000) {
+            // 循环，阻塞中...
+        }
+        console.log('...主线程耗时任务结束，调用栈即将清空...');
+
+        // 4. 当这段脚本执行完毕后，事件循环(Event Loop)开始工作，
+        // 它会从宏任务队列中取出任务来执行。
+        
+    </script>
+</body>
+</html>
