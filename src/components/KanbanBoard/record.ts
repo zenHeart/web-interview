@@ -63,11 +63,12 @@ export default {
     'algorithm',
     'typescript',
     'operate-system',
-    'node',
+    'system-design',
+    'nodejs',
     'paradigm',
-    'coding',
     'interview',
-    'hybird'
+    'rn',
+    'miniprogram'
   ],
   DeadLine: '2025-07-31 23:59:59'
 }
