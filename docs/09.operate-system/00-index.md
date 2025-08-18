@@ -1,6 +1,6 @@
 # 计算机基础
 
-## 什么是 INode? {p0-inode}
+## 什么是 INode? {#p0-inode}
 
 <Answer>
 
@@ -52,7 +52,7 @@ ext4 默认 inode 数量在格式化时决定；大量小文件场景可能“in
 
 </Answer>
 
-## 软链接和硬链接区别是什么？
+## 软链接和硬链接区别是什么？ {#p0-softlink-hardlink}
 
 <Answer>
 
@@ -167,7 +167,6 @@ async function caseSensitivity () {
 大小写不敏感的 FS（如默认 APFS/NTFS）会放大代码中大小写不一致的 import 问题，CI/容器（ext4）常因此构建失败。
 :::
 
-
 **延伸阅读:**
 
 * [Kernel: ext4](https://www.kernel.org/doc/Documentation/filesystems/ext4.txt) — 设计与特性
@@ -179,7 +178,6 @@ async function caseSensitivity () {
 * [Microsoft: exFAT Spec](https://learn.microsoft.com/windows/win32/fileio/exfat-specification) — 跨平台移动介质首选
 
 </Answer>
-
 
 ## 进程和线程区别 {#p0-process-thread}
 
