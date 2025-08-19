@@ -211,6 +211,45 @@ async function caseSensitivity () {
 
 </Answer>
 
+## 什么是 IPC? {#p0-ipc}
+
+// ...existing code...
+
+## 什么是 IPC? {#p0-ipc}
+
+// ...existing code...
+
+## 什么是 IPC? {#p0-ipc}
+
+<Answer>
+
+IPC（Inter-Process Communication）是不同进程在独立地址空间间交换数据/事件的机制，常见机制：管道/FIFO、消息队列、共享内存+同步、Unix/TCP/UDP 套接字、信号。
+
+共享内存吞吐最高但需同步；队列有序缓冲；Socket 通用可跨机；管道简单但多为单向字节流。
+
+|机制|通信语义|优点|局限/适用|
+|:--|:--|:--|:--|
+|管道/FIFO|字节流、通常单向|简单、零配置|同机、父子/同属；小规模流水线|
+|消息队列|消息帧、有序缓冲|解耦、可限流|容量上限/实现差异；控制面|
+|共享内存+同步|共享地址、需加锁|吞吐/延迟最佳|同步复杂，仅同机|
+|Unix 域套接字|流/报文|低开销、可传句柄|同机、需权限|
+|TCP/UDP 套接字|跨主机|最通用、可路由|协议/可靠性自管；网络开销|
+|信号|短通知|低成本|载荷极少，仅控制|
+
+:::tip
+Node 中 fork/cluster 才有 process.send/on('message') 的 IPC 通道；spawn/exec 默认仅有标准流（需自行分帧）。
+:::
+
+**延伸阅读:**
+
+* [man 7 pipe](https://man7.org/linux/man-pages/man7/pipe.7.html) — 管道/命名管道语义与限制
+* [man 7 unix](https://man7.org/linux/man-pages/man7/unix.7.html) — Unix 域套接字与句柄传递
+* [man 7 shm_overview](https://man7.org/linux/man-pages/man7/shm_overview.7.html) — 共享内存概览与同步
+* [man 7 mq_overview](https://man7.org/linux/man-pages/man7/mq_overview.7.html) — POSIX 消息队列
+* [man 7 socket](https://man7.org/linux/man-pages/man7/socket.7.html) — 套接字通用接口
+
+</Answer>
+
 ## 权限管理模型相关概念 {#p2-manage}
 
 <Answer>
