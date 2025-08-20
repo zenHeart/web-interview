@@ -1,0 +1,30 @@
+<script type="module">
+  // CancelToken（已弃用）：仅为兼容旧项目示例
+  import axios from "https://esm.sh/axios";
+
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  console.log("bind source.token");
+ 
+  source.token.promise.then(() => {
+    console.log("trigger1 token");
+  });
+   source.token.promise.then(() => {
+    console.log("trigger token");
+  });
+
+  source.token.subscribe(() => {
+   console.log("subscribe token");
+  })
+   source.token.subscribe(() => {
+   console.log("subscribe token1");
+  })
+
+  setTimeout(() => {
+    source.cancel("demo");
+  }, 1e3);
+
+
+  source.cancel("demo");
+
+</script>

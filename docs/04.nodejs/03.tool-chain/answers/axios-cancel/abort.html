@@ -1,0 +1,14 @@
+<script type="module">
+// AbortController 手动取消（浏览器/Node 18+，此处示例以浏览器 ESM 运行）
+import axios from 'https://esm.sh/axios'
+
+const ctrl = new AbortController()
+const p = axios.get('https://httpbin.org/delay/3', { signal: ctrl.signal })
+  .then(r => console.log('OK status:', r.status))
+  // 利用 axios.isCancel 判断是取消请求
+  .catch(e => console.dir(axios.isCancel(e) ? 'manual cancel ->' : 'error ->', e.code || e.name || e.message))
+
+setTimeout(() => ctrl.abort(), 10) // 300ms 后中断
+await p
+
+</script>

@@ -1,0 +1,22 @@
+<script type="module">
+import axios from "https://esm.sh/axios";
+
+async function downloadWithProgressAxios(url) {
+   const res = await axios.get(url, {
+      responseType: "blob",
+      onDownloadProgress: (progressEvent) => {
+         if (progressEvent.total) {
+            const percent = Math.round(progressEvent.loaded / progressEvent.total * 100);
+            console.log("progress:", percent + "%");
+         } else {
+            console.log("loaded:", progressEvent.loaded, "bytes");
+         }
+      }
+   });
+   console.log("Download complete, total size:", res.data.size, "bytes");
+}
+
+// 示例文件（支持 CORS）
+downloadWithProgressAxios("https://raw.githubusercontent.com/github/explore/main/topics/javascript/javascript.png")
+   .catch(err => console.error("axios progress 示例出错:", err));
+</script>

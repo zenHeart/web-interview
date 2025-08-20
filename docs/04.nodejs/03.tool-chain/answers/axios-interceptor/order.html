@@ -1,0 +1,26 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  // 整体拦截器执行符合洋葱模型
+  // 请求拦截器按照栈后注入的先执行
+  axios.interceptor.request.use((config) => {
+    console.log("Request Interceptor 1:", config);
+    return config;
+  });
+  axios.interceptor.request.use((config) => {
+    console.log("Request Interceptor 2:", config);
+    return config;
+  });
+
+  // 响应拦截器按照队列先进先出
+  axios.interceptor.response.use((config) => {
+    console.log("Response Interceptor 1:", config);
+    return config;
+  });
+  axios.interceptor.response.use((config) => {
+    console.log("Response Interceptor 2:", config);
+    return config;
+  });
+
+  axios.get("https://jsonplaceholder.typicode.com/todos/1")
+</script>

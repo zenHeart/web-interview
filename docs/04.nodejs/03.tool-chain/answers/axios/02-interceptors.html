@@ -1,0 +1,21 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  const api = axios.create({ baseURL: "https://httpbin.org" });
+  api.interceptors.request.use(cfg => {
+    cfg.headers["X-From"] = "interceptor";
+    console.log("request →", { url: cfg.url, headers: cfg.headers });
+    return cfg;
+  });
+  api.interceptors.response.use(res => {
+    console.log("response ←", { status: res.status, echo: res.data.headers["X-From"] });
+    return res;
+  });
+
+  async function main() {
+    const r = await api.get("/anything");
+    console.log("done", r.status);
+  }
+
+  main().catch(err => console.error("interceptors 示例出错:", err));
+</script>

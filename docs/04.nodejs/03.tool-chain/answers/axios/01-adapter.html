@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="UTF-8" />
+<title>Axios 适配器（XHR vs fetch）</title>
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  async function main() {
+    console.log("使用默认 XHR 适配器发起请求...");
+    const r1 = await axios.get("https://httpbin.org/get", { params: { q: "xhr" } });
+    console.log("XHR →", r1.status, r1.statusText, r1.data.args);
+
+    console.log("使用 fetch 适配器发起请求...");
+    const r2 = await axios.get("https://httpbin.org/get", { params: { q: "fetch" }, adapter: "fetch" });
+    console.log("fetch →", r2.status, r2.statusText, r2.data.args);
+  }
+
+  main().catch(err => console.error("adapter 示例出错:", err));
+</script>

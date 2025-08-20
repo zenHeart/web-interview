@@ -1,0 +1,28 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  const api = axios.create({
+    baseURL: "https://httpbin.org",
+    transformRequest: [ (data, headers) => {
+      const toSnake = s => s.replace(/[A-Z]/g, m => "_" + m.toLowerCase());
+      const obj = {};
+      for (const k in data || {}) obj[toSnake(k)] = data[k];
+      headers["Content-Type"] = "application/json";
+      return JSON.stringify(obj);
+    }],
+    transformResponse: [ (data) => {
+      try { data = JSON.parse(data); } catch {}
+      const toCamel = s => s.replace(/_([a-z])/g, (_,c)=>c.toUpperCase());
+      const obj = {};
+      for (const k in (data.json || {})) obj[toCamel(k)] = data.json[k];
+      return { converted: obj, raw: data };
+    }]
+  });
+
+  async function main() {
+    const r = await api.post("/post", { userName: "alice", userAge: 18 });
+    console.log(r.data);
+  }
+
+  main().catch(err => console.error("transform 示例出错:", err));
+</script>

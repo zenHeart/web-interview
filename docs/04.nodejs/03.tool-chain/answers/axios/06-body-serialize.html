@@ -1,0 +1,33 @@
+<script type="module">
+import axios from "https://esm.sh/axios";
+
+// JSON 序列化请求体
+async function jsonBody() {
+   const r = await axios.post("https://httpbin.org/post", { a: 1, b: "x" });
+   console.log("json:", r.data.json);
+}
+
+// FormData 序列化请求体
+async function formDataBody() {
+   const fd = new FormData();
+   fd.append("name", "alice");
+   fd.append("avatar", new Blob(["hi"], { type: "text/plain" }), "a.txt");
+   const r = await axios.post("https://httpbin.org/post", fd);
+   console.log("form:", r.data.form, "files:", r.data.files);
+}
+
+// x-www-form-urlencoded 序列化请求体
+async function urlencodedBody() {
+   const p = new URLSearchParams({ x: "1", y: "2" });
+   const r = await axios.post("https://httpbin.org/post", p, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+   });
+   console.log("form:", r.data.form);
+}
+
+(async () => {
+   await jsonBody();
+   await formDataBody();
+   await urlencodedBody();
+})().catch(err => console.error("body-serialize 示例出错:", err));
+</script>

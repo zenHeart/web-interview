@@ -1,0 +1,43 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  // 整体拦截器执行符合洋葱模型
+  // 请求拦截器按照栈后注入的先执行
+  axios.interceptor.request.use(
+    (config) => {
+      console.log("Request Interceptor 1:", config);
+      return config;
+    },
+    (error) => {
+      console.error("Request Interceptor 1 Error:", error);
+      return Promise.reject(error);
+    },
+    {
+      // 配置同步执行
+      synchronous: true,
+    }
+  );
+
+  axios.interceptor.request.use(
+    (config) => {
+      // log 不会触发因为 runWhen 返回 false
+      console.log("Request Interceptor 2:", config);
+      return config;
+    },
+    (error) => {
+      console.error("Request Interceptor 2 Error:", error);
+      return Promise.reject(error);
+    },
+    {
+      // 配置同步执行，注意必须所有都配置同步才会使请求拦截器都同步
+      synchronous: true,
+      runWhen: (config) => {
+        // 可以根据 config 条件判断是否执行, false 则不执行,
+        console.log("Request Interceptor 2 runWhen:", config);
+        return !config.url.includes("todos");
+      },
+    }
+  );
+
+  axios.get("https://jsonplaceholder.typicode.com/todos/1");
+</script>

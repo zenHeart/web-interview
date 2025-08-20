@@ -1,0 +1,14 @@
+<script type="module">
+// CancelToken（已弃用）：仅为兼容旧项目示例
+import axios from 'https://esm.sh/axios'
+
+const CancelToken = axios.CancelToken
+const source = CancelToken.source()
+
+const p = axios.get('https://httpbin.org/delay/3', { cancelToken: source.token })
+  .then(() => console.log('OK'))
+  .catch(e => console.log('cancelToken ->', axios.isCancel(e)))
+
+setTimeout(() => source.cancel('legacy cancel'), 10)
+await p
+</script>

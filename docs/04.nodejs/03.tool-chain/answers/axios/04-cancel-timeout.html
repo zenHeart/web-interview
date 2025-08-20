@@ -1,0 +1,23 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  async function demoCancel() {
+    const ac = new AbortController();
+    const p = axios.get("https://httpbin.org/delay/3", { signal: ac.signal });
+    setTimeout(() => ac.abort(), 500);
+    try { await p; } catch (e) { console.log("取消:", e.name || e.code || e.message); }
+  }
+
+  async function demoTimeout() {
+    try {
+      await axios.get("https://httpbin.org/delay/3", { timeout: 300 });
+    } catch (e) { console.log("超时:", e.code || e.message); }
+  }
+
+  async function main() {
+    await demoCancel();
+    await demoTimeout();
+  }
+
+  main().catch(err => console.error("cancel/timeout 示例出错:", err));
+</script>

@@ -1,0 +1,20 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  // 写入一个测试 cookie（真实场景由后端 Set-Cookie 设置）
+  document.cookie = "XSRF-TOKEN=demo123; path=/";
+
+  const api = axios.create({
+    baseURL: "https://httpbin.org",
+    withCredentials: true,
+    xsrfCookieName: "XSRF-TOKEN",
+    xsrfHeaderName: "X-XSRF-TOKEN",
+  });
+
+  async function main() {
+    const r = await api.post("/anything", { a: 1 });
+    console.log("sent headers.X-XSRF-TOKEN? ->", r.data.headers["X-XSRF-TOKEN"]);
+  }
+
+  main().catch(err => console.error("xsrf 示例出错:", err));
+</script>

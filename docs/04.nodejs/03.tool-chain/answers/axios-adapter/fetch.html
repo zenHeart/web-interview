@@ -1,0 +1,14 @@
+<script type="module">
+  import axios from "https://esm.sh/axios";
+
+  axios
+    .get("https://jsonplaceholder.typicode.com/todos/1", {
+      adapter: "fetch",
+    })
+    .then((res) => {
+      console.log(res.data);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+</script>

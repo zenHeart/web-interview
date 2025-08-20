@@ -1,0 +1,28 @@
+<script type="module">
+import axios from "https://esm.sh/axios";
+import qs from "https://esm.sh/qs";
+
+// 假设我们有一个复杂的查询参数对象，包含嵌套对象和数组
+const params = {
+   search: "laptop",
+   filters: {
+      price: { gte: 1000, lte: 3000 },
+      brands: ["Apple", "Dell"]
+   },
+   sort: "price_desc"
+};
+
+// 使用 qs 库将参数对象序列化为 URL 查询字符串
+const paramsSerializer = {
+   serialize: p => qs.stringify(p, { arrayFormat: "brackets", encode: true })
+};
+
+async function main() {
+   // 发起 GET 请求，自动将复杂参数序列化为标准 URL 查询字符串
+   const r = await axios.get("https://httpbin.org/get", { params, paramsSerializer });
+   // 输出服务器解析后的参数
+   console.log(r.data.args);
+}
+
+main().catch(err => console.error("params-serialize 示例出错:", err));
+</script>

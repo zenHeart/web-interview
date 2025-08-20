@@ -1,0 +1,14 @@
+<script type="module">
+  // AbortSignal.timeout 自动超时取消（现代浏览器 / Node 17.3+）
+  import axios from "https://esm.sh/axios";
+
+  try {
+    // 本质也是取消只是取消方式是超时
+    await axios.get("https://httpbin.org/delay/3", {
+      signal: AbortSignal.timeout(500),
+    });
+    console.log("OK");
+  } catch (e) {
+    console.log("timeout cancel ->", e.code || e.name || e.message); // 一般为 ERR_CANCELED
+  }
+</script>
