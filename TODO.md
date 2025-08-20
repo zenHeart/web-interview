@@ -74,7 +74,7 @@
 - **4.14 (周日)**
   - [ ] [node ssr](/docs/04.node/05-ssr.md)
   - [ ] [node server](/docs/04.node/06-server.md)
-  - [ ] [operate-system index](/docs/09.operate-system/00-index.md)
+  - [ ] [operate-system index](/docs/09.os/00-index.md)
 
 ### 第三周 (4.15-4.21) - 算法 & 工程化
 
