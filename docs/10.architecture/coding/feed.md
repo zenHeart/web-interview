@@ -1,4 +1,4 @@
-# 设计 News Feed 应用 (类似 Facebook, Twitter 信息流)
+## 设计推特 {#p0-design-twitter}
 
 2. 细节确定
 
@@ -10,7 +10,7 @@
 - POST 是否要设置 xx 不可见
 - 评论是否可以 嵌套，类似 Reddit
 
-## Objectives
+### Objectives
 
 - 可以快速查看 following / follower list
 - 快速加载一个用户的所有 post
@@ -29,7 +29,7 @@
   - 10years ~ 10TB posts
   - avg 100 follwersl per user
 
-## overview
+### overview
 
 - client
 - load balancer
@@ -243,11 +243,10 @@ LIMIT 20;
 
 1. 多级缓存设计
 
-# L1: 本地缓存 (进程内存)
+L1: 本地缓存 (进程内存)
+L2: Redis 缓存
 
-# L2: Redis 缓存
-
-# L3: 从存储层查询
+L3: 从存储层查询
 
 2. 缓存更新策略
 
@@ -260,3 +259,53 @@ LIMIT 20;
 - 设置合理的 TTL
 - 使用版本号控制
 - 更新时同步清理相关缓存
+
+```TypeScript
+type Tweet = {
+  id: number;
+  userId: number;
+};
+
+class Twitter {
+  private tweets: Tweet[] = []
+  private following: Map<number, number[]> = new Map()
+
+  postTweet (userId: number, tweetId: number): void {
+    this.tweets.unshift({
+      id: tweetId,
+      userId
+    })
+  }
+
+  getNewsFeed (userId: number): number[] {
+    const following = this.following.get(userId) || []
+    const userList = [...following, userId]
+    return this.tweets
+      .filter((t) => userList.includes(t.userId))
+      .map((t) => t.id)
+      .slice(0, 10)
+  }
+
+  follow (followerId: number, followeeId: number): void {
+    const following = this.following.has(followerId)
+      ? this.following.get(followerId)
+      : []
+    if (!following.includes(followeeId)) {
+      following.push(followeeId)
+      this.following.set(followerId, following)
+    }
+  }
+
+  unfollow (followerId: number, followeeId: number): void {
+    const following = this.following.has(followerId)
+      ? this.following.get(followerId)
+      : []
+    if (following.includes(followeeId)) {
+      this.following.set(
+        followerId,
+        following.filter((f) => f !== followeeId)
+      )
+    }
+  }
+}
+```
