@@ -1,0 +1,37 @@
+<style>
+   #hello {
+      font-size: 2rem;
+      color: #2d8cf0;
+      margin-bottom: 1rem;
+      font-weight: bold;
+   }
+   #timer {
+      font-size: 1.2rem;
+      color: #555;
+      background: #fff;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+   }
+</style>
+<div id="app">
+   <div id="hello">{{ message }}</div>
+   <div id="timer">定时器: {{ count }} 秒</div>
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script>
+   const { createApp } = Vue;
+   createApp({
+      data() {
+         return {
+            message: "hello world",
+            count: 0
+         };
+      },
+      mounted() {
+         setInterval(() => {
+            this.count++;
+         }, 1000);
+      }
+   }).mount("#app");
+</script>
