@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialog 元素完整示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        /* 按钮样式 */
+        button {
+            background: #0969da;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px 8px 8px 0;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background: #0550ae;
+        }
+
+        button:disabled {
+            background: #8c959f;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #656d76;
+        }
+
+        .btn-secondary:hover {
+            background: #4c535a;
+        }
+
+        .btn-danger {
+            background: #d1242f;
+        }
+
+        .btn-danger:hover {
+            background: #a40e26;
+        }
+
+        /* Dialog 基础样式 */
+        dialog {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            padding: 0;
+            max-width: 500px;
+            width: 90vw;
+        }
+
+        /* 模态对话框背景 */
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Dialog 头部 */
+        .dialog-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid #e1e5e9;
+            background: #f6f8fa;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dialog-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #24292f;
+        }
+
+        /* Dialog 内容 */
+        .dialog-content {
+            padding: 20px 24px;
+        }
+
+        /* Dialog 底部 */
+        .dialog-footer {
+            padding: 16px 24px 20px;
+            border-top: 1px solid #e1e5e9;
+            background: #f6f8fa;
+            text-align: right;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0969da;
+            box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+        }
+
+        /* 确认对话框样式 */
+        .confirm-dialog {
+            max-width: 400px;
+        }
+
+        .confirm-content {
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .warning-icon {
+            color: #d1242f;
+        }
+
+        .info-icon {
+            color: #0969da;
+        }
+
+        .success-icon {
+            color: #1a7f37;
+        }
+
+        /* 非模态对话框样式 */
+        .non-modal-dialog {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 320px;
+            border: 1px solid #d0d7de;
+            background: white;
+        }
+
+        /* 进度对话框 */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            margin: 16px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0969da, #2ea043);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* 状态消息 */
+        .status-message {
+            margin: 16px 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .status-success {
+            background: #dafbe1;
+            color: #1a7f37;
+            border: 1px solid #a2eeaf;
+        }
+
+        .status-error {
+            background: #ffebe9;
+            color: #d1242f;
+            border: 1px solid #ffb3ab;
+        }
+
+        .status-info {
+            background: #ddf4ff;
+            color: #0969da;
+            border: 1px solid #80ccff;
+        }
+
+        /* 代码示例 */
+        .code-block {
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        /* 响应式 */
+        @media (max-width: 640px) {
+            dialog {
+                width: 95vw;
+                margin: 10px;
+            }
+            
+            .dialog-header,
+            .dialog-content,
+            .dialog-footer {
+                padding-left: 16px;
+                padding-right: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Dialog 元素完整示例</h1>
+
+    <div class="demo-section">
+        <h2>1. 基础模态对话框</h2>
+        <p>使用 <code>showModal()</code> 方法创建模态对话框，会阻止与背景页面的交互。</p>
+        
+        <button onclick="openBasicDialog()">打开基础对话框</button>
+        <button onclick="openFormDialog()">打开表单对话框</button>
+
+        <!-- 基础对话框 -->
+        <dialog id="basicDialog">
+            <div class="dialog-header">
+                <h3 class="dialog-title">提示信息</h3>
+            </div>
+            <div class="dialog-content">
+                <p>这是一个基础的模态对话框示例。点击确定或取消按钮来关闭对话框。</p>
+                <p>你也可以按 ESC 键关闭对话框。</p>
+            </div>
+            <div class="dialog-footer">
+                <button type="button" class="btn-secondary" onclick="closeDialog('basicDialog')">取消</button>
+                <button type="button" onclick="closeDialog('basicDialog', 'confirm')">确定</button>
+            </div>
+        </dialog>
+
+        <!-- 表单对话框 -->
+        <dialog id="formDialog">
+            <form method="dialog" onsubmit="handleFormSubmit(event)">
+                <div class="dialog-header">
+                    <h3 class="dialog-title">用户信息</h3>
+                </div>
+                <div class="dialog-content">
+                    <div class="form-group">
+                        <label for="userName">姓名：</label>
+                        <input type="text" id="userName" name="userName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">邮箱：</label>
+                        <input type="email" id="userEmail" name="userEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userNote">备注：</label>
+                        <textarea id="userNote" name="userNote" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="dialog-footer">
+                    <button type="button" class="btn-secondary" onclick="closeDialog('formDialog')">取消</button>
+                    <button type="submit">提交</button>
+                </div>
+            </form>
+        </dialog>
+    </div>
+
+    <div class="demo-section">
+        <h2>2. 确认对话框</h2>
+        <p>用于重要操作的确认提示，通常包含警告图标和明确的操作描述。</p>
+        
+        <button onclick="openConfirmDialog()">删除操作确认</button>
+        <button onclick="openInfoDialog()">信息提示</button>
+
+        <!-- 确认对话框 -->
+        <dialog id="confirmDialog" class="confirm-dialog">
+            <div class="confirm-content">
+                <div class="confirm-icon warning-icon">⚠️</div>
+                <h3>确认删除</h3>
+                <p>您确定要删除这个项目吗？此操作无法撤销。</p>
+                <div style="margin-top: 24px;">
+                    <button type="button" class="btn-secondary" onclick="closeDialog('confirmDialog')">取消</button>
+                    <button type="button" class="btn-danger" onclick="confirmDelete()">删除</button>
+                </div>
+            </div>
+        </dialog>
+
+        <!-- 信息对话框 -->
+        <dialog id="infoDialog" class="confirm-dialog">
+            <div class="confirm-content">
+                <div class="confirm-icon info-icon">ℹ️</div>
+                <h3>操作完成</h3>
+                <p>您的操作已成功完成！</p>
+                <div style="margin-top: 24px;">
+                    <button type="button" onclick="closeDialog('infoDialog')">确定</button>
+                </div>
+            </div>
+        </dialog>
+    </div>
+
+    <div class="demo-section">
+        <h2>3. 非模态对话框</h2>
+        <p>使用 <code>show()</code> 方法创建非模态对话框，用户仍可与背景页面交互。</p>
+        
+        <button onclick="openNonModalDialog()">打开通知</button>
+        <button onclick="openProgressDialog()">显示进度</button>
+
+        <!-- 非模态对话框 -->
+        <dialog id="nonModalDialog" class="non-modal-dialog">
+            <div class="dialog-header">
+                <h4 class="dialog-title">系统通知</h4>
+            </div>
+            <div class="dialog-content">
+                <p>这是一个非模态对话框，您可以继续与页面其他部分交互。</p>
+                <button onclick="closeDialog('nonModalDialog')" style="width: 100%;">关闭通知</button>
+            </div>
+        </dialog>
+
+        <!-- 进度对话框 -->
+        <dialog id="progressDialog">
+            <div class="dialog-header">
+                <h3 class="dialog-title">处理中...</h3>
+            </div>
+            <div class="dialog-content">
+                <p>正在处理您的请求，请稍候。</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div id="progressText">0%</div>
+            </div>
+            <div class="dialog-footer">
+                <button type="button" class="btn-secondary" onclick="cancelProgress()" id="cancelBtn">取消</button>
+            </div>
+        </dialog>
+    </div>
+
+    <div class="demo-section">
+        <h2>4. JavaScript API 演示</h2>
+        <div class="code-block">
+// 打开模态对话框
+dialog.showModal();
+
+// 打开非模态对话框  
+dialog.show();
+
+// 关闭对话框（可选返回值）
+dialog.close('returnValue');
+
+// 监听对话框关闭事件
+dialog.addEventListener('close', function() {
+    console.log('返回值:', dialog.returnValue);
+});
+
+// 检查对话框状态
+console.log('是否打开:', dialog.open);
+        </div>
+
+        <button onclick="showAPI()">测试 API</button>
+        <button onclick="clearLog()">清空日志</button>
+        <div id="apiLog" class="status-message status-info" style="display: none;"></div>
+    </div>
+
+    <div class="demo-section">
+        <h2>5. 浏览器兼容性检查</h2>
+        <div id="supportInfo"></div>
+    </div>
+
+    <script>
+        // 对话框控制函数
+        function openBasicDialog() {
+            document.getElementById('basicDialog').showModal();
+        }
+
+        function openFormDialog() {
+            document.getElementById('formDialog').showModal();
+        }
+
+        function openConfirmDialog() {
+            document.getElementById('confirmDialog').showModal();
+        }
+
+        function openInfoDialog() {
+            document.getElementById('infoDialog').showModal();
+        }
+
+        function openNonModalDialog() {
+            document.getElementById('nonModalDialog').show();
+        }
+
+        function openProgressDialog() {
+            const dialog = document.getElementById('progressDialog');
+            dialog.showModal();
+            startProgress();
+        }
+
+        function closeDialog(dialogId, returnValue = '') {
+            const dialog = document.getElementById(dialogId);
+            dialog.close(returnValue);
+        }
+
+        // 表单提交处理
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // 模拟处理
+            console.log('表单数据:', data);
+            
+            // 显示成功消息
+            showStatusMessage('表单提交成功！', 'success');
+            
+            // 关闭对话框
+            closeDialog('formDialog', 'submitted');
+            
+            // 重置表单
+            event.target.reset();
+        }
+
+        // 确认删除
+        function confirmDelete() {
+            showStatusMessage('项目已删除', 'success');
+            closeDialog('confirmDialog', 'deleted');
+        }
+
+        // 进度条控制
+        let progressInterval;
+        function startProgress() {
+            let progress = 0;
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                    progressText.textContent = '完成！';
+                    cancelBtn.textContent = '关闭';
+                    cancelBtn.onclick = () => closeDialog('progressDialog', 'completed');
+                } else {
+                    progressText.textContent = Math.round(progress) + '%';
+                }
+                progressFill.style.width = progress + '%';
+            }, 500);
+        }
+
+        function cancelProgress() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                document.getElementById('progressFill').style.width = '0%';
+                document.getElementById('progressText').textContent = '0%';
+                document.getElementById('cancelBtn').textContent = '取消';
+                document.getElementById('cancelBtn').onclick = cancelProgress;
+            }
+            closeDialog('progressDialog', 'cancelled');
+        }
+
+        // 状态消息显示
+        function showStatusMessage(message, type = 'info') {
+            const existing = document.querySelector('.temp-status');
+            if (existing) existing.remove();
+            
+            const div = document.createElement('div');
+            div.className = `status-message status-${type} temp-status`;
+            div.textContent = message;
+            div.style.position = 'fixed';
+            div.style.top = '20px';
+            div.style.left = '50%';
+            div.style.transform = 'translateX(-50%)';
+            div.style.zIndex = '1000';
+            div.style.maxWidth = '400px';
+            
+            document.body.appendChild(div);
+            
+            setTimeout(() => {
+                div.remove();
+            }, 3000);
+        }
+
+        // API 演示
+        function showAPI() {
+            const log = document.getElementById('apiLog');
+            log.style.display = 'block';
+            
+            // 创建测试对话框
+            const testDialog = document.createElement('dialog');
+            testDialog.innerHTML = `
+                <div class="dialog-content">
+                    <h4>API 测试对话框</h4>
+                    <p>这是通过 JavaScript 创建的对话框</p>
+                    <button onclick="this.closest('dialog').close('api-test')">关闭</button>
+                </div>
+            `;
+            
+            document.body.appendChild(testDialog);
+            
+            // 添加事件监听
+            testDialog.addEventListener('close', function() {
+                log.innerHTML += `<br>对话框已关闭，返回值: "${this.returnValue}"`;
+                document.body.removeChild(this);
+            });
+            
+            log.innerHTML = '对话框已创建并打开...';
+            testDialog.showModal();
+        }
+
+        function clearLog() {
+            document.getElementById('apiLog').style.display = 'none';
+        }
+
+        // 监听所有对话框的关闭事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const dialogs = document.querySelectorAll('dialog');
+            dialogs.forEach(dialog => {
+                dialog.addEventListener('close', function() {
+                    console.log(`对话框 ${this.id} 关闭，返回值:`, this.returnValue);
+                });
+                
+                // ESC 键关闭事件
+                dialog.addEventListener('cancel', function() {
+                    console.log(`对话框 ${this.id} 被 ESC 键关闭`);
+                });
+            });
+            
+            // 检查浏览器支持
+            checkDialogSupport();
+        });
+
+        // 背景点击关闭模态对话框
+        document.addEventListener('click', function(event) {
+            if (event.target.tagName === 'DIALOG') {
+                const rect = event.target.getBoundingClientRect();
+                const isInDialog = (
+                    rect.top <= event.clientY && event.clientY <= rect.top + rect.height &&
+                    rect.left <= event.clientX && event.clientX <= rect.left + rect.width
+                );
+                if (!isInDialog) {
+                    event.target.close();
+                }
+            }
+        });
+
+        // 浏览器支持检查
+        function checkDialogSupport() {
+            const supportInfo = document.getElementById('supportInfo');
+            
+            if (typeof HTMLDialogElement === 'function') {
+                supportInfo.innerHTML = `
+                    <div class="status-success">
+                        ✅ 您的浏览器支持原生 Dialog 元素
+                    </div>
+                `;
+            } else {
+                supportInfo.innerHTML = `
+                    <div class="status-error">
+                        ❌ 您的浏览器不支持原生 Dialog 元素<br>
+                        建议使用 Chrome 37+、Firefox 98+、Safari 15.4+ 或相应的 Polyfill
+                    </div>
+                `;
+            }
+        }
+    </script>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #f0f8ff; border-left: 4px solid #0969da;">
+        <h3>💡 Dialog 元素特性总结</h3>
+        <ul>
+            <li><strong>模态vs非模态</strong>: showModal() 创建模态对话框，show() 创建非模态对话框</li>
+            <li><strong>返回值</strong>: close(value) 可以设置返回值，通过 returnValue 属性获取</li>
+            <li><strong>事件监听</strong>: 支持 close 和 cancel 事件监听</li>
+            <li><strong>键盘支持</strong>: ESC 键自动关闭模态对话框</li>
+            <li><strong>焦点管理</strong>: 自动管理焦点转移和恢复</li>
+            <li><strong>背景样式</strong>: ::backdrop 伪元素可自定义模态背景</li>
+            <li><strong>表单集成</strong>: method="dialog" 可将表单与对话框关联</li>
+        </ul>
+    </div>
+</body>
+</html>

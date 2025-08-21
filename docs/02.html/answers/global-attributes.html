@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML全局属性完整演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .demo-section h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .attribute-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .category-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 基础属性演示 */
+        .basic-demo {
+            border: 2px solid #e74c3c;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .basic-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .hidden-demo {
+            background: #f39c12;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+
+        .editable-demo {
+            border: 2px dashed #27ae60;
+            padding: 15px;
+            margin: 10px 0;
+            background: #d5f4e6;
+            border-radius: 6px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .editable-demo:focus {
+            border-color: #27ae60;
+            background: #a9f1d1;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
+        }
+
+        .draggable-demo {
+            background: #9b59b6;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            cursor: move;
+            margin: 10px;
+            display: inline-block;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .draggable-demo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        }
+
+        /* 数据属性演示 */
+        .data-demo {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .data-demo:hover {
+            background: #2c3e50;
+        }
+
+        /* 可访问性演示 */
+        .accessibility-demo {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .tab-demo {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .tab-demo:focus {
+            outline: 3px solid #f39c12;
+            outline-offset: 2px;
+            transform: scale(1.05);
+        }
+
+        .tab-demo:hover {
+            background: #2980b9;
+        }
+
+        /* 国际化演示 */
+        .i18n-demo {
+            margin: 15px 0;
+        }
+
+        .rtl-demo {
+            direction: rtl;
+            background: #e8daef;
+            padding: 15px;
+            border-radius: 6px;
+            border-right: 4px solid #8e44ad;
+            margin: 10px 0;
+        }
+
+        .ltr-demo {
+            direction: ltr;
+            background: #d5f4e6;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #27ae60;
+            margin: 10px 0;
+        }
+
+        /* 输入辅助演示 */
+        .input-demo {
+            margin: 15px 0;
+        }
+
+        .input-demo input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 8px 0;
+            transition: all 0.3s;
+        }
+
+        .input-demo input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        /* 微数据演示 */
+        .microdata-demo {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .person-card {
+            background: white;
+            border-radius: 6px;
+            padding: 15px;
+            border-left: 4px solid #f39c12;
+        }
+
+        /* 控制面板 */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 属性信息显示 */
+        .attribute-info {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .info-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .info-value {
+            color: #e74c3c;
+        }
+
+        /* 拖放区域 */
+        .drop-zone {
+            border: 3px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background: #ecf0f1;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .drop-zone.drag-over {
+            border-color: #3498db;
+            background: #ebf3fd;
+            color: #3498db;
+        }
+
+        /* Web组件演示 */
+        .web-component-demo {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .accessibility-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML全局属性完整演示</h1>
+
+        <!-- 基础属性演示 -->
+        <div class="demo-section">
+            <h2>1. 基础全局属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">BASIC</span>
+                <h3>id, class, style, title 属性</h3>
+                
+                <div class="basic-demo" 
+                     id="unique-element" 
+                     class="demo-class another-class" 
+                     style="border-color: #e74c3c;" 
+                     title="这是一个包含基础全局属性的元素">
+                    <strong>基础属性演示元素</strong>
+                    <p>此元素包含 id="unique-element", class="demo-class another-class", style="border-color: #e74c3c;", title="..."</p>
+                    <p>将鼠标悬停在此元素上查看title属性效果</p>
+                </div>
+
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>Hidden 属性控制</label>
+                        <div class="hidden-demo" id="hiddenDemo">可以隐藏/显示的元素</div>
+                        <button class="control-btn" onclick="toggleHidden()">切换显示/隐藏</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>ContentEditable 演示</label>
+                        <div class="editable-demo" contenteditable="true">
+                            点击此区域进行编辑，体验contenteditable属性
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>Draggable 拖拽演示</label>
+                        <div class="draggable-demo" draggable="true" ondragstart="handleDragStart(event)">
+                            拖拽我到下方区域
+                        </div>
+                        <div class="draggable-demo" draggable="true" ondragstart="handleDragStart(event)">
+                            我也可以拖拽
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>拖放目标区域</label>
+                        <div class="drop-zone" 
+                             ondrop="handleDrop(event)" 
+                             ondragover="handleDragOver(event)"
+                             ondragleave="handleDragLeave(event)">
+                            将可拖拽元素拖到这里
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data属性演示 -->
+        <div class="demo-section">
+            <h2>2. Data-* 自定义数据属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">DATA</span>
+                <h3>自定义数据存储与访问</h3>
+                
+                <div class="data-demo" 
+                     data-user-id="12345" 
+                     data-user-name="张三" 
+                     data-user-role="admin" 
+                     data-timestamp="1623456789"
+                     onclick="showDataAttributes(this)">
+                    点击查看data-*属性内容
+                </div>
+                
+                <div class="data-demo" 
+                     data-product-id="prod-001" 
+                     data-product-name="MacBook Pro" 
+                     data-product-price="15999" 
+                     data-category="laptop"
+                     onclick="showDataAttributes(this)">
+                    产品信息演示元素
+                </div>
+
+                <div class="attribute-info" id="dataInfo">
+                    <div class="info-item">点击上方元素查看其data-*属性</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 可访问性属性演示 -->
+        <div class="demo-section">
+            <h2>3. 可访问性属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">A11Y</span>
+                <h3>tabindex, accesskey 演示</h3>
+                
+                <div class="accessibility-demo">
+                    <button class="tab-demo" tabindex="1" accesskey="a">
+                        按钮 1 (Alt+A)
+                    </button>
+                    <button class="tab-demo" tabindex="3" accesskey="c">
+                        按钮 3 (Alt+C)
+                    </button>
+                    <button class="tab-demo" tabindex="2" accesskey="b">
+                        按钮 2 (Alt+B)
+                    </button>
+                    <button class="tab-demo" tabindex="4" accesskey="d">
+                        按钮 4 (Alt+D)
+                    </button>
+                </div>
+                
+                <p><strong>说明：</strong>使用Tab键按照tabindex顺序聚焦，或使用Alt+字母快捷键直接访问</p>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>Inert 属性演示</label>
+                        <div id="inertDemo">
+                            <button class="control-btn">可交互按钮</button>
+                            <input type="text" placeholder="可输入文本">
+                            <a href="#" onclick="return false;">可点击链接</a>
+                        </div>
+                        <button class="control-btn" onclick="toggleInert()">切换inert状态</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 国际化属性演示 -->
+        <div class="demo-section">
+            <h2>4. 国际化属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">I18N</span>
+                <h3>lang, dir, translate 演示</h3>
+                
+                <div class="i18n-demo">
+                    <div class="ltr-demo" lang="zh-CN" dir="ltr">
+                        <strong>中文文本 (左到右)</strong><br>
+                        这是一段中文文本，使用从左到右的文本方向。
+                    </div>
+                    
+                    <div class="rtl-demo" lang="ar" dir="rtl">
+                        <strong>Arabic text (right to left)</strong><br>
+                        هذا نص عربي يتم عرضه من اليمين إلى اليسار
+                    </div>
+                    
+                    <div class="ltr-demo" lang="en" dir="ltr" translate="no">
+                        <strong>English text (no translate)</strong><br>
+                        This text has translate="no" attribute and should not be translated.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 输入辅助属性演示 -->
+        <div class="demo-section">
+            <h2>5. 输入辅助属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">INPUT</span>
+                <h3>inputmode, enterkeyhint, autofocus 演示</h3>
+                
+                <div class="input-demo">
+                    <label for="numericInput">数字输入 (inputmode="numeric"):</label>
+                    <input type="text" 
+                           id="numericInput" 
+                           inputmode="numeric" 
+                           placeholder="输入数字">
+                    
+                    <label for="emailInput">邮箱输入 (inputmode="email"):</label>
+                    <input type="text" 
+                           id="emailInput" 
+                           inputmode="email" 
+                           placeholder="输入邮箱">
+                    
+                    <label for="searchInput">搜索输入 (enterkeyhint="search"):</label>
+                    <input type="text" 
+                           id="searchInput" 
+                           enterkeyhint="search" 
+                           placeholder="输入搜索内容">
+                    
+                    <label for="autofocusInput">自动聚焦输入:</label>
+                    <input type="text" 
+                           id="autofocusInput" 
+                           placeholder="页面加载时自动聚焦">
+                    
+                    <button class="control-btn" onclick="setAutofocus()">设置自动聚焦</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 微数据属性演示 -->
+        <div class="demo-section">
+            <h2>6. 微数据属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">MICRODATA</span>
+                <h3>itemscope, itemprop 演示</h3>
+                
+                <div class="microdata-demo">
+                    <div class="person-card" itemscope itemtype="http://schema.org/Person">
+                        <h4>人物信息卡片 (Schema.org)</h4>
+                        <p><strong>姓名:</strong> <span itemprop="name">李明</span></p>
+                        <p><strong>职位:</strong> <span itemprop="jobTitle">前端工程师</span></p>
+                        <p><strong>邮箱:</strong> <span itemprop="email">liming@example.com</span></p>
+                        <p><strong>电话:</strong> <span itemprop="telephone">+86 138-0000-0000</span></p>
+                        <div itemscope itemprop="address" itemtype="http://schema.org/PostalAddress">
+                            <p><strong>地址:</strong> 
+                                <span itemprop="addressLocality">北京市</span>
+                                <span itemprop="addressRegion">朝阳区</span>
+                                <span itemprop="streetAddress">建国路100号</span>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p><strong>说明：</strong>这些微数据属性帮助搜索引擎理解页面内容结构，有利于SEO</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Web组件属性演示 -->
+        <div class="demo-section">
+            <h2>7. Web组件属性</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">WEB COMPONENTS</span>
+                <h3>slot, part 属性演示</h3>
+                
+                <div class="web-component-demo">
+                    <h4>Web组件相关属性</h4>
+                    <p>这些属性主要用于Shadow DOM和自定义元素：</p>
+                    
+                    <ul>
+                        <li><code>slot</code> - 指定内容应该插入到哪个插槽</li>
+                        <li><code>part</code> - 允许外部CSS选择器样式化组件内部</li>
+                        <li><code>is</code> - 指定自定义内置元素的行为</li>
+                    </ul>
+                    
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label>创建自定义元素</label>
+                            <button class="control-btn" onclick="createCustomElement()">创建示例组件</button>
+                            <div id="customElementContainer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 属性检查工具 -->
+        <div class="demo-section">
+            <h2>8. 属性检查工具</h2>
+
+            <div class="attribute-demo">
+                <span class="category-tag">INSPECTOR</span>
+                <h3>实时属性检查</h3>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>选择元素检查</label>
+                        <button class="control-btn" onclick="inspectElement()">开始检查模式</button>
+                        <button class="control-btn" onclick="stopInspecting()">停止检查</button>
+                    </div>
+                </div>
+                
+                <div class="attribute-info" id="inspectorInfo">
+                    <div class="info-item">点击"开始检查模式"然后点击页面任意元素查看其全局属性</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class GlobalAttributesDemo {
+            constructor() {
+                this.isInspecting = false;
+                this.init();
+            }
+            
+            init() {
+                console.log('HTML全局属性演示已启动');
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                // 阻止某些元素的默认行为
+                document.addEventListener('dragstart', (e) => {
+                    if (e.target.draggable) {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('text/html', e.target.outerHTML);
+                    }
+                });
+            }
+        }
+
+        // 全局函数
+        function toggleHidden() {
+            const element = document.getElementById('hiddenDemo');
+            const isHidden = element.hasAttribute('hidden');
+            
+            if (isHidden) {
+                element.removeAttribute('hidden');
+            } else {
+                element.setAttribute('hidden', '');
+            }
+        }
+
+        function handleDragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.textContent);
+            event.target.style.opacity = '0.5';
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            event.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            const data = event.dataTransfer.getData('text/plain');
+            event.currentTarget.innerHTML = `<p style="color: #27ae60; font-weight: bold;">已放置: ${data}</p>`;
+            
+            // 重置拖拽元素透明度
+            document.querySelectorAll('.draggable-demo').forEach(el => {
+                el.style.opacity = '1';
+            });
+        }
+
+        function showDataAttributes(element) {
+            const info = document.getElementById('dataInfo');
+            let html = '';
+            
+            // 获取所有data-*属性
+            const dataset = element.dataset;
+            
+            html += '<div class="info-item"><span class="info-label">Data Attributes:</span></div>';
+            
+            for (const [key, value] of Object.entries(dataset)) {
+                html += `<div class="info-item">
+                    <span class="info-label">data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:</span> 
+                    <span class="info-value">"${value}"</span>
+                </div>`;
+            }
+            
+            // 同时显示通过getAttribute访问的方式
+            html += '<div class="info-item"><span class="info-label">JavaScript访问方式:</span></div>';
+            for (const [key, value] of Object.entries(dataset)) {
+                html += `<div class="info-item">element.dataset.${key} = "${value}"</div>`;
+            }
+            
+            info.innerHTML = html;
+        }
+
+        function toggleInert() {
+            const demo = document.getElementById('inertDemo');
+            const isInert = demo.hasAttribute('inert');
+            
+            if (isInert) {
+                demo.removeAttribute('inert');
+            } else {
+                demo.setAttribute('inert', '');
+            }
+        }
+
+        function setAutofocus() {
+            const input = document.getElementById('autofocusInput');
+            input.setAttribute('autofocus', '');
+            input.focus();
+        }
+
+        function createCustomElement() {
+            const container = document.getElementById('customElementContainer');
+            
+            // 创建一个简单的自定义元素示例
+            container.innerHTML = `
+                <div style="border: 2px solid #3498db; border-radius: 6px; padding: 15px; margin: 10px 0; background: #ebf3fd;">
+                    <h5>自定义元素示例</h5>
+                    <p slot="content">这是插槽内容</p>
+                    <div part="header" style="background: #3498db; color: white; padding: 8px; border-radius: 4px;">
+                        这是一个part部分
+                    </div>
+                </div>
+            `;
+        }
+
+        let inspecting = false;
+        let originalCursor = '';
+
+        function inspectElement() {
+            inspecting = true;
+            originalCursor = document.body.style.cursor;
+            document.body.style.cursor = 'crosshair';
+            
+            // 添加点击监听器
+            document.addEventListener('click', handleInspectorClick, true);
+            
+            const info = document.getElementById('inspectorInfo');
+            info.innerHTML = '<div class="info-item"><span style="color: #f39c12;">检查模式已启用</span> - 点击任意元素查看其全局属性</div>';
+        }
+
+        function stopInspecting() {
+            inspecting = false;
+            document.body.style.cursor = originalCursor;
+            document.removeEventListener('click', handleInspectorClick, true);
+            
+            const info = document.getElementById('inspectorInfo');
+            info.innerHTML = '<div class="info-item">检查模式已停用</div>';
+        }
+
+        function handleInspectorClick(event) {
+            if (!inspecting) return;
+            
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const element = event.target;
+            const info = document.getElementById('inspectorInfo');
+            
+            let html = `<div class="info-item"><span class="info-label">Element:</span> ${element.tagName.toLowerCase()}</div>`;
+            
+            // 检查常见的全局属性
+            const globalAttrs = ['id', 'class', 'style', 'title', 'hidden', 'lang', 'dir', 'tabindex', 'accesskey', 'contenteditable', 'draggable', 'translate'];
+            
+            globalAttrs.forEach(attr => {
+                if (element.hasAttribute(attr)) {
+                    const value = element.getAttribute(attr);
+                    html += `<div class="info-item"><span class="info-label">${attr}:</span> <span class="info-value">"${value}"</span></div>`;
+                }
+            });
+            
+            // 检查data-*属性
+            const dataset = element.dataset;
+            if (Object.keys(dataset).length > 0) {
+                html += '<div class="info-item"><span class="info-label">Data Attributes:</span></div>';
+                for (const [key, value] of Object.entries(dataset)) {
+                    html += `<div class="info-item">  data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}: <span class="info-value">"${value}"</span></div>`;
+                }
+            }
+            
+            // 检查aria-*属性
+            const ariaAttrs = [];
+            for (let i = 0; i < element.attributes.length; i++) {
+                const attr = element.attributes[i];
+                if (attr.name.startsWith('aria-')) {
+                    ariaAttrs.push(attr);
+                }
+            }
+            
+            if (ariaAttrs.length > 0) {
+                html += '<div class="info-item"><span class="info-label">ARIA Attributes:</span></div>';
+                ariaAttrs.forEach(attr => {
+                    html += `<div class="info-item">  ${attr.name}: <span class="info-value">"${attr.value}"</span></div>`;
+                });
+            }
+            
+            if (html === `<div class="info-item"><span class="info-label">Element:</span> ${element.tagName.toLowerCase()}</div>`) {
+                html += '<div class="info-item">此元素没有设置全局属性</div>';
+            }
+            
+            info.innerHTML = html;
+        }
+
+        // 启动演示
+        document.addEventListener('DOMContentLoaded', function() {
+            const demo = new GlobalAttributesDemo();
+            console.log('HTML全局属性演示加载完成');
+            
+            // 添加一些使用提示
+            console.log('功能说明:');
+            console.log('1. 测试各种全局属性的效果');
+            console.log('2. 拖拽元素体验draggable属性');
+            console.log('3. 使用Tab键测试tabindex顺序');
+            console.log('4. 点击元素查看data-*属性');
+            console.log('5. 使用检查工具查看任意元素的全局属性');
+        });
+    </script>
+</body>
+</html>

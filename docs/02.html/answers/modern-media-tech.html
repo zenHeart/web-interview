@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代Web媒体技术演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #9b59b6;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .demo-section h2 {
+            color: #9b59b6;
+            margin-bottom: 20px;
+        }
+
+        .tech-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .element-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #9b59b6;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 画中画演示 */
+        .pip-demo {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .pip-demo video {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+        }
+
+        /* Web Audio 可视化 */
+        .audio-viz {
+            background: #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .visualizer-canvas {
+            border: 1px solid #34495e;
+            border-radius: 4px;
+            background: black;
+            margin: 15px 0;
+        }
+
+        /* MediaRecorder 演示 */
+        .recorder-demo {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+        }
+
+        .recorder-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .recorder-status {
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* Screen Capture 演示 */
+        .screen-demo {
+            background: #34495e;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+        }
+
+        .screen-preview {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .screen-preview video {
+            max-width: 100%;
+            border-radius: 4px;
+            background: black;
+        }
+
+        /* 按钮样式 */
+        .tech-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+
+        .tech-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .tech-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .tech-btn.danger {
+            background: #e74c3c;
+        }
+
+        .tech-btn.danger:hover {
+            background: #c0392b;
+        }
+
+        .tech-btn.success {
+            background: #27ae60;
+        }
+
+        .tech-btn.success:hover {
+            background: #229954;
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-inactive { background: #95a5a6; }
+        .status-active { background: #27ae60; }
+        .status-recording { background: #e74c3c; animation: pulse 1s infinite; }
+        .status-error { background: #e74c3c; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 信息框 */
+        .info-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box.warning {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        .info-box.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .info-box strong {
+            color: #0c5460;
+        }
+
+        /* Canvas effects */
+        .canvas-demo {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .canvas-demo canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-width: 100%;
+        }
+
+        /* 媒体会话 */
+        .media-session {
+            background: #f39c12;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .media-info {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 15px;
+            align-items: center;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .album-art {
+            width: 80px;
+            height: 80px;
+            background: #e67e22;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .recorder-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .media-info {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>现代Web媒体技术演示</h1>
+
+        <!-- Picture-in-Picture API -->
+        <div class="demo-section">
+            <h2>1. Picture-in-Picture API (画中画)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">PIP</span>
+                <h3>画中画模式演示</h3>
+                <div class="pip-demo">
+                    <video id="pipVideo" controls muted autoplay>
+                        <source src="#" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                    <div>
+                        <button class="tech-btn" id="pipBtn">
+                            <span class="status-indicator status-inactive" id="pipStatus"></span>
+                            启用画中画
+                        </button>
+                        <button class="tech-btn" id="exitPipBtn" disabled>退出画中画</button>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>💡 画中画功能：</strong>
+                    允许用户在小窗口中观看视频，同时继续浏览其他页面内容。适用于视频会议、教学视频等场景。
+                </div>
+            </div>
+        </div>
+
+        <!-- Web Audio API -->
+        <div class="demo-section">
+            <h2>2. Web Audio API (音频处理)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">AUDIO</span>
+                <h3>音频可视化和处理</h3>
+                <div class="audio-viz">
+                    <canvas id="audioCanvas" class="visualizer-canvas" width="600" height="200"></canvas>
+                    <div>
+                        <button class="tech-btn" id="audioStartBtn">开始音频</button>
+                        <button class="tech-btn" id="audioStopBtn" disabled>停止音频</button>
+                        <button class="tech-btn" id="micBtn">使用麦克风</button>
+                    </div>
+                    <div>
+                        <label for="gainSlider">增益: </label>
+                        <input type="range" id="gainSlider" min="0" max="2" step="0.1" value="1">
+                        <span id="gainValue">1.0</span>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🎵 Web Audio API特性：</strong>
+                    提供强大的音频处理能力，包括音频合成、效果处理、3D空间音频、实时分析等。
+                </div>
+            </div>
+        </div>
+
+        <!-- MediaRecorder API -->
+        <div class="demo-section">
+            <h2>3. MediaRecorder API (录制)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">RECORD</span>
+                <h3>媒体录制功能</h3>
+                <div class="recorder-demo">
+                    <div class="recorder-status">
+                        <span class="status-indicator status-inactive" id="recordStatus"></span>
+                        <span id="recordStatusText">就绪</span>
+                    </div>
+                    
+                    <div class="recorder-controls">
+                        <button class="tech-btn" id="startRecordBtn">开始录制</button>
+                        <button class="tech-btn danger" id="stopRecordBtn" disabled>停止录制</button>
+                        <button class="tech-btn" id="playRecordBtn" disabled>播放录制</button>
+                        <button class="tech-btn" id="downloadRecordBtn" disabled>下载录制</button>
+                    </div>
+                    
+                    <video id="recordedVideo" controls style="width: 100%; max-width: 400px; margin-top: 15px; display: none;"></video>
+                </div>
+                
+                <div class="info-box">
+                    <strong>📹 MediaRecorder功能：</strong>
+                    录制音频、视频或屏幕内容，支持多种格式输出，适用于会议录制、教学视频制作等。
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen Capture API -->
+        <div class="demo-section">
+            <h2>4. Screen Capture API (屏幕录制)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">SCREEN</span>
+                <h3>屏幕捕获和共享</h3>
+                <div class="screen-demo">
+                    <div style="text-align: center; margin: 15px 0;">
+                        <button class="tech-btn" id="startScreenBtn">开始屏幕捕获</button>
+                        <button class="tech-btn danger" id="stopScreenBtn" disabled>停止捕获</button>
+                    </div>
+                    
+                    <div class="screen-preview">
+                        <video id="screenVideo" autoplay muted style="max-width: 500px; display: none;"></video>
+                    </div>
+                    
+                    <div id="screenStatus" style="text-align: center; margin: 15px 0;">
+                        点击"开始屏幕捕获"选择要共享的屏幕或窗口
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🖥️ 屏幕捕获应用：</strong>
+                    用于视频会议、远程协作、教学演示、客服支持等场景。现代浏览器会询问用户权限。
+                </div>
+            </div>
+        </div>
+
+        <!-- Canvas + Video -->
+        <div class="demo-section">
+            <h2>5. Canvas + Video (视频特效)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">CANVAS</span>
+                <h3>实时视频处理</h3>
+                <div class="canvas-demo">
+                    <video id="sourceVideo" width="300" height="200" muted autoplay style="display: none;"></video>
+                    <canvas id="effectCanvas" width="300" height="200"></canvas>
+                    
+                    <div style="margin: 15px 0;">
+                        <button class="tech-btn" id="startEffectBtn">开始效果</button>
+                        <button class="tech-btn" id="stopEffectBtn" disabled>停止效果</button>
+                        <select id="effectSelect" style="margin: 0 10px; padding: 5px;">
+                            <option value="normal">正常</option>
+                            <option value="grayscale">灰度</option>
+                            <option value="sepia">褐色</option>
+                            <option value="invert">反色</option>
+                            <option value="blur">模糊</option>
+                            <option value="edge">边缘检测</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🎨 视频特效处理：</strong>
+                    通过Canvas实时处理视频帧，可以实现滤镜、美颜、背景替换等效果。
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Session API -->
+        <div class="demo-section">
+            <h2>6. Media Session API (媒体会话)</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">SESSION</span>
+                <h3>媒体会话控制</h3>
+                <div class="media-session">
+                    <div class="media-info">
+                        <div class="album-art">🎵</div>
+                        <div>
+                            <h4 style="margin: 0;">现在播放</h4>
+                            <p style="margin: 5px 0;">示例音乐 - Web Audio Demo</p>
+                            <p style="margin: 5px 0; opacity: 0.8;">专辑: HTML5 媒体技术</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <button class="tech-btn" id="sessionPlayBtn">播放</button>
+                        <button class="tech-btn" id="sessionPauseBtn">暂停</button>
+                        <button class="tech-btn" id="sessionPrevBtn">上一首</button>
+                        <button class="tech-btn" id="sessionNextBtn">下一首</button>
+                    </div>
+                </div>
+                
+                <div class="info-box">
+                    <strong>🎮 媒体会话特性：</strong>
+                    整合系统媒体控制（锁屏界面、通知中心、硬件按键），提供统一的媒体控制体验。
+                </div>
+            </div>
+        </div>
+
+        <!-- API 支持检测 -->
+        <div class="demo-section">
+            <h2>7. 现代媒体API支持检测</h2>
+
+            <div class="tech-demo">
+                <span class="element-tag">SUPPORT</span>
+                <h3>浏览器兼容性检查</h3>
+                <div id="apiSupport" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
+                    <!-- API支持状态将在这里显示 -->
+                </div>
+                
+                <div class="info-box warning">
+                    <strong>⚠️ 兼容性注意：</strong>
+                    不同的现代媒体API在各浏览器中的支持程度不同，使用前应检测支持性并提供降级方案。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class ModernMediaTech {
+            constructor() {
+                this.audioContext = null;
+                this.mediaRecorder = null;
+                this.recordedChunks = [];
+                this.screenStream = null;
+                this.effectAnimation = null;
+                
+                this.init();
+            }
+            
+            init() {
+                this.checkAPISupport();
+                this.setupPictureInPicture();
+                this.setupWebAudio();
+                this.setupMediaRecorder();
+                this.setupScreenCapture();
+                this.setupCanvasEffects();
+                this.setupMediaSession();
+            }
+            
+            checkAPISupport() {
+                const apis = {
+                    'Picture-in-Picture': 'pictureInPictureEnabled' in document,
+                    'Web Audio API': 'AudioContext' in window || 'webkitAudioContext' in window,
+                    'MediaRecorder': 'MediaRecorder' in window,
+                    'Screen Capture': 'getDisplayMedia' in navigator.mediaDevices,
+                    'Media Session': 'mediaSession' in navigator,
+                    'WebRTC': 'RTCPeerConnection' in window,
+                    'MSE': 'MediaSource' in window,
+                    'Web Speech': 'speechSynthesis' in window
+                };
+                
+                const container = document.getElementById('apiSupport');
+                
+                Object.entries(apis).forEach(([name, supported]) => {
+                    const item = document.createElement('div');
+                    item.style.cssText = 'padding: 10px; background: white; border-radius: 4px; text-align: center;';
+                    
+                    const status = supported ? 'success' : 'error';
+                    const icon = supported ? '✅' : '❌';
+                    const text = supported ? '支持' : '不支持';
+                    
+                    item.innerHTML = `
+                        <div style="font-weight: bold; margin-bottom: 5px;">${name}</div>
+                        <div style="color: ${supported ? '#27ae60' : '#e74c3c'}">${icon} ${text}</div>
+                    `;
+                    
+                    container.appendChild(item);
+                });
+            }
+            
+            setupPictureInPicture() {
+                const video = document.getElementById('pipVideo');
+                const pipBtn = document.getElementById('pipBtn');
+                const exitPipBtn = document.getElementById('exitPipBtn');
+                const pipStatus = document.getElementById('pipStatus');
+                
+                // 生成测试视频
+                this.generatePiPVideo(video);
+                
+                pipBtn.addEventListener('click', async () => {
+                    try {
+                        if (document.pictureInPictureEnabled && !video.disablePictureInPicture) {
+                            await video.requestPictureInPicture();
+                            pipStatus.className = 'status-indicator status-active';
+                            pipBtn.textContent = '画中画已启用';
+                            pipBtn.disabled = true;
+                            exitPipBtn.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('画中画启用失败:', error);
+                    }
+                });
+                
+                exitPipBtn.addEventListener('click', async () => {
+                    try {
+                        await document.exitPictureInPicture();
+                    } catch (error) {
+                        console.error('退出画中画失败:', error);
+                    }
+                });
+                
+                video.addEventListener('enterpictureinpicture', () => {
+                    console.log('进入画中画模式');
+                });
+                
+                video.addEventListener('leavepictureinpicture', () => {
+                    console.log('退出画中画模式');
+                    pipStatus.className = 'status-indicator status-inactive';
+                    pipBtn.textContent = '启用画中画';
+                    pipBtn.disabled = false;
+                    exitPipBtn.disabled = true;
+                });
+            }
+            
+            generatePiPVideo(video) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 640;
+                canvas.height = 360;
+                const ctx = canvas.getContext('2d');
+                
+                let frame = 0;
+                const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 绘制动态背景
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    gradient.addColorStop(0, `hsl(${frame % 360}, 70%, 50%)`);
+                    gradient.addColorStop(1, `hsl(${(frame + 180) % 360}, 70%, 30%)`);
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 绘制时钟
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const time = Date.now() / 1000;
+                    
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 80, 0, Math.PI * 2);
+                    ctx.stroke();
+                    
+                    // 时针
+                    const hourAngle = (time / 3600) * Math.PI * 2 - Math.PI / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + Math.cos(hourAngle) * 40, centerY + Math.sin(hourAngle) * 40);
+                    ctx.stroke();
+                    
+                    // 分针
+                    const minuteAngle = (time / 60) * Math.PI * 2 - Math.PI / 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(centerX + Math.cos(minuteAngle) * 60, centerY + Math.sin(minuteAngle) * 60);
+                    ctx.stroke();
+                    
+                    // 文字
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 24px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Picture-in-Picture', centerX, centerY + 120);
+                    ctx.font = '16px Arial';
+                    ctx.fillText(new Date().toLocaleTimeString(), centerX, centerY + 145);
+                    
+                    frame++;
+                    requestAnimationFrame(animate);
+                };
+                
+                animate();
+                
+                if (canvas.captureStream) {
+                    video.srcObject = canvas.captureStream(30);
+                }
+            }
+            
+            setupWebAudio() {
+                const startBtn = document.getElementById('audioStartBtn');
+                const stopBtn = document.getElementById('audioStopBtn');
+                const micBtn = document.getElementById('micBtn');
+                const canvas = document.getElementById('audioCanvas');
+                const ctx = canvas.getContext('2d');
+                const gainSlider = document.getElementById('gainSlider');
+                const gainValue = document.getElementById('gainValue');
+                
+                let analyser, dataArray, source, gainNode;
+                
+                startBtn.addEventListener('click', async () => {
+                    try {
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        
+                        // 创建振荡器
+                        const oscillator = this.audioContext.createOscillator();
+                        gainNode = this.audioContext.createGain();
+                        analyser = this.audioContext.createAnalyser();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(analyser);
+                        analyser.connect(this.audioContext.destination);
+                        
+                        oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+                        oscillator.type = 'sine';
+                        oscillator.start();
+                        
+                        source = oscillator;
+                        this.setupAnalyser(analyser, ctx);
+                        
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        
+                    } catch (error) {
+                        console.error('Web Audio启动失败:', error);
+                    }
+                });
+                
+                micBtn.addEventListener('click', async () => {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        
+                        source = this.audioContext.createMediaStreamSource(stream);
+                        gainNode = this.audioContext.createGain();
+                        analyser = this.audioContext.createAnalyser();
+                        
+                        source.connect(gainNode);
+                        gainNode.connect(analyser);
+                        
+                        this.setupAnalyser(analyser, ctx);
+                        
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        
+                    } catch (error) {
+                        console.error('麦克风访问失败:', error);
+                    }
+                });
+                
+                stopBtn.addEventListener('click', () => {
+                    if (this.audioContext) {
+                        this.audioContext.close();
+                        this.audioContext = null;
+                    }
+                    
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                });
+                
+                gainSlider.addEventListener('input', (e) => {
+                    if (gainNode) {
+                        gainNode.gain.value = e.target.value;
+                    }
+                    gainValue.textContent = e.target.value;
+                });
+            }
+            
+            setupAnalyser(analyser, ctx) {
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+                
+                const draw = () => {
+                    if (!this.audioContext) return;
+                    
+                    requestAnimationFrame(draw);
+                    
+                    analyser.getByteFrequencyData(dataArray);
+                    
+                    ctx.fillStyle = 'rgb(0, 0, 0)';
+                    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    
+                    const barWidth = (ctx.canvas.width / bufferLength) * 2.5;
+                    let barHeight;
+                    let x = 0;
+                    
+                    for (let i = 0; i < bufferLength; i++) {
+                        barHeight = dataArray[i] * 0.8;
+                        
+                        const r = barHeight + 25 * (i / bufferLength);
+                        const g = 250 * (i / bufferLength);
+                        const b = 50;
+                        
+                        ctx.fillStyle = `rgb(${r},${g},${b})`;
+                        ctx.fillRect(x, ctx.canvas.height - barHeight, barWidth, barHeight);
+                        
+                        x += barWidth + 1;
+                    }
+                };
+                
+                draw();
+            }
+            
+            setupMediaRecorder() {
+                const startBtn = document.getElementById('startRecordBtn');
+                const stopBtn = document.getElementById('stopRecordBtn');
+                const playBtn = document.getElementById('playRecordBtn');
+                const downloadBtn = document.getElementById('downloadRecordBtn');
+                const video = document.getElementById('recordedVideo');
+                const status = document.getElementById('recordStatus');
+                const statusText = document.getElementById('recordStatusText');
+                
+                startBtn.addEventListener('click', async () => {
+                    try {
+                        const stream = await navigator.mediaDevices.getUserMedia({ 
+                            video: true, 
+                            audio: true 
+                        });
+                        
+                        this.mediaRecorder = new MediaRecorder(stream);
+                        this.recordedChunks = [];
+                        
+                        this.mediaRecorder.ondataavailable = (event) => {
+                            if (event.data.size > 0) {
+                                this.recordedChunks.push(event.data);
+                            }
+                        };
+                        
+                        this.mediaRecorder.onstop = () => {
+                            const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+                            video.src = URL.createObjectURL(blob);
+                            video.style.display = 'block';
+                            
+                            playBtn.disabled = false;
+                            downloadBtn.disabled = false;
+                            
+                            status.className = 'status-indicator status-inactive';
+                            statusText.textContent = '录制完成';
+                            
+                            // 停止所有轨道
+                            stream.getTracks().forEach(track => track.stop());
+                        };
+                        
+                        this.mediaRecorder.start();
+                        
+                        status.className = 'status-indicator status-recording';
+                        statusText.textContent = '正在录制...';
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        
+                    } catch (error) {
+                        console.error('录制启动失败:', error);
+                        status.className = 'status-indicator status-error';
+                        statusText.textContent = '录制失败';
+                    }
+                });
+                
+                stopBtn.addEventListener('click', () => {
+                    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+                        this.mediaRecorder.stop();
+                        startBtn.disabled = false;
+                        stopBtn.disabled = true;
+                    }
+                });
+                
+                playBtn.addEventListener('click', () => {
+                    video.play();
+                });
+                
+                downloadBtn.addEventListener('click', () => {
+                    const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `recording-${Date.now()}.webm`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            }
+            
+            setupScreenCapture() {
+                const startBtn = document.getElementById('startScreenBtn');
+                const stopBtn = document.getElementById('stopScreenBtn');
+                const video = document.getElementById('screenVideo');
+                const status = document.getElementById('screenStatus');
+                
+                startBtn.addEventListener('click', async () => {
+                    try {
+                        this.screenStream = await navigator.mediaDevices.getDisplayMedia({
+                            video: true,
+                            audio: true
+                        });
+                        
+                        video.srcObject = this.screenStream;
+                        video.style.display = 'block';
+                        
+                        startBtn.disabled = true;
+                        stopBtn.disabled = false;
+                        status.textContent = '正在共享屏幕...';
+                        
+                        // 监听用户停止共享
+                        this.screenStream.getVideoTracks()[0].addEventListener('ended', () => {
+                            this.stopScreenCapture();
+                        });
+                        
+                    } catch (error) {
+                        console.error('屏幕捕获失败:', error);
+                        status.textContent = '屏幕捕获失败，请检查浏览器权限';
+                    }
+                });
+                
+                stopBtn.addEventListener('click', () => {
+                    this.stopScreenCapture();
+                });
+            }
+            
+            stopScreenCapture() {
+                if (this.screenStream) {
+                    this.screenStream.getTracks().forEach(track => track.stop());
+                    this.screenStream = null;
+                }
+                
+                const video = document.getElementById('screenVideo');
+                const startBtn = document.getElementById('startScreenBtn');
+                const stopBtn = document.getElementById('stopScreenBtn');
+                const status = document.getElementById('screenStatus');
+                
+                video.style.display = 'none';
+                video.srcObject = null;
+                
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                status.textContent = '屏幕共享已停止';
+            }
+            
+            setupCanvasEffects() {
+                const video = document.getElementById('sourceVideo');
+                const canvas = document.getElementById('effectCanvas');
+                const ctx = canvas.getContext('2d');
+                const startBtn = document.getElementById('startEffectBtn');
+                const stopBtn = document.getElementById('stopEffectBtn');
+                const effectSelect = document.getElementById('effectSelect');
+                
+                // 生成测试视频源
+                this.generateEffectVideo(video);
+                
+                startBtn.addEventListener('click', () => {
+                    this.startVideoEffects(video, ctx, effectSelect);
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                });
+                
+                stopBtn.addEventListener('click', () => {
+                    if (this.effectAnimation) {
+                        cancelAnimationFrame(this.effectAnimation);
+                        this.effectAnimation = null;
+                    }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                });
+            }
+            
+            generateEffectVideo(video) {
+                const canvas = document.createElement('canvas');
+                canvas.width = 300;
+                canvas.height = 200;
+                const ctx = canvas.getContext('2d');
+                
+                let frame = 0;
+                const animate = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 绘制彩色方块动画
+                    const time = frame * 0.05;
+                    for (let i = 0; i < 10; i++) {
+                        for (let j = 0; j < 10; j++) {
+                            const x = i * 30;
+                            const y = j * 20;
+                            const hue = (time + i * 10 + j * 5) % 360;
+                            
+                            ctx.fillStyle = `hsl(${hue}, 70%, 50%)`;
+                            ctx.fillRect(x, y, 25, 15);
+                        }
+                    }
+                    
+                    // 添加文字
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Video Effects Demo', canvas.width / 2, canvas.height / 2);
+                    
+                    frame++;
+                    requestAnimationFrame(animate);
+                };
+                
+                animate();
+                
+                if (canvas.captureStream) {
+                    video.srcObject = canvas.captureStream(30);
+                }
+            }
+            
+            startVideoEffects(video, ctx, effectSelect) {
+                const processFrame = () => {
+                    if (!this.effectAnimation) return;
+                    
+                    ctx.drawImage(video, 0, 0, ctx.canvas.width, ctx.canvas.height);
+                    
+                    const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
+                    const data = imageData.data;
+                    
+                    const effect = effectSelect.value;
+                    
+                    switch (effect) {
+                        case 'grayscale':
+                            for (let i = 0; i < data.length; i += 4) {
+                                const gray = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+                                data[i] = data[i + 1] = data[i + 2] = gray;
+                            }
+                            break;
+                        case 'sepia':
+                            for (let i = 0; i < data.length; i += 4) {
+                                const r = data[i], g = data[i + 1], b = data[i + 2];
+                                data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+                                data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+                                data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+                            }
+                            break;
+                        case 'invert':
+                            for (let i = 0; i < data.length; i += 4) {
+                                data[i] = 255 - data[i];
+                                data[i + 1] = 255 - data[i + 1];
+                                data[i + 2] = 255 - data[i + 2];
+                            }
+                            break;
+                    }
+                    
+                    if (effect !== 'normal') {
+                        ctx.putImageData(imageData, 0, 0);
+                    }
+                    
+                    this.effectAnimation = requestAnimationFrame(processFrame);
+                };
+                
+                this.effectAnimation = requestAnimationFrame(processFrame);
+            }
+            
+            setupMediaSession() {
+                if ('mediaSession' in navigator) {
+                    navigator.mediaSession.metadata = new MediaMetadata({
+                        title: '示例音乐',
+                        artist: 'Web Audio Demo',
+                        album: 'HTML5 媒体技术',
+                        artwork: [
+                            { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHZpZXdCb3g9IjAgMCA5NiA5NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9Ijk2IiBoZWlnaHQ9Ijk2IiBmaWxsPSIjZjM5YzEyIi8+Cjx0ZXh0IHg9IjQ4IiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmaWxsPSJ3aGl0ZSI+8J+OtTwvdGV4dD4KPC9zdmc+', sizes: '96x96', type: 'image/svg+xml' }
+                        ]
+                    });
+                    
+                    const actionHandlers = [
+                        ['play', () => console.log('媒体会话: 播放')],
+                        ['pause', () => console.log('媒体会话: 暂停')],
+                        ['previoustrack', () => console.log('媒体会话: 上一首')],
+                        ['nexttrack', () => console.log('媒体会话: 下一首')],
+                        ['seekbackward', () => console.log('媒体会话: 后退')],
+                        ['seekforward', () => console.log('媒体会话: 前进')]
+                    ];
+                    
+                    actionHandlers.forEach(([action, handler]) => {
+                        try {
+                            navigator.mediaSession.setActionHandler(action, handler);
+                        } catch (error) {
+                            console.log(`${action} 动作不支持`);
+                        }
+                    });
+                }
+                
+                // 按钮事件
+                document.getElementById('sessionPlayBtn').addEventListener('click', () => {
+                    console.log('播放按钮点击');
+                });
+                
+                document.getElementById('sessionPauseBtn').addEventListener('click', () => {
+                    console.log('暂停按钮点击');
+                });
+                
+                document.getElementById('sessionPrevBtn').addEventListener('click', () => {
+                    console.log('上一首按钮点击');
+                });
+                
+                document.getElementById('sessionNextBtn').addEventListener('click', () => {
+                    console.log('下一首按钮点击');
+                });
+            }
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            const modernMedia = new ModernMediaTech();
+            console.log('现代Web媒体技术演示已启动');
+            console.log('请检查控制台查看各种API的使用情况');
+        });
+    </script>
+</body>
+</html>

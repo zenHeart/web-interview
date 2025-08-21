@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复杂表格合并单元格示例</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #666;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+        
+        .merged-cell {
+            background-color: #e3f2fd;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .code-example {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #007acc;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <h3>示例1: colspan 水平合并</h3>
+        <table>
+            <caption>产品销售统计 - 水平合并示例</caption>
+            <thead>
+                <tr>
+                    <th rowspan="2">产品类别</th>
+                    <th colspan="3" class="merged-cell">2023年销售额（万元）</th>
+                    <th rowspan="2">年度总计</th>
+                </tr>
+                <tr>
+                    <th>Q1</th>
+                    <th>Q2</th>
+                    <th>Q3</th>
+                    <!-- 注意：Q4列被上面的"年度总计"占用了 -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">电子产品</th>
+                    <td>120</td>
+                    <td>135</td>
+                    <td>150</td>
+                    <td>405</td>
+                </tr>
+                <tr>
+                    <th scope="row">服装鞋帽</th>
+                    <td>80</td>
+                    <td>95</td>
+                    <td>110</td>
+                    <td>285</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="code-example">
+关键代码：
+&lt;th colspan="3" class="merged-cell"&gt;2023年销售额（万元）&lt;/th&gt;
+&lt;th rowspan="2"&gt;年度总计&lt;/th&gt;
+
+说明：
+- colspan="3" 表示该单元格水平跨越3列
+- rowspan="2" 表示该单元格垂直跨越2行
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h3>示例2: rowspan 垂直合并</h3>
+        <table>
+            <caption>部门人员组织架构表</caption>
+            <thead>
+                <tr>
+                    <th>部门</th>
+                    <th>职位</th>
+                    <th>姓名</th>
+                    <th>工号</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th rowspan="3" class="merged-cell" scope="rowgroup">技术部</th>
+                    <td>部门经理</td>
+                    <td>张三</td>
+                    <td>T001</td>
+                </tr>
+                <tr>
+                    <!-- 注意：这里不需要部门单元格，因为被上面的rowspan占用了 -->
+                    <td>高级工程师</td>
+                    <td>李四</td>
+                    <td>T002</td>
+                </tr>
+                <tr>
+                    <td>初级工程师</td>
+                    <td>王五</td>
+                    <td>T003</td>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="merged-cell" scope="rowgroup">市场部</th>
+                    <td>部门经理</td>
+                    <td>赵六</td>
+                    <td>M001</td>
+                </tr>
+                <tr>
+                    <td>市场专员</td>
+                    <td>孙七</td>
+                    <td>M002</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="code-example">
+关键代码：
+&lt;th rowspan="3" scope="rowgroup"&gt;技术部&lt;/th&gt;
+
+说明：
+- rowspan="3" 表示该单元格垂直跨越3行
+- scope="rowgroup" 表示该表头适用于一组行
+- 被合并的行中不能包含对应位置的单元格
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h3>示例3: 复杂合并（colspan + rowspan）</h3>
+        <table>
+            <caption>综合绩效评估表</caption>
+            <thead>
+                <tr>
+                    <th rowspan="2">员工姓名</th>
+                    <th colspan="2" class="merged-cell">技术能力</th>
+                    <th colspan="2" class="merged-cell">软技能</th>
+                    <th rowspan="2">综合评分</th>
+                </tr>
+                <tr>
+                    <th>编程</th>
+                    <th>架构</th>
+                    <th>沟通</th>
+                    <th>团队</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">张三</th>
+                    <td>85</td>
+                    <td>90</td>
+                    <td>88</td>
+                    <td>92</td>
+                    <td class="merged-cell">89</td>
+                </tr>
+                <tr>
+                    <th scope="row">李四</th>
+                    <td>92</td>
+                    <td>85</td>
+                    <td>90</td>
+                    <td>87</td>
+                    <td class="merged-cell">88.5</td>
+                </tr>
+                <tr>
+                    <th colspan="5" class="merged-cell">部门平均分</th>
+                    <td>88.75</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="code-example">
+复杂合并要点：
+1. 计算合并后的表格布局
+2. 确保每行的列数一致
+3. 被合并的单元格位置不能重复定义
+4. 保持表格的可访问性属性
+
+常见错误：
+❌ 合并后忘记删除被覆盖的单元格
+❌ colspan/rowspan数值计算错误
+❌ 忽略合并单元格的scope属性
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h3>响应式表格处理</h3>
+        <style>
+            .responsive-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            @media (max-width: 600px) {
+                .mobile-stack {
+                    display: block;
+                    width: 100%;
+                }
+                
+                .mobile-stack thead,
+                .mobile-stack tbody,
+                .mobile-stack th,
+                .mobile-stack td,
+                .mobile-stack tr {
+                    display: block;
+                }
+                
+                .mobile-stack tr {
+                    border: 1px solid #ccc;
+                    margin-bottom: 10px;
+                    padding: 10px;
+                }
+                
+                .mobile-stack td::before {
+                    content: attr(data-label) ": ";
+                    font-weight: bold;
+                    display: inline-block;
+                    width: 100px;
+                }
+            }
+        </style>
+        
+        <div class="responsive-table">
+            <table class="mobile-stack">
+                <caption>响应式表格示例</caption>
+                <thead>
+                    <tr>
+                        <th>产品</th>
+                        <th>价格</th>
+                        <th>库存</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="产品">笔记本电脑</td>
+                        <td data-label="价格">¥5999</td>
+                        <td data-label="库存">32台</td>
+                        <td data-label="状态">有货</td>
+                    </tr>
+                    <tr>
+                        <td data-label="产品">智能手机</td>
+                        <td data-label="价格">¥2999</td>
+                        <td data-label="库存">0台</td>
+                        <td data-label="状态">缺货</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <p><strong>提示：</strong> 调整浏览器窗口大小查看响应式效果。在移动设备上，复杂表格通常需要特殊处理以保证可用性。</p>
+    </div>
+
+    <script>
+        // 表格调试工具
+        function analyzeTable(tableIndex = 0) {
+            const table = document.querySelectorAll('table')[tableIndex];
+            if (!table) return;
+            
+            const rows = table.querySelectorAll('tr');
+            console.log(`表格 ${tableIndex + 1} 分析：`);
+            console.log(`总行数：${rows.length}`);
+            
+            rows.forEach((row, rowIndex) => {
+                const cells = row.querySelectorAll('th, td');
+                let cellCount = 0;
+                
+                cells.forEach(cell => {
+                    const colspan = parseInt(cell.getAttribute('colspan')) || 1;
+                    cellCount += colspan;
+                });
+                
+                console.log(`第${rowIndex + 1}行：${cells.length}个单元格，占用${cellCount}列`);
+            });
+        }
+        
+        // 页面加载后分析所有表格
+        document.addEventListener('DOMContentLoaded', function() {
+            const tables = document.querySelectorAll('table');
+            console.log(`页面包含 ${tables.length} 个表格`);
+            
+            // 分析每个表格
+            for (let i = 0; i < tables.length; i++) {
+                analyzeTable(i);
+            }
+        });
+    </script>
+</body>
+</html>

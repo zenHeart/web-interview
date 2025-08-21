@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>媒体 API 控制与事件处理</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .demo-section h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .api-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .element-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 媒体播放器样式 */
+        .media-player {
+            background: #2c3e50;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            margin: 20px 0;
+        }
+
+        .media-player video {
+            width: 100%;
+            border-radius: 6px;
+            background: black;
+        }
+
+        /* 控制面板 */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #34495e;
+            border-radius: 6px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .control-input {
+            padding: 8px;
+            border: 1px solid #7f8c8d;
+            border-radius: 4px;
+            background: white;
+            color: #333;
+        }
+
+        /* 状态显示 */
+        .status-panel {
+            background: #ecf0f1;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .status-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .status-label {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .status-value {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        /* 事件日志 */
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+
+        .event-log .event-item {
+            padding: 2px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .event-log .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-time {
+            color: #95a5a6;
+        }
+
+        .event-type {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .event-data {
+            color: #e74c3c;
+        }
+
+        /* 进度条 */
+        .progress-section {
+            margin: 20px 0;
+        }
+
+        .progress-bar-container {
+            position: relative;
+            height: 30px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 0.1s;
+            border-radius: 15px;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* 音量可视化 */
+        .volume-visualizer {
+            display: flex;
+            align-items: flex-end;
+            height: 40px;
+            gap: 2px;
+            margin: 10px 0;
+        }
+
+        .volume-bar {
+            background: #3498db;
+            width: 4px;
+            transition: height 0.1s;
+            border-radius: 2px;
+        }
+
+        /* 播放速度控制 */
+        .speed-control {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .speed-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .speed-btn.active {
+            background: #e74c3c;
+        }
+
+        /* 错误显示 */
+        .error-display {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>媒体 API 控制与事件处理</h1>
+
+        <!-- 主要演示区域 -->
+        <div class="demo-section">
+            <h2>1. 完整的媒体控制演示</h2>
+
+            <div class="api-demo">
+                <span class="element-tag">API DEMO</span>
+                <div class="media-player">
+                    <video id="mainVideo" muted>
+                        <source src="#" type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                    
+                    <!-- 自定义进度条 -->
+                    <div class="progress-section">
+                        <div class="progress-bar-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                            <div class="progress-text" id="progressText">00:00 / 00:00</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 控制面板 -->
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label>播放控制</label>
+                            <button class="control-btn" id="playBtn">播放</button>
+                            <button class="control-btn" id="pauseBtn">暂停</button>
+                            <button class="control-btn" id="stopBtn">停止</button>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>跳转控制</label>
+                            <button class="control-btn" id="rewindBtn">后退 10s</button>
+                            <button class="control-btn" id="forwardBtn">前进 10s</button>
+                            <input type="number" class="control-input" id="seekInput" placeholder="跳转到(秒)" min="0">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>音量控制</label>
+                            <input type="range" class="control-input" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+                            <button class="control-btn" id="muteBtn">静音</button>
+                        </div>
+                        
+                        <div class="control-group">
+                            <label>其他控制</label>
+                            <button class="control-btn" id="fullscreenBtn">全屏</button>
+                            <button class="control-btn" id="pipBtn">画中画</button>
+                            <button class="control-btn" id="reloadBtn">重新加载</button>
+                        </div>
+                    </div>
+                    
+                    <!-- 播放速度控制 -->
+                    <div class="control-group">
+                        <label>播放速度</label>
+                        <div class="speed-control">
+                            <button class="speed-btn" data-speed="0.5">0.5x</button>
+                            <button class="speed-btn" data-speed="0.75">0.75x</button>
+                            <button class="speed-btn active" data-speed="1">1x</button>
+                            <button class="speed-btn" data-speed="1.25">1.25x</button>
+                            <button class="speed-btn" data-speed="1.5">1.5x</button>
+                            <button class="speed-btn" data-speed="2">2x</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 错误显示 -->
+                <div class="error-display" id="errorDisplay"></div>
+            </div>
+        </div>
+
+        <!-- 状态监控 -->
+        <div class="demo-section">
+            <h2>2. 媒体状态实时监控</h2>
+
+            <div class="api-demo">
+                <span class="element-tag">STATUS</span>
+                <div class="status-panel">
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <div class="status-label">播放状态</div>
+                            <div class="status-value" id="playState">暂停</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">当前时间</div>
+                            <div class="status-value" id="currentTime">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">总时长</div>
+                            <div class="status-value" id="duration">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">缓冲时间</div>
+                            <div class="status-value" id="buffered">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">音量</div>
+                            <div class="status-value" id="volume">50%</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">播放速度</div>
+                            <div class="status-value" id="playbackRate">1x</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">就绪状态</div>
+                            <div class="status-value" id="readyState">0</div>
+                        </div>
+                        <div class="status-item">
+                            <div class="status-label">网络状态</div>
+                            <div class="status-value" id="networkState">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 事件监听 -->
+        <div class="demo-section">
+            <h2>3. 媒体事件实时监听</h2>
+
+            <div class="api-demo">
+                <span class="element-tag">EVENTS</span>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button class="control-btn" id="clearLogBtn">清空日志</button>
+                    <button class="control-btn" id="pauseLogBtn">暂停日志</button>
+                    <button class="control-btn" id="exportLogBtn">导出日志</button>
+                </div>
+                <div class="event-log" id="eventLog">
+                    <div class="event-item">
+                        <span class="event-time">[00:00:00]</span> 
+                        <span class="event-type">INIT</span> 
+                        <span class="event-data">事件监听器已启动</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API 方法测试 -->
+        <div class="demo-section">
+            <h2>4. 媒体 API 方法测试</h2>
+
+            <div class="api-demo">
+                <span class="element-tag">API TEST</span>
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>canPlayType() 测试</label>
+                        <button class="control-btn" onclick="testCanPlayType()">测试格式支持</button>
+                        <div id="canPlayResult" style="margin-top: 10px; font-size: 12px;"></div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>load() 方法</label>
+                        <button class="control-btn" onclick="testLoad()">重新加载媒体</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>fastSeek() 方法</label>
+                        <input type="number" id="fastSeekInput" class="control-input" placeholder="快速跳转(秒)" min="0">
+                        <button class="control-btn" onclick="testFastSeek()">快速跳转</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>媒体源切换</label>
+                        <select id="sourceSelect" class="control-input">
+                            <option value="test1">测试视频 1</option>
+                            <option value="test2">测试视频 2</option>
+                            <option value="test3">测试视频 3</option>
+                        </select>
+                        <button class="control-btn" onclick="switchSource()">切换源</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MediaController {
+            constructor(videoElement) {
+                this.video = videoElement;
+                this.eventLog = document.getElementById('eventLog');
+                this.logPaused = false;
+                this.eventCount = 0;
+                
+                this.initializeVideo();
+                this.setupControls();
+                this.setupEventListeners();
+                this.startStatusUpdate();
+            }
+            
+            initializeVideo() {
+                // 生成测试视频
+                this.generateTestVideo();
+            }
+            
+            generateTestVideo() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 800;
+                canvas.height = 450;
+                const ctx = canvas.getContext('2d');
+                
+                let frame = 0;
+                const fps = 30;
+                const duration = 30; // 30秒测试视频
+                
+                const animate = () => {
+                    // 清除画布
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 绘制动态背景
+                    const time = frame / fps;
+                    const gradient = ctx.createRadialGradient(
+                        canvas.width/2, canvas.height/2, 0,
+                        canvas.width/2, canvas.height/2, Math.max(canvas.width, canvas.height)/2
+                    );
+                    
+                    const hue1 = (time * 30) % 360;
+                    const hue2 = (time * 50) % 360;
+                    gradient.addColorStop(0, `hsl(${hue1}, 70%, 60%)`);
+                    gradient.addColorStop(1, `hsl(${hue2}, 70%, 30%)`);
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // 绘制动画元素
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (time + i * 0.5) * 2;
+                        const radius = 100 + i * 30;
+                        const x = centerX + Math.cos(angle) * radius;
+                        const y = centerY + Math.sin(angle) * radius;
+                        
+                        ctx.beginPath();
+                        ctx.arc(x, y, 20, 0, Math.PI * 2);
+                        ctx.fillStyle = `hsla(${(time * 100 + i * 60) % 360}, 80%, 70%, 0.8)`;
+                        ctx.fill();
+                    }
+                    
+                    // 绘制时间信息
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 32px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.strokeStyle = 'black';
+                    ctx.lineWidth = 2;
+                    
+                    const timeText = `${Math.floor(time / 60)}:${Math.floor(time % 60).toString().padStart(2, '0')}`;
+                    ctx.strokeText(timeText, centerX, centerY - 20);
+                    ctx.fillText(timeText, centerX, centerY - 20);
+                    
+                    ctx.font = '18px Arial';
+                    const frameText = `Frame: ${frame}`;
+                    ctx.strokeText(frameText, centerX, centerY + 20);
+                    ctx.fillText(frameText, centerX, centerY + 20);
+                    
+                    frame++;
+                    
+                    if (time < duration) {
+                        setTimeout(animate, 1000 / fps);
+                    }
+                };
+                
+                animate();
+                
+                // 将canvas设置为视频源
+                if (canvas.captureStream) {
+                    const stream = canvas.captureStream(fps);
+                    this.video.srcObject = stream;
+                }
+            }
+            
+            setupControls() {
+                // 播放控制
+                document.getElementById('playBtn').addEventListener('click', () => {
+                    this.video.play().catch(e => this.logEvent('ERROR', `播放失败: ${e.message}`));
+                });
+                
+                document.getElementById('pauseBtn').addEventListener('click', () => {
+                    this.video.pause();
+                });
+                
+                document.getElementById('stopBtn').addEventListener('click', () => {
+                    this.video.pause();
+                    this.video.currentTime = 0;
+                });
+                
+                // 跳转控制
+                document.getElementById('rewindBtn').addEventListener('click', () => {
+                    this.video.currentTime = Math.max(0, this.video.currentTime - 10);
+                });
+                
+                document.getElementById('forwardBtn').addEventListener('click', () => {
+                    this.video.currentTime = Math.min(this.video.duration, this.video.currentTime + 10);
+                });
+                
+                document.getElementById('seekInput').addEventListener('change', (e) => {
+                    const time = parseFloat(e.target.value);
+                    if (!isNaN(time)) {
+                        this.video.currentTime = time;
+                    }
+                });
+                
+                // 音量控制
+                document.getElementById('volumeSlider').addEventListener('input', (e) => {
+                    this.video.volume = e.target.value;
+                });
+                
+                document.getElementById('muteBtn').addEventListener('click', () => {
+                    this.video.muted = !this.video.muted;
+                    document.getElementById('muteBtn').textContent = this.video.muted ? '取消静音' : '静音';
+                });
+                
+                // 全屏和画中画
+                document.getElementById('fullscreenBtn').addEventListener('click', () => {
+                    if (this.video.requestFullscreen) {
+                        this.video.requestFullscreen();
+                    }
+                });
+                
+                document.getElementById('pipBtn').addEventListener('click', () => {
+                    if (this.video.requestPictureInPicture) {
+                        this.video.requestPictureInPicture().catch(e => 
+                            this.logEvent('ERROR', `画中画失败: ${e.message}`)
+                        );
+                    }
+                });
+                
+                document.getElementById('reloadBtn').addEventListener('click', () => {
+                    this.video.load();
+                });
+                
+                // 进度条点击
+                document.getElementById('progressContainer').addEventListener('click', (e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const pos = (e.clientX - rect.left) / rect.width;
+                    this.video.currentTime = pos * this.video.duration;
+                });
+                
+                // 播放速度控制
+                document.querySelectorAll('.speed-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const speed = parseFloat(btn.dataset.speed);
+                        this.video.playbackRate = speed;
+                        
+                        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                    });
+                });
+                
+                // 日志控制
+                document.getElementById('clearLogBtn').addEventListener('click', () => {
+                    this.clearLog();
+                });
+                
+                document.getElementById('pauseLogBtn').addEventListener('click', () => {
+                    this.logPaused = !this.logPaused;
+                    document.getElementById('pauseLogBtn').textContent = this.logPaused ? '恢复日志' : '暂停日志';
+                });
+                
+                document.getElementById('exportLogBtn').addEventListener('click', () => {
+                    this.exportLog();
+                });
+            }
+            
+            setupEventListeners() {
+                const events = [
+                    'loadstart', 'durationchange', 'loadedmetadata', 'loadeddata',
+                    'progress', 'canplay', 'canplaythrough', 'play', 'playing',
+                    'pause', 'seeking', 'seeked', 'ended', 'timeupdate',
+                    'volumechange', 'ratechange', 'resize', 'enterpictureinpicture',
+                    'leavepictureinpicture', 'error', 'abort', 'emptied',
+                    'stalled', 'suspend', 'waiting'
+                ];
+                
+                events.forEach(eventType => {
+                    this.video.addEventListener(eventType, (e) => {
+                        this.logEvent(eventType.toUpperCase(), this.getEventData(eventType));
+                    });
+                });
+            }
+            
+            getEventData(eventType) {
+                switch(eventType) {
+                    case 'timeupdate':
+                        return `时间: ${this.video.currentTime.toFixed(2)}s`;
+                    case 'durationchange':
+                        return `时长: ${this.video.duration.toFixed(2)}s`;
+                    case 'volumechange':
+                        return `音量: ${(this.video.volume * 100).toFixed(0)}%, 静音: ${this.video.muted}`;
+                    case 'ratechange':
+                        return `速度: ${this.video.playbackRate}x`;
+                    case 'progress':
+                        const buffered = this.video.buffered;
+                        if (buffered.length > 0) {
+                            return `缓冲: ${buffered.end(buffered.length - 1).toFixed(2)}s`;
+                        }
+                        return '缓冲: 0s';
+                    case 'error':
+                        const error = this.video.error;
+                        return error ? `错误码: ${error.code}, 消息: ${error.message}` : '未知错误';
+                    default:
+                        return `就绪状态: ${this.video.readyState}, 网络状态: ${this.video.networkState}`;
+                }
+            }
+            
+            logEvent(type, data) {
+                if (this.logPaused) return;
+                
+                this.eventCount++;
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+                
+                const eventItem = document.createElement('div');
+                eventItem.className = 'event-item';
+                eventItem.innerHTML = `
+                    <span class="event-time">[${timeStr}]</span>
+                    <span class="event-type">${type}</span>
+                    <span class="event-data">${data}</span>
+                `;
+                
+                this.eventLog.insertBefore(eventItem, this.eventLog.firstChild);
+                
+                // 限制日志条数
+                if (this.eventLog.children.length > 100) {
+                    this.eventLog.removeChild(this.eventLog.lastChild);
+                }
+            }
+            
+            clearLog() {
+                this.eventLog.innerHTML = `
+                    <div class="event-item">
+                        <span class="event-time">[${new Date().toLocaleTimeString()}]</span>
+                        <span class="event-type">CLEAR</span>
+                        <span class="event-data">日志已清空</span>
+                    </div>
+                `;
+                this.eventCount = 0;
+            }
+            
+            exportLog() {
+                const events = Array.from(this.eventLog.children).map(item => item.textContent).reverse();
+                const content = events.join('\n');
+                
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `media-events-${Date.now()}.log`;
+                a.click();
+                
+                URL.revokeObjectURL(url);
+            }
+            
+            startStatusUpdate() {
+                setInterval(() => {
+                    this.updateStatus();
+                }, 100);
+            }
+            
+            updateStatus() {
+                // 更新状态显示
+                document.getElementById('playState').textContent = this.video.paused ? '暂停' : '播放';
+                document.getElementById('currentTime').textContent = this.video.currentTime.toFixed(2) + 's';
+                document.getElementById('duration').textContent = (this.video.duration || 0).toFixed(2) + 's';
+                document.getElementById('volume').textContent = Math.round(this.video.volume * 100) + '%';
+                document.getElementById('playbackRate').textContent = this.video.playbackRate + 'x';
+                document.getElementById('readyState').textContent = this.video.readyState;
+                document.getElementById('networkState').textContent = this.video.networkState;
+                
+                // 更新缓冲显示
+                const buffered = this.video.buffered;
+                let bufferedTime = 0;
+                if (buffered.length > 0) {
+                    bufferedTime = buffered.end(buffered.length - 1);
+                }
+                document.getElementById('buffered').textContent = bufferedTime.toFixed(2) + 's';
+                
+                // 更新进度条
+                if (this.video.duration) {
+                    const progress = (this.video.currentTime / this.video.duration) * 100;
+                    document.getElementById('progressBar').style.width = progress + '%';
+                    
+                    const current = this.formatTime(this.video.currentTime);
+                    const total = this.formatTime(this.video.duration);
+                    document.getElementById('progressText').textContent = `${current} / ${total}`;
+                }
+            }
+            
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // API测试函数
+        function testCanPlayType() {
+            const video = document.getElementById('mainVideo');
+            const formats = [
+                'video/mp4',
+                'video/webm',
+                'video/ogg',
+                'video/mp4; codecs="avc1.42E01E"',
+                'video/webm; codecs="vp8"',
+                'video/webm; codecs="vp9"',
+                'video/ogg; codecs="theora"'
+            ];
+            
+            let result = '<strong>格式支持测试结果:</strong><br>';
+            formats.forEach(format => {
+                const support = video.canPlayType(format);
+                const status = support === 'probably' ? '✅ 完全支持' :
+                             support === 'maybe' ? '⚠️ 可能支持' : '❌ 不支持';
+                result += `${format}: ${status}<br>`;
+            });
+            
+            document.getElementById('canPlayResult').innerHTML = result;
+        }
+        
+        function testLoad() {
+            const video = document.getElementById('mainVideo');
+            video.load();
+        }
+        
+        function testFastSeek() {
+            const video = document.getElementById('mainVideo');
+            const time = parseFloat(document.getElementById('fastSeekInput').value);
+            
+            if (!isNaN(time)) {
+                if (video.fastSeek) {
+                    video.fastSeek(time);
+                } else {
+                    video.currentTime = time;
+                }
+            }
+        }
+        
+        function switchSource() {
+            const video = document.getElementById('mainVideo');
+            const select = document.getElementById('sourceSelect');
+            
+            // 这里可以切换到不同的测试视频源
+            // 为了演示，我们重新生成视频
+            mediaController.generateTestVideo();
+        }
+
+        // 初始化
+        let mediaController;
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('mainVideo');
+            mediaController = new MediaController(video);
+            
+            console.log('媒体 API 控制演示已启动');
+            console.log('使用控制面板测试各种媒体 API 功能');
+        });
+    </script>
+</body>
+</html>

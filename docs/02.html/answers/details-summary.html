@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details 和 Summary 元素示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        /* 基础样式 */
+        details {
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            background-color: white;
+        }
+
+        summary {
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            list-style: none;
+            outline: none;
+        }
+
+        /* 隐藏默认的三角形标记 */
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        /* 自定义展开/折叠图标 */
+        .custom-details summary {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .custom-details summary::before {
+            content: "▶";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: transform 0.2s ease;
+            color: #656d76;
+        }
+
+        .custom-details[open] summary::before {
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        /* 动画效果 */
+        .animated-details {
+            overflow: hidden;
+        }
+
+        .animated-details summary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin: -16px -16px 16px -16px;
+            padding: 16px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .animated-details[open] summary {
+            border-radius: 6px 6px 0 0;
+        }
+
+        /* 嵌套样式 */
+        .nested-details {
+            background-color: #f6f8fa;
+            margin-left: 20px;
+            border-left: 3px solid #d0d7de;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* FAQ样式 */
+        .faq-item {
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-item summary {
+            color: #0969da;
+            font-size: 1.1em;
+        }
+
+        .faq-item summary:hover {
+            color: #0550ae;
+        }
+
+        /* 状态指示 */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-closed {
+            background-color: #d1242f;
+        }
+
+        .status-open {
+            background-color: #1a7f37;
+        }
+
+        /* 代码示例样式 */
+        .code-example {
+            background-color: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Details 和 Summary 元素完整示例</h1>
+
+    <div class="demo-section">
+        <h2>1. 基础用法</h2>
+        <details>
+            <summary>什么是 HTML5？</summary>
+            <p>HTML5 是超文本标记语言的第五个重大版本，引入了许多新的语义化元素、API和功能。它改善了网页的结构、样式和交互能力，使开发者能够创建更加丰富和动态的网页应用。</p>
+        </details>
+
+        <details open>
+            <summary>默认展开的内容（使用 open 属性）</summary>
+            <p>通过在 &lt;details&gt; 标签上添加 <code>open</code> 属性，可以让内容默认处于展开状态。</p>
+        </details>
+    </div>
+
+    <div class="demo-section">
+        <h2>2. 自定义样式</h2>
+        <details class="custom-details">
+            <summary>自定义展开图标</summary>
+            <p>使用 CSS 可以隐藏默认的三角形标记，并添加自定义的图标。这里使用了 CSS 伪元素和过渡动画。</p>
+            <div class="code-example">
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::before {
+    content: "▶";
+    transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+            </div>
+        </details>
+
+        <details class="animated-details">
+            <summary>带动画效果的样式</summary>
+            <p>通过 CSS 渐变背景和过渡动画，可以创建更加吸引人的视觉效果。</p>
+            <p>这种样式特别适合用于产品介绍、功能说明等需要突出显示的内容。</p>
+        </details>
+    </div>
+
+    <div class="demo-section">
+        <h2>3. 嵌套使用</h2>
+        <details>
+            <summary>前端技术栈</summary>
+            <p>现代前端开发涉及多个层面的技术：</p>
+            
+            <details class="nested-details">
+                <summary>HTML/CSS</summary>
+                <ul>
+                    <li>语义化HTML结构</li>
+                    <li>响应式CSS布局</li>
+                    <li>CSS预处理器（Sass、Less）</li>
+                    <li>CSS框架（Bootstrap、Tailwind）</li>
+                </ul>
+            </details>
+
+            <details class="nested-details">
+                <summary>JavaScript</summary>
+                <ul>
+                    <li>ES6+ 语法特性</li>
+                    <li>DOM 操作和事件处理</li>
+                    <li>异步编程（Promise、async/await）</li>
+                    <li>模块化开发</li>
+                </ul>
+            </details>
+
+            <details class="nested-details">
+                <summary>框架和工具</summary>
+                <ul>
+                    <li>React/Vue/Angular</li>
+                    <li>Webpack/Vite 构建工具</li>
+                    <li>TypeScript 类型系统</li>
+                    <li>Git 版本控制</li>
+                </ul>
+            </details>
+        </details>
+    </div>
+
+    <div class="demo-section">
+        <h2>4. FAQ 常见问题</h2>
+        <details class="faq-item">
+            <summary>如何检查浏览器对 details 元素的支持？</summary>
+            <p>可以使用 JavaScript 检测浏览器支持：</p>
+            <div class="code-example">
+if ('open' in document.createElement('details')) {
+    console.log('浏览器支持 details 元素');
+} else {
+    console.log('需要使用 polyfill');
+}
+            </div>
+        </details>
+
+        <details class="faq-item">
+            <summary>details 元素的无障碍访问特性</summary>
+            <p>details 元素具有内置的无障碍访问支持：</p>
+            <ul>
+                <li>支持键盘导航（空格键或回车键切换）</li>
+                <li>屏幕阅读器能正确识别展开/折叠状态</li>
+                <li>自动管理 aria-expanded 属性</li>
+                <li>提供语义化的内容结构</li>
+            </ul>
+        </details>
+
+        <details class="faq-item">
+            <summary>如何监听 details 的展开/折叠事件？</summary>
+            <p>可以监听 toggle 事件来响应状态变化：</p>
+            <div class="code-example">
+document.addEventListener('toggle', function(event) {
+    if (event.target.tagName === 'DETAILS') {
+        console.log('Details 状态改变:', event.target.open);
+    }
+});
+            </div>
+        </details>
+    </div>
+
+    <div class="demo-section">
+        <h2>5. 实时状态指示</h2>
+        <div id="status-demo">
+            <details class="status-details">
+                <summary>
+                    <span class="status-indicator status-closed"></span>
+                    服务器状态监控
+                </summary>
+                <p>当前所有服务正常运行，响应时间良好。</p>
+                <ul>
+                    <li>API 服务器: ✅ 正常</li>
+                    <li>数据库: ✅ 正常</li>
+                    <li>CDN: ✅ 正常</li>
+                    <li>缓存服务: ✅ 正常</li>
+                </ul>
+            </details>
+        </div>
+    </div>
+
+    <div class="demo-section">
+        <h2>6. JavaScript 控制</h2>
+        <button onclick="toggleAllDetails()">切换所有折叠区域</button>
+        <button onclick="openAllDetails()">展开所有</button>
+        <button onclick="closeAllDetails()">折叠所有</button>
+        
+        <div style="margin-top: 16px;">
+            <details id="js-details-1">
+                <summary>JavaScript 控制示例 1</summary>
+                <p>这个区域可以通过上面的按钮进行控制。</p>
+            </details>
+
+            <details id="js-details-2">
+                <summary>JavaScript 控制示例 2</summary>
+                <p>演示如何批量操作多个 details 元素。</p>
+            </details>
+        </div>
+    </div>
+
+    <script>
+        // 监听所有 details 元素的 toggle 事件
+        document.addEventListener('toggle', function(event) {
+            if (event.target.tagName === 'DETAILS') {
+                const statusIndicator = event.target.querySelector('.status-indicator');
+                if (statusIndicator) {
+                    if (event.target.open) {
+                        statusIndicator.className = 'status-indicator status-open';
+                    } else {
+                        statusIndicator.className = 'status-indicator status-closed';
+                    }
+                }
+                
+                console.log(`Details "${event.target.querySelector('summary').textContent.trim()}" 
+                    ${event.target.open ? '已展开' : '已折叠'}`);
+            }
+        });
+
+        // 控制函数
+        function toggleAllDetails() {
+            const details = document.querySelectorAll('#js-details-1, #js-details-2');
+            details.forEach(detail => {
+                detail.open = !detail.open;
+            });
+        }
+
+        function openAllDetails() {
+            const details = document.querySelectorAll('#js-details-1, #js-details-2');
+            details.forEach(detail => {
+                detail.open = true;
+            });
+        }
+
+        function closeAllDetails() {
+            const details = document.querySelectorAll('#js-details-1, #js-details-2');
+            details.forEach(detail => {
+                detail.open = false;
+            });
+        }
+
+        // 页面加载完成后的统计
+        document.addEventListener('DOMContentLoaded', function() {
+            const allDetails = document.querySelectorAll('details');
+            const openDetails = document.querySelectorAll('details[open]');
+            
+            console.log(`页面包含 ${allDetails.length} 个 details 元素，
+                其中 ${openDetails.length} 个默认展开`);
+        });
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(event) {
+            // Ctrl + E 展开所有
+            if (event.ctrlKey && event.key === 'e') {
+                event.preventDefault();
+                openAllDetails();
+            }
+            // Ctrl + R 折叠所有  
+            if (event.ctrlKey && event.key === 'r') {
+                event.preventDefault();
+                closeAllDetails();
+            }
+        });
+    </script>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #f0f8ff; border-left: 4px solid #0969da;">
+        <h3>💡 使用技巧</h3>
+        <ul>
+            <li><strong>键盘支持</strong>: 使用空格键或回车键切换展开/折叠状态</li>
+            <li><strong>快捷键</strong>: Ctrl+E 展开所有，Ctrl+R 折叠所有</li>
+            <li><strong>状态监听</strong>: 查看控制台了解 toggle 事件的触发</li>
+            <li><strong>样式定制</strong>: 通过 CSS 可以完全自定义外观和动画</li>
+            <li><strong>无障碍</strong>: 原生支持屏幕阅读器和键盘导航</li>
+        </ul>
+    </div>
+</body>
+</html>

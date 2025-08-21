@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容分组元素使用示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        /* 示例区块样式 */
+        .example-section {
+            margin: 40px 0;
+            padding: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .example-section h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .demo-box {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            border-left: 3px solid #3498db;
+            position: relative;
+        }
+
+        /* 元素标签指示器 */
+        .element-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* DIV 示例 */
+        .div-example {
+            border: 2px dashed #95a5a6;
+            padding: 15px;
+            margin: 10px 0;
+            background: #ecf0f1;
+        }
+
+        .div-example p {
+            margin: 0;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* 段落样式 */
+        .paragraph-example p {
+            background: #fff3cd;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }
+
+        /* 引用样式 */
+        blockquote {
+            background: #f8f9fa;
+            border-left: 5px solid #6c757d;
+            margin: 20px 0;
+            padding: 20px;
+            font-style: italic;
+            position: relative;
+        }
+
+        blockquote::before {
+            content: '"';
+            font-size: 4em;
+            color: #dee2e6;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: serif;
+        }
+
+        blockquote p {
+            margin: 0 0 10px 0;
+            padding-left: 30px;
+        }
+
+        blockquote cite {
+            display: block;
+            text-align: right;
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        blockquote cite::before {
+            content: '— ';
+        }
+
+        /* Figure 样式 */
+        figure {
+            margin: 25px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        figure img {
+            max-width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        figcaption {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            color: #495057;
+            font-style: italic;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* 代码figure */
+        .code-figure {
+            background: #263238;
+            color: #eeffff;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .code-figure pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .code-figure figcaption {
+            background: #37474f;
+            color: #b0bec5;
+            margin-top: 15px;
+            margin-bottom: -20px;
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 10px 20px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* HR 分隔线样式 */
+        hr.fancy {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #3498db, transparent);
+            margin: 30px 0;
+        }
+
+        hr.dots {
+            border: none;
+            height: 20px;
+            background: radial-gradient(circle, #3498db 2px, transparent 2px);
+            background-size: 20px 20px;
+            background-position: center;
+            margin: 30px 0;
+        }
+
+        /* PRE 预格式化文本 */
+        .pre-example {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+
+        .pre-example pre {
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #495057;
+        }
+
+        /* 地址样式 */
+        address {
+            background: #e8f4f8;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            font-style: normal;
+            margin: 15px 0;
+        }
+
+        address strong {
+            color: #0c5460;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* 时间元素 */
+        time {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+            color: #856404;
+        }
+
+        /* 比较表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            border: 1px solid #dee2e6;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #e9ecef;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        /* 提示框 */
+        .tip-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .tip-box strong {
+            color: #0c5460;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .example-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML 内容分组元素使用指南</h1>
+
+        <!-- DIV 元素示例 -->
+        <div class="example-section">
+            <h2>1. &lt;div&gt; 通用容器</h2>
+            <p><strong>用途：</strong>当没有更合适的语义化元素时使用，主要用于样式和脚本目的。</p>
+            
+            <div class="demo-box">
+                <span class="element-tag">DIV</span>
+                <p>这是一个普通的div容器，用于布局和样式控制。</p>
+                <div class="div-example">
+                    <p>嵌套的div，通常用于创建复杂的布局结构</p>
+                </div>
+                <p><strong>何时使用：</strong>当需要分组元素进行样式控制，但内容没有特殊语义时。</p>
+            </div>
+        </div>
+
+        <!-- 段落元素示例 -->
+        <div class="example-section">
+            <h2>2. &lt;p&gt; 段落元素</h2>
+            <p><strong>用途：</strong>表示文本段落，是最基本的文本容器。</p>
+            
+            <div class="demo-box paragraph-example">
+                <span class="element-tag">P</span>
+                <p>这是第一个段落，包含一些示例文本。段落元素会自动在前后添加间距。</p>
+                <p>这是第二个段落。每个p元素都代表一个独立的段落，浏览器会自动添加适当的间距。</p>
+                <p>段落可以包含<strong>粗体文本</strong>、<em>斜体文本</em>和<a href="#">链接</a>等内联元素。</p>
+            </div>
+        </div>
+
+        <!-- 引用元素示例 -->
+        <div class="example-section">
+            <h2>3. &lt;blockquote&gt; 块引用</h2>
+            <p><strong>用途：</strong>表示来自其他来源的长段引用内容。</p>
+            
+            <div class="demo-box">
+                <span class="element-tag">BLOCKQUOTE</span>
+                <p>以下是一个著名的引用：</p>
+                
+                <blockquote cite="https://en.wikipedia.org/wiki/Tim_Berners-Lee">
+                    <p>网络的原始设计和理念是为了让它成为一个协作的媒体，一个我们可以读写的地方。</p>
+                    <cite>蒂姆·伯纳斯-李 (Tim Berners-Lee)</cite>
+                </blockquote>
+                
+                <p><strong>注意：</strong>cite属性用于指定引用来源的URL，cite元素用于标注作者或来源。</p>
+            </div>
+        </div>
+
+        <!-- Figure 和 Figcaption 示例 -->
+        <div class="example-section">
+            <h2>4. &lt;figure&gt; 和 &lt;figcaption&gt;</h2>
+            <p><strong>用途：</strong>figure表示独立的内容单元（图片、图表、代码等），figcaption提供说明。</p>
+            
+            <div class="demo-box">
+                <span class="element-tag">FIGURE</span>
+                
+                <!-- 图片示例 -->
+                <figure>
+                    <svg width="200" height="120" style="background: #3498db; border-radius: 6px;">
+                        <text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="white" font-size="16">示例图片</text>
+                    </svg>
+                    <figcaption>图1: 这是一个示例图片的说明文字</figcaption>
+                </figure>
+
+                <!-- 代码示例 -->
+                <figure class="code-figure">
+                    <pre><code>function greetUser(name) {
+    return `Hello, ${name}! Welcome to our website.`;
+}
+
+console.log(greetUser('Alice'));</code></pre>
+                    <figcaption>代码示例: JavaScript 问候函数</figcaption>
+                </figure>
+            </div>
+        </div>
+
+        <!-- HR 分隔线示例 -->
+        <div class="example-section">
+            <h2>5. &lt;hr&gt; 主题分隔线</h2>
+            <p><strong>用途：</strong>表示段落级元素之间的主题转换。</p>
+            
+            <div class="demo-box">
+                <span class="element-tag">HR</span>
+                <p>这是第一个主题的内容。</p>
+                
+                <hr class="fancy">
+                
+                <p>这是第二个主题的内容，与上面的内容有明显的主题差异。</p>
+                
+                <hr class="dots">
+                
+                <p>第三个主题，展示不同样式的分隔线。</p>
+            </div>
+        </div>
+
+        <!-- PRE 预格式化文本示例 -->
+        <div class="example-section">
+            <h2>6. &lt;pre&gt; 预格式化文本</h2>
+            <p><strong>用途：</strong>保持文本的空格、换行和缩进，常用于代码展示。</p>
+            
+            <div class="demo-box">
+                <span class="element-tag">PRE</span>
+                <p>以下是一首诗的格式：</p>
+                
+                <div class="pre-example">
+                    <pre>春眠不觉晓，
+处处闻啼鸟。
+夜来风雨声，
+花落知多少。</pre>
+                </div>
+                
+                <p>注意空格和换行都被完整保留。</p>
+            </div>
+        </div>
+
+        <!-- 其他语义元素示例 -->
+        <div class="example-section">
+            <h2>7. 其他语义元素</h2>
+            
+            <div class="demo-box">
+                <span class="element-tag">ADDRESS</span>
+                <h3>&lt;address&gt; 联系信息</h3>
+                <address>
+                    <strong>联系我们</strong><br>
+                    地址: 北京市朝阳区创新大厦 808室<br>
+                    电话: <a href="tel:+86-138-0000-0000">138-0000-0000</a><br>
+                    邮箱: <a href="mailto:contact@example.com">contact@example.com</a>
+                </address>
+            </div>
+
+            <div class="demo-box">
+                <span class="element-tag">TIME</span>
+                <h3>&lt;time&gt; 时间信息</h3>
+                <p>文章发布时间: <time datetime="2024-01-15T14:30:00Z">2024年1月15日 下午2:30</time></p>
+                <p>会议安排在 <time datetime="2024-02-01">2月1日</time> 举行。</p>
+            </div>
+        </div>
+
+        <!-- 元素选择指南 -->
+        <div class="example-section">
+            <h2>8. 元素选择指南</h2>
+            
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>元素</th>
+                        <th>使用场景</th>
+                        <th>语义意义</th>
+                        <th>常见错误</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>&lt;div&gt;</code></td>
+                        <td>布局容器、样式分组</td>
+                        <td>无特殊语义</td>
+                        <td>过度使用替代语义元素</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;p&gt;</code></td>
+                        <td>文本段落</td>
+                        <td>段落文本</td>
+                        <td>包装非段落内容</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;blockquote&gt;</code></td>
+                        <td>长段引用</td>
+                        <td>来源引用</td>
+                        <td>装饰性使用</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;figure&gt;</code></td>
+                        <td>独立内容单元</td>
+                        <td>可移动的内容</td>
+                        <td>所有图片都用figure</td>
+                    </tr>
+                    <tr>
+                        <td><code>&lt;hr&gt;</code></td>
+                        <td>主题转换</td>
+                        <td>内容分隔</td>
+                        <td>纯装饰用途</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 最佳实践提示：</strong>
+            <ul>
+                <li>优先选择有语义意义的元素，最后考虑div</li>
+                <li>figure适用于可以移动到文档其他位置的内容</li>
+                <li>blockquote应包含cite属性指明来源</li>
+                <li>time元素的datetime属性使用ISO格式</li>
+                <li>address元素只用于联系信息，不是所有地址</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== 内容分组元素统计 ===');
+            
+            const elements = ['div', 'p', 'blockquote', 'figure', 'figcaption', 'hr', 'pre', 'address', 'time'];
+            
+            elements.forEach(element => {
+                const count = document.querySelectorAll(element).length;
+                console.log(`${element.toUpperCase()}: ${count} 个`);
+            });
+            
+            // 检查figure和figcaption的配对
+            const figures = document.querySelectorAll('figure');
+            console.log('\n=== Figure元素检查 ===');
+            figures.forEach((figure, index) => {
+                const hasCaption = figure.querySelector('figcaption');
+                console.log(`Figure ${index + 1}: ${hasCaption ? '有说明文字 ✅' : '无说明文字 ⚠️'}`);
+            });
+            
+            // 检查blockquote的cite属性
+            const blockquotes = document.querySelectorAll('blockquote');
+            console.log('\n=== Blockquote元素检查 ===');
+            blockquotes.forEach((bq, index) => {
+                const hasCite = bq.hasAttribute('cite');
+                const hasCiteElement = bq.querySelector('cite');
+                console.log(`Blockquote ${index + 1}: cite属性=${hasCite ? '✅' : '❌'}, cite元素=${hasCiteElement ? '✅' : '❌'}`);
+            });
+            
+            // 检查time元素的datetime属性
+            const timeElements = document.querySelectorAll('time');
+            console.log('\n=== Time元素检查 ===');
+            timeElements.forEach((time, index) => {
+                const hasDatetime = time.hasAttribute('datetime');
+                console.log(`Time ${index + 1}: datetime属性=${hasDatetime ? '✅' : '❌'}`);
+            });
+        });
+    </script>
+</body>
+</html>

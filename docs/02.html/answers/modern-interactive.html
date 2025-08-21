@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代化交互式组件示例</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #24292f;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .demo-card {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-card h3 {
+            margin-top: 0;
+            color: #0969da;
+            border-bottom: 1px solid #e1e5e9;
+            padding-bottom: 8px;
+        }
+
+        /* 自定义选择器组件 */
+        .custom-select {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            margin: 12px 0;
+        }
+
+        .select-trigger {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 8px 32px 8px 12px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color 0.2s;
+        }
+
+        .select-trigger:hover {
+            border-color: #0969da;
+        }
+
+        .select-trigger[aria-expanded="true"] {
+            border-color: #0969da;
+            box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+        }
+
+        .select-arrow {
+            transition: transform 0.2s;
+        }
+
+        .select-trigger[aria-expanded="true"] .select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-8px);
+            pointer-events: none;
+            transition: all 0.2s ease;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .select-dropdown.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .select-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .select-option:hover,
+        .select-option:focus {
+            background-color: #f6f8fa;
+        }
+
+        .select-option[aria-selected="true"] {
+            background-color: #0969da;
+            color: white;
+        }
+
+        /* 交互式标签页 */
+        .tab-container {
+            margin: 20px 0;
+        }
+
+        .tab-list {
+            display: flex;
+            border-bottom: 1px solid #d0d7de;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .tab-button:hover {
+            background-color: #f6f8fa;
+        }
+
+        .tab-button[aria-selected="true"] {
+            border-bottom-color: #0969da;
+            color: #0969da;
+            font-weight: 600;
+        }
+
+        .tab-panel {
+            padding: 20px 0;
+            display: none;
+        }
+
+        .tab-panel[aria-hidden="false"] {
+            display: block;
+        }
+
+        /* 可折叠面板 */
+        .accordion {
+            border: 1px solid #d0d7de;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #d0d7de;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            background: #f6f8fa;
+            border: none;
+            width: 100%;
+            padding: 16px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .accordion-header:hover {
+            background-color: #eaeef2;
+        }
+
+        .accordion-content {
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 200px;
+            padding: 16px;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* 工具提示 */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            margin: 8px;
+        }
+
+        .tooltip-trigger {
+            background: #0969da;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #24292f;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 1000;
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #24292f;
+        }
+
+        .tooltip-container:hover .tooltip,
+        .tooltip-container:focus-within .tooltip {
+            opacity: 1;
+        }
+
+        /* 切换开关 */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 8px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0969da;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* 进度指示器 */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            margin: 16px;
+        }
+
+        .progress-ring-circle {
+            stroke: #d0d7de;
+            stroke-width: 4;
+            fill: transparent;
+            transition: stroke-dasharray 0.3s ease;
+        }
+
+        .progress-ring-progress {
+            stroke: #0969da;
+            stroke-width: 4;
+            fill: transparent;
+            stroke-linecap: round;
+        }
+
+        /* 可拖拽列表 */
+        .draggable-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+            background: #f6f8fa;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .draggable-item {
+            background: white;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 4px 0;
+            cursor: move;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .draggable-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .draggable-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.02);
+        }
+
+        .drag-handle {
+            cursor: grab;
+            color: #656d76;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-list {
+                overflow-x: auto;
+            }
+            
+            .tab-button {
+                white-space: nowrap;
+                min-width: 120px;
+            }
+        }
+
+        /* 实用样式 */
+        .code-preview {
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            margin: 12px 0;
+            overflow-x: auto;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+        }
+
+        .badge-primary { background: #ddf4ff; color: #0969da; }
+        .badge-success { background: #dafbe1; color: #1a7f37; }
+        .badge-warning { background: #fff8c5; color: #9a6700; }
+        .badge-danger { background: #ffebe9; color: #d1242f; }
+    </style>
+</head>
+<body>
+    <h1>现代化交互式组件示例</h1>
+    <p>展示如何结合HTML、CSS和JavaScript创建现代化的交互式组件，遵循无障碍访问和渐进增强原则。</p>
+
+    <div class="demo-grid">
+        <!-- 自定义选择器 -->
+        <div class="demo-card">
+            <h3>自定义选择器</h3>
+            <p>基于语义化HTML增强的下拉选择器，支持键盘导航。</p>
+            
+            <div class="custom-select" id="customSelect">
+                <button class="select-trigger" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="select-label">
+                    <span id="select-value">请选择...</span>
+                    <span class="select-arrow">▼</span>
+                </button>
+                <ul class="select-dropdown" role="listbox" aria-labelledby="select-label">
+                    <li class="select-option" role="option" data-value="html">HTML</li>
+                    <li class="select-option" role="option" data-value="css">CSS</li>
+                    <li class="select-option" role="option" data-value="javascript">JavaScript</li>
+                    <li class="select-option" role="option" data-value="react">React</li>
+                    <li class="select-option" role="option" data-value="vue">Vue.js</li>
+                </ul>
+            </div>
+            
+            <div class="code-preview">
+选择值: <span id="selectedValue">未选择</span>
+            </div>
+        </div>
+
+        <!-- 交互式标签页 -->
+        <div class="demo-card">
+            <h3>无障碍标签页</h3>
+            <p>遵循ARIA规范的标签页组件，支持键盘导航。</p>
+            
+            <div class="tab-container">
+                <ul class="tab-list" role="tablist">
+                    <li role="presentation">
+                        <button class="tab-button" role="tab" aria-selected="true" aria-controls="tab1-panel" id="tab1">基础</button>
+                    </li>
+                    <li role="presentation">
+                        <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab2-panel" id="tab2">进阶</button>
+                    </li>
+                    <li role="presentation">
+                        <button class="tab-button" role="tab" aria-selected="false" aria-controls="tab3-panel" id="tab3">高级</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-panel" role="tabpanel" aria-labelledby="tab1" id="tab1-panel" aria-hidden="false">
+                    <h4>基础知识</h4>
+                    <p>HTML、CSS、JavaScript基础语法和概念。</p>
+                    <span class="status-badge badge-primary">入门级</span>
+                </div>
+                
+                <div class="tab-panel" role="tabpanel" aria-labelledby="tab2" id="tab2-panel" aria-hidden="true">
+                    <h4>进阶技能</h4>
+                    <p>框架应用、工程化工具、性能优化等。</p>
+                    <span class="status-badge badge-warning">中级</span>
+                </div>
+                
+                <div class="tab-panel" role="tabpanel" aria-labelledby="tab3" id="tab3-panel" aria-hidden="true">
+                    <h4>高级架构</h4>
+                    <p>系统设计、微前端、跨端开发等。</p>
+                    <span class="status-badge badge-danger">高级</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 手风琴面板 -->
+        <div class="demo-card">
+            <h3>可折叠面板</h3>
+            <p>平滑动画的手风琴组件，支持多项展开。</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span>前端开发工具</span>
+                        <span class="accordion-icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>VSCode、Chrome DevTools、Git、Node.js等开发必备工具。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span>构建工具链</span>
+                        <span class="accordion-icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>Webpack、Vite、Rollup等现代化构建工具的配置和使用。</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <button class="accordion-header" aria-expanded="false">
+                        <span>部署策略</span>
+                        <span class="accordion-icon">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>CDN、Docker、CI/CD等现代化部署和运维方案。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 工具提示和开关 -->
+        <div class="demo-card">
+            <h3>交互元素集合</h3>
+            <p>工具提示、切换开关等常用交互元素。</p>
+            
+            <div style="margin: 16px 0;">
+                <h4>工具提示</h4>
+                <div class="tooltip-container">
+                    <button class="tooltip-trigger">悬停显示提示</button>
+                    <div class="tooltip">这是一个工具提示</div>
+                </div>
+                
+                <div class="tooltip-container">
+                    <button class="tooltip-trigger">键盘焦点提示</button>
+                    <div class="tooltip">支持键盘导航</div>
+                </div>
+            </div>
+            
+            <div style="margin: 16px 0;">
+                <h4>切换开关</h4>
+                <label class="switch">
+                    <input type="checkbox" id="darkMode">
+                    <span class="slider"></span>
+                </label>
+                <label for="darkMode">深色模式</label>
+                
+                <label class="switch">
+                    <input type="checkbox" id="notifications" checked>
+                    <span class="slider"></span>
+                </label>
+                <label for="notifications">推送通知</label>
+            </div>
+        </div>
+
+        <!-- 进度指示器 -->
+        <div class="demo-card">
+            <h3>进度指示器</h3>
+            <p>环形和线性进度条组件。</p>
+            
+            <div class="progress-container">
+                <h4>环形进度</h4>
+                <svg class="progress-ring" width="80" height="80">
+                    <circle class="progress-ring-circle" cx="40" cy="40" r="30"/>
+                    <circle class="progress-ring-progress" cx="40" cy="40" r="30" 
+                            stroke-dasharray="0 188.5" id="progressCircle"/>
+                </svg>
+                
+                <div style="margin: 16px 0;">
+                    <button onclick="updateProgress(25)">25%</button>
+                    <button onclick="updateProgress(50)">50%</button>
+                    <button onclick="updateProgress(75)">75%</button>
+                    <button onclick="updateProgress(100)">100%</button>
+                </div>
+                
+                <h4>线性进度</h4>
+                <div style="background: #e1e5e9; height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="background: linear-gradient(90deg, #0969da, #2ea043); height: 100%; width: 60%; transition: width 0.3s ease;" id="linearProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 可拖拽列表 -->
+        <div class="demo-card">
+            <h3>可拖拽列表</h3>
+            <p>支持鼠标和触摸的拖拽排序组件。</p>
+            
+            <ul class="draggable-list" id="dragList">
+                <li class="draggable-item" draggable="true">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span>HTML 语义化</span>
+                </li>
+                <li class="draggable-item" draggable="true">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span>CSS 布局</span>
+                </li>
+                <li class="draggable-item" draggable="true">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span>JavaScript ES6+</span>
+                </li>
+                <li class="draggable-item" draggable="true">
+                    <span class="drag-handle">⋮⋮</span>
+                    <span>React/Vue 框架</span>
+                </li>
+            </ul>
+            
+            <div class="code-preview">
+                拖拽项目重新排序，查看控制台日志
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; padding: 20px; background-color: #f0f8ff; border-left: 4px solid #0969da;">
+        <h3>🚀 现代化组件设计原则</h3>
+        <ul>
+            <li><strong>语义化优先</strong>: 使用正确的HTML元素和ARIA属性</li>
+            <li><strong>键盘导航</strong>: 所有交互都支持键盘操作</li>
+            <li><strong>视觉反馈</strong>: 清晰的状态指示和平滑动画</li>
+            <li><strong>响应式设计</strong>: 适配不同设备和屏幕尺寸</li>
+            <li><strong>渐进增强</strong>: 基础功能无需JavaScript即可使用</li>
+            <li><strong>性能优化</strong>: 合理使用CSS动画和事件委托</li>
+        </ul>
+    </div>
+
+    <script>
+        // 自定义选择器
+        class CustomSelect {
+            constructor(element) {
+                this.element = element;
+                this.trigger = element.querySelector('.select-trigger');
+                this.dropdown = element.querySelector('.select-dropdown');
+                this.options = element.querySelectorAll('.select-option');
+                this.valueElement = element.querySelector('#select-value');
+                this.selectedValueElement = document.getElementById('selectedValue');
+                
+                this.isOpen = false;
+                this.selectedIndex = -1;
+                
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                this.trigger.addEventListener('click', () => this.toggle());
+                this.trigger.addEventListener('keydown', (e) => this.handleKeyDown(e));
+                
+                this.options.forEach((option, index) => {
+                    option.addEventListener('click', () => this.selectOption(index));
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if (!this.element.contains(e.target)) {
+                        this.close();
+                    }
+                });
+            }
+            
+            toggle() {
+                this.isOpen ? this.close() : this.open();
+            }
+            
+            open() {
+                this.isOpen = true;
+                this.trigger.setAttribute('aria-expanded', 'true');
+                this.dropdown.classList.add('show');
+                this.focusOption(0);
+            }
+            
+            close() {
+                this.isOpen = false;
+                this.trigger.setAttribute('aria-expanded', 'false');
+                this.dropdown.classList.remove('show');
+                this.trigger.focus();
+            }
+            
+            selectOption(index) {
+                this.selectedIndex = index;
+                const option = this.options[index];
+                const value = option.dataset.value;
+                const text = option.textContent;
+                
+                this.valueElement.textContent = text;
+                this.selectedValueElement.textContent = value;
+                
+                this.options.forEach(opt => opt.setAttribute('aria-selected', 'false'));
+                option.setAttribute('aria-selected', 'true');
+                
+                this.close();
+            }
+            
+            focusOption(index) {
+                if (index >= 0 && index < this.options.length) {
+                    this.options[index].focus();
+                }
+            }
+            
+            handleKeyDown(e) {
+                switch(e.key) {
+                    case 'Enter':
+                    case ' ':
+                        e.preventDefault();
+                        this.toggle();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        if (this.isOpen) {
+                            this.focusOption(0);
+                        } else {
+                            this.open();
+                        }
+                        break;
+                    case 'Escape':
+                        this.close();
+                        break;
+                }
+            }
+        }
+
+        // 标签页组件
+        class TabComponent {
+            constructor(container) {
+                this.container = container;
+                this.tabList = container.querySelector('[role="tablist"]');
+                this.tabs = container.querySelectorAll('[role="tab"]');
+                this.panels = container.querySelectorAll('[role="tabpanel"]');
+                
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                this.tabs.forEach((tab, index) => {
+                    tab.addEventListener('click', () => this.selectTab(index));
+                    tab.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+                });
+            }
+            
+            selectTab(index) {
+                this.tabs.forEach((tab, i) => {
+                    const isSelected = i === index;
+                    tab.setAttribute('aria-selected', isSelected);
+                    this.panels[i].setAttribute('aria-hidden', !isSelected);
+                });
+            }
+            
+            handleKeyDown(e, currentIndex) {
+                let newIndex;
+                switch(e.key) {
+                    case 'ArrowRight':
+                        newIndex = (currentIndex + 1) % this.tabs.length;
+                        break;
+                    case 'ArrowLeft':
+                        newIndex = (currentIndex - 1 + this.tabs.length) % this.tabs.length;
+                        break;
+                    case 'Home':
+                        newIndex = 0;
+                        break;
+                    case 'End':
+                        newIndex = this.tabs.length - 1;
+                        break;
+                    default:
+                        return;
+                }
+                
+                e.preventDefault();
+                this.selectTab(newIndex);
+                this.tabs[newIndex].focus();
+            }
+        }
+
+        // 手风琴组件
+        class AccordionComponent {
+            constructor(element) {
+                this.element = element;
+                this.items = element.querySelectorAll('.accordion-item');
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                this.items.forEach(item => {
+                    const header = item.querySelector('.accordion-header');
+                    header.addEventListener('click', () => this.toggleItem(item));
+                });
+            }
+            
+            toggleItem(item) {
+                const isActive = item.classList.contains('active');
+                const header = item.querySelector('.accordion-header');
+                
+                if (isActive) {
+                    item.classList.remove('active');
+                    header.setAttribute('aria-expanded', 'false');
+                } else {
+                    item.classList.add('active');
+                    header.setAttribute('aria-expanded', 'true');
+                }
+                
+                console.log(`手风琴项目 ${isActive ? '关闭' : '展开'}`);
+            }
+        }
+
+        // 拖拽组件
+        class DragSortList {
+            constructor(element) {
+                this.element = element;
+                this.draggedItem = null;
+                this.bindEvents();
+            }
+            
+            bindEvents() {
+                this.element.addEventListener('dragstart', (e) => this.handleDragStart(e));
+                this.element.addEventListener('dragover', (e) => this.handleDragOver(e));
+                this.element.addEventListener('drop', (e) => this.handleDrop(e));
+                this.element.addEventListener('dragend', (e) => this.handleDragEnd(e));
+            }
+            
+            handleDragStart(e) {
+                this.draggedItem = e.target;
+                e.target.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            }
+            
+            handleDragOver(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                const afterElement = this.getDragAfterElement(e.clientY);
+                if (afterElement == null) {
+                    this.element.appendChild(this.draggedItem);
+                } else {
+                    this.element.insertBefore(this.draggedItem, afterElement);
+                }
+            }
+            
+            handleDrop(e) {
+                e.preventDefault();
+                console.log('列表重新排序');
+            }
+            
+            handleDragEnd(e) {
+                e.target.classList.remove('dragging');
+                this.draggedItem = null;
+            }
+            
+            getDragAfterElement(y) {
+                const draggableElements = [...this.element.querySelectorAll('.draggable-item:not(.dragging)')];
+                
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+        }
+
+        // 进度更新函数
+        function updateProgress(percent) {
+            const circle = document.getElementById('progressCircle');
+            const linear = document.getElementById('linearProgress');
+            const circumference = 2 * Math.PI * 30; // r=30
+            const offset = circumference - (percent / 100) * circumference;
+            
+            circle.style.strokeDasharray = `${circumference - offset} ${circumference}`;
+            linear.style.width = percent + '%';
+            
+            console.log(`进度更新至 ${percent}%`);
+        }
+
+        // 初始化所有组件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化自定义选择器
+            const customSelect = document.getElementById('customSelect');
+            new CustomSelect(customSelect);
+            
+            // 初始化标签页
+            const tabContainer = document.querySelector('.tab-container');
+            new TabComponent(tabContainer);
+            
+            // 初始化手风琴
+            const accordion = document.querySelector('.accordion');
+            new AccordionComponent(accordion);
+            
+            // 初始化拖拽列表
+            const dragList = document.getElementById('dragList');
+            new DragSortList(dragList);
+            
+            // 开关状态监听
+            document.getElementById('darkMode').addEventListener('change', function() {
+                console.log('深色模式:', this.checked ? '开启' : '关闭');
+            });
+            
+            document.getElementById('notifications').addEventListener('change', function() {
+                console.log('推送通知:', this.checked ? '开启' : '关闭');
+            });
+            
+            console.log('所有现代化组件初始化完成');
+        });
+    </script>
+</body>
+</html>

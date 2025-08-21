@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览器标签页通信完整演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .demo-section h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .communication-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .method-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 控制面板样式 */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .control-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .control-input {
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        /* 消息日志样式 */
+        .message-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+
+        .message-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .message-item:last-child {
+            border-bottom: none;
+        }
+
+        .message-time {
+            color: #95a5a6;
+            font-size: 10px;
+        }
+
+        .message-type {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .message-content {
+            color: #e74c3c;
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-disconnected { background: #e74c3c; }
+        .status-connected { background: #27ae60; }
+        .status-sending { background: #f39c12; animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* 新窗口按钮样式 */
+        .window-btn {
+            background: #9b59b6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin: 5px;
+        }
+
+        .window-btn:hover {
+            background: #8e44ad;
+        }
+
+        /* 统计面板 */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        /* 兼容性提示 */
+        .compatibility-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .compatibility-info h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>浏览器标签页通信完整演示</h1>
+
+        <!-- Broadcast Channel API 演示 -->
+        <div class="demo-section">
+            <h2>1. Broadcast Channel API</h2>
+
+            <div class="communication-demo">
+                <span class="method-tag">BC API</span>
+                <h3>广播通道通信</h3>
+                <p>最简单的跨标签页通信方式，支持实时双向通信</p>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>通道管理</label>
+                        <input type="text" class="control-input" id="channelName" value="demo-channel" placeholder="通道名称">
+                        <button class="control-btn" id="createChannelBtn">创建通道</button>
+                        <button class="control-btn" id="closeChannelBtn" disabled>关闭通道</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>消息发送</label>
+                        <input type="text" class="control-input" id="broadcastMessage" placeholder="输入消息...">
+                        <button class="control-btn" id="sendBroadcastBtn" disabled>发送广播</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>新窗口测试</label>
+                        <button class="window-btn" onclick="openNewWindow('broadcast')">打开新窗口</button>
+                        <div style="margin-top: 10px;">
+                            <span class="status-indicator status-disconnected" id="bcStatus"></span>
+                            <span id="bcStatusText">未连接</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-log" id="broadcastLog">
+                    <div class="message-item">
+                        <span class="message-time">[00:00:00]</span>
+                        <span class="message-type">SYSTEM</span>
+                        <span class="message-content">广播通道准备就绪</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LocalStorage + Events 演示 -->
+        <div class="demo-section">
+            <h2>2. LocalStorage + Events</h2>
+
+            <div class="communication-demo">
+                <span class="method-tag">STORAGE</span>
+                <h3>本地存储事件通信</h3>
+                <p>利用storage事件实现跨标签页数据同步</p>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>存储键值</label>
+                        <input type="text" class="control-input" id="storageKey" value="tab-message" placeholder="存储键">
+                        <input type="text" class="control-input" id="storageValue" placeholder="存储值">
+                        <button class="control-btn" id="setStorageBtn">设置存储</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>存储操作</label>
+                        <button class="control-btn" id="getStorageBtn">读取存储</button>
+                        <button class="control-btn" id="clearStorageBtn">清空存储</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>测试窗口</label>
+                        <button class="window-btn" onclick="openNewWindow('storage')">打开新窗口</button>
+                        <div style="margin-top: 10px;">
+                            <span class="status-indicator status-connected" id="storageStatus"></span>
+                            <span id="storageStatusText">监听中</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-log" id="storageLog">
+                    <div class="message-item">
+                        <span class="message-time">[00:00:00]</span>
+                        <span class="message-type">SYSTEM</span>
+                        <span class="message-content">存储事件监听已启动</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- postMessage 演示 -->
+        <div class="demo-section">
+            <h2>3. postMessage API</h2>
+
+            <div class="communication-demo">
+                <span class="method-tag">POST MSG</span>
+                <h3>跨窗口消息传递</h3>
+                <p>支持跨域和iframe通信，安全性最高</p>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>目标窗口</label>
+                        <select class="control-input" id="targetWindow">
+                            <option value="">选择目标窗口</option>
+                        </select>
+                        <button class="control-btn" id="refreshWindowsBtn">刷新窗口列表</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>消息发送</label>
+                        <input type="text" class="control-input" id="postMessage" placeholder="输入消息...">
+                        <button class="control-btn" id="sendPostMessageBtn" disabled>发送消息</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>iframe测试</label>
+                        <button class="window-btn" onclick="createIframe()">创建iframe</button>
+                        <button class="window-btn" onclick="openNewWindow('postmessage')">打开新窗口</button>
+                        <div style="margin-top: 10px;">
+                            <span class="status-indicator status-connected" id="postMessageStatus"></span>
+                            <span id="postMessageStatusText">监听中</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-log" id="postMessageLog">
+                    <div class="message-item">
+                        <span class="message-time">[00:00:00]</span>
+                        <span class="message-type">SYSTEM</span>
+                        <span class="message-content">postMessage监听已启动</span>
+                    </div>
+                </div>
+                
+                <div id="iframeContainer" style="margin-top: 15px;"></div>
+            </div>
+        </div>
+
+        <!-- SharedWorker 演示 -->
+        <div class="demo-section">
+            <h2>4. SharedWorker (实验性)</h2>
+
+            <div class="communication-demo">
+                <span class="method-tag">WORKER</span>
+                <h3>共享Worker通信</h3>
+                <p>多个页面共享一个后台线程，适用于复杂状态管理</p>
+                
+                <div class="compatibility-info">
+                    <h4>⚠️ 兼容性提示</h4>
+                    <p>SharedWorker在某些浏览器中可能不被支持。当前浏览器支持状态：
+                        <strong id="sharedWorkerSupport">检测中...</strong>
+                    </p>
+                </div>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>Worker管理</label>
+                        <button class="control-btn" id="createWorkerBtn">创建Worker</button>
+                        <button class="control-btn" id="terminateWorkerBtn" disabled>终止Worker</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>消息交互</label>
+                        <input type="text" class="control-input" id="workerMessage" placeholder="输入消息...">
+                        <button class="control-btn" id="sendWorkerBtn" disabled>发送到Worker</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>测试窗口</label>
+                        <button class="window-btn" onclick="openNewWindow('worker')">打开新窗口</button>
+                        <div style="margin-top: 10px;">
+                            <span class="status-indicator status-disconnected" id="workerStatus"></span>
+                            <span id="workerStatusText">未连接</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="message-log" id="workerLog">
+                    <div class="message-item">
+                        <span class="message-time">[00:00:00]</span>
+                        <span class="message-type">SYSTEM</span>
+                        <span class="message-content">SharedWorker准备就绪</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计面板 -->
+        <div class="demo-section">
+            <h2>5. 通信统计</h2>
+
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalMessages">0</div>
+                    <div class="stat-label">总消息数</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="activeChannels">0</div>
+                    <div class="stat-label">活跃通道</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="openWindows">1</div>
+                    <div class="stat-label">打开窗口</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="supportedMethods">0</div>
+                    <div class="stat-label">支持的方法</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TabCommunicationDemo {
+            constructor() {
+                this.stats = {
+                    totalMessages: 0,
+                    activeChannels: 0,
+                    openWindows: 1,
+                    supportedMethods: 0
+                };
+                
+                this.broadcastChannel = null;
+                this.sharedWorker = null;
+                this.childWindows = new Map();
+                
+                this.init();
+            }
+            
+            init() {
+                this.checkBrowserSupport();
+                this.setupBroadcastChannel();
+                this.setupLocalStorage();
+                this.setupPostMessage();
+                this.setupSharedWorker();
+                this.updateStats();
+                
+                console.log('标签页通信演示已启动');
+            }
+            
+            checkBrowserSupport() {
+                let supportedCount = 0;
+                
+                // 检测各种API支持情况
+                const support = {
+                    broadcastChannel: 'BroadcastChannel' in window,
+                    localStorage: 'localStorage' in window,
+                    postMessage: 'postMessage' in window,
+                    sharedWorker: 'SharedWorker' in window
+                };
+                
+                Object.values(support).forEach(supported => {
+                    if (supported) supportedCount++;
+                });
+                
+                this.stats.supportedMethods = supportedCount;
+                
+                // 显示SharedWorker支持状态
+                document.getElementById('sharedWorkerSupport').textContent = 
+                    support.sharedWorker ? '✅ 支持' : '❌ 不支持';
+                
+                console.log('浏览器支持情况:', support);
+            }
+            
+            setupBroadcastChannel() {
+                const createBtn = document.getElementById('createChannelBtn');
+                const closeBtn = document.getElementById('closeChannelBtn');
+                const sendBtn = document.getElementById('sendBroadcastBtn');
+                const messageInput = document.getElementById('broadcastMessage');
+                const channelNameInput = document.getElementById('channelName');
+                
+                createBtn.addEventListener('click', () => {
+                    const channelName = channelNameInput.value.trim();
+                    if (!channelName) return;
+                    
+                    this.createBroadcastChannel(channelName);
+                    createBtn.disabled = true;
+                    closeBtn.disabled = false;
+                    sendBtn.disabled = false;
+                    
+                    this.updateStatus('bc', 'connected', '已连接');
+                    this.stats.activeChannels++;
+                    this.updateStats();
+                });
+                
+                closeBtn.addEventListener('click', () => {
+                    this.closeBroadcastChannel();
+                    createBtn.disabled = false;
+                    closeBtn.disabled = true;
+                    sendBtn.disabled = true;
+                    
+                    this.updateStatus('bc', 'disconnected', '未连接');
+                    this.stats.activeChannels--;
+                    this.updateStats();
+                });
+                
+                sendBtn.addEventListener('click', () => {
+                    const message = messageInput.value.trim();
+                    if (!message || !this.broadcastChannel) return;
+                    
+                    this.sendBroadcastMessage(message);
+                    messageInput.value = '';
+                    this.stats.totalMessages++;
+                    this.updateStats();
+                });
+                
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendBtn.click();
+                    }
+                });
+            }
+            
+            createBroadcastChannel(channelName) {
+                if (!'BroadcastChannel' in window) {
+                    this.logMessage('broadcastLog', 'ERROR', 'BroadcastChannel API不被支持');
+                    return;
+                }
+                
+                this.broadcastChannel = new BroadcastChannel(channelName);
+                
+                this.broadcastChannel.addEventListener('message', (event) => {
+                    this.logMessage('broadcastLog', 'RECEIVED', 
+                        `收到消息: ${JSON.stringify(event.data)}`);
+                    this.stats.totalMessages++;
+                    this.updateStats();
+                });
+                
+                this.logMessage('broadcastLog', 'CREATED', `通道 "${channelName}" 已创建`);
+            }
+            
+            closeBroadcastChannel() {
+                if (this.broadcastChannel) {
+                    this.broadcastChannel.close();
+                    this.broadcastChannel = null;
+                    this.logMessage('broadcastLog', 'CLOSED', '广播通道已关闭');
+                }
+            }
+            
+            sendBroadcastMessage(message) {
+                if (!this.broadcastChannel) return;
+                
+                const messageData = {
+                    type: 'broadcast',
+                    content: message,
+                    timestamp: Date.now(),
+                    sender: 'main-window'
+                };
+                
+                this.broadcastChannel.postMessage(messageData);
+                this.logMessage('broadcastLog', 'SENT', `发送消息: ${message}`);
+            }
+            
+            setupLocalStorage() {
+                const setBtn = document.getElementById('setStorageBtn');
+                const getBtn = document.getElementById('getStorageBtn');
+                const clearBtn = document.getElementById('clearStorageBtn');
+                const keyInput = document.getElementById('storageKey');
+                const valueInput = document.getElementById('storageValue');
+                
+                // 监听storage事件
+                window.addEventListener('storage', (event) => {
+                    if (event.key && event.newValue !== null) {
+                        this.logMessage('storageLog', 'CHANGED', 
+                            `${event.key}: ${event.oldValue} → ${event.newValue}`);
+                        this.stats.totalMessages++;
+                        this.updateStats();
+                    }
+                });
+                
+                setBtn.addEventListener('click', () => {
+                    const key = keyInput.value.trim();
+                    const value = valueInput.value.trim();
+                    if (!key || !value) return;
+                    
+                    const messageData = {
+                        type: 'storage',
+                        content: value,
+                        timestamp: Date.now(),
+                        sender: 'main-window'
+                    };
+                    
+                    localStorage.setItem(key, JSON.stringify(messageData));
+                    this.logMessage('storageLog', 'SET', `设置 ${key}: ${value}`);
+                    valueInput.value = '';
+                });
+                
+                getBtn.addEventListener('click', () => {
+                    const key = keyInput.value.trim();
+                    if (!key) return;
+                    
+                    const value = localStorage.getItem(key);
+                    this.logMessage('storageLog', 'GET', 
+                        value ? `${key}: ${value}` : `${key}: 不存在`);
+                });
+                
+                clearBtn.addEventListener('click', () => {
+                    const key = keyInput.value.trim();
+                    if (key) {
+                        localStorage.removeItem(key);
+                        this.logMessage('storageLog', 'REMOVE', `删除 ${key}`);
+                    } else {
+                        localStorage.clear();
+                        this.logMessage('storageLog', 'CLEAR', '清空所有存储');
+                    }
+                });
+                
+                valueInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        setBtn.click();
+                    }
+                });
+            }
+            
+            setupPostMessage() {
+                const sendBtn = document.getElementById('sendPostMessageBtn');
+                const refreshBtn = document.getElementById('refreshWindowsBtn');
+                const messageInput = document.getElementById('postMessage');
+                const targetSelect = document.getElementById('targetWindow');
+                
+                // 监听postMessage事件
+                window.addEventListener('message', (event) => {
+                    // 这里应该验证来源，但为了演示简化处理
+                    this.logMessage('postMessageLog', 'RECEIVED', 
+                        `来自 ${event.origin}: ${JSON.stringify(event.data)}`);
+                    this.stats.totalMessages++;
+                    this.updateStats();
+                });
+                
+                sendBtn.addEventListener('click', () => {
+                    const message = messageInput.value.trim();
+                    const targetId = targetSelect.value;
+                    if (!message || !targetId) return;
+                    
+                    const targetWindow = this.childWindows.get(targetId);
+                    if (targetWindow && !targetWindow.closed) {
+                        const messageData = {
+                            type: 'postMessage',
+                            content: message,
+                            timestamp: Date.now(),
+                            sender: 'main-window'
+                        };
+                        
+                        targetWindow.postMessage(messageData, '*');
+                        this.logMessage('postMessageLog', 'SENT', 
+                            `发送到 ${targetId}: ${message}`);
+                        messageInput.value = '';
+                        this.stats.totalMessages++;
+                        this.updateStats();
+                    }
+                });
+                
+                refreshBtn.addEventListener('click', () => {
+                    this.updateWindowList();
+                });
+                
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendBtn.click();
+                    }
+                });
+                
+                // 定期更新窗口列表
+                setInterval(() => {
+                    this.updateWindowList();
+                }, 2000);
+            }
+            
+            updateWindowList() {
+                const targetSelect = document.getElementById('targetWindow');
+                const sendBtn = document.getElementById('sendPostMessageBtn');
+                
+                // 清理已关闭的窗口
+                for (const [id, window] of this.childWindows) {
+                    if (window.closed) {
+                        this.childWindows.delete(id);
+                        this.stats.openWindows--;
+                    }
+                }
+                
+                // 更新选择框
+                targetSelect.innerHTML = '<option value="">选择目标窗口</option>';
+                
+                for (const [id] of this.childWindows) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = id;
+                    targetSelect.appendChild(option);
+                }
+                
+                sendBtn.disabled = this.childWindows.size === 0;
+                this.updateStats();
+            }
+            
+            setupSharedWorker() {
+                const createBtn = document.getElementById('createWorkerBtn');
+                const terminateBtn = document.getElementById('terminateWorkerBtn');
+                const sendBtn = document.getElementById('sendWorkerBtn');
+                const messageInput = document.getElementById('workerMessage');
+                
+                if (!('SharedWorker' in window)) {
+                    createBtn.disabled = true;
+                    this.logMessage('workerLog', 'ERROR', 'SharedWorker不被支持');
+                    return;
+                }
+                
+                createBtn.addEventListener('click', () => {
+                    this.createSharedWorker();
+                    createBtn.disabled = true;
+                    terminateBtn.disabled = false;
+                    sendBtn.disabled = false;
+                    
+                    this.updateStatus('worker', 'connected', '已连接');
+                });
+                
+                terminateBtn.addEventListener('click', () => {
+                    this.terminateSharedWorker();
+                    createBtn.disabled = false;
+                    terminateBtn.disabled = true;
+                    sendBtn.disabled = true;
+                    
+                    this.updateStatus('worker', 'disconnected', '未连接');
+                });
+                
+                sendBtn.addEventListener('click', () => {
+                    const message = messageInput.value.trim();
+                    if (!message || !this.sharedWorker) return;
+                    
+                    this.sendWorkerMessage(message);
+                    messageInput.value = '';
+                    this.stats.totalMessages++;
+                    this.updateStats();
+                });
+                
+                messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendBtn.click();
+                    }
+                });
+            }
+            
+            createSharedWorker() {
+                // 创建一个简单的SharedWorker脚本
+                const workerScript = `
+                    let connections = [];
+                    
+                    self.addEventListener('connect', function(e) {
+                        const port = e.ports[0];
+                        connections.push(port);
+                        
+                        port.addEventListener('message', function(e) {
+                            const message = e.data;
+                            
+                            // 广播消息到所有连接
+                            connections.forEach(connection => {
+                                if (connection !== port) {
+                                    connection.postMessage({
+                                        type: 'broadcast',
+                                        content: message.content,
+                                        timestamp: Date.now(),
+                                        sender: 'shared-worker'
+                                    });
+                                }
+                            });
+                            
+                            // 回复发送者
+                            port.postMessage({
+                                type: 'echo',
+                                content: 'Worker收到: ' + message.content,
+                                timestamp: Date.now(),
+                                sender: 'shared-worker'
+                            });
+                        });
+                        
+                        port.addEventListener('close', function() {
+                            const index = connections.indexOf(port);
+                            if (index > -1) {
+                                connections.splice(index, 1);
+                            }
+                        });
+                        
+                        port.start();
+                    });
+                `;
+                
+                const blob = new Blob([workerScript], { type: 'application/javascript' });
+                const workerUrl = URL.createObjectURL(blob);
+                
+                try {
+                    this.sharedWorker = new SharedWorker(workerUrl);
+                    this.sharedWorker.port.start();
+                    
+                    this.sharedWorker.port.addEventListener('message', (event) => {
+                        this.logMessage('workerLog', 'RECEIVED', 
+                            `Worker消息: ${JSON.stringify(event.data)}`);
+                        this.stats.totalMessages++;
+                        this.updateStats();
+                    });
+                    
+                    this.logMessage('workerLog', 'CREATED', 'SharedWorker已创建');
+                    this.stats.activeChannels++;
+                    this.updateStats();
+                    
+                } catch (error) {
+                    this.logMessage('workerLog', 'ERROR', `创建Worker失败: ${error.message}`);
+                } finally {
+                    URL.revokeObjectURL(workerUrl);
+                }
+            }
+            
+            terminateSharedWorker() {
+                if (this.sharedWorker) {
+                    this.sharedWorker.port.close();
+                    this.sharedWorker = null;
+                    this.logMessage('workerLog', 'TERMINATED', 'SharedWorker已终止');
+                    this.stats.activeChannels--;
+                    this.updateStats();
+                }
+            }
+            
+            sendWorkerMessage(message) {
+                if (!this.sharedWorker) return;
+                
+                const messageData = {
+                    type: 'worker',
+                    content: message,
+                    timestamp: Date.now(),
+                    sender: 'main-window'
+                };
+                
+                this.sharedWorker.port.postMessage(messageData);
+                this.logMessage('workerLog', 'SENT', `发送到Worker: ${message}`);
+            }
+            
+            logMessage(logId, type, content) {
+                const log = document.getElementById(logId);
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+                
+                const messageItem = document.createElement('div');
+                messageItem.className = 'message-item';
+                messageItem.innerHTML = `
+                    <span class="message-time">[${timeStr}]</span>
+                    <span class="message-type">${type}</span>
+                    <span class="message-content">${content}</span>
+                `;
+                
+                log.insertBefore(messageItem, log.firstChild);
+                
+                // 限制日志条数
+                if (log.children.length > 50) {
+                    log.removeChild(log.lastChild);
+                }
+            }
+            
+            updateStatus(prefix, status, text) {
+                const statusIndicator = document.getElementById(`${prefix}Status`);
+                const statusText = document.getElementById(`${prefix}StatusText`);
+                
+                statusIndicator.className = `status-indicator status-${status}`;
+                statusText.textContent = text;
+            }
+            
+            updateStats() {
+                Object.keys(this.stats).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.textContent = this.stats[key];
+                    }
+                });
+            }
+            
+            openWindow(type) {
+                const windowId = `${type}-${Date.now()}`;
+                const features = 'width=600,height=400,scrollbars=yes,resizable=yes';
+                
+                // 创建新窗口的HTML内容
+                const windowContent = this.generateWindowContent(type, windowId);
+                
+                const newWindow = window.open('', windowId, features);
+                newWindow.document.write(windowContent);
+                newWindow.document.close();
+                
+                this.childWindows.set(windowId, newWindow);
+                this.stats.openWindows++;
+                this.updateWindowList();
+                
+                return newWindow;
+            }
+            
+            generateWindowContent(type, windowId) {
+                return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${type.toUpperCase()} 测试窗口 - ${windowId}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+                        .container { background: white; padding: 20px; border-radius: 8px; }
+                        button { background: #3498db; color: white; border: none; padding: 10px 15px; margin: 5px; border-radius: 4px; cursor: pointer; }
+                        input { padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px; width: 200px; }
+                        .log { background: #2c3e50; color: white; padding: 10px; border-radius: 4px; height: 200px; overflow-y: auto; font-family: monospace; margin-top: 10px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <h2>${type.toUpperCase()} 测试窗口</h2>
+                        <p>窗口ID: ${windowId}</p>
+                        ${this.generateWindowControls(type)}
+                        <div class="log" id="log"></div>
+                    </div>
+                    ${this.generateWindowScript(type, windowId)}
+                </body>
+                </html>
+                `;
+            }
+            
+            generateWindowControls(type) {
+                switch (type) {
+                    case 'broadcast':
+                        return `
+                            <input type="text" id="channelName" value="demo-channel" placeholder="通道名称">
+                            <button onclick="createChannel()">连接通道</button><br>
+                            <input type="text" id="message" placeholder="输入消息...">
+                            <button onclick="sendMessage()">发送消息</button>
+                        `;
+                    case 'storage':
+                        return `
+                            <input type="text" id="key" value="tab-message" placeholder="键">
+                            <input type="text" id="value" placeholder="值">
+                            <button onclick="setStorage()">设置</button>
+                            <button onclick="getStorage()">获取</button>
+                        `;
+                    case 'postmessage':
+                        return `
+                            <input type="text" id="message" placeholder="输入消息...">
+                            <button onclick="sendToParent()">发送到父窗口</button>
+                        `;
+                    case 'worker':
+                        return `
+                            <button onclick="connectWorker()">连接Worker</button>
+                            <input type="text" id="message" placeholder="输入消息...">
+                            <button onclick="sendToWorker()">发送到Worker</button>
+                        `;
+                    default:
+                        return '<p>未知的窗口类型</p>';
+                }
+            }
+            
+            generateWindowScript(type, windowId) {
+                const commonScript = `
+                    <script>
+                        function log(type, message) {
+                            const logDiv = document.getElementById('log');
+                            const time = new Date().toLocaleTimeString();
+                            logDiv.innerHTML = '[' + time + '] ' + type + ': ' + message + '\\n' + logDiv.innerHTML;
+                        }
+                        
+                        window.addEventListener('beforeunload', function() {
+                            if (window.opener) {
+                                try {
+                                    window.opener.postMessage({
+                                        type: 'window-closing',
+                                        windowId: '${windowId}'
+                                    }, '*');
+                                } catch (e) {}
+                            }
+                        });
+                `;
+                
+                switch (type) {
+                    case 'broadcast':
+                        return commonScript + `
+                            let channel = null;
+                            
+                            function createChannel() {
+                                const name = document.getElementById('channelName').value;
+                                if ('BroadcastChannel' in window) {
+                                    channel = new BroadcastChannel(name);
+                                    channel.addEventListener('message', function(e) {
+                                        log('RECEIVED', JSON.stringify(e.data));
+                                    });
+                                    log('CREATED', '通道已连接: ' + name);
+                                } else {
+                                    log('ERROR', 'BroadcastChannel不被支持');
+                                }
+                            }
+                            
+                            function sendMessage() {
+                                const message = document.getElementById('message').value;
+                                if (channel && message) {
+                                    channel.postMessage({
+                                        type: 'broadcast',
+                                        content: message,
+                                        timestamp: Date.now(),
+                                        sender: '${windowId}'
+                                    });
+                                    log('SENT', message);
+                                    document.getElementById('message').value = '';
+                                }
+                            }
+                            
+                            // 自动连接
+                            createChannel();
+                        </script>`;
+                    
+                    case 'storage':
+                        return commonScript + `
+                            window.addEventListener('storage', function(e) {
+                                if (e.key && e.newValue !== null) {
+                                    log('CHANGED', e.key + ': ' + e.oldValue + ' → ' + e.newValue);
+                                }
+                            });
+                            
+                            function setStorage() {
+                                const key = document.getElementById('key').value;
+                                const value = document.getElementById('value').value;
+                                if (key && value) {
+                                    localStorage.setItem(key, JSON.stringify({
+                                        type: 'storage',
+                                        content: value,
+                                        timestamp: Date.now(),
+                                        sender: '${windowId}'
+                                    }));
+                                    log('SET', key + ': ' + value);
+                                    document.getElementById('value').value = '';
+                                }
+                            }
+                            
+                            function getStorage() {
+                                const key = document.getElementById('key').value;
+                                const value = localStorage.getItem(key);
+                                log('GET', key + ': ' + (value || '不存在'));
+                            }
+                            
+                            log('READY', '存储事件监听已启动');
+                        </script>`;
+                    
+                    case 'postmessage':
+                        return commonScript + `
+                            window.addEventListener('message', function(e) {
+                                log('RECEIVED', '来自 ' + e.origin + ': ' + JSON.stringify(e.data));
+                            });
+                            
+                            function sendToParent() {
+                                const message = document.getElementById('message').value;
+                                if (message && window.opener) {
+                                    window.opener.postMessage({
+                                        type: 'postMessage',
+                                        content: message,
+                                        timestamp: Date.now(),
+                                        sender: '${windowId}'
+                                    }, '*');
+                                    log('SENT', message);
+                                    document.getElementById('message').value = '';
+                                }
+                            }
+                            
+                            log('READY', 'postMessage监听已启动');
+                        </script>`;
+                    
+                    case 'worker':
+                        return commonScript + `
+                            let worker = null;
+                            
+                            function connectWorker() {
+                                // 这里需要与主窗口共享同一个Worker实例
+                                // 实际实现中需要更复杂的协调机制
+                                log('INFO', 'Worker连接功能需要与主窗口协调');
+                            }
+                            
+                            function sendToWorker() {
+                                log('INFO', 'Worker功能演示 - 请在主窗口操作');
+                            }
+                            
+                            log('READY', 'Worker窗口已就绪');
+                        </script>`;
+                    
+                    default:
+                        return commonScript + '</script>';
+                }
+            }
+        }
+        
+        // 全局函数，供按钮调用
+        let demo;
+        
+        function openNewWindow(type) {
+            if (demo) {
+                demo.openWindow(type);
+            }
+        }
+        
+        function createIframe() {
+            const container = document.getElementById('iframeContainer');
+            container.innerHTML = `
+                <iframe 
+                    src="data:text/html,${encodeURIComponent(generateIframeContent())}"
+                    width="100%" 
+                    height="200" 
+                    style="border: 1px solid #ddd; border-radius: 4px;">
+                </iframe>
+            `;
+        }
+        
+        function generateIframeContent() {
+            return `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 10px; background: #f9f9f9; }
+                        button { background: #e74c3c; color: white; border: none; padding: 8px 12px; margin: 3px; border-radius: 3px; cursor: pointer; }
+                        input { padding: 5px; margin: 3px; border: 1px solid #ddd; border-radius: 3px; }
+                    </style>
+                </head>
+                <body>
+                    <h4>iframe 通信测试</h4>
+                    <input type="text" id="message" placeholder="输入消息..." style="width: 200px;">
+                    <button onclick="sendToParent()">发送到父窗口</button>
+                    <div id="log" style="background: #333; color: white; padding: 8px; margin-top: 8px; border-radius: 3px; font-family: monospace; font-size: 12px; height: 80px; overflow-y: auto;"></div>
+                    
+                    <script>
+                        window.addEventListener('message', function(e) {
+                            log('收到: ' + JSON.stringify(e.data));
+                        });
+                        
+                        function sendToParent() {
+                            const message = document.getElementById('message').value;
+                            if (message) {
+                                parent.postMessage({
+                                    type: 'iframe',
+                                    content: message,
+                                    timestamp: Date.now(),
+                                    sender: 'iframe'
+                                }, '*');
+                                log('发送: ' + message);
+                                document.getElementById('message').value = '';
+                            }
+                        }
+                        
+                        function log(message) {
+                            const logDiv = document.getElementById('log');
+                            const time = new Date().toLocaleTimeString();
+                            logDiv.innerHTML = '[' + time + '] ' + message + '\\n' + logDiv.innerHTML;
+                        }
+                        
+                        log('iframe已加载');
+                    </script>
+                </body>
+                </html>
+            `;
+        }
+        
+        // 启动演示
+        document.addEventListener('DOMContentLoaded', function() {
+            demo = new TabCommunicationDemo();
+            console.log('页面加载完成，演示已启动');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM事件冒泡完整演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e74c3c;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .demo-section h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        /* 事件流演示区域 */
+        .event-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .phase-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 嵌套结构演示 */
+        .nested-demo {
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            background: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .nested-demo:hover {
+            background: #d5dbdb;
+            transform: scale(1.02);
+        }
+
+        .level-1 {
+            border-color: #e74c3c;
+            background: #fadbd8;
+        }
+
+        .level-2 {
+            border-color: #f39c12;
+            background: #fdf2e9;
+            margin: 15px;
+            padding: 15px;
+        }
+
+        .level-3 {
+            border-color: #27ae60;
+            background: #d5f4e6;
+            margin: 15px;
+            padding: 15px;
+        }
+
+        .level-4 {
+            border-color: #8e44ad;
+            background: #e8daef;
+            margin: 15px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .element-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        /* 控制面板 */
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: #e74c3c;
+        }
+
+        .control-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 事件日志 */
+        .event-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+
+        .log-item {
+            padding: 3px 0;
+            border-bottom: 1px solid #34495e;
+            display: flex;
+            align-items: center;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-phase {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 8px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .log-capture { background: #3498db; color: white; }
+        .log-target { background: #e74c3c; color: white; }
+        .log-bubble { background: #f39c12; color: white; }
+
+        .log-element {
+            color: #2ecc71;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .log-details {
+            color: #95a5a6;
+            font-size: 11px;
+        }
+
+        /* 可视化流程图 */
+        .flow-visualization {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .flow-step {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 15px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .flow-step.active {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+
+        .flow-step:last-child::after {
+            content: '';
+        }
+
+        /* 事件属性对比 */
+        .property-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .property-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .property-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .property-value {
+            font-family: 'Courier New', monospace;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            min-height: 20px;
+        }
+
+        /* 阻止传播演示 */
+        .stop-demo {
+            margin: 20px 0;
+        }
+
+        .stop-toggle {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 12px;
+        }
+
+        .stop-toggle.enabled {
+            background: #e74c3c;
+        }
+
+        /* 统计面板 */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .control-panel {
+                grid-template-columns: 1fr;
+            }
+            
+            .property-comparison {
+                grid-template-columns: 1fr;
+            }
+            
+            .flow-step {
+                margin: 5px;
+                display: block;
+            }
+            
+            .flow-step::after {
+                content: '↓';
+                position: static;
+                display: block;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DOM事件冒泡完整演示</h1>
+
+        <!-- 基本概念演示 -->
+        <div class="demo-section">
+            <h2>1. 事件传播的三个阶段</h2>
+
+            <div class="event-demo">
+                <span class="phase-tag">3 PHASES</span>
+                <h3>事件流可视化</h3>
+                
+                <div class="flow-visualization">
+                    <div class="flow-step" id="capture-phase">捕获阶段</div>
+                    <div class="flow-step" id="target-phase">目标阶段</div>
+                    <div class="flow-step" id="bubble-phase">冒泡阶段</div>
+                </div>
+                
+                <p>点击下方嵌套元素，观察事件在DOM树中的传播过程：</p>
+                
+                <div class="nested-demo level-1" data-level="1">
+                    <div class="element-label">Window → Document → HTML → Body → Level 1 (外层容器)</div>
+                    <div class="nested-demo level-2" data-level="2">
+                        <div class="element-label">Level 2 (中层容器)</div>
+                        <div class="nested-demo level-3" data-level="3">
+                            <div class="element-label">Level 3 (内层容器)</div>
+                            <div class="nested-demo level-4" data-level="4">
+                                <div class="element-label">Level 4 (目标元素)</div>
+                                <strong>点击我试试!</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="event-log" id="eventLog">
+                    <div class="log-item">
+                        <span class="log-phase log-capture">READY</span>
+                        <span class="log-element">SYSTEM</span>
+                        <span class="log-details">事件监听器已就绪，点击任意嵌套元素开始演示</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 事件属性对比 -->
+        <div class="demo-section">
+            <h2>2. 事件对象属性对比</h2>
+
+            <div class="event-demo">
+                <span class="phase-tag">PROPERTIES</span>
+                <h3>target vs currentTarget</h3>
+                <p>理解事件对象中两个重要属性的区别：</p>
+                
+                <div class="property-comparison">
+                    <div class="property-card">
+                        <div class="property-title">event.target</div>
+                        <div class="property-value" id="targetDisplay">触发事件的元素</div>
+                        <small>始终指向实际被点击的元素（不会变化）</small>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-title">event.currentTarget</div>
+                        <div class="property-value" id="currentTargetDisplay">当前处理事件的元素</div>
+                        <small>指向当前绑定事件监听器的元素（会变化）</small>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-title">this</div>
+                        <div class="property-value" id="thisDisplay">事件处理器中的this</div>
+                        <small>等同于event.currentTarget（非箭头函数）</small>
+                    </div>
+                    
+                    <div class="property-card">
+                        <div class="property-title">event.eventPhase</div>
+                        <div class="property-value" id="phaseDisplay">当前事件阶段</div>
+                        <small>1=捕获 2=目标 3=冒泡</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 阻止事件传播 -->
+        <div class="demo-section">
+            <h2>3. 阻止事件传播</h2>
+
+            <div class="event-demo">
+                <span class="phase-tag">STOP</span>
+                <h3>stopPropagation() 控制</h3>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>传播控制</label>
+                        <button class="control-btn" id="clearLogBtn">清空日志</button>
+                        <button class="control-btn" id="resetBtn">重置演示</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>阻止传播设置</label>
+                        <button class="stop-toggle" data-level="1">Level 1 阻止</button>
+                        <button class="stop-toggle" data-level="2">Level 2 阻止</button>
+                        <button class="stop-toggle" data-level="3">Level 3 阻止</button>
+                        <button class="stop-toggle" data-level="4">Level 4 阻止</button>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>监听阶段</label>
+                        <button class="control-btn" id="captureBtn">切换捕获监听</button>
+                        <button class="control-btn active" id="bubbleBtn">切换冒泡监听</button>
+                    </div>
+                </div>
+                
+                <div class="stop-demo">
+                    <p><strong>说明：</strong>启用"阻止传播"后，事件将在该层级停止传播。你可以观察事件流的变化。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 事件委托演示 -->
+        <div class="demo-section">
+            <h2>4. 事件委托应用</h2>
+
+            <div class="event-demo">
+                <span class="phase-tag">DELEGATION</span>
+                <h3>事件委托模式</h3>
+                <p>利用事件冒泡，在父元素上监听子元素的事件：</p>
+                
+                <div class="control-panel">
+                    <div class="control-group">
+                        <label>动态添加按钮</label>
+                        <button class="control-btn" id="addButtonBtn">添加新按钮</button>
+                        <button class="control-btn" id="removeAllBtn">删除所有按钮</button>
+                    </div>
+                </div>
+                
+                <div id="buttonContainer" style="min-height: 100px; padding: 20px; border: 2px dashed #bdc3c7; border-radius: 6px; background: #f8f9fa;">
+                    <p style="text-align: center; color: #7f8c8d;">动态按钮将出现在这里</p>
+                </div>
+                
+                <div class="event-log" id="delegationLog">
+                    <div class="log-item">
+                        <span class="log-phase log-target">DELEGATE</span>
+                        <span class="log-element">READY</span>
+                        <span class="log-details">事件委托已设置，点击"添加新按钮"开始测试</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 统计面板 -->
+        <div class="demo-section">
+            <h2>5. 事件统计</h2>
+
+            <div class="stats-panel">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalEvents">0</div>
+                    <div class="stat-label">总事件数</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="captureEvents">0</div>
+                    <div class="stat-label">捕获阶段</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="targetEvents">0</div>
+                    <div class="stat-label">目标阶段</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="bubbleEvents">0</div>
+                    <div class="stat-label">冒泡阶段</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="stoppedEvents">0</div>
+                    <div class="stat-label">被阻止传播</div>
+                </div>
+                
+                <div class="stat-item">
+                    <div class="stat-value" id="delegatedEvents">0</div>
+                    <div class="stat-label">委托处理</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EventBubblingDemo {
+            constructor() {
+                this.stats = {
+                    totalEvents: 0,
+                    captureEvents: 0,
+                    targetEvents: 0,
+                    bubbleEvents: 0,
+                    stoppedEvents: 0,
+                    delegatedEvents: 0
+                };
+                
+                this.stopPropagationLevels = new Set();
+                this.useCapture = false;
+                this.buttonCounter = 0;
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.setupControls();
+                this.setupEventDelegation();
+                this.updateStats();
+                
+                console.log('事件冒泡演示已启动');
+            }
+            
+            setupEventListeners() {
+                // 为每个嵌套层级添加事件监听器
+                for (let level = 1; level <= 4; level++) {
+                    const element = document.querySelector(`.level-${level}`);
+                    
+                    // 冒泡阶段监听器
+                    element.addEventListener('click', (e) => {
+                        this.handleEvent(e, level, 'bubble');
+                    }, false);
+                    
+                    // 捕获阶段监听器
+                    element.addEventListener('click', (e) => {
+                        this.handleEvent(e, level, 'capture');
+                    }, true);
+                }
+            }
+            
+            handleEvent(event, level, phase) {
+                this.stats.totalEvents++;
+                
+                // 更新事件属性显示
+                this.updateEventProperties(event);
+                
+                // 记录事件
+                this.logEvent(event, level, phase);
+                
+                // 检查是否需要阻止传播
+                if (this.stopPropagationLevels.has(level)) {
+                    event.stopPropagation();
+                    this.stats.stoppedEvents++;
+                    this.logStopPropagation(level, phase);
+                }
+                
+                // 统计不同阶段的事件
+                switch(event.eventPhase) {
+                    case Event.CAPTURING_PHASE:
+                        this.stats.captureEvents++;
+                        break;
+                    case Event.AT_TARGET:
+                        this.stats.targetEvents++;
+                        break;
+                    case Event.BUBBLING_PHASE:
+                        this.stats.bubbleEvents++;
+                        break;
+                }
+                
+                this.updateStats();
+                this.highlightPhase(event.eventPhase);
+            }
+            
+            updateEventProperties(event) {
+                document.getElementById('targetDisplay').textContent = 
+                    `${event.target.className || event.target.tagName} (Level ${event.target.dataset.level || 'Unknown'})`;
+                
+                document.getElementById('currentTargetDisplay').textContent = 
+                    `${event.currentTarget.className || event.currentTarget.tagName} (Level ${event.currentTarget.dataset.level || 'Unknown'})`;
+                
+                document.getElementById('thisDisplay').textContent = 
+                    `${event.currentTarget.className || event.currentTarget.tagName}`;
+                
+                const phaseNames = ['', 'CAPTURING', 'AT_TARGET', 'BUBBLING'];
+                document.getElementById('phaseDisplay').textContent = 
+                    `${event.eventPhase} (${phaseNames[event.eventPhase]})`;
+            }
+            
+            logEvent(event, level, phase) {
+                const log = document.getElementById('eventLog');
+                const phaseNames = {
+                    capture: 'CAPTURE',
+                    bubble: 'BUBBLE'
+                };
+                
+                const actualPhase = event.eventPhase === Event.AT_TARGET ? 'TARGET' : phaseNames[phase];
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                
+                logItem.innerHTML = `
+                    <span class="log-phase log-${actualPhase.toLowerCase()}">${actualPhase}</span>
+                    <span class="log-element">Level ${level}</span>
+                    <span class="log-details">target: ${event.target.dataset.level}, currentTarget: ${event.currentTarget.dataset.level}</span>
+                `;
+                
+                log.insertBefore(logItem, log.firstChild);
+                
+                // 限制日志条数
+                if (log.children.length > 20) {
+                    log.removeChild(log.lastChild);
+                }
+            }
+            
+            logStopPropagation(level, phase) {
+                const log = document.getElementById('eventLog');
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                logItem.style.background = '#e74c3c';
+                
+                logItem.innerHTML = `
+                    <span class="log-phase" style="background: #c0392b;">STOPPED</span>
+                    <span class="log-element">Level ${level}</span>
+                    <span class="log-details">事件传播在此停止 (${phase} 阶段)</span>
+                `;
+                
+                log.insertBefore(logItem, log.firstChild);
+            }
+            
+            highlightPhase(eventPhase) {
+                // 重置所有阶段高亮
+                document.querySelectorAll('.flow-step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // 高亮当前阶段
+                let activeStep;
+                switch(eventPhase) {
+                    case Event.CAPTURING_PHASE:
+                        activeStep = document.getElementById('capture-phase');
+                        break;
+                    case Event.AT_TARGET:
+                        activeStep = document.getElementById('target-phase');
+                        break;
+                    case Event.BUBBLING_PHASE:
+                        activeStep = document.getElementById('bubble-phase');
+                        break;
+                }
+                
+                if (activeStep) {
+                    activeStep.classList.add('active');
+                    
+                    // 短暂延迟后移除高亮
+                    setTimeout(() => {
+                        activeStep.classList.remove('active');
+                    }, 500);
+                }
+            }
+            
+            setupControls() {
+                // 清空日志
+                document.getElementById('clearLogBtn').addEventListener('click', () => {
+                    document.getElementById('eventLog').innerHTML = `
+                        <div class="log-item">
+                            <span class="log-phase log-capture">CLEARED</span>
+                            <span class="log-element">SYSTEM</span>
+                            <span class="log-details">日志已清空</span>
+                        </div>
+                    `;
+                });
+                
+                // 重置演示
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.stopPropagationLevels.clear();
+                    this.stats = {
+                        totalEvents: 0,
+                        captureEvents: 0,
+                        targetEvents: 0,
+                        bubbleEvents: 0,
+                        stoppedEvents: 0,
+                        delegatedEvents: 0
+                    };
+                    
+                    // 重置按钮状态
+                    document.querySelectorAll('.stop-toggle').forEach(btn => {
+                        btn.classList.remove('enabled');
+                    });
+                    
+                    this.updateStats();
+                    
+                    document.getElementById('eventLog').innerHTML = `
+                        <div class="log-item">
+                            <span class="log-phase log-target">RESET</span>
+                            <span class="log-element">SYSTEM</span>
+                            <span class="log-details">演示已重置</span>
+                        </div>
+                    `;
+                });
+                
+                // 阻止传播控制
+                document.querySelectorAll('.stop-toggle').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const level = parseInt(btn.dataset.level);
+                        
+                        if (this.stopPropagationLevels.has(level)) {
+                            this.stopPropagationLevels.delete(level);
+                            btn.classList.remove('enabled');
+                        } else {
+                            this.stopPropagationLevels.add(level);
+                            btn.classList.add('enabled');
+                        }
+                    });
+                });
+                
+                // 监听阶段切换（这里主要是演示用，实际监听器已经都添加了）
+                document.getElementById('captureBtn').addEventListener('click', () => {
+                    this.useCapture = true;
+                    document.getElementById('captureBtn').classList.add('active');
+                    document.getElementById('bubbleBtn').classList.remove('active');
+                });
+                
+                document.getElementById('bubbleBtn').addEventListener('click', () => {
+                    this.useCapture = false;
+                    document.getElementById('bubbleBtn').classList.add('active');
+                    document.getElementById('captureBtn').classList.remove('active');
+                });
+            }
+            
+            setupEventDelegation() {
+                const container = document.getElementById('buttonContainer');
+                const log = document.getElementById('delegationLog');
+                
+                // 在容器上设置事件委托
+                container.addEventListener('click', (event) => {
+                    if (event.target.classList.contains('dynamic-btn')) {
+                        this.stats.delegatedEvents++;
+                        this.updateStats();
+                        
+                        const logItem = document.createElement('div');
+                        logItem.className = 'log-item';
+                        logItem.innerHTML = `
+                            <span class="log-phase log-bubble">DELEGATE</span>
+                            <span class="log-element">${event.target.textContent}</span>
+                            <span class="log-details">通过事件委托处理点击事件</span>
+                        `;
+                        
+                        log.insertBefore(logItem, log.firstChild);
+                        
+                        // 添加点击效果
+                        event.target.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            event.target.style.transform = 'scale(1)';
+                        }, 150);
+                        
+                        // 限制日志条数
+                        if (log.children.length > 10) {
+                            log.removeChild(log.lastChild);
+                        }
+                    }
+                });
+                
+                // 添加按钮控制
+                document.getElementById('addButtonBtn').addEventListener('click', () => {
+                    this.addDynamicButton();
+                });
+                
+                document.getElementById('removeAllBtn').addEventListener('click', () => {
+                    this.removeAllButtons();
+                });
+            }
+            
+            addDynamicButton() {
+                const container = document.getElementById('buttonContainer');
+                this.buttonCounter++;
+                
+                const button = document.createElement('button');
+                button.className = 'dynamic-btn control-btn';
+                button.textContent = `动态按钮 ${this.buttonCounter}`;
+                button.style.margin = '5px';
+                button.style.background = '#27ae60';
+                
+                // 如果是第一个按钮，清空提示文字
+                if (this.buttonCounter === 1) {
+                    container.innerHTML = '';
+                }
+                
+                container.appendChild(button);
+                
+                // 添加动画效果
+                button.style.opacity = '0';
+                button.style.transform = 'scale(0.8)';
+                
+                setTimeout(() => {
+                    button.style.transition = 'all 0.3s';
+                    button.style.opacity = '1';
+                    button.style.transform = 'scale(1)';
+                }, 10);
+            }
+            
+            removeAllButtons() {
+                const container = document.getElementById('buttonContainer');
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">动态按钮将出现在这里</p>';
+                this.buttonCounter = 0;
+                
+                const log = document.getElementById('delegationLog');
+                const logItem = document.createElement('div');
+                logItem.className = 'log-item';
+                logItem.innerHTML = `
+                    <span class="log-phase log-target">CLEARED</span>
+                    <span class="log-element">SYSTEM</span>
+                    <span class="log-details">所有动态按钮已删除</span>
+                `;
+                
+                log.insertBefore(logItem, log.firstChild);
+            }
+            
+            updateStats() {
+                Object.keys(this.stats).forEach(key => {
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.textContent = this.stats[key];
+                    }
+                });
+            }
+        }
+
+        // 启动演示
+        document.addEventListener('DOMContentLoaded', function() {
+            const demo = new EventBubblingDemo();
+            console.log('事件冒泡演示加载完成');
+            
+            // 添加一些说明
+            console.log('功能说明:');
+            console.log('1. 点击嵌套元素观察事件传播过程');
+            console.log('2. 使用"阻止传播"按钮控制事件流');
+            console.log('3. 在事件委托区域测试动态元素');
+            console.log('4. 观察target和currentTarget的区别');
+        });
+    </script>
+</body>
+</html>

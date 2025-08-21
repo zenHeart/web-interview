@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 媒体元素使用示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e74c3c;
+        }
+
+        .demo-section {
+            margin: 40px 0;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .demo-section h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .media-demo {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .element-tag {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        /* 媒体元素样式 */
+        video, audio {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .media-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .media-info {
+            background: #e8f4f8;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .media-info h4 {
+            margin-top: 0;
+            color: #0c5460;
+        }
+
+        /* 自定义媒体播放器样式 */
+        .custom-player {
+            background: #2c3e50;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+        }
+
+        .custom-player video {
+            width: 100%;
+            background: black;
+            border-radius: 4px;
+        }
+
+        .custom-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+            padding: 10px;
+            background: #34495e;
+            border-radius: 6px;
+        }
+
+        .control-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #2980b9;
+        }
+
+        .control-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            flex: 1;
+            height: 6px;
+            background: #7f8c8d;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #e74c3c;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+
+        .time-display {
+            font-size: 14px;
+            color: #ecf0f1;
+            min-width: 80px;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+        }
+
+        /* 响应式视频容器 */
+        .responsive-video {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 比例 */
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .responsive-video video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 音频播放器样式 */
+        .audio-player {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .audio-info {
+            margin-bottom: 15px;
+        }
+
+        .audio-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .audio-artist {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        /* 特性展示网格 */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .feature-card h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* 代码示例 */
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        /* 状态指示器 */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-ready { background: #28a745; }
+        .status-loading { background: #ffc107; }
+        .status-error { background: #dc3545; }
+
+        /* 提示框 */
+        .tip-box {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .tip-box strong {
+            color: #0c5460;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .custom-controls {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .time-display {
+                min-width: auto;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML5 媒体元素完整指南</h1>
+
+        <!-- 视频元素基础用法 -->
+        <div class="demo-section">
+            <h2>1. &lt;video&gt; 视频元素基础用法</h2>
+
+            <div class="media-demo">
+                <span class="element-tag">VIDEO</span>
+                <h3>基础视频播放器</h3>
+                <div class="media-container">
+                    <!-- 使用生成的测试视频 -->
+                    <video id="basicVideo" controls poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAwIiBoZWlnaHQ9IjMzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQ5OGRiIi8+CiAgPHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7op4bpopHlsIHpnaI8L3RleHQ+Cjwvc3ZnPg==">
+                        <source src="data:video/mp4;base64," type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                </div>
+                
+                <div class="media-info">
+                    <h4>基础属性说明：</h4>
+                    <ul>
+                        <li><code>controls</code> - 显示播放控制界面</li>
+                        <li><code>poster</code> - 视频加载前显示的封面图</li>
+                        <li><code>width/height</code> - 设置视频尺寸</li>
+                        <li><code>preload</code> - 预加载策略（none/metadata/auto）</li>
+                    </ul>
+                </div>
+                
+                <div class="code-example">
+&lt;video controls poster="cover.jpg" preload="metadata"&gt;
+  &lt;source src="video.mp4" type="video/mp4"&gt;
+  &lt;source src="video.webm" type="video/webm"&gt;
+  您的浏览器不支持视频标签。
+&lt;/video&gt;
+                </div>
+            </div>
+
+            <div class="media-demo">
+                <span class="element-tag">VIDEO</span>
+                <h3>响应式视频容器</h3>
+                <div class="responsive-video">
+                    <video controls>
+                        <source src="data:video/mp4;base64," type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                </div>
+                
+                <div class="media-info">
+                    <h4>响应式设计要点：</h4>
+                    <ul>
+                        <li>使用相对单位和百分比设置尺寸</li>
+                        <li>保持宽高比使用padding-bottom技巧</li>
+                        <li>考虑移动端的数据流量和性能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 音频元素用法 -->
+        <div class="demo-section">
+            <h2>2. &lt;audio&gt; 音频元素</h2>
+
+            <div class="media-demo">
+                <span class="element-tag">AUDIO</span>
+                <h3>音频播放器</h3>
+                <div class="audio-player">
+                    <div class="audio-info">
+                        <div class="audio-title">示例音频文件</div>
+                        <div class="audio-artist">HTML5 Audio Demo</div>
+                    </div>
+                    <audio id="basicAudio" controls>
+                        <source src="data:audio/mp3;base64," type="audio/mp3">
+                        <source src="data:audio/ogg;base64," type="audio/ogg">
+                        您的浏览器不支持音频标签。
+                    </audio>
+                </div>
+                
+                <div class="media-info">
+                    <h4>音频特有属性：</h4>
+                    <ul>
+                        <li>通常不需要poster属性</li>
+                        <li>可以设置为背景音乐（谨慎使用autoplay）</li>
+                        <li>支持多种音频格式：MP3、OGG、WAV等</li>
+                        <li>移动端可能需要用户交互才能播放</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自定义媒体控制器 -->
+        <div class="demo-section">
+            <h2>3. 自定义媒体控制器</h2>
+
+            <div class="media-demo">
+                <span class="element-tag">CUSTOM</span>
+                <h3>自定义视频播放器</h3>
+                <div class="custom-player">
+                    <video id="customVideo" width="100%">
+                        <source src="data:video/mp4;base64," type="video/mp4">
+                        您的浏览器不支持视频标签。
+                    </video>
+                    
+                    <div class="custom-controls">
+                        <button class="control-btn" id="playPauseBtn">▶️</button>
+                        <button class="control-btn" id="stopBtn">⏹️</button>
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <span class="time-display" id="timeDisplay">00:00 / 00:00</span>
+                        <div class="volume-container">
+                            <span>🔊</span>
+                            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+                        </div>
+                        <button class="control-btn" id="fullscreenBtn">⛶</button>
+                    </div>
+                </div>
+                
+                <div class="media-info">
+                    <h4>自定义控制器优势：</h4>
+                    <ul>
+                        <li>统一的跨浏览器用户体验</li>
+                        <li>符合网站设计风格</li>
+                        <li>可添加自定义功能（字幕、倍速等）</li>
+                        <li>更好的移动端适配</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 媒体元素特性 -->
+        <div class="demo-section">
+            <h2>4. 媒体元素特性展示</h2>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎬</div>
+                    <h4>多格式支持</h4>
+                    <p>MP4、WebM、OGG等多种格式，提供最佳兼容性</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h4>响应式设计</h4>
+                    <p>自适应不同屏幕尺寸，优化移动端体验</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h4>性能优化</h4>
+                    <p>智能预加载策略，减少带宽消耗</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎛️</div>
+                    <h4>API 控制</h4>
+                    <p>丰富的JavaScript API，实现复杂交互</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">♿</div>
+                    <h4>无障碍访问</h4>
+                    <p>支持字幕、音频描述等辅助功能</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h4>安全策略</h4>
+                    <p>遵循现代浏览器的自动播放策略</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 浏览器支持和最佳实践 -->
+        <div class="demo-section">
+            <h2>5. 浏览器支持检测</h2>
+
+            <div class="media-demo">
+                <span class="element-tag">DETECT</span>
+                <h3>格式支持检测</h3>
+                <div id="formatSupport">
+                    <h4>您的浏览器支持情况：</h4>
+                    <div id="supportList"></div>
+                </div>
+                
+                <div class="code-example">
+// 检测视频格式支持
+const video = document.createElement('video');
+const formats = {
+    'MP4': 'video/mp4',
+    'WebM': 'video/webm',
+    'OGG': 'video/ogg'
+};
+
+Object.entries(formats).forEach(([name, type]) => {
+    const support = video.canPlayType(type);
+    console.log(`${name}: ${support}`);
+});
+                </div>
+            </div>
+        </div>
+
+        <div class="tip-box">
+            <strong>💡 媒体元素最佳实践：</strong>
+            <ul>
+                <li><strong>格式兼容性</strong>：提供多种格式确保跨浏览器支持</li>
+                <li><strong>预加载策略</strong>：根据内容重要性选择合适的preload值</li>
+                <li><strong>自动播放</strong>：遵循浏览器政策，静音视频更容易自动播放</li>
+                <li><strong>移动优化</strong>：考虑数据流量，提供画质选择</li>
+                <li><strong>无障碍访问</strong>：提供字幕track和音频描述</li>
+                <li><strong>性能监控</strong>：监听加载和错误事件</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== HTML5 媒体元素演示 ===');
+            
+            // 格式支持检测
+            checkFormatSupport();
+            
+            // 初始化自定义播放器
+            initCustomPlayer();
+            
+            // 媒体事件监听演示
+            setupMediaEventListeners();
+        });
+
+        // 检测媒体格式支持
+        function checkFormatSupport() {
+            const video = document.createElement('video');
+            const audio = document.createElement('audio');
+            const supportList = document.getElementById('supportList');
+            
+            const formats = {
+                '视频格式': {
+                    'MP4 (H.264)': 'video/mp4; codecs="avc1.42E01E"',
+                    'WebM (VP8)': 'video/webm; codecs="vp8"',
+                    'WebM (VP9)': 'video/webm; codecs="vp9"',
+                    'OGG (Theora)': 'video/ogg; codecs="theora"'
+                },
+                '音频格式': {
+                    'MP3': 'audio/mpeg',
+                    'AAC': 'audio/mp4; codecs="mp4a.40.2"',
+                    'OGG Vorbis': 'audio/ogg; codecs="vorbis"',
+                    'WebM Opus': 'audio/webm; codecs="opus"'
+                }
+            };
+            
+            let html = '';
+            
+            Object.entries(formats).forEach(([category, formatList]) => {
+                html += `<h5>${category}:</h5><ul>`;
+                Object.entries(formatList).forEach(([name, type]) => {
+                    const element = category === '视频格式' ? video : audio;
+                    const support = element.canPlayType(type);
+                    const status = support === 'probably' ? 'ready' : 
+                                 support === 'maybe' ? 'loading' : 'error';
+                    const text = support === 'probably' ? '完全支持' :
+                                support === 'maybe' ? '可能支持' : '不支持';
+                    
+                    html += `<li><span class="status-indicator status-${status}"></span>${name}: ${text}</li>`;
+                });
+                html += '</ul>';
+            });
+            
+            supportList.innerHTML = html;
+        }
+
+        // 初始化自定义播放器
+        function initCustomPlayer() {
+            const video = document.getElementById('customVideo');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const timeDisplay = document.getElementById('timeDisplay');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            // 生成测试视频（彩色渐变动画）
+            generateTestVideo(video);
+            
+            // 播放/暂停
+            playPauseBtn.addEventListener('click', function() {
+                if (video.paused) {
+                    video.play().then(() => {
+                        playPauseBtn.textContent = '⏸️';
+                    }).catch(e => console.log('播放失败:', e));
+                } else {
+                    video.pause();
+                    playPauseBtn.textContent = '▶️';
+                }
+            });
+            
+            // 停止
+            stopBtn.addEventListener('click', function() {
+                video.pause();
+                video.currentTime = 0;
+                playPauseBtn.textContent = '▶️';
+            });
+            
+            // 进度条点击
+            progressContainer.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                video.currentTime = pos * video.duration;
+            });
+            
+            // 时间更新
+            video.addEventListener('timeupdate', function() {
+                if (video.duration) {
+                    const progress = (video.currentTime / video.duration) * 100;
+                    progressBar.style.width = progress + '%';
+                    
+                    const current = formatTime(video.currentTime);
+                    const total = formatTime(video.duration);
+                    timeDisplay.textContent = `${current} / ${total}`;
+                }
+            });
+            
+            // 音量控制
+            volumeSlider.addEventListener('input', function() {
+                video.volume = this.value;
+            });
+            
+            // 全屏
+            fullscreenBtn.addEventListener('click', function() {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            });
+            
+            // 视频事件
+            video.addEventListener('play', () => console.log('视频开始播放'));
+            video.addEventListener('pause', () => console.log('视频暂停'));
+            video.addEventListener('ended', () => {
+                playPauseBtn.textContent = '▶️';
+                console.log('视频播放结束');
+            });
+        }
+
+        // 生成测试视频（Canvas动画）
+        function generateTestVideo(videoElement) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            
+            let frame = 0;
+            const fps = 30;
+            const duration = 10; // 10秒
+            const totalFrames = fps * duration;
+            
+            function drawFrame() {
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制彩色渐变背景
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                const hue1 = (frame * 2) % 360;
+                const hue2 = (frame * 3) % 360;
+                gradient.addColorStop(0, `hsl(${hue1}, 70%, 50%)`);
+                gradient.addColorStop(1, `hsl(${hue2}, 70%, 50%)`);
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制动画圆圈
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = 50 + Math.sin(frame * 0.1) * 30;
+                
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.fill();
+                
+                // 绘制文字
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('HTML5 Video Demo', centerX, centerY - 10);
+                ctx.font = '16px Arial';
+                ctx.fillText(`Frame: ${frame}/${totalFrames}`, centerX, centerY + 20);
+                
+                frame++;
+                if (frame <= totalFrames) {
+                    setTimeout(drawFrame, 1000 / fps);
+                }
+            }
+            
+            // 开始绘制
+            drawFrame();
+            
+            // 将canvas转换为视频流（如果支持）
+            if (canvas.captureStream) {
+                const stream = canvas.captureStream(fps);
+                videoElement.srcObject = stream;
+            }
+        }
+
+        // 设置媒体事件监听
+        function setupMediaEventListeners() {
+            const events = [
+                'loadstart', 'durationchange', 'loadedmetadata', 'loadeddata',
+                'progress', 'canplay', 'canplaythrough', 'play', 'pause',
+                'seeking', 'seeked', 'ended', 'error', 'volumechange'
+            ];
+            
+            const basicVideo = document.getElementById('basicVideo');
+            const basicAudio = document.getElementById('basicAudio');
+            
+            events.forEach(eventType => {
+                [basicVideo, basicAudio].forEach((element, index) => {
+                    const mediaType = index === 0 ? 'Video' : 'Audio';
+                    element.addEventListener(eventType, function() {
+                        console.log(`${mediaType} ${eventType}:`, this.currentTime);
+                    });
+                });
+            });
+        }
+
+        // 时间格式化函数
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 媒体查询响应
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        function handleMobileView(e) {
+            if (e.matches) {
+                console.log('切换到移动端视图');
+                // 可以在这里调整媒体元素的行为
+            } else {
+                console.log('切换到桌面端视图');
+            }
+        }
+        
+        mediaQuery.addListener(handleMobileView);
+        handleMobileView(mediaQuery);
+    </script>
+</body>
+</html>

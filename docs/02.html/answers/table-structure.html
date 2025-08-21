@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML表格基本结构示例</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tfoot {
+            background-color: #e9e9e9;
+            font-weight: bold;
+        }
+        
+        caption {
+            caption-side: top;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <caption>2023年销售业绩统计表</caption>
+        
+        <!-- 表头区域 -->
+        <thead>
+            <tr>
+                <th>产品类别</th>
+                <th>第一季度</th>
+                <th>第二季度</th>
+                <th>第三季度</th>
+                <th>第四季度</th>
+            </tr>
+        </thead>
+        
+        <!-- 表格主体 -->
+        <tbody>
+            <tr>
+                <th>电子产品</th>
+                <td>120万</td>
+                <td>135万</td>
+                <td>150万</td>
+                <td>180万</td>
+            </tr>
+            <tr>
+                <th>服装鞋帽</th>
+                <td>80万</td>
+                <td>95万</td>
+                <td>110万</td>
+                <td>125万</td>
+            </tr>
+            <tr>
+                <th>家居用品</th>
+                <td>60万</td>
+                <td>70万</td>
+                <td>85万</td>
+                <td>90万</td>
+            </tr>
+        </tbody>
+        
+        <!-- 表尾区域 -->
+        <tfoot>
+            <tr>
+                <th>总计</th>
+                <td>260万</td>
+                <td>300万</td>
+                <td>345万</td>
+                <td>395万</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div style="margin-top: 20px; padding: 15px; background-color: #f0f8ff; border-left: 4px solid #007acc;">
+        <h3>结构说明：</h3>
+        <ul>
+            <li><strong>&lt;caption&gt;</strong>: 表格标题，描述表格内容</li>
+            <li><strong>&lt;thead&gt;</strong>: 表头区域，包含列标题</li>
+            <li><strong>&lt;tbody&gt;</strong>: 表格主体，包含数据行</li>
+            <li><strong>&lt;tfoot&gt;</strong>: 表尾区域，包含汇总信息</li>
+            <li><strong>&lt;th&gt;</strong>: 表头单元格，语义化标题</li>
+            <li><strong>&lt;td&gt;</strong>: 数据单元格，包含实际数据</li>
+        </ul>
+    </div>
+</body>
+</html>

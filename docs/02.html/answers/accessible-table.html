@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可访问性表格示例</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+        
+        caption {
+            caption-side: top;
+            padding: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: left;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+        }
+        
+        .demo-info {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+    </style>
+</head>
+<body>
+    <!-- 简单表格示例：scope属性 -->
+    <table>
+        <caption>学生成绩表 - 使用scope属性提升可访问性</caption>
+        <thead>
+            <tr>
+                <th scope="col">姓名</th>
+                <th scope="col">数学</th>
+                <th scope="col">英语</th>
+                <th scope="col">物理</th>
+                <th scope="col">总分</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">张三</th>
+                <td>85</td>
+                <td>92</td>
+                <td>78</td>
+                <td>255</td>
+            </tr>
+            <tr>
+                <th scope="row">李四</th>
+                <td>90</td>
+                <td>88</td>
+                <td>85</td>
+                <td>263</td>
+            </tr>
+            <tr>
+                <th scope="row">王五</th>
+                <td>78</td>
+                <td>95</td>
+                <td>82</td>
+                <td>255</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- 复杂表格示例：headers属性 -->
+    <table>
+        <caption>季度销售报告 - 使用headers属性建立复杂关联</caption>
+        <thead>
+            <tr>
+                <th id="product" scope="col">产品</th>
+                <th id="q1" scope="colgroup" colspan="2">第一季度</th>
+                <th id="q2" scope="colgroup" colspan="2">第二季度</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th id="q1-sales" scope="col">销量</th>
+                <th id="q1-revenue" scope="col">收入</th>
+                <th id="q2-sales" scope="col">销量</th>
+                <th id="q2-revenue" scope="col">收入</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th id="laptop" scope="row">笔记本电脑</th>
+                <td headers="laptop q1 q1-sales">1200台</td>
+                <td headers="laptop q1 q1-revenue">360万</td>
+                <td headers="laptop q2 q2-sales">1500台</td>
+                <td headers="laptop q2 q2-revenue">450万</td>
+            </tr>
+            <tr>
+                <th id="phone" scope="row">智能手机</th>
+                <td headers="phone q1 q1-sales">2800台</td>
+                <td headers="phone q1 q1-revenue">420万</td>
+                <td headers="phone q2 q2-sales">3200台</td>
+                <td headers="phone q2 q2-revenue">480万</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="demo-info">
+        <h3>可访问性要点：</h3>
+        <ul>
+            <li><strong>caption</strong>: 为表格提供清晰的标题和描述</li>
+            <li><strong>scope="col"</strong>: 标识列表头</li>
+            <li><strong>scope="row"</strong>: 标识行表头</li>
+            <li><strong>scope="colgroup"</strong>: 标识列组表头</li>
+            <li><strong>headers属性</strong>: 在复杂表格中建立单元格与表头的关联</li>
+            <li><strong>id属性</strong>: 为表头提供唯一标识符，供headers属性引用</li>
+        </ul>
+        
+        <p><strong>屏幕阅读器体验</strong>: 这些属性帮助屏幕阅读器用户理解表格结构，在浏览时能清楚知道当前单元格对应的行头和列头信息。</p>
+    </div>
+
+    <script>
+        // 演示：表格线性化测试
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('表格可访问性检查：');
+            
+            // 检查所有表格是否有caption
+            const tables = document.querySelectorAll('table');
+            tables.forEach((table, index) => {
+                const caption = table.querySelector('caption');
+                console.log(`表格 ${index + 1}: ${caption ? '有caption ✓' : '缺少caption ✗'}`);
+            });
+            
+            // 检查表头是否使用了scope或headers属性
+            const headers = document.querySelectorAll('th');
+            let accessibleHeaders = 0;
+            headers.forEach(th => {
+                if (th.hasAttribute('scope') || th.hasAttribute('headers')) {
+                    accessibleHeaders++;
+                }
+            });
+            console.log(`可访问的表头数量: ${accessibleHeaders}/${headers.length}`);
+        });
+    </script>
+</body>
+</html>
