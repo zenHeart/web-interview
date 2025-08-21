@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL查询参数解析</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .demo-section {
+            border: 2px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f8fff9;
+        }
+        .input-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .method-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .results {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+        .current-url {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>前端URL查询参数解析</h1>
+    
+    <div class="current-url">
+        <strong>当前页面URL:</strong> <span id="currentUrl"></span>
+    </div>
+    
+    <div class="demo-section">
+        <h2>测试URL输入</h2>
+        <div class="input-group">
+            <label for="testUrl">输入测试URL:</label>
+            <input type="text" id="testUrl" 
+                   value="https://example.com?name=张三&age=25&city=北京&tags[]=javascript&tags[]=react&user.id=123&user.name=John&data={'theme':'dark'}">
+        </div>
+        
+        <div class="method-tabs">
+            <div class="tab active" onclick="switchMethod('urlsearchparams')">URLSearchParams API</div>
+            <div class="tab" onclick="switchMethod('manual')">手动解析</div>
+            <div class="tab" onclick="switchMethod('advanced')">高级解析</div>
+        </div>
+        
+        <button onclick="parseCurrentMethod()">解析参数</button>
+        <button onclick="updateCurrentUrl()">使用当前页面URL</button>
+        <button onclick="setComplexUrl()">设置复杂URL</button>
+        <button onclick="clearResults()">清除结果</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        let currentMethod = 'urlsearchparams';
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentUrl').textContent = window.location.href;
+        });
+        
+        // 切换解析方法
+        function switchMethod(method) {
+            currentMethod = method;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // 1. URLSearchParams API 方式（推荐）
+        function parseWithURLSearchParams(url) {
+            try {
+                const urlObj = new URL(url);
+                const params = new URLSearchParams(urlObj.search);
+                const result = {};
+                
+                // 处理同名参数（转为数组）
+                for (const [key, value] of params) {
+                    if (result[key]) {
+                        if (Array.isArray(result[key])) {
+                            result[key].push(value);
+                        } else {
+                            result[key] = [result[key], value];
+                        }
+                    } else {
+                        result[key] = value;
+                    }
+                }
+                
+                return {
+                    method: 'URLSearchParams API',
+                    success: true,
+                    data: result,
+                    details: {
+                        searchString: urlObj.search,
+                        paramCount: params.size
+                    }
+                };
+            } catch (error) {
+                return { method: 'URLSearchParams API', success: false, error: error.message };
+            }
+        }
+        
+        // 2. 手动解析方式
+        function parseManually(url) {
+            try {
+                const params = {};
+                const queryString = url.split('?')[1];
+                
+                if (!queryString) {
+                    return { method: '手动解析', success: true, data: {}, details: { queryString: '' } };
+                }
+                
+                const pairs = queryString.split('&');
+                pairs.forEach(pair => {
+                    const [key, value = ''] = pair.split('=');
+                    if (key) {
+                        const decodedKey = decodeURIComponent(key);
+                        const decodedValue = decodeURIComponent(value);
+                        
+                        // 处理同名参数
+                        if (params[decodedKey]) {
+                            if (Array.isArray(params[decodedKey])) {
+                                params[decodedKey].push(decodedValue);
+                            } else {
+                                params[decodedKey] = [params[decodedKey], decodedValue];
+                            }
+                        } else {
+                            params[decodedKey] = decodedValue;
+                        }
+                    }
+                });
+                
+                return {
+                    method: '手动解析',
+                    success: true,
+                    data: params,
+                    details: {
+                        queryString,
+                        pairCount: pairs.length
+                    }
+                };
+            } catch (error) {
+                return { method: '手动解析', success: false, error: error.message };
+            }
+        }
+        
+        // 3. 高级解析（支持嵌套对象和数组）
+        function parseAdvanced(url) {
+            try {
+                const params = {};
+                const queryString = url.split('?')[1];
+                
+                if (!queryString) {
+                    return { method: '高级解析', success: true, data: {}, details: { queryString: '' } };
+                }
+                
+                const pairs = queryString.split('&');
+                pairs.forEach(pair => {
+                    const [key, value = ''] = pair.split('=');
+                    if (key) {
+                        setNestedValue(params, key, decodeURIComponent(value));
+                    }
+                });
+                
+                return {
+                    method: '高级解析',
+                    success: true,
+                    data: params,
+                    details: {
+                        queryString,
+                        supportFeatures: ['嵌套对象', '数组', 'JSON解析']
+                    }
+                };
+            } catch (error) {
+                return { method: '高级解析', success: false, error: error.message };
+            }
+        }
+        
+        // 设置嵌套值（支持 user.name 和 tags[] 语法）
+        function setNestedValue(obj, key, value) {
+            // 处理数组语法: tags[]=value1&tags[]=value2
+            if (key.endsWith('[]')) {
+                const arrayKey = key.slice(0, -2);
+                if (!obj[arrayKey]) obj[arrayKey] = [];
+                obj[arrayKey].push(parseValue(value));
+                return;
+            }
+            
+            // 处理嵌套对象语法: user.name=John&user.age=30
+            if (key.includes('.')) {
+                const keys = key.split('.');
+                let current = obj;
+                
+                for (let i = 0; i < keys.length - 1; i++) {
+                    const k = keys[i];
+                    if (!current[k] || typeof current[k] !== 'object') {
+                        current[k] = {};
+                    }
+                    current = current[k];
+                }
+                
+                const lastKey = keys[keys.length - 1];
+                current[lastKey] = parseValue(value);
+            } else {
+                // 普通参数
+                if (obj[key]) {
+                    // 转换为数组
+                    if (Array.isArray(obj[key])) {
+                        obj[key].push(parseValue(value));
+                    } else {
+                        obj[key] = [obj[key], parseValue(value)];
+                    }
+                } else {
+                    obj[key] = parseValue(value);
+                }
+            }
+        }
+        
+        // 尝试解析值（JSON、数字、布尔值）
+        function parseValue(value) {
+            // 尝试解析JSON
+            if (value.startsWith('{') || value.startsWith('[')) {
+                try {
+                    return JSON.parse(value);
+                } catch (e) {
+                    return value;
+                }
+            }
+            
+            // 尝试解析数字
+            if (/^\d+$/.test(value)) {
+                return parseInt(value, 10);
+            }
+            
+            if (/^\d*\.\d+$/.test(value)) {
+                return parseFloat(value);
+            }
+            
+            // 解析布尔值
+            if (value === 'true') return true;
+            if (value === 'false') return false;
+            
+            return value;
+        }
+        
+        // 执行当前选择的解析方法
+        function parseCurrentMethod() {
+            const url = document.getElementById('testUrl').value;
+            if (!url) {
+                alert('请输入URL');
+                return;
+            }
+            
+            let result;
+            switch (currentMethod) {
+                case 'urlsearchparams':
+                    result = parseWithURLSearchParams(url);
+                    break;
+                case 'manual':
+                    result = parseManually(url);
+                    break;
+                case 'advanced':
+                    result = parseAdvanced(url);
+                    break;
+            }
+            
+            displayResult(result, url);
+        }
+        
+        // 显示解析结果
+        function displayResult(result, originalUrl) {
+            const resultsDiv = document.getElementById('results');
+            
+            if (!result.success) {
+                resultsDiv.innerHTML = `
+                    <div class="results">
+                        <h3>解析失败</h3>
+                        <p><strong>方法:</strong> ${result.method}</p>
+                        <p><strong>错误:</strong> ${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const dataJson = JSON.stringify(result.data, null, 2);
+            const detailsJson = JSON.stringify(result.details, null, 2);
+            
+            resultsDiv.innerHTML = `
+                <div class="results">
+                    <h3>解析结果 - ${result.method}</h3>
+                    
+                    <h4>原始URL:</h4>
+                    <pre>${originalUrl}</pre>
+                    
+                    <h4>解析后的参数:</h4>
+                    <pre>${dataJson}</pre>
+                    
+                    <h4>解析详情:</h4>
+                    <pre>${detailsJson}</pre>
+                    
+                    <h4>使用示例:</h4>
+                    <pre>// 获取特定参数
+const name = result.data.name; // "${result.data.name || '未找到'}"
+const age = result.data.age;   // ${result.data.age || '未找到'}
+
+// 遍历所有参数
+Object.entries(result.data).forEach(([key, value]) => {
+    console.log(\`\${key}: \${value}\`);
+});</pre>
+                </div>
+            `;
+        }
+        
+        // 使用当前页面URL
+        function updateCurrentUrl() {
+            document.getElementById('testUrl').value = window.location.href;
+        }
+        
+        // 设置复杂URL示例
+        function setComplexUrl() {
+            const complexUrl = 'https://shop.example.com/search?q=手机&category=electronics&price.min=1000&price.max=5000&brands[]=apple&brands[]=samsung&sort=price&filter.color=black&filter.storage=128GB&config={"theme":"dark","lang":"zh"}';
+            document.getElementById('testUrl').value = complexUrl;
+        }
+        
+        // 清除结果
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        // 工具函数：快速解析当前页面参数（在控制台中使用）
+        window.getPageParams = function() {
+            return parseWithURLSearchParams(window.location.href).data;
+        };
+        
+        console.log('URL参数解析工具已加载');
+        console.log('在控制台中使用 getPageParams() 快速获取当前页面参数');
+    </script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义setInterval实现</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            border: 2px solid #fd7e14;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #fff8f0;
+        }
+        
+        .controls {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .timer-display {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #fd7e14;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #e86a0f;
+        }
+        
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .method-tabs {
+            display: flex;
+            margin: 15px 0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: #fd7e14;
+            color: white;
+        }
+        
+        .logs {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .performance-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .stat-item {
+            background-color: #fff;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fd7e14;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>不使用setTimeout实现setInterval</h1>
+    
+    <div class="demo-section">
+        <h2>实现方式对比</h2>
+        
+        <div class="method-tabs">
+            <div class="tab active" onclick="switchMethod('raf')">requestAnimationFrame</div>
+            <div class="tab" onclick="switchMethod('timeout')">setTimeout递归</div>
+            <div class="tab" onclick="switchMethod('worker')">Web Worker</div>
+        </div>
+        
+        <div class="controls">
+            <label>间隔时间 (ms): <input type="number" id="interval" value="1000" min="100" max="5000"></label>
+            <label>最大执行次数: <input type="number" id="maxCount" value="10" min="1" max="100"></label>
+            <button id="startBtn" onclick="startTimer()">开始</button>
+            <button id="stopBtn" onclick="stopTimer()" disabled>停止</button>
+            <button onclick="clearLogs()">清除日志</button>
+        </div>
+        
+        <div class="timer-display">
+            <div>当前方法: <span id="currentMethod">requestAnimationFrame</span></div>
+            <div>状态: <span id="status">停止</span></div>
+            <div>已执行: <span id="executed">0</span> 次</div>
+            <div>平均间隔: <span id="avgInterval">0</span> ms</div>
+        </div>
+        
+        <div class="performance-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalTime">0</div>
+                <div class="stat-label">总运行时间 (ms)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="precision">0</div>
+                <div class="stat-label">精度偏差 (ms)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="performance">0</div>
+                <div class="stat-label">性能评分</div>
+            </div>
+        </div>
+        
+        <div class="logs" id="logs"></div>
+    </div>
+
+    <script>
+        // 全局状态
+        let currentMethod = 'raf';
+        let activeTimer = null;
+        let executionCount = 0;
+        let startTime = 0;
+        let lastExecutionTime = 0;
+        let intervalSum = 0;
+        let workerInstance = null;
+        
+        // 1. RequestAnimationFrame 实现
+        class RAFInterval {
+            constructor() {
+                this.timers = new Map();
+                this.timerId = 0;
+            }
+            
+            setInterval(callback, interval) {
+                const id = ++this.timerId;
+                let startTime = performance.now();
+                let lastExecution = startTime;
+                
+                const loop = (currentTime) => {
+                    const timer = this.timers.get(id);
+                    if (!timer) return;
+                    
+                    const elapsed = currentTime - lastExecution;
+                    
+                    if (elapsed >= interval) {
+                        try {
+                            callback();
+                            lastExecution = currentTime;
+                        } catch (error) {
+                            console.error('RAF Interval error:', error);
+                            this.clearInterval(id);
+                            return;
+                        }
+                    }
+                    
+                    timer.rafId = requestAnimationFrame(loop);
+                    this.timers.set(id, timer);
+                };
+                
+                const rafId = requestAnimationFrame(loop);
+                this.timers.set(id, { rafId, callback, interval });
+                
+                return id;
+            }
+            
+            clearInterval(id) {
+                const timer = this.timers.get(id);
+                if (timer) {
+                    cancelAnimationFrame(timer.rafId);
+                    this.timers.delete(id);
+                }
+            }
+        }
+        
+        // 2. setTimeout 递归实现
+        class TimeoutInterval {
+            constructor() {
+                this.timers = new Map();
+                this.timerId = 0;
+            }
+            
+            setInterval(callback, interval) {
+                const id = ++this.timerId;
+                let executionCount = 0;
+                let startTime = Date.now();
+                
+                const execute = () => {
+                    try {
+                        callback();
+                        executionCount++;
+                    } catch (error) {
+                        console.error('Timeout Interval error:', error);
+                        this.clearInterval(id);
+                        return;
+                    }
+                    
+                    // 时间补偿机制
+                    const expectedNext = startTime + (executionCount + 1) * interval;
+                    const currentTime = Date.now();
+                    const delay = Math.max(0, expectedNext - currentTime);
+                    
+                    const timeoutId = setTimeout(execute, delay);
+                    this.timers.set(id, { timeoutId, callback, interval });
+                };
+                
+                const timeoutId = setTimeout(execute, interval);
+                this.timers.set(id, { timeoutId, callback, interval });
+                
+                return id;
+            }
+            
+            clearInterval(id) {
+                const timer = this.timers.get(id);
+                if (timer) {
+                    clearTimeout(timer.timeoutId);
+                    this.timers.delete(id);
+                }
+            }
+        }
+        
+        // 3. Web Worker 实现
+        class WorkerInterval {
+            constructor() {
+                this.callbacks = new Map();
+                this.timerId = 0;
+                this.worker = null;
+                this.initWorker();
+            }
+            
+            initWorker() {
+                const workerScript = `
+                    let timers = new Map();
+                    
+                    self.onmessage = function(e) {
+                        const { type, id, interval } = e.data;
+                        
+                        switch(type) {
+                            case 'start':
+                                const timer = setInterval(() => {
+                                    self.postMessage({ type: 'tick', id });
+                                }, interval);
+                                timers.set(id, timer);
+                                break;
+                                
+                            case 'stop':
+                                const existingTimer = timers.get(id);
+                                if (existingTimer) {
+                                    clearInterval(existingTimer);
+                                    timers.delete(id);
+                                }
+                                break;
+                        }
+                    };
+                `;
+                
+                const blob = new Blob([workerScript], { type: 'application/javascript' });
+                this.worker = new Worker(URL.createObjectURL(blob));
+                
+                this.worker.onmessage = (e) => {
+                    const { type, id } = e.data;
+                    if (type === 'tick') {
+                        const callback = this.callbacks.get(id);
+                        if (callback) {
+                            try {
+                                callback();
+                            } catch (error) {
+                                console.error('Worker interval error:', error);
+                            }
+                        }
+                    }
+                };
+            }
+            
+            setInterval(callback, interval) {
+                const id = ++this.timerId;
+                this.callbacks.set(id, callback);
+                this.worker.postMessage({ type: 'start', id, interval });
+                return id;
+            }
+            
+            clearInterval(id) {
+                this.callbacks.delete(id);
+                this.worker.postMessage({ type: 'stop', id });
+            }
+            
+            destroy() {
+                if (this.worker) {
+                    this.worker.terminate();
+                    this.worker = null;
+                }
+                this.callbacks.clear();
+            }
+        }
+        
+        // 管理器实例
+        const rafManager = new RAFInterval();
+        const timeoutManager = new TimeoutInterval();
+        let workerManager = null;
+        
+        // 初始化 Worker (延迟加载)
+        function initWorkerManager() {
+            if (!workerManager) {
+                workerManager = new WorkerInterval();
+                workerInstance = workerManager;
+            }
+            return workerManager;
+        }
+        
+        // 切换实现方法
+        function switchMethod(method) {
+            if (activeTimer) {
+                alert('请先停止当前定时器');
+                return;
+            }
+            
+            currentMethod = method;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const methodNames = {
+                'raf': 'requestAnimationFrame',
+                'timeout': 'setTimeout递归',
+                'worker': 'Web Worker'
+            };
+            
+            document.getElementById('currentMethod').textContent = methodNames[method];
+            log(`切换到 ${methodNames[method]} 实现`);
+        }
+        
+        // 开始定时器
+        function startTimer() {
+            if (activeTimer) return;
+            
+            const interval = parseInt(document.getElementById('interval').value);
+            const maxCount = parseInt(document.getElementById('maxCount').value);
+            
+            if (interval < 100 || maxCount < 1) {
+                alert('参数设置错误');
+                return;
+            }
+            
+            // 重置统计
+            executionCount = 0;
+            startTime = performance.now();
+            lastExecutionTime = startTime;
+            intervalSum = 0;
+            
+            // 更新UI
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stopBtn').disabled = false;
+            document.getElementById('status').textContent = '运行中';
+            
+            log(`开始执行 - 间隔: ${interval}ms, 最大次数: ${maxCount}`);
+            
+            // 执行回调函数
+            const callback = () => {
+                const currentTime = performance.now();
+                const actualInterval = currentTime - lastExecutionTime;
+                
+                executionCount++;
+                intervalSum += actualInterval;
+                
+                log(`第 ${executionCount} 次执行 - 实际间隔: ${actualInterval.toFixed(2)}ms`);
+                
+                // 更新统计
+                updateStats(interval, actualInterval);
+                
+                lastExecutionTime = currentTime;
+                
+                // 检查是否达到最大次数
+                if (executionCount >= maxCount) {
+                    stopTimer();
+                }
+            };
+            
+            // 根据选择的方法启动定时器
+            switch (currentMethod) {
+                case 'raf':
+                    activeTimer = { id: rafManager.setInterval(callback, interval), manager: rafManager };
+                    break;
+                case 'timeout':
+                    activeTimer = { id: timeoutManager.setInterval(callback, interval), manager: timeoutManager };
+                    break;
+                case 'worker':
+                    const manager = initWorkerManager();
+                    activeTimer = { id: manager.setInterval(callback, interval), manager };
+                    break;
+            }
+        }
+        
+        // 停止定时器
+        function stopTimer() {
+            if (!activeTimer) return;
+            
+            activeTimer.manager.clearInterval(activeTimer.id);
+            activeTimer = null;
+            
+            // 更新UI
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stopBtn').disabled = true;
+            document.getElementById('status').textContent = '停止';
+            
+            const totalTime = performance.now() - startTime;
+            log(`定时器已停止 - 总运行时间: ${totalTime.toFixed(2)}ms`);
+            
+            // 最终统计
+            updateFinalStats(totalTime);
+        }
+        
+        // 更新统计信息
+        function updateStats(expectedInterval, actualInterval) {
+            document.getElementById('executed').textContent = executionCount;
+            
+            if (executionCount > 1) {
+                const avgInterval = intervalSum / executionCount;
+                document.getElementById('avgInterval').textContent = avgInterval.toFixed(2);
+                
+                const precision = Math.abs(avgInterval - expectedInterval);
+                document.getElementById('precision').textContent = precision.toFixed(2);
+            }
+        }
+        
+        // 更新最终统计
+        function updateFinalStats(totalTime) {
+            document.getElementById('totalTime').textContent = totalTime.toFixed(0);
+            
+            if (executionCount > 1) {
+                const avgInterval = intervalSum / executionCount;
+                const expectedInterval = parseInt(document.getElementById('interval').value);
+                const precision = Math.abs(avgInterval - expectedInterval);
+                const performance = Math.max(0, 100 - (precision / expectedInterval) * 100);
+                
+                document.getElementById('performance').textContent = performance.toFixed(0);
+            }
+        }
+        
+        // 日志记录
+        function log(message) {
+            const logs = document.getElementById('logs');
+            const time = new Date().toLocaleTimeString();
+            logs.innerHTML += `<div>[${time}] ${message}</div>`;
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        // 清除日志
+        function clearLogs() {
+            document.getElementById('logs').innerHTML = '';
+        }
+        
+        // 页面卸载时清理
+        window.addEventListener('beforeunload', () => {
+            if (activeTimer) {
+                stopTimer();
+            }
+            if (workerInstance) {
+                workerInstance.destroy();
+            }
+        });
+        
+        // 工具函数：性能测试
+        window.performanceTest = async function(method, interval, count) {
+            console.log(`开始性能测试: ${method}, 间隔: ${interval}ms, 次数: ${count}`);
+            
+            return new Promise((resolve) => {
+                let execCount = 0;
+                const intervals = [];
+                let lastTime = performance.now();
+                
+                const callback = () => {
+                    const currentTime = performance.now();
+                    if (execCount > 0) {
+                        intervals.push(currentTime - lastTime);
+                    }
+                    lastTime = currentTime;
+                    execCount++;
+                    
+                    if (execCount >= count) {
+                        // 计算统计数据
+                        const avg = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+                        const variance = intervals.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / intervals.length;
+                        const stdDev = Math.sqrt(variance);
+                        
+                        resolve({
+                            method,
+                            average: avg,
+                            stdDev,
+                            precision: Math.abs(avg - interval),
+                            intervals
+                        });
+                    }
+                };
+                
+                // 启动对应的定时器
+                let timerId;
+                switch (method) {
+                    case 'raf':
+                        timerId = rafManager.setInterval(callback, interval);
+                        break;
+                    case 'timeout':
+                        timerId = timeoutManager.setInterval(callback, interval);
+                        break;
+                }
+            });
+        };
+        
+        console.log('自定义 setInterval 实现演示已加载');
+        console.log('使用 performanceTest("raf", 1000, 10) 进行性能测试');
+    </script>
+</body>
+</html>

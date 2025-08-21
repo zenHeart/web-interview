@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本溢出Popover效果</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        
+        .demo-section {
+            border: 2px solid #6f42c1;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f8f6ff;
+        }
+        
+        /* 文本截断样式 */
+        .text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: help;
+            padding: 8px 12px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: block;
+        }
+        
+        /* 不同宽度的容器 */
+        .container-small { width: 200px; }
+        .container-medium { width: 300px; }
+        .container-large { width: 400px; }
+        
+        /* Popover样式 */
+        .text-popover {
+            position: absolute;
+            z-index: 1000;
+            background-color: #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            max-width: 300px;
+            word-wrap: break-word;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            pointer-events: none;
+        }
+        
+        .text-popover.visible {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        
+        /* 现代 Popover API 样式 */
+        .native-popover {
+            padding: 8px 12px;
+            background: #333;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            max-width: 300px;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        button {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #5a32a3;
+        }
+        
+        .trigger-mode {
+            margin: 10px 0;
+        }
+        
+        .trigger-mode label {
+            margin-left: 5px;
+        }
+        
+        .status {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>文本溢出 Popover 效果演示</h1>
+    
+    <div class="controls">
+        <h3>设置</h3>
+        <div class="trigger-mode">
+            <strong>触发方式:</strong>
+            <label><input type="radio" name="trigger" value="hover" checked> 鼠标悬停</label>
+            <label><input type="radio" name="trigger" value="click"> 点击</label>
+        </div>
+        <button onclick="addTestContent()">添加测试内容</button>
+        <button onclick="toggleNativePopover()">切换原生Popover API</button>
+        <button onclick="clearContent()">清除内容</button>
+    </div>
+    
+    <div class="status">
+        <span id="status">自定义Popover已启用 | 当前触发方式: 悬停</span>
+    </div>
+    
+    <div class="demo-section">
+        <h2>基础演示</h2>
+        <p>将鼠标悬停在下面的文本上，或根据设置点击来查看完整内容：</p>
+        
+        <div class="container-small">
+            <span class="text-truncate" data-full-text="这是一段很长很长很长很长很长很长很长很长的文本内容，用来演示文本溢出时的popover效果">
+                这是一段很长很长很长很长很长很长很长很长的文本内容，用来演示文本溢出时的popover效果
+            </span>
+        </div>
+        
+        <div class="container-medium">
+            <span class="text-truncate" data-full-text="JavaScript是一种高级的、解释型的编程语言，具有函数优先的特点">
+                JavaScript是一种高级的、解释型的编程语言，具有函数优先的特点
+            </span>
+        </div>
+        
+        <div class="container-large">
+            <span class="text-truncate" data-full-text="前端开发涉及HTML、CSS、JavaScript等多种技术栈，需要综合运用各种技能来构建用户界面和用户体验">
+                前端开发涉及HTML、CSS、JavaScript等多种技术栈，需要综合运用各种技能来构建用户界面和用户体验
+            </span>
+        </div>
+    </div>
+    
+    <div id="dynamicContent" class="demo-section">
+        <h2>动态内容测试</h2>
+        <p>点击"添加测试内容"按钮来测试动态生成的内容：</p>
+    </div>
+
+    <script>
+        // 自定义 Popover 实现
+        class TextOverflowPopover {
+            constructor(options = {}) {
+                this.options = {
+                    trigger: 'hover',
+                    className: 'text-popover',
+                    showDelay: 300,
+                    hideDelay: 100,
+                    ...options
+                };
+                this.activePopover = null;
+                this.showTimer = null;
+                this.hideTimer = null;
+                this.elements = new Set();
+            }
+            
+            init(selector = '.text-truncate') {
+                // 清理之前的监听器
+                this.cleanup();
+                
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => this.setupElement(element));
+            }
+            
+            setupElement(element) {
+                // 检查是否溢出
+                if (!this.isOverflowing(element)) {
+                    element.style.cursor = 'default';
+                    return;
+                }
+                
+                element.style.cursor = 'help';
+                this.elements.add(element);
+                
+                // 绑定事件
+                if (this.options.trigger === 'hover') {
+                    element.addEventListener('mouseenter', (e) => this.showPopover(e.target));
+                    element.addEventListener('mouseleave', () => this.hidePopover());
+                } else {
+                    element.addEventListener('click', (e) => this.showPopover(e.target));
+                }
+            }
+            
+            isOverflowing(element) {
+                return element.scrollWidth > element.offsetWidth;
+            }
+            
+            showPopover(element) {
+                clearTimeout(this.hideTimer);
+                
+                this.showTimer = setTimeout(() => {
+                    this.hidePopover(true);
+                    
+                    const popover = this.createPopover(element);
+                    document.body.appendChild(popover);
+                    this.positionPopover(popover, element);
+                    
+                    // 显示动画
+                    requestAnimationFrame(() => {
+                        popover.classList.add('visible');
+                    });
+                    
+                    this.activePopover = popover;
+                    
+                    // 添加全局点击关闭
+                    this.addGlobalListeners();
+                }, this.options.showDelay);
+            }
+            
+            createPopover(element) {
+                const popover = document.createElement('div');
+                popover.className = this.options.className;
+                
+                const fullText = element.dataset.fullText || element.textContent;
+                popover.textContent = fullText;
+                
+                return popover;
+            }
+            
+            positionPopover(popover, target) {
+                const targetRect = target.getBoundingClientRect();
+                const popoverRect = popover.getBoundingClientRect();
+                
+                let left = targetRect.left + (targetRect.width - popoverRect.width) / 2;
+                let top = targetRect.top - popoverRect.height - 8;
+                
+                // 边界检查
+                if (top < 0) {
+                    top = targetRect.bottom + 8; // 放到下方
+                }
+                
+                left = Math.max(8, Math.min(left, window.innerWidth - popoverRect.width - 8));
+                
+                popover.style.left = `${left + window.scrollX}px`;
+                popover.style.top = `${top + window.scrollY}px`;
+            }
+            
+            hidePopover(immediate = false) {
+                clearTimeout(this.showTimer);
+                
+                if (!this.activePopover) return;
+                
+                if (immediate) {
+                    this.activePopover.remove();
+                    this.activePopover = null;
+                } else {
+                    this.hideTimer = setTimeout(() => {
+                        if (this.activePopover) {
+                            this.activePopover.remove();
+                            this.activePopover = null;
+                        }
+                    }, this.options.hideDelay);
+                }
+            }
+            
+            addGlobalListeners() {
+                const handleClickOutside = (e) => {
+                    if (this.activePopover && !this.activePopover.contains(e.target)) {
+                        this.hidePopover(true);
+                        document.removeEventListener('click', handleClickOutside);
+                    }
+                };
+                
+                const handleKeyDown = (e) => {
+                    if (e.key === 'Escape') {
+                        this.hidePopover(true);
+                        document.removeEventListener('keydown', handleKeyDown);
+                    }
+                };
+                
+                document.addEventListener('click', handleClickOutside);
+                document.addEventListener('keydown', handleKeyDown);
+            }
+            
+            cleanup() {
+                this.hidePopover(true);
+                this.elements.clear();
+            }
+            
+            updateTrigger(newTrigger) {
+                this.options.trigger = newTrigger;
+                this.init();
+            }
+        }
+        
+        // 原生 Popover API 支持
+        class NativePopoverManager {
+            init() {
+                if (!('showPopover' in HTMLElement.prototype)) {
+                    return false;
+                }
+                
+                const elements = document.querySelectorAll('.text-truncate');
+                elements.forEach(element => this.setupNativePopover(element));
+                return true;
+            }
+            
+            setupNativePopover(element) {
+                if (!this.isOverflowing(element)) return;
+                
+                // 清理可能存在的旧popover
+                const oldPopoverId = element.getAttribute('popovertarget');
+                if (oldPopoverId) {
+                    const oldPopover = document.getElementById(oldPopoverId);
+                    oldPopover?.remove();
+                }
+                
+                const popoverId = `popover-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                const popover = document.createElement('div');
+                
+                popover.id = popoverId;
+                popover.popover = 'auto';
+                popover.className = 'native-popover';
+                
+                const fullText = element.dataset.fullText || element.textContent;
+                popover.textContent = fullText;
+                
+                document.body.appendChild(popover);
+                element.setAttribute('popovertarget', popoverId);
+                element.style.cursor = 'help';
+            }
+            
+            isOverflowing(element) {
+                return element.scrollWidth > element.offsetWidth;
+            }
+            
+            cleanup() {
+                // 清理所有原生popover
+                document.querySelectorAll('[popover]').forEach(popover => {
+                    if (popover.id.startsWith('popover-')) {
+                        popover.remove();
+                    }
+                });
+                
+                document.querySelectorAll('[popovertarget]').forEach(element => {
+                    element.removeAttribute('popovertarget');
+                });
+            }
+        }
+        
+        // 管理器实例
+        let popoverManager = new TextOverflowPopover();
+        let nativeManager = new NativePopoverManager();
+        let isUsingNative = false;
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            popoverManager.init();
+            updateStatus();
+        });
+        
+        // 触发方式切换
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'trigger') {
+                const trigger = e.target.value;
+                if (!isUsingNative) {
+                    popoverManager.updateTrigger(trigger);
+                }
+                updateStatus();
+            }
+        });
+        
+        // 添加测试内容
+        function addTestContent() {
+            const container = document.getElementById('dynamicContent');
+            const testTexts = [
+                '这是动态添加的超长文本内容，用来测试 Popover 在动态内容上的工作效果',
+                'React是一个用于构建用户界面的JavaScript库，由Facebook开发并维护',
+                'Vue.js是一套用于构建用户界面的渐进式JavaScript框架，易学易用',
+                'Node.js是一个基于Chrome V8引擎的JavaScript运行时环境'
+            ];
+            
+            const randomText = testTexts[Math.floor(Math.random() * testTexts.length)];
+            const div = document.createElement('div');
+            div.className = 'container-medium';
+            div.style.marginTop = '10px';
+            
+            div.innerHTML = `
+                <span class="text-truncate" data-full-text="${randomText}">
+                    ${randomText}
+                </span>
+            `;
+            
+            container.appendChild(div);
+            
+            // 重新初始化
+            if (isUsingNative) {
+                nativeManager.init();
+            } else {
+                popoverManager.init();
+            }
+        }
+        
+        // 切换原生/自定义 Popover
+        function toggleNativePopover() {
+            if (isUsingNative) {
+                // 切换到自定义
+                nativeManager.cleanup();
+                popoverManager.init();
+                isUsingNative = false;
+            } else {
+                // 切换到原生
+                if (nativeManager.init()) {
+                    popoverManager.cleanup();
+                    isUsingNative = true;
+                } else {
+                    alert('您的浏览器不支持原生 Popover API');
+                    return;
+                }
+            }
+            updateStatus();
+        }
+        
+        // 清除动态内容
+        function clearContent() {
+            const container = document.getElementById('dynamicContent');
+            const children = container.children;
+            for (let i = children.length - 1; i >= 0; i--) {
+                if (children[i].className === 'container-medium') {
+                    children[i].remove();
+                }
+            }
+        }
+        
+        // 更新状态显示
+        function updateStatus() {
+            const status = document.getElementById('status');
+            const trigger = document.querySelector('input[name="trigger"]:checked').value;
+            const triggerText = trigger === 'hover' ? '悬停' : '点击';
+            const modeText = isUsingNative ? '原生Popover API' : '自定义Popover';
+            
+            status.textContent = `${modeText}已启用 | 当前触发方式: ${triggerText}`;
+        }
+        
+        // 工具函数：检查浏览器支持
+        window.checkPopoverSupport = function() {
+            const hasNativeSupport = 'showPopover' in HTMLElement.prototype;
+            console.log('原生 Popover API 支持:', hasNativeSupport);
+            return hasNativeSupport;
+        };
+        
+        console.log('文本溢出 Popover 演示已加载');
+        console.log('使用 checkPopoverSupport() 检查浏览器支持情况');
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查找页面出现次数最多的HTML标签</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .demo-area {
+            border: 2px solid #007bff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .test-content {
+            margin: 15px 0;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>查找页面出现次数最多的HTML标签</h1>
+    
+    <div class="demo-area">
+        <h2>测试内容区域</h2>
+        <div class="test-content">
+            <p>这是一个段落1</p>
+            <p>这是一个段落2</p>
+            <p>这是一个段落3</p>
+            <div>
+                <span>嵌套span1</span>
+                <span>嵌套span2</span>
+                <ul>
+                    <li>列表项1</li>
+                    <li>列表项2</li>
+                    <li>列表项3</li>
+                </ul>
+            </div>
+            <table>
+                <tr><td>表格单元格1</td><td>表格单元格2</td></tr>
+                <tr><td>表格单元格3</td><td>表格单元格4</td></tr>
+            </table>
+        </div>
+        
+        <button onclick="findMostFrequentTag()">统计页面标签</button>
+        <button onclick="showDetailedStats()">显示详细统计</button>
+        <button onclick="clearResults()">清除结果</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        // 基础实现：查找出现次数最多的HTML标签
+        function findMostFrequentTag() {
+            const allElements = document.getElementsByTagName('*');
+            const tagCount = {};
+            
+            // 统计每种标签的数量
+            for (let i = 0; i < allElements.length; i++) {
+                const tagName = allElements[i].tagName.toLowerCase();
+                tagCount[tagName] = (tagCount[tagName] || 0) + 1;
+            }
+            
+            // 找出出现次数最多的标签
+            let mostFrequentTag = null;
+            let maxCount = 0;
+            
+            for (const tag in tagCount) {
+                if (tagCount[tag] > maxCount) {
+                    mostFrequentTag = tag;
+                    maxCount = tagCount[tag];
+                }
+            }
+            
+            displayResult({
+                tag: mostFrequentTag,
+                count: maxCount,
+                total: allElements.length,
+                types: Object.keys(tagCount).length
+            });
+        }
+        
+        // 现代化实现：使用现代API和更详细的统计
+        function showDetailedStats() {
+            const allElements = [...document.querySelectorAll('*')];
+            
+            // 使用 Map 进行统计
+            const tagStats = allElements.reduce((stats, element) => {
+                const tagName = element.tagName.toLowerCase();
+                if (!stats.has(tagName)) {
+                    stats.set(tagName, {
+                        count: 0,
+                        examples: []
+                    });
+                }
+                
+                const tagInfo = stats.get(tagName);
+                tagInfo.count++;
+                
+                // 保存前3个示例
+                if (tagInfo.examples.length < 3) {
+                    tagInfo.examples.push({
+                        id: element.id || '(无id)',
+                        className: element.className || '(无class)',
+                        text: element.textContent?.slice(0, 30) || ''
+                    });
+                }
+                
+                return stats;
+            }, new Map());
+            
+            // 找出最频繁的标签
+            const [mostFrequentTag, maxInfo] = [...tagStats.entries()]
+                .reduce((max, current) => 
+                    current[1].count > max[1].count ? current : max
+                );
+            
+            displayDetailedResult({
+                mostFrequent: { tag: mostFrequentTag, ...maxInfo },
+                allStats: Object.fromEntries(tagStats),
+                summary: {
+                    totalElements: allElements.length,
+                    uniqueTags: tagStats.size
+                }
+            });
+        }
+        
+        // 显示基础结果
+        function displayResult(result) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="results">
+                    <h3>统计结果</h3>
+                    <p><strong>最常见的标签:</strong> &lt;${result.tag}&gt;</p>
+                    <p><strong>出现次数:</strong> ${result.count} 次</p>
+                    <p><strong>页面总元素数:</strong> ${result.total} 个</p>
+                    <p><strong>不同标签类型:</strong> ${result.types} 种</p>
+                </div>
+            `;
+        }
+        
+        // 显示详细结果
+        function displayDetailedResult(result) {
+            const resultsDiv = document.getElementById('results');
+            
+            const statsHtml = Object.entries(result.allStats)
+                .sort(([,a], [,b]) => b.count - a.count)
+                .slice(0, 10) // 只显示前10种
+                .map(([tag, info]) => 
+                    `<tr><td>&lt;${tag}&gt;</td><td>${info.count}</td></tr>`
+                ).join('');
+            
+            resultsDiv.innerHTML = `
+                <div class="results">
+                    <h3>详细统计结果</h3>
+                    <p><strong>最常见标签:</strong> &lt;${result.mostFrequent.tag}&gt; (${result.mostFrequent.count} 次)</p>
+                    
+                    <h4>Top 10 标签统计:</h4>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background-color: #e9ecef;">
+                                <th style="border: 1px solid #ddd; padding: 8px;">标签</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">数量</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${statsHtml}
+                        </tbody>
+                    </table>
+                    
+                    <p style="margin-top: 15px;">
+                        <strong>总计:</strong> ${result.summary.totalElements} 个元素，
+                        ${result.summary.uniqueTags} 种不同标签
+                    </p>
+                </div>
+            `;
+        }
+        
+        // 清除结果
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        // 页面加载完成提示
+        console.log('页面加载完成，可以开始统计HTML标签');
+        console.log('尝试运行 findMostFrequentTag() 函数');
+    </script>
+</body>
+</html>
