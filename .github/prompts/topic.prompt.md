@@ -1,5 +1,5 @@
 ---
-mode: ask
+mode: agent
 tools: ['codebase']
 description: 重构主题下答案，尽量复用现有答案与示例，输出可直接入库的高质量内容。
 ---

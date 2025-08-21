@@ -20,22 +20,37 @@ glob: docs/**/*.md
 ## 格式要求
 
 - 标题使用一级标题`# 主题名称`
-- 问题ID必须包含难度标记，如`{#p0-question-id}`，其中p0-p3表示难度递增
-- 使用`<Answer>`标签包裹答案内容
-- 答案中可添加meta信息，如`<Answer meta={{difficulty: "中级", duration: "5分钟"}}>`
-- 代码示例应使用适当的代码块或Sandpack组件
-- 延伸阅读使用列表格式标记
+- 问题锚点必须包含难度标记，使用大写：`{#P0-question-id}`（P0–P4）
+- 使用`<Answer>`标签包裹答案内容，且不允许添加任何属性
+- `<Answer>` 内禁止使用 `#、##、###` 标题；分隔使用加粗小标题并以冒号结尾（如 `**核心概念:**`）
+- 示例需可运行：优先使用 Sandpack/TestCode；长代码用 Raw-loader 引入并通过 `files` 属性引用
+- 示例与路径规范：
+ 	- 从题目锚点提取 `<question-id>`；示例置于同级 `answers/` 目录
+ 	- 单文件：`answers/<question-id>.<ext>`；多文件：`answers/<question-id>/**`
+ 	- `files` 键名必须以 `/` 开头，且与 Raw-loader 导入同名映射
+  （如 `"/index.js": demo`）
+- 延伸阅读使用列表格式，优先引用 MDN/WHATWG/ECMA-262 等权威链接
 
 ## 重构步骤
 
-1. 确认该主题是否属于科目的定义，详见 @01.summary.md#docs
-2. 检查目录结构和命名规范
-3. 审核内容组织逻辑，确保层次清晰
-4. 验证问题格式及标签使用
-5. 确保答案包含必要元素（概述、详细解释、代码示例、延伸阅读）
-6. 优化内容格式，保持一致性
-7. 如有必要，将复杂主题拆分为多个子主题，详见 @02.workflow.md
+1. 确认该主题是否属于科目的定义，详见 （必要性/相关性评估可用 `.github/prompts/evaluate.prompt.md`）
+2. 检查目录结构和命名规范；必要时调整为 `docs/<subject>/<order>.<topic>.md`
+3. 审核内容组织逻辑（依赖关系→概念递进→复杂度→频率）；必要时拆分/合并问题
+4. 为每个问题补全/修正标题与锚点：`## 标题 {#P?-question-id}`（P0–P4）；清理重复、统一 slug
+5. 规范 `<Answer>`：四区块齐全；长度与风格对齐 `.github/prompts/answer.prompt.md`
+6. 示例/测试：如缺失或不可运行，先用 `.github/prompts/example.prompt.md` 生成最小可运行片段，
+ 落地到 `answers/<question-id>`，并修正 Raw-loader 与 files 映射
+1. 自检通过后提交；如主题过大，参考 @02.workflow.md 拆分成子主题
 
 ## 参考示例
 
 [03.01.babel.md](mdc:docs/06.engineering/03.01.babel.md)
+
+## 自检清单（提交前务必全 ✅）
+
+- [ ] 主题结构符合 `contributors/template/02.topic.md`
+- [ ] 每个问题符合 `contributors/template/01.question.md`（标题+锚点+可选描述+`<Answer>`）
+- [ ] `<Answer>` 内无 `#` 级标题；四区块齐全；权威链接齐备
+- [ ] 示例可运行；`answers/<question-id>` 路径与 `files` 映射一致且以 `/` 开头
+- [ ] 复用现有答案/示例或已按 example.prompt 生成并落地
+- [ ] 排序合理（依赖、层级、复杂度、频率）
