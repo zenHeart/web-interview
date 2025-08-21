@@ -1,9 +1,4 @@
 ---
-description: 前端专家
-globs: docs, company,src
-alwaysApply: false
----
----
 title: 主题重构规则
 description: 指导如何基于规范重构已完成的主题
 glob: docs/**/*.md
@@ -12,6 +7,7 @@ glob: docs/**/*.md
 # 主题重构规则
 
 ## 描述
+
 指导如何基于规范重构已完成的主题，确保内容符合项目标准。
 
 ## 标准

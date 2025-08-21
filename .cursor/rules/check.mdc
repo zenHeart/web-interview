@@ -1,0 +1,7 @@
+---
+title: 检查问题
+description: 先评估问题在确定是否值得给出答案
+glob: docs/**/*.md
+---
+
+基于 [check](../../.github/prompts/check.prompt.md) 规则先校验问题在判断是否需要给出答案

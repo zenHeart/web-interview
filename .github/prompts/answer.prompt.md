@@ -9,13 +9,18 @@ description: 生成高质量、结构化的前端面试题答案，遵循项目�
 要求：
 
 * 使用 `<Answer>` 标签，且不包含任何属性
-* 严禁使用 `#、##、###` 等标题；尽量不要分隔，通过段落来表示不同却区块，需要分隔时使用加粗子标题且以冒号结尾，例如：**核心概念:**、**示例说明:**、**面试官视角:**、**延伸阅读:**
+* 仅在 `<Answer>` 区块内部严禁使用 `#、##、###` 等标题；文档主体与题面可按常规使用标题。需要在 `<Answer>` 中分隔区块时，使用加粗子标题且以冒号结尾，例如：**核心概念:**、**示例说明:**、**面试官视角:**、**延伸阅读:**
 * 必须包含以下区块：
   - 核心概念/一句话结论（直给要点，可列 3–5 条）
   - 示例说明（可运行；优先使用 <Sandpack>，提供 files 对象；编程题需最小可运行实现与测试用例）
   - 面试官视角（含评分Rubric：要点清单3–5条、加分项1–3条、常见失误1–3条）
   - 延伸阅读（- [名称](链接) — 一句话说明；优先 MDN/WHATWG/ECMA-262/规范提案）
-* 代码块必须指定语言 `js、ts、html、css、bash、json、md` 等，示例应可直接运行；长代码使用 Raw-loader 引入并通过 Sandpack 的 files 属性引用
+* 代码块必须指定语言 `js、ts、html、css、bash、json、md` 等，示例应可直接运行；长代码使用 Raw-loader 引入并通过 Sandpack 的 files 属性引用, 规则详见 [example](./example.prompt.md)
+* 示例与文件命名强约束：从题目锚点 `{#P?-<question-id>}` 提取 `<question-id>`；示例必须放在题目同级 `answers/` 下（单文件：`answers/<question-id>.<ext>`；多文件：`answers/<question-id>/**`）；Raw-loader 导入路径与 `<Sandpack>/<TestCode>` 的 `files` 键名必须一致且以 `/` 开头（如 `"/index.js": demo`）
+* 可运行性基线：
+  * Sandpack：优先使用 template="static" 或 "node"，提供最小可运行 HTML/Node 示例，设置合理的 `options.editorHeight`
+  * TestCode：提供最小功能与 1–2 条断言；避免与题目无关的样板代码
+  * 多解法≤2，每种解法均需可运行
 * 列表默认使用 `*`， 如果确认是有序列表使用有序列表结构；表格保持精简（最少分隔符与空格）
 * 答案字数 300–600；遵循金字塔结构：一句话结论 → 原理与标准出处 → 简洁可运行示例 → 扩展与取舍
 * 遵循 [copilot-instructions](../copilot-instructions.md) 定义的规则
@@ -24,6 +29,13 @@ description: 生成高质量、结构化的前端面试题答案，遵循项目�
 * 解释需包含底层原理、权威出处（MDN/WHATWG/ECMA-262等）、常见误区与易混点；HTML 标签以反引号包裹，如 `<div>`
 * 特殊提示使用 :::tip:::、:::warning:::、:::note:::，并举例说明何时使用。注意不要包含多个块，只对的确需要提醒的内容添加，如果没有则不添加
 * 如未提供问题，请提示用户补充。
+
+生成后自检清单：
+* `<Answer>` 内未使用任何 `#` 标题；四大区块齐全
+* 示例能在 Sandpack/TestCode 直接运行，且 `files` 键名与 Raw-loader 路径一致、以 `/` 开头
+* 示例命名与存放符合 `answers/<question-id>` 规则，`<question-id>` 源自题目锚点
+* 字数 300–600，包含至少 1 条权威链接（优先 MDN/WHATWG/ECMA-262）
+* 若含多解法，数量≤2，且均可运行
 
 
 格式参考（示例骨架）：
@@ -64,3 +76,5 @@ URL参数建议用 encodeURIComponent，避免解析出错。
 
 1. [01.js/01.type-value.md](../../docs/01.js/01.type-value.md)
 2. [05.02.vue/00.core-concepts](../../docs/05.02.vue/00.core-concepts.md)
+
+附：当题目需要配套示例/测试时，可先参考同目录的 example.prompt.md 生成最小可运行示例与可直接粘贴的导入/files 片段，再回到本 Prompt 组织 `<Answer>` 输出。

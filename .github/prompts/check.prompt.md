@@ -15,7 +15,7 @@ description: 回答前的统一入口：先评估题目是否达标（收录/拒
 - 评估标准对齐：
   * [好问题标准](../../contributors/03.good_interview_question.md) 有效性、信度、区分度、时间合理性、贴近实际）
   * [问题模板](../../contributors/template/01.question.md)（结构合法性：标题+锚点、可选描述块、答案块）
-  * [Copilot指令](.github/copilot-instructions.md)（格式化与答案风格）
+  * [Copilot指令](../copilot-instructions.md)（格式化与答案风格）
 
 对每个解析到的题目输出以下结构（表格精简）：
 
@@ -46,7 +46,7 @@ description: 回答前的统一入口：先评估题目是否达标（收录/拒
 
 阶段B：答案生成（仅对✅收录的题目执行）
 
-- 生成规范对齐 [answer](./answer.prompt.md) 与 [Copilot指令](.github/copilot-instructions.md)
+- 生成规范对齐 [answer](./answer.prompt.md) 与 [Copilot指令](../copilot-instructions.md)；如题目需要配套示例/测试，先参考同目录的 [example](./example.prompt.md) 生成最小可运行片段，再回到 Answer 组织输出。
 
 
 输出顺序与格式

@@ -11,7 +11,6 @@ description: 评估前端面试题是否为高质量题目，基于项目文档�
 
 * 不要生成题目的答案，只做质量评估
 * 遵循 [copilot-instructions](../copilot-instructions.md) 定义的规则
-* 遵循 [copilot-instructions](../copilot-instructions.md) 定义的规则
 * 遵循答案结构，详见 [quesitons.md](../../contributors/template/01.question.md)
 * 输出必须包含一个 **简化 Rubric 表格**
 * 表格后面必须有 **收录结论（✅ 收录 / ❌ 拒绝）** 和 **理由说明**

@@ -1,0 +1,7 @@
+---
+title: 问题管理规则
+description: 指导如何完善现有问题或增加新问题
+glob: docs/**/*.md
+---
+
+基于 [answer](../../.github/prompts/answer.prompt.md) 规则生成问题答案
