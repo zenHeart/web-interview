@@ -2,6 +2,44 @@
 
 ## 实现一个文件夹树组件，支持拖拽排序 {#p0-vue-file-tree}
 
+<Answer>
+
+import appFileTree from '!!raw-loader!./answers/file-tree/app.vue';
+import FileTree from '!!raw-loader!./answers/file-tree/FileTree.vue';
+import TreeNode from '!!raw-loader!./answers/file-tree/TreeNode.vue';
+
+<Sandpack
+  template="vue"
+  options={{
+     editorHeight: 600
+  }}
+  files={{
+    "/src/App.vue": appFileTree,
+    "/src/FileTree.vue": FileTree,
+    "/src/TreeNode.vue": TreeNode,
+  }}
+/>
+
+**答案解析**
+
+该题考察如下知识点：
+
+1. **递归组件**：使用组件自身递归渲染树形结构
+2. **拖拽 API**：使用 HTML5 拖拽 API（`dragstart`、`dragover`、`drop` 等事件）
+3. **数据结构操作**：对嵌套树形数据进行增删改查操作
+4. **事件传递**：子组件向父组件传递事件进行数据更新
+5. **CSS 样式控制**：拖拽时的视觉反馈
+
+**核心实现思路**：
+
+- 使用递归组件渲染文件夹树形结构
+- 实现拖拽源和拖放目标的事件处理
+- 通过事件向上传递，在根组件中统一处理数据更新
+- 提供拖拽时的视觉反馈效果
+- 处理拖拽排序的边界情况（如不能拖拽到自身子节点）
+
+</Answer>
+
 ## 实现一个 ErrorBoundary 组件，捕获子组件的错误并可自定义错误组件 {#p1-vue-errorboundary}
 
 <Answer>
@@ -31,112 +69,49 @@ import VueErrorBoundary from '!!raw-loader!./answers/ErrorBoundary/VueErrorBound
 
 </Answer>
 
-## 实现下拉菜单，支持点击区域外关闭下拉组件？ {#p1-react}
+## 实现下拉菜单，支持点击区域外关闭下拉组件？ {#p1-vue-dropdown}
 
-在 React 中，要实现点击区域外关闭下拉组件，一般可以使用以下几种方法：
+<Answer>
 
-1. 在下拉组件的根元素上监听点击事件，当点击区域不在下拉组件内时，触发关闭下拉组件的操作。这可以通过添加全局点击事件，然后在事件处理程序中判断点击区域是否在下拉组件内来实现。具体实现如下：
+import appDropdown from '!!raw-loader!./answers/dropdown/app.vue';
+import ClickOutside from '!!raw-loader!./answers/dropdown/ClickOutside.vue';
 
-```jsx
-import React, { useRef, useEffect } from 'react';
+<Sandpack
+  template="vue"
+  options={{
+     editorHeight: 600
+  }}
+  files={{
+    "/src/App.vue": appDropdown,
+    "/src/ClickOutside.vue": ClickOutside,
+  }}
+/>
 
-function DropdownMenu(props) {
- const menuRef = useRef(null);
+**答案解析**
 
- useEffect(() => {
- function handleClickOutside(event) {
- if (menuRef.current && !menuRef.current.contains(event.target)) {
- props.onClose();
- }
- }
+该题考察如下知识点：
 
- document.addEventListener('click', handleClickOutside);
- return () => {
- document.removeEventListener('click', handleClickOutside);
- };
- }, [props]);
+1. **自定义指令**：通过 `v-click-outside` 指令实现点击外部区域的检测
+2. **事件处理**：使用 `addEventListener` 和 `removeEventListener` 管理全局事件
+3. **DOM 节点操作**：使用 `contains` 方法判断点击目标是否在组件内部
+4. **组件生命周期**：在指令的 `mounted` 和 `unmounted` 钩子中添加和移除事件监听器
 
- return (
- <div ref={menuRef}>
- {/* 下拉菜单内容 */}
- </div>
- );
-}
-```
+**核心实现思路**：
 
-2. 在下拉组件的父元素上监听点击事件，当点击区域不在下拉组件及其父元素内时，触发关闭下拉组件的操作。具体实现如下：
+- 在组件挂载时添加全局 `click` 事件监听器
+- 在事件处理函数中判断点击目标是否在组件内部
+- 如果点击在外部，则执行关闭操作
+- 在组件卸载时移除事件监听器以防止内存泄漏
 
-```jsx
-import React, { useState } from 'react';
-
-function Dropdown(props) {
- const [isOpen, setIsOpen] = useState(false);
-
- function toggleDropdown() {
- setIsOpen(!isOpen);
- }
-
- function handleClickOutside(event) {
- if (!event.target.closest('.dropdown')) {
- setIsOpen(false);
- }
- }
-
- return (
- <div className="dropdown" onClick={handleClickOutside}>
- <button onClick={toggleDropdown}>Toggle Dropdown</button>
- {isOpen && <DropdownMenu onClose={() => setIsOpen(false)} />}
- </div>
- );
-}
-```
-
-在上述代码中，我们在 `Dropdown` 组件的根元素上添加了点击事件处理程序 `handleClickOutside`，当点击区域不在 `.dropdown` 元素内时，触发关闭下拉组件的操作。由于 `DropdownMenu` 组件位于 `Dropdown` 组件内部，因此当点击下拉菜单时，事件会冒泡到 `Dropdown` 组件，从而不会触发关闭操作。
-
-3. 除了上述方法外，还可以使用 `useRef` 钩子来监听鼠标点击事件。具体实现可以在下拉组件的根元素上使用 `ref` 属性来获取 DOM 元素的引用，然后在组件挂载时使用 `addEventListener` 方法绑定 `mousedown` 事件，最后在事件处理函数中判断鼠标点击的位置是否在下拉组件内，如果不在，则关闭下拉组件。
-
-示例代码如下：
-
-```jsx
-import { useRef, useState, useEffect } from 'react';
-
-function Dropdown() {
- const [isOpen, setIsOpen] = useState(false);
- const dropdownRef = useRef(null);
-
- useEffect(() => {
- function handleClickOutside(event) {
- if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
- setIsOpen(false);
- }
- }
-
- document.addEventListener('mousedown', handleClickOutside);
- return () => {
- document.removeEventListener('mousedown', handleClickOutside);
- };
- }, [dropdownRef]);
-
- return (
- <div ref={dropdownRef}>
- <button onClick={() => setIsOpen(!isOpen)}>Toggle Dropdown</button>
- {isOpen && (
- <ul>
- <li>Option 1</li>
- <li>Option 2</li>
- <li>Option 3</li>
- </ul>
- )}
- </div>
- );
-}
-```
-
-这种方法可以在组件内部处理点击事件，不需要将事件处理函数传递给父组件。但是相对而言代码会比较繁琐，需要手动处理事件绑定和解绑。
+</Answer>
 
 ## 实现一个简单的 i18n (国际化 (Internationalization) 的缩写) 插件 {#p3-implement-a-simple-i18n-internationalization-plugin}
 
 实现下面的这样的一个插件 `<h1>{{ $translate('greetings.hello') }}</h1>`
+
+<Answer>
+
+**核心实现思路**
 
 以下是一个简单的 Vue 3 的国际化插件实现：
 
@@ -200,3 +175,21 @@ app.mount('#app')
 ```
 
 这样，在你的组件中就可以使用`{{ $translate('greetings.hello') }}`来获取翻译后的文本，并且可以通过修改传入插件的翻译对象来切换不同的语言。
+
+**答案解析**
+
+该题考察如下知识点：
+
+1. **Vue 插件机制**：理解 Vue 插件的 `install` 方法和如何注册全局属性
+2. **对象深度访问**：通过点分隔符访问嵌套对象的属性值
+3. **全局属性注册**：使用 `app.config.globalProperties` 注册全局方法
+4. **字符串处理**：解析点分隔的键名并遍历对象结构
+
+**核心技术要点**：
+
+- 插件通过 `app.use()` 方式注册
+- 使用 `globalProperties` 在所有组件中提供 `$translate` 方法
+- 通过递归方式访问嵌套的翻译对象
+- 当找不到翻译时返回原始键名作为降级处理
+
+</Answer>
