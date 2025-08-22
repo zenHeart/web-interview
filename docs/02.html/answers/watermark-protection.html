@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web水印防护技术</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .demo-section h2 {
+            color: #444;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .demo-area {
+            min-height: 200px;
+            background: linear-gradient(45deg, #fff 0%, #f8f9fa 100%);
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-content {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .watermark-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .watermark-info h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .protection-log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        /* 水印样式 */
+        .watermark-dom {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            background: transparent;
+        }
+
+        .watermark-item {
+            position: absolute;
+            color: rgba(0, 0, 0, 0.1);
+            font-size: 14px;
+            transform: rotate(-20deg);
+            user-select: none;
+            font-weight: bold;
+        }
+
+        .stealth-watermark {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0.01;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .attack-simulation {
+            background: #ffe6e6;
+            border: 2px solid #ff9999;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .attack-simulation h4 {
+            color: #cc0000;
+            margin-bottom: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Web水印防护技术</h1>
+            <p>探索水印生成、检测与防护的技术实现</p>
+        </div>
+
+        <div class="content">
+            <!-- DOM水印防护 -->
+            <div class="demo-section">
+                <h2>🏗️ DOM元素水印防护</h2>
+                <div class="watermark-info">
+                    <h4>技术原理</h4>
+                    <p>通过MutationObserver监听DOM变化，当水印元素被删除时自动重新生成。使用多层防护和动态位置变化增加移除难度。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="createDOMWatermark()">生成DOM水印</button>
+                    <button class="btn-danger" onclick="simulateRemoveWatermark()">模拟删除水印</button>
+                    <button class="btn-warning" onclick="clearDOMWatermark()">清除所有水印</button>
+                </div>
+
+                <div class="demo-area" id="domWatermarkArea">
+                    <div class="demo-content">
+                        <h3>DOM水印保护区域</h3>
+                        <p>尝试在开发者工具中删除水印元素，观察自动重建效果</p>
+                        <p>当前时间: <span id="currentTime"></span></p>
+                    </div>
+                </div>
+
+                <div class="status" id="domStatus"></div>
+                <div class="protection-log" id="domLog"></div>
+            </div>
+
+            <!-- Canvas水印防护 -->
+            <div class="demo-section">
+                <h2>🎨 Canvas背景水印</h2>
+                <div class="watermark-info">
+                    <h4>技术原理</h4>
+                    <p>使用Canvas绘制水印图案，转换为base64图片作为背景，通过CSS repeat实现全屏覆盖。难以直接删除，但可以被CSS覆盖。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="createCanvasWatermark()">生成Canvas水印</button>
+                    <button class="btn-success" onclick="regenerateCanvasWatermark()">重新生成</button>
+                    <button class="btn-warning" onclick="clearCanvasWatermark()">清除水印</button>
+                </div>
+
+                <div class="demo-area" id="canvasWatermarkArea">
+                    <div class="demo-content">
+                        <h3>Canvas背景水印区域</h3>
+                        <p>此区域使用Canvas生成的背景水印</p>
+                        <p>水印ID: <span id="canvasWatermarkId"></span></p>
+                    </div>
+                </div>
+
+                <div class="status" id="canvasStatus"></div>
+            </div>
+
+            <!-- SVG水印防护 -->
+            <div class="demo-section">
+                <h2>🔷 SVG矢量水印</h2>
+                <div class="watermark-info">
+                    <h4>技术原理</h4>
+                    <p>使用SVG创建矢量水印，支持复杂图形和动画效果。可以嵌入到background-image中，保持高清晰度。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="createSVGWatermark()">生成SVG水印</button>
+                    <button class="btn-success" onclick="animateSVGWatermark()">添加动画</button>
+                    <button class="btn-warning" onclick="clearSVGWatermark()">清除水印</button>
+                </div>
+
+                <div class="demo-area" id="svgWatermarkArea">
+                    <div class="demo-content">
+                        <h3>SVG矢量水印区域</h3>
+                        <p>矢量图形保证缩放时的清晰度</p>
+                        <p>支持复杂图形和动画效果</p>
+                    </div>
+                </div>
+
+                <div class="status" id="svgStatus"></div>
+            </div>
+
+            <!-- 隐形水印技术 -->
+            <div class="demo-section">
+                <h2>👻 隐形水印技术</h2>
+                <div class="watermark-info">
+                    <h4>技术原理</h4>
+                    <p>通过微调像素值、使用零宽字符或隐藏元素等方式嵌入信息。肉眼不可见，但可通过特定算法检测和提取。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="createStealthWatermark()">嵌入隐形水印</button>
+                    <button class="btn-success" onclick="detectStealthWatermark()">检测隐形水印</button>
+                    <button class="btn-warning" onclick="clearStealthWatermark()">清除水印</button>
+                </div>
+
+                <div class="demo-area" id="stealthWatermarkArea">
+                    <div class="demo-content">
+                        <h3>隐形水印区域</h3>
+                        <p>此区域包含隐藏的水印信息</p>
+                        <p>用户ID: USER_12345 | 时间戳: <span id="stealthTimestamp"></span></p>
+                    </div>
+                </div>
+
+                <div class="status" id="stealthStatus"></div>
+            </div>
+
+            <!-- 攻击模拟 -->
+            <div class="demo-section">
+                <div class="attack-simulation">
+                    <h4>🎯 攻击模拟测试</h4>
+                    <p>模拟各种移除水印的攻击手段，测试防护效果：</p>
+                    <div class="controls" style="margin-top: 15px;">
+                        <button class="btn-danger" onclick="simulateCSSSOverride()">CSS样式覆盖攻击</button>
+                        <button class="btn-danger" onclick="simulateDOMRemoval()">DOM删除攻击</button>
+                        <button class="btn-danger" onclick="simulateEventBlocking()">事件阻断攻击</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let watermarkConfig = {
+            text: 'CONFIDENTIAL',
+            userId: 'USER_12345',
+            timestamp: new Date().getTime()
+        };
+
+        let observers = [];
+        let watermarkElements = [];
+        let protectionEnabled = true;
+
+        // 日志系统
+        function addLog(containerId, message, type = 'info') {
+            const logContainer = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            
+            if (logContainer) {
+                logContainer.textContent += logEntry;
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            console.log(`[Watermark Protection] ${message}`);
+        }
+
+        // 状态显示
+        function showStatus(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = message;
+                element.className = `status ${type}`;
+                element.style.display = 'block';
+                
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // DOM水印相关功能
+        function createDOMWatermark() {
+            const container = document.getElementById('domWatermarkArea');
+            
+            // 清除现有水印
+            clearDOMWatermark();
+            
+            // 创建水印容器
+            const watermarkLayer = document.createElement('div');
+            watermarkLayer.className = 'watermark-dom';
+            watermarkLayer.id = `watermark-${Date.now()}`;
+            
+            // 生成多个水印元素
+            for (let i = 0; i < 20; i++) {
+                const watermarkItem = document.createElement('div');
+                watermarkItem.className = 'watermark-item';
+                watermarkItem.textContent = `${watermarkConfig.text} - ${watermarkConfig.userId}`;
+                
+                // 随机位置
+                watermarkItem.style.left = Math.random() * 80 + '%';
+                watermarkItem.style.top = Math.random() * 80 + '%';
+                
+                watermarkLayer.appendChild(watermarkItem);
+            }
+            
+            container.appendChild(watermarkLayer);
+            watermarkElements.push(watermarkLayer);
+            
+            // 设置MutationObserver监听
+            setupDOMProtection(container);
+            
+            addLog('domLog', 'DOM水印已生成，开始监听保护...');
+            showStatus('domStatus', 'DOM水印生成成功，保护机制已启动', 'success');
+        }
+
+        function setupDOMProtection(container) {
+            const observer = new MutationObserver((mutations) => {
+                if (!protectionEnabled) return;
+                
+                mutations.forEach(mutation => {
+                    // 检查删除的节点
+                    mutation.removedNodes.forEach(node => {
+                        if (node.className && node.className.includes('watermark-dom')) {
+                            addLog('domLog', '⚠️ 检测到水印被删除，自动重建中...');
+                            
+                            // 延迟重建，避免被立即删除
+                            setTimeout(() => {
+                                if (protectionEnabled) {
+                                    createDOMWatermark();
+                                    addLog('domLog', '✅ 水印已重建完成');
+                                }
+                            }, 100);
+                        }
+                    });
+                    
+                    // 检查属性变化
+                    if (mutation.type === 'attributes' && 
+                        mutation.target.className && 
+                        mutation.target.className.includes('watermark-dom')) {
+                        addLog('domLog', '⚠️ 检测到水印属性被修改');
+                        
+                        // 恢复原始属性
+                        mutation.target.style.display = '';
+                        mutation.target.style.visibility = 'visible';
+                        mutation.target.style.opacity = '1';
+                    }
+                });
+            });
+            
+            observer.observe(container, {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['style', 'class']
+            });
+            
+            observers.push(observer);
+        }
+
+        function simulateRemoveWatermark() {
+            const watermarks = document.querySelectorAll('.watermark-dom');
+            if (watermarks.length > 0) {
+                watermarks[0].remove();
+                addLog('domLog', '🎯 模拟删除水印元素...');
+                showStatus('domStatus', '模拟攻击：水印元素被删除', 'error');
+            } else {
+                showStatus('domStatus', '没有找到可删除的水印元素', 'info');
+            }
+        }
+
+        function clearDOMWatermark() {
+            // 停止保护
+            protectionEnabled = false;
+            
+            // 断开所有观察者
+            observers.forEach(observer => observer.disconnect());
+            observers = [];
+            
+            // 删除所有水印元素
+            const watermarks = document.querySelectorAll('.watermark-dom');
+            watermarks.forEach(watermark => watermark.remove());
+            watermarkElements = [];
+            
+            addLog('domLog', '🚫 所有DOM水印已清除，保护机制已停止');
+            showStatus('domStatus', 'DOM水印已清除', 'info');
+            
+            // 重新启用保护
+            setTimeout(() => {
+                protectionEnabled = true;
+            }, 1000);
+        }
+
+        // Canvas水印相关功能
+        function createCanvasWatermark() {
+            const container = document.getElementById('canvasWatermarkArea');
+            const watermarkId = 'watermark-' + Date.now();
+            
+            // 创建Canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = 200;
+            canvas.height = 100;
+            const ctx = canvas.getContext('2d');
+            
+            // 绘制水印
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.font = '16px Arial';
+            ctx.rotate(-20 * Math.PI / 180);
+            ctx.fillText(watermarkConfig.text, 10, 50);
+            ctx.fillText(watermarkConfig.userId, 10, 70);
+            
+            // 设置为背景
+            const dataURL = canvas.toDataURL();
+            container.style.backgroundImage = `url(${dataURL})`;
+            container.style.backgroundRepeat = 'repeat';
+            container.style.backgroundSize = '200px 100px';
+            
+            document.getElementById('canvasWatermarkId').textContent = watermarkId;
+            showStatus('canvasStatus', 'Canvas水印生成成功', 'success');
+        }
+
+        function regenerateCanvasWatermark() {
+            watermarkConfig.timestamp = Date.now();
+            createCanvasWatermark();
+            showStatus('canvasStatus', 'Canvas水印已重新生成', 'success');
+        }
+
+        function clearCanvasWatermark() {
+            const container = document.getElementById('canvasWatermarkArea');
+            container.style.backgroundImage = '';
+            document.getElementById('canvasWatermarkId').textContent = '';
+            showStatus('canvasStatus', 'Canvas水印已清除', 'info');
+        }
+
+        // SVG水印相关功能
+        function createSVGWatermark() {
+            const container = document.getElementById('svgWatermarkArea');
+            
+            const svgString = `
+                <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="watermarkPattern" patternUnits="userSpaceOnUse" width="200" height="100">
+                            <text x="10" y="30" fill="rgba(0,0,0,0.1)" font-size="14" transform="rotate(-20)">
+                                ${watermarkConfig.text}
+                            </text>
+                            <text x="10" y="50" fill="rgba(0,0,0,0.1)" font-size="12" transform="rotate(-20)">
+                                ${watermarkConfig.userId}
+                            </text>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#watermarkPattern)"/>
+                </svg>
+            `;
+            
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+            const svgURL = URL.createObjectURL(svgBlob);
+            
+            container.style.backgroundImage = `url(${svgURL})`;
+            container.style.backgroundRepeat = 'repeat';
+            container.style.backgroundSize = '200px 100px';
+            
+            showStatus('svgStatus', 'SVG水印生成成功', 'success');
+        }
+
+        function animateSVGWatermark() {
+            const container = document.getElementById('svgWatermarkArea');
+            
+            const svgString = `
+                <svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <pattern id="animatedPattern" patternUnits="userSpaceOnUse" width="200" height="100">
+                            <text x="10" y="30" fill="rgba(0,0,0,0.1)" font-size="14" transform="rotate(-20)">
+                                <animateTransform attributeName="transform" type="rotate" 
+                                    values="-20;-15;-20" dur="3s" repeatCount="indefinite"/>
+                                ${watermarkConfig.text}
+                            </text>
+                            <text x="10" y="50" fill="rgba(0,0,0,0.1)" font-size="12" transform="rotate(-20)">
+                                ${watermarkConfig.userId}
+                            </text>
+                        </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill="url(#animatedPattern)"/>
+                </svg>
+            `;
+            
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+            const svgURL = URL.createObjectURL(svgBlob);
+            
+            container.style.backgroundImage = `url(${svgURL})`;
+            
+            showStatus('svgStatus', 'SVG动画水印生成成功', 'success');
+        }
+
+        function clearSVGWatermark() {
+            const container = document.getElementById('svgWatermarkArea');
+            container.style.backgroundImage = '';
+            showStatus('svgStatus', 'SVG水印已清除', 'info');
+        }
+
+        // 隐形水印相关功能
+        function createStealthWatermark() {
+            const container = document.getElementById('stealthWatermarkArea');
+            
+            // 方法1：零宽字符
+            const zeroWidthChars = '\u200B\u200C\u200D\uFEFF';
+            const hiddenText = watermarkConfig.userId.split('').join(zeroWidthChars);
+            
+            // 方法2：隐藏元素
+            const hiddenElement = document.createElement('div');
+            hiddenElement.className = 'stealth-watermark';
+            hiddenElement.textContent = `WATERMARK:${watermarkConfig.userId}:${watermarkConfig.timestamp}`;
+            hiddenElement.setAttribute('data-watermark', 'true');
+            
+            container.appendChild(hiddenElement);
+            
+            // 方法3：在现有文本中插入零宽字符
+            const textElement = container.querySelector('.demo-content p:last-child');
+            if (textElement) {
+                textElement.innerHTML = textElement.innerHTML + hiddenText;
+            }
+            
+            document.getElementById('stealthTimestamp').textContent = new Date().toLocaleTimeString();
+            showStatus('stealthStatus', '隐形水印已嵌入（零宽字符+隐藏元素）', 'success');
+        }
+
+        function detectStealthWatermark() {
+            const container = document.getElementById('stealthWatermarkArea');
+            let detectedInfo = [];
+            
+            // 检测隐藏元素
+            const hiddenElements = container.querySelectorAll('.stealth-watermark');
+            if (hiddenElements.length > 0) {
+                hiddenElements.forEach(el => {
+                    detectedInfo.push(`隐藏元素: ${el.textContent}`);
+                });
+            }
+            
+            // 检测零宽字符（简化版）
+            const textContent = container.textContent;
+            const hasZeroWidth = /[\u200B\u200C\u200D\uFEFF]/.test(textContent);
+            if (hasZeroWidth) {
+                detectedInfo.push('检测到零宽字符水印');
+            }
+            
+            if (detectedInfo.length > 0) {
+                showStatus('stealthStatus', `检测到隐形水印: ${detectedInfo.join(', ')}`, 'info');
+            } else {
+                showStatus('stealthStatus', '未检测到隐形水印', 'error');
+            }
+        }
+
+        function clearStealthWatermark() {
+            const container = document.getElementById('stealthWatermarkArea');
+            const hiddenElements = container.querySelectorAll('.stealth-watermark');
+            hiddenElements.forEach(el => el.remove());
+            
+            // 清理零宽字符（重新设置文本）
+            const textElement = container.querySelector('.demo-content p:last-child');
+            if (textElement) {
+                textElement.innerHTML = `用户ID: USER_12345 | 时间戳: <span id="stealthTimestamp"></span>`;
+            }
+            
+            showStatus('stealthStatus', '隐形水印已清除', 'info');
+        }
+
+        // 攻击模拟
+        function simulateCSSSOverride() {
+            // 尝试用CSS隐藏水印
+            const style = document.createElement('style');
+            style.textContent = `
+                .watermark-dom { display: none !important; }
+                .watermark-item { visibility: hidden !important; }
+            `;
+            document.head.appendChild(style);
+            
+            setTimeout(() => {
+                document.head.removeChild(style);
+            }, 3000);
+            
+            showStatus('domStatus', '模拟CSS覆盖攻击（3秒后恢复）', 'error');
+        }
+
+        function simulateDOMRemoval() {
+            const watermarks = document.querySelectorAll('.watermark-dom, .stealth-watermark');
+            watermarks.forEach(el => el.remove());
+            showStatus('domStatus', '模拟DOM删除攻击', 'error');
+        }
+
+        function simulateEventBlocking() {
+            // 临时禁用保护
+            const originalEnabled = protectionEnabled;
+            protectionEnabled = false;
+            
+            setTimeout(() => {
+                protectionEnabled = originalEnabled;
+            }, 5000);
+            
+            showStatus('domStatus', '模拟事件阻断攻击（5秒后恢复保护）', 'error');
+        }
+
+        // 初始化
+        function init() {
+            // 更新时间显示
+            function updateTime() {
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.textContent = new Date().toLocaleTimeString();
+                }
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 添加初始日志
+            addLog('domLog', '水印防护系统已初始化');
+            addLog('domLog', '支持的防护技术: DOM监听、Canvas背景、SVG矢量、隐形水印');
+            addLog('domLog', '请点击按钮开始测试...');
+            
+            console.log('🛡️ 水印防护系统已就绪');
+        }
+
+        // 页面加载后初始化
+        window.addEventListener('load', init);
+        
+        // 页面卸载前清理
+        window.addEventListener('beforeunload', () => {
+            observers.forEach(observer => observer.disconnect());
+        });
+    </script>
+</body>
+</html>

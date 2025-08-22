@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>富文本划词功能演示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .demo-section h2 {
+            color: #444;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1e7e34;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .editor-area {
+            min-height: 300px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.8;
+            position: relative;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+        }
+
+        .editor-area.contenteditable {
+            outline: none;
+        }
+
+        .editor-area:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .status-panel {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .selection-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .selection-info h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .italic {
+            font-style: italic;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        /* 自定义右键菜单样式 */
+        .context-menu {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 150px;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .context-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .context-menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .context-menu-item.disabled {
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .context-menu-item.disabled:hover {
+            background: transparent;
+        }
+
+        .selection-toolbar {
+            position: absolute;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            padding: 8px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .selection-toolbar button {
+            padding: 6px 10px;
+            margin: 0 2px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .selection-toolbar button:hover {
+            background: #f5f5f5;
+        }
+
+        .api-demo {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .api-demo h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 富文本划词功能</h1>
+            <p>Selection API、Range API 与自定义文本操作</p>
+        </div>
+
+        <div class="content">
+            <!-- 基础划词检测 -->
+            <div class="demo-section">
+                <h2>🎯 基础划词检测</h2>
+                <div class="selection-info">
+                    <h4>Selection API 核心概念</h4>
+                    <p>Selection API 允许我们获取用户选中的文本范围，包括起始位置、结束位置、选中的内容等。Range API 则提供了更精细的文本范围操作能力。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="enableBasicSelection()">启用基础划词监听</button>
+                    <button class="btn-warning" onclick="clearSelection()">清除选择</button>
+                    <button class="btn-success" onclick="selectAllText()">全选文本</button>
+                </div>
+
+                <div class="editor-area" id="basicEditor">
+                    <h3>请在此区域选择文本进行测试</h3>
+                    <p>这是一段演示文本，您可以用鼠标拖拽来选择其中的任意部分。Selection API 会实时捕获您的选择操作，并显示相关信息。</p>
+                    <p>支持的功能包括：获取选中文本、获取选择范围、计算选择位置、检测选择方向等。尝试选择不同的文本段落，观察下方状态面板中的实时信息变化。</p>
+                    <p><strong>技术要点：</strong>通过监听 mouseup 和 selectionchange 事件来捕获用户的文本选择操作。</p>
+                </div>
+
+                <div class="status-panel" id="basicStatus">
+                    [等待启用基础划词监听...]
+                </div>
+            </div>
+
+            <!-- 高级划词操作 -->
+            <div class="demo-section">
+                <h2>⚡ 高级划词操作</h2>
+                <div class="selection-info">
+                    <h4>Range API 与文本操作</h4>
+                    <p>Range API 提供了对文本范围的精确控制，支持插入、删除、提取、克隆等操作。结合 Selection API 可以实现复杂的文本编辑功能。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="enableAdvancedSelection()">启用高级划词</button>
+                    <button class="btn-success" onclick="highlightSelection()">高亮选中文本</button>
+                    <button class="btn-success" onclick="wrapSelection('bold')">加粗</button>
+                    <button class="btn-success" onclick="wrapSelection('italic')">斜体</button>
+                    <button class="btn-success" onclick="wrapSelection('underline')">下划线</button>
+                    <button class="btn-danger" onclick="deleteSelection()">删除选中</button>
+                    <button class="btn-warning" onclick="clearAllFormatting()">清除格式</button>
+                </div>
+
+                <div class="editor-area" contenteditable="true" id="advancedEditor">
+                    <h3>可编辑的富文本区域</h3>
+                    <p>这是一个支持编辑的文本区域。您可以选择文本后使用上方的按钮来应用各种格式。</p>
+                    <p>支持的操作包括：<span class="highlight">高亮显示</span>、<strong>加粗文本</strong>、<em>斜体文本</em>、<u>下划线文本</u>等。</p>
+                    <p>尝试选择一些文本，然后点击上方的格式按钮来应用样式。您也可以直接在此区域输入新的内容。</p>
+                </div>
+
+                <div class="status-panel" id="advancedStatus">
+                    [等待启用高级划词功能...]
+                </div>
+            </div>
+
+            <!-- 自定义右键菜单 -->
+            <div class="demo-section">
+                <h2>🖱️ 自定义右键菜单</h2>
+                <div class="selection-info">
+                    <h4>contextmenu 事件与自定义菜单</h4>
+                    <p>通过监听 contextmenu 事件并结合 Selection API，可以在用户右键点击选中文本时显示自定义菜单，提供丰富的文本操作选项。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="enableContextMenu()">启用右键菜单</button>
+                    <button class="btn-warning" onclick="disableContextMenu()">禁用右键菜单</button>
+                </div>
+
+                <div class="editor-area" contenteditable="true" id="contextMenuEditor">
+                    <h3>右键菜单演示区域</h3>
+                    <p>在此区域选择文本后点击右键，将显示自定义菜单而不是浏览器默认菜单。</p>
+                    <p>菜单选项包括：复制、剪切、粘贴、格式化、搜索等功能。每个菜单项都会根据当前选择状态动态启用或禁用。</p>
+                    <p>这种技术广泛应用于在线文档编辑器、代码编辑器、富文本编辑器等场景中。</p>
+                </div>
+
+                <div class="status-panel" id="contextMenuStatus">
+                    [等待启用右键菜单功能...]
+                </div>
+            </div>
+
+            <!-- Selection Toolbar -->
+            <div class="demo-section">
+                <h2>🛠️ 浮动工具栏</h2>
+                <div class="selection-info">
+                    <h4>动态定位与工具栏</h4>
+                    <p>根据选中文本的位置动态显示浮动工具栏，提供快速的文本操作入口。需要计算选择范围的位置并动态调整工具栏位置。</p>
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="enableSelectionToolbar()">启用浮动工具栏</button>
+                    <button class="btn-warning" onclick="disableSelectionToolbar()">禁用工具栏</button>
+                </div>
+
+                <div class="editor-area" contenteditable="true" id="toolbarEditor">
+                    <h3>浮动工具栏演示</h3>
+                    <p>选择此区域中的文本时，会在选择位置附近显示浮动工具栏。</p>
+                    <p>工具栏会自动计算最佳显示位置，避免超出视窗边界。点击工具栏按钮可以快速应用格式。</p>
+                    <p>这种交互方式提供了更直观的用户体验，类似于 Google Docs、Notion 等现代编辑器的设计。</p>
+                </div>
+
+                <div class="status-panel" id="toolbarStatus">
+                    [等待启用浮动工具栏...]
+                </div>
+            </div>
+
+            <!-- API 演示 -->
+            <div class="demo-section">
+                <div class="api-demo">
+                    <h4>🔧 相关 API 方法演示</h4>
+                    <div class="controls">
+                        <button class="btn-primary" onclick="showSelectionAPI()">Selection API 方法</button>
+                        <button class="btn-primary" onclick="showRangeAPI()">Range API 方法</button>
+                        <button class="btn-primary" onclick="showDocumentAPI()">Document API 方法</button>
+                    </div>
+                </div>
+
+                <div class="status-panel" id="apiStatus">
+                    [点击上方按钮查看相关 API 的详细信息...]
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自定义右键菜单 -->
+    <div class="context-menu" id="customContextMenu">
+        <div class="context-menu-item" onclick="handleMenuAction('copy')">
+            📋 复制
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('cut')">
+            ✂️ 剪切
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('paste')">
+            📄 粘贴
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('bold')">
+            <strong>B</strong> 加粗
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('italic')">
+            <em>I</em> 斜体
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('underline')">
+            <u>U</u> 下划线
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('highlight')">
+            🌟 高亮
+        </div>
+        <div class="context-menu-item" onclick="handleMenuAction('search')">
+            🔍 搜索
+        </div>
+    </div>
+
+    <!-- 浮动工具栏 -->
+    <div class="selection-toolbar" id="selectionToolbar">
+        <button onclick="applyFormat('bold')"><strong>B</strong></button>
+        <button onclick="applyFormat('italic')"><em>I</em></button>
+        <button onclick="applyFormat('underline')"><u>U</u></button>
+        <button onclick="applyFormat('highlight')">🌟</button>
+        <button onclick="applyFormat('copy')">📋</button>
+        <button onclick="applyFormat('delete')">🗑️</button>
+    </div>
+
+    <script>
+        // 全局变量
+        let isBasicSelectionEnabled = false;
+        let isAdvancedSelectionEnabled = false;
+        let isContextMenuEnabled = false;
+        let isSelectionToolbarEnabled = false;
+        let currentSelection = null;
+        let currentRange = null;
+
+        // 日志系统
+        function addLog(containerId, message, type = 'info') {
+            const logContainer = document.getElementById(containerId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}\n`;
+            
+            if (logContainer) {
+                logContainer.textContent += logEntry;
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }
+            
+            console.log(`[Selection API] ${message}`);
+        }
+
+        // 获取选择信息
+        function getSelectionInfo() {
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) {
+                return null;
+            }
+
+            const range = selection.getRangeAt(0);
+            const selectedText = selection.toString();
+            
+            return {
+                selection,
+                range,
+                selectedText,
+                anchorNode: selection.anchorNode,
+                focusNode: selection.focusNode,
+                anchorOffset: selection.anchorOffset,
+                focusOffset: selection.focusOffset,
+                isCollapsed: selection.isCollapsed,
+                rangeCount: selection.rangeCount,
+                type: selection.type
+            };
+        }
+
+        // 基础划词功能
+        function enableBasicSelection() {
+            if (isBasicSelectionEnabled) {
+                addLog('basicStatus', '基础划词监听已启用');
+                return;
+            }
+
+            const editor = document.getElementById('basicEditor');
+            
+            // 监听鼠标抬起事件
+            editor.addEventListener('mouseup', handleBasicSelection);
+            
+            // 监听键盘选择
+            editor.addEventListener('keyup', handleBasicSelection);
+            
+            // 监听选择变化（现代浏览器支持）
+            if ('onselectionchange' in document) {
+                document.addEventListener('selectionchange', handleSelectionChange);
+            }
+
+            isBasicSelectionEnabled = true;
+            addLog('basicStatus', '✅ 基础划词监听已启用');
+            addLog('basicStatus', '请在编辑区域选择文本来测试功能...');
+        }
+
+        function handleBasicSelection(event) {
+            const info = getSelectionInfo();
+            
+            if (info && info.selectedText.trim()) {
+                addLog('basicStatus', `📝 选中文本: "${info.selectedText}"`);
+                addLog('basicStatus', `📍 起始位置: ${info.anchorOffset}, 结束位置: ${info.focusOffset}`);
+                addLog('basicStatus', `📊 选择类型: ${info.type}, 范围数量: ${info.rangeCount}`);
+                addLog('basicStatus', `🎯 是否折叠: ${info.isCollapsed ? '是' : '否'}`);
+                
+                // 分析选择方向
+                const isBackward = info.anchorNode === info.focusNode && 
+                                   info.anchorOffset > info.focusOffset;
+                addLog('basicStatus', `⬅️ 选择方向: ${isBackward ? '向后' : '向前'}`);
+                
+                currentSelection = info.selection;
+                currentRange = info.range;
+            }
+        }
+
+        function handleSelectionChange() {
+            if (!isBasicSelectionEnabled) return;
+            
+            const info = getSelectionInfo();
+            if (info && info.selectedText.trim()) {
+                addLog('basicStatus', `🔄 选择变化: "${info.selectedText}"`);
+            }
+        }
+
+        // 清除选择
+        function clearSelection() {
+            const selection = window.getSelection();
+            if (selection) {
+                selection.removeAllRanges();
+                addLog('basicStatus', '🧹 选择已清除');
+            }
+        }
+
+        // 全选文本
+        function selectAllText() {
+            const editor = document.getElementById('basicEditor');
+            const range = document.createRange();
+            range.selectNodeContents(editor);
+            
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            addLog('basicStatus', '📖 已全选编辑区域文本');
+        }
+
+        // 高级划词功能
+        function enableAdvancedSelection() {
+            if (isAdvancedSelectionEnabled) {
+                addLog('advancedStatus', '高级划词功能已启用');
+                return;
+            }
+
+            const editor = document.getElementById('advancedEditor');
+            
+            editor.addEventListener('mouseup', handleAdvancedSelection);
+            editor.addEventListener('keyup', handleAdvancedSelection);
+
+            isAdvancedSelectionEnabled = true;
+            addLog('advancedStatus', '✅ 高级划词功能已启用');
+            addLog('advancedStatus', '可以选择文本并使用格式化按钮...');
+        }
+
+        function handleAdvancedSelection(event) {
+            const info = getSelectionInfo();
+            
+            if (info && info.selectedText.trim()) {
+                addLog('advancedStatus', `✨ 选中文本: "${info.selectedText}"`);
+                addLog('advancedStatus', `🎨 可以应用格式: 高亮、加粗、斜体、下划线`);
+                
+                currentSelection = info.selection;
+                currentRange = info.range;
+            }
+        }
+
+        // 高亮选中文本
+        function highlightSelection() {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                addLog('advancedStatus', '❌ 请先选择要高亮的文本');
+                return;
+            }
+
+            try {
+                const span = document.createElement('span');
+                span.className = 'highlight';
+                
+                currentRange.surroundContents(span);
+                
+                addLog('advancedStatus', '🌟 文本已高亮');
+                clearSelection();
+            } catch (error) {
+                addLog('advancedStatus', `❌ 高亮失败: ${error.message}`);
+            }
+        }
+
+        // 包装选中文本
+        function wrapSelection(format) {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                addLog('advancedStatus', `❌ 请先选择要应用${format}格式的文本`);
+                return;
+            }
+
+            try {
+                const span = document.createElement('span');
+                span.className = format;
+                
+                currentRange.surroundContents(span);
+                
+                addLog('advancedStatus', `✅ 已应用${format}格式`);
+                clearSelection();
+            } catch (error) {
+                addLog('advancedStatus', `❌ 格式应用失败: ${error.message}`);
+            }
+        }
+
+        // 删除选中文本
+        function deleteSelection() {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                addLog('advancedStatus', '❌ 请先选择要删除的文本');
+                return;
+            }
+
+            currentRange.deleteContents();
+            addLog('advancedStatus', '🗑️ 选中文本已删除');
+            clearSelection();
+        }
+
+        // 清除所有格式
+        function clearAllFormatting() {
+            const editor = document.getElementById('advancedEditor');
+            const formattedElements = editor.querySelectorAll('.highlight, .bold, .italic, .underline');
+            
+            formattedElements.forEach(element => {
+                const parent = element.parentNode;
+                while (element.firstChild) {
+                    parent.insertBefore(element.firstChild, element);
+                }
+                parent.removeChild(element);
+            });
+            
+            addLog('advancedStatus', '🧹 所有格式已清除');
+        }
+
+        // 右键菜单功能
+        function enableContextMenu() {
+            if (isContextMenuEnabled) {
+                addLog('contextMenuStatus', '右键菜单已启用');
+                return;
+            }
+
+            const editor = document.getElementById('contextMenuEditor');
+            const contextMenu = document.getElementById('customContextMenu');
+            
+            editor.addEventListener('contextmenu', handleContextMenu);
+            document.addEventListener('click', hideContextMenu);
+            document.addEventListener('scroll', hideContextMenu);
+
+            isContextMenuEnabled = true;
+            addLog('contextMenuStatus', '✅ 自定义右键菜单已启用');
+            addLog('contextMenuStatus', '在编辑区域选择文本后右键点击...');
+        }
+
+        function disableContextMenu() {
+            const editor = document.getElementById('contextMenuEditor');
+            editor.removeEventListener('contextmenu', handleContextMenu);
+            document.removeEventListener('click', hideContextMenu);
+            document.removeEventListener('scroll', hideContextMenu);
+
+            hideContextMenu();
+            isContextMenuEnabled = false;
+            addLog('contextMenuStatus', '🚫 右键菜单已禁用');
+        }
+
+        function handleContextMenu(event) {
+            event.preventDefault();
+            
+            const info = getSelectionInfo();
+            const contextMenu = document.getElementById('customContextMenu');
+            
+            // 设置菜单位置
+            contextMenu.style.left = event.pageX + 'px';
+            contextMenu.style.top = event.pageY + 'px';
+            contextMenu.style.display = 'block';
+            
+            // 根据选择状态更新菜单项
+            updateContextMenuItems(info);
+            
+            if (info && info.selectedText.trim()) {
+                addLog('contextMenuStatus', `📋 显示右键菜单: "${info.selectedText}"`);
+                currentSelection = info.selection;
+                currentRange = info.range;
+            } else {
+                addLog('contextMenuStatus', '📋 显示右键菜单 (无选择)');
+            }
+        }
+
+        function updateContextMenuItems(info) {
+            const menuItems = document.querySelectorAll('.context-menu-item');
+            const hasSelection = info && info.selectedText.trim();
+            
+            menuItems.forEach(item => {
+                const action = item.onclick.toString().match(/handleMenuAction\('(\w+)'\)/);
+                if (action) {
+                    const actionType = action[1];
+                    
+                    if (['copy', 'cut', 'bold', 'italic', 'underline', 'highlight', 'search'].includes(actionType)) {
+                        item.classList.toggle('disabled', !hasSelection);
+                    }
+                }
+            });
+        }
+
+        function hideContextMenu() {
+            const contextMenu = document.getElementById('customContextMenu');
+            contextMenu.style.display = 'none';
+        }
+
+        function handleMenuAction(action) {
+            hideContextMenu();
+            
+            switch (action) {
+                case 'copy':
+                    if (currentSelection && !currentSelection.isCollapsed) {
+                        navigator.clipboard.writeText(currentSelection.toString());
+                        addLog('contextMenuStatus', '📋 文本已复制到剪贴板');
+                    }
+                    break;
+                case 'cut':
+                    if (currentRange && !currentSelection.isCollapsed) {
+                        navigator.clipboard.writeText(currentSelection.toString());
+                        currentRange.deleteContents();
+                        addLog('contextMenuStatus', '✂️ 文本已剪切');
+                    }
+                    break;
+                case 'paste':
+                    navigator.clipboard.readText().then(text => {
+                        if (currentRange) {
+                            currentRange.deleteContents();
+                            currentRange.insertNode(document.createTextNode(text));
+                            addLog('contextMenuStatus', '📄 文本已粘贴');
+                        }
+                    }).catch(() => {
+                        addLog('contextMenuStatus', '❌ 粘贴失败 (权限不足)');
+                    });
+                    break;
+                case 'bold':
+                case 'italic':
+                case 'underline':
+                    wrapSelectionInContextMenu(action);
+                    break;
+                case 'highlight':
+                    highlightSelectionInContextMenu();
+                    break;
+                case 'search':
+                    if (currentSelection && !currentSelection.isCollapsed) {
+                        const query = encodeURIComponent(currentSelection.toString());
+                        window.open(`https://www.google.com/search?q=${query}`, '_blank');
+                        addLog('contextMenuStatus', '🔍 已在新窗口中搜索选中文本');
+                    }
+                    break;
+            }
+        }
+
+        function wrapSelectionInContextMenu(format) {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                return;
+            }
+
+            try {
+                const span = document.createElement('span');
+                span.className = format;
+                currentRange.surroundContents(span);
+                addLog('contextMenuStatus', `✅ 已应用${format}格式`);
+            } catch (error) {
+                addLog('contextMenuStatus', `❌ 格式应用失败: ${error.message}`);
+            }
+        }
+
+        function highlightSelectionInContextMenu() {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                return;
+            }
+
+            try {
+                const span = document.createElement('span');
+                span.className = 'highlight';
+                currentRange.surroundContents(span);
+                addLog('contextMenuStatus', '🌟 文本已高亮');
+            } catch (error) {
+                addLog('contextMenuStatus', `❌ 高亮失败: ${error.message}`);
+            }
+        }
+
+        // 浮动工具栏功能
+        function enableSelectionToolbar() {
+            if (isSelectionToolbarEnabled) {
+                addLog('toolbarStatus', '浮动工具栏已启用');
+                return;
+            }
+
+            const editor = document.getElementById('toolbarEditor');
+            
+            editor.addEventListener('mouseup', handleSelectionToolbar);
+            editor.addEventListener('keyup', handleSelectionToolbar);
+            document.addEventListener('click', hideSelectionToolbar);
+
+            isSelectionToolbarEnabled = true;
+            addLog('toolbarStatus', '✅ 浮动工具栏已启用');
+            addLog('toolbarStatus', '选择文本时将显示浮动工具栏...');
+        }
+
+        function disableSelectionToolbar() {
+            const editor = document.getElementById('toolbarEditor');
+            editor.removeEventListener('mouseup', handleSelectionToolbar);
+            editor.removeEventListener('keyup', handleSelectionToolbar);
+            document.removeEventListener('click', hideSelectionToolbar);
+
+            hideSelectionToolbar();
+            isSelectionToolbarEnabled = false;
+            addLog('toolbarStatus', '🚫 浮动工具栏已禁用');
+        }
+
+        function handleSelectionToolbar(event) {
+            const info = getSelectionInfo();
+            const toolbar = document.getElementById('selectionToolbar');
+            
+            if (info && info.selectedText.trim()) {
+                // 计算工具栏位置
+                const rect = info.range.getBoundingClientRect();
+                const toolbarWidth = 200; // 估算工具栏宽度
+                const toolbarHeight = 40; // 估算工具栏高度
+                
+                let left = rect.left + (rect.width / 2) - (toolbarWidth / 2);
+                let top = rect.top - toolbarHeight - 10;
+                
+                // 边界检测
+                if (left < 10) left = 10;
+                if (left + toolbarWidth > window.innerWidth - 10) {
+                    left = window.innerWidth - toolbarWidth - 10;
+                }
+                if (top < 10) {
+                    top = rect.bottom + 10; // 显示在选择区域下方
+                }
+                
+                toolbar.style.left = left + window.scrollX + 'px';
+                toolbar.style.top = top + window.scrollY + 'px';
+                toolbar.style.display = 'block';
+                
+                addLog('toolbarStatus', `🛠️ 工具栏已显示: "${info.selectedText}"`);
+                currentSelection = info.selection;
+                currentRange = info.range;
+            } else {
+                hideSelectionToolbar();
+            }
+        }
+
+        function hideSelectionToolbar() {
+            const toolbar = document.getElementById('selectionToolbar');
+            toolbar.style.display = 'none';
+        }
+
+        function applyFormat(format) {
+            if (!currentSelection || !currentRange || currentSelection.isCollapsed) {
+                return;
+            }
+
+            switch (format) {
+                case 'bold':
+                case 'italic':
+                case 'underline':
+                    try {
+                        const span = document.createElement('span');
+                        span.className = format;
+                        currentRange.surroundContents(span);
+                        addLog('toolbarStatus', `✅ 已应用${format}格式`);
+                    } catch (error) {
+                        addLog('toolbarStatus', `❌ 格式应用失败: ${error.message}`);
+                    }
+                    break;
+                case 'highlight':
+                    try {
+                        const span = document.createElement('span');
+                        span.className = 'highlight';
+                        currentRange.surroundContents(span);
+                        addLog('toolbarStatus', '🌟 文本已高亮');
+                    } catch (error) {
+                        addLog('toolbarStatus', `❌ 高亮失败: ${error.message}`);
+                    }
+                    break;
+                case 'copy':
+                    navigator.clipboard.writeText(currentSelection.toString());
+                    addLog('toolbarStatus', '📋 文本已复制');
+                    break;
+                case 'delete':
+                    currentRange.deleteContents();
+                    addLog('toolbarStatus', '🗑️ 文本已删除');
+                    break;
+            }
+            
+            hideSelectionToolbar();
+            clearSelection();
+        }
+
+        // API 演示功能
+        function showSelectionAPI() {
+            addLog('apiStatus', '📚 Selection API 主要方法:');
+            addLog('apiStatus', '• window.getSelection() - 获取当前选择对象');
+            addLog('apiStatus', '• selection.toString() - 获取选中的文本内容');
+            addLog('apiStatus', '• selection.getRangeAt(index) - 获取指定索引的范围');
+            addLog('apiStatus', '• selection.addRange(range) - 添加范围到选择');
+            addLog('apiStatus', '• selection.removeRange(range) - 从选择中移除范围');
+            addLog('apiStatus', '• selection.removeAllRanges() - 清除所有选择');
+            addLog('apiStatus', '• selection.collapse(node, offset) - 将选择折叠到指定位置');
+            addLog('apiStatus', '• selection.extend(node, offset) - 扩展选择到指定位置');
+            addLog('apiStatus', '• selection.selectAllChildren(node) - 选择节点的所有子内容');
+        }
+
+        function showRangeAPI() {
+            addLog('apiStatus', '📚 Range API 主要方法:');
+            addLog('apiStatus', '• document.createRange() - 创建新的范围对象');
+            addLog('apiStatus', '• range.setStart(node, offset) - 设置范围起始位置');
+            addLog('apiStatus', '• range.setEnd(node, offset) - 设置范围结束位置');
+            addLog('apiStatus', '• range.selectNode(node) - 选择整个节点');
+            addLog('apiStatus', '• range.selectNodeContents(node) - 选择节点内容');
+            addLog('apiStatus', '• range.insertNode(node) - 在范围起始位置插入节点');
+            addLog('apiStatus', '• range.deleteContents() - 删除范围内容');
+            addLog('apiStatus', '• range.extractContents() - 提取范围内容');
+            addLog('apiStatus', '• range.cloneContents() - 克隆范围内容');
+            addLog('apiStatus', '• range.surroundContents(node) - 用节点包围范围内容');
+        }
+
+        function showDocumentAPI() {
+            addLog('apiStatus', '📚 Document API 相关方法:');
+            addLog('apiStatus', '• document.execCommand() - 执行编辑命令 (已废弃)');
+            addLog('apiStatus', '• document.queryCommandState() - 查询命令状态');
+            addLog('apiStatus', '• document.queryCommandValue() - 查询命令值');
+            addLog('apiStatus', '• document.createTextNode() - 创建文本节点');
+            addLog('apiStatus', '• document.createElement() - 创建元素节点');
+            addLog('apiStatus', '• element.contentEditable - 设置元素可编辑');
+            addLog('apiStatus', '• 事件: selectionchange, beforeinput, input');
+        }
+
+        // 初始化
+        function init() {
+            addLog('basicStatus', '🚀 富文本划词功能演示已初始化');
+            addLog('basicStatus', '支持的功能: 基础划词、高级操作、右键菜单、浮动工具栏');
+            
+            console.log('📝 富文本划词功能演示已就绪');
+        }
+
+        // 页面加载后初始化
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
