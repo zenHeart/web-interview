@@ -1,0 +1,12 @@
+<div style="font:14px/1.6 -apple-system,Segoe UI,Arial;">
+  <h3>QPS 峰值应对要点</h3>
+  <ul>
+    <li>缓存分层：浏览器/Service Worker → 边缘/CDN → 服务端</li>
+    <li>热点保护：预热、短 TTL + 秒级更新、单飞地</li>
+    <li>限流与降级：令牌桶/漏桶、快速失败、静态页兜底</li>
+    <li>异步削峰：队列缓冲、批处理、幂等消费</li>
+    <li>重试退避：指数退避 + 抖动，避免惊群</li>
+  </ul>
+</div>
+
+

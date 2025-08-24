@@ -1,5 +1,5 @@
 
-## 如何从 0 到 1 搭建前端基建 {#p1-base-constructure}
+# 如何从 0 到 1 搭建前端基建 {#p1-base-constructure}
 
 如何从 0 到 1 搭建前端基建
 

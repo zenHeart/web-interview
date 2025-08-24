@@ -63,7 +63,7 @@ export default {
     'algorithm',
     'typescript',
     'os',
-    'architecture',
+    'system-design',
     'nodejs',
     'paradigm',
     'interview',

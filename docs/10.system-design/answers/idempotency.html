@@ -1,0 +1,10 @@
+<h3>幂等键与写入顺序</h3>
+<ol>
+  <li>生成 requestId（客户端/网关）</li>
+  <li>去重表 upsert(requestId, ttl, status=pending)</li>
+  <li>执行业务写（含版本号/条件更新）</li>
+  <li>更新去重表 status=success（或错误码）</li>
+  <li>重复请求命中去重表直接返回结果</li>
+</ol>
+
+

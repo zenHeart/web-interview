@@ -1,0 +1,22 @@
+<!doctype html>
+<meta charset="utf-8"/>
+<h3>Service Worker 预缓存示例（最小化）</h3>
+<button id="reg">注册 SW 并预缓存</button>
+<pre id="log"></pre>
+<script>
+const log = (m)=>document.querySelector('#log').textContent += m + "\n";
+document.querySelector('#reg').onclick = async () => {
+  if (!('serviceWorker' in navigator)) return log('不支持 SW');
+  const reg = await navigator.serviceWorker.register(URL.createObjectURL(new Blob([
+    `self.addEventListener('install', e => {
+       e.waitUntil(caches.open('v1').then(c => c.addAll(['/index.html'])));
+     });
+     self.addEventListener('fetch', e => {
+       e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+     });`
+  ], { type: 'text/javascript' })));
+  log('SW 已注册: ' + (reg.scope || 'inline'));
+}
+</script>
+
+
