@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["DOM", "ES2020"],
+    "moduleResolution": "node",
+    
+    "outDir": "./dist",
+    "rootDir": "./src", 
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@utils/*": ["src/utils/*"]
+    },
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "types": ["node", "jest"],
+    
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    
+    "skipLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./.tsbuildinfo"
+  },
+  
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "dist"
+  ],
+  
+  "compileOnSave": true
+}
