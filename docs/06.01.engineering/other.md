@@ -1,6 +1,8 @@
 # 杂项
 
-## seo {#p0-seo}
+## SEO 技术优化策略有哪些？ {#p0-seo}
+
+<Answer>
 
 深度 SEO 优化涉及到一些技术层面的优化策略，以下是一些常见的方式：
 
@@ -24,9 +26,19 @@
 
 10. 移动友好性：优化网站在移动设备上的显示和用户体验，确保网站具备响应式设计或移动版网站，以及快速加载和友好的操作性。
 
-这些是深度 SEO 优化的一些常见技术层面的策略，通过综合运用这些策略，可以提升网站的搜索引擎可见性和排名。需要根据具体情况和搜索引擎的最佳
+这些是深度 SEO 优化的一些常见技术层面的策略，通过综合运用这些策略，可以提升网站的搜索引擎可见性和排名。需要根据具体情况和搜索引擎的最佳实践来选择合适的优化方案。
+
+**延伸阅读**
+
+- [Google SEO 入门指南](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
+- [Web.dev SEO 最佳实践](https://web.dev/lighthouse-seo/)
+- [Schema.org 结构化数据](https://schema.org/)
+
+</Answer>
 
 ## eslint 该如何配置 {#p2-eslint-config}
+
+<Answer>
 
 在前端项目中，配置 ESLint 可以帮助你保持代码风格的一致性和提高代码质量。以下是配置 ESLint 的一般步骤：
 
@@ -35,20 +47,20 @@
 1. 首先，确保你已经安装了 Node.js 和 npm（或 yarn）。
 2. 在项目目录中，使用以下命令安装 ESLint：
 
-* 使用 npm：`npm install eslint --save-dev`
-* 使用 yarn：`yarn add eslint --dev`
+- 使用 npm：`npm install eslint --save-dev`
+- 使用 yarn：`yarn add eslint --dev`
 
 **二、初始化 ESLint 配置**
 
 1. 在项目根目录下，运行以下命令来初始化 ESLint 配置：
 
-* `npx eslint --init`
+- `npx eslint --init`
 
  这个命令会引导你通过一系列问题来生成一个基本的 ESLint 配置文件。你可以根据项目的需求选择不同的选项，例如：
 
-* 选择编程语言（JavaScript、TypeScript 等）。
-* 选择代码运行的环境（浏览器、Node.js 等）。
-* 选择风格指南（例如，Airbnb、Standard 等）。
+- 选择编程语言（JavaScript、TypeScript 等）。
+- 选择代码运行的环境（浏览器、Node.js 等）。
+- 选择风格指南（例如，Airbnb、Standard 等）。
 
 2. 回答完问题后，ESLint 会在项目根目录下生成一个`.eslintrc.*`文件（可能是`.eslintrc.js`、`.eslintrc.json`或`.eslintrc.yaml`等，具体取决于你的选择）。
 
@@ -56,8 +68,8 @@
 
 1. **解析器（Parser）**：
 
-* 根据你使用的编程语言，可能需要指定一个解析器。例如，对于 TypeScript 项目，你可以使用`@TypeScript-eslint/parser`。
-* 在`.eslintrc.*`文件中，可以这样配置：
+- 根据你使用的编程语言，可能需要指定一个解析器。例如，对于 TypeScript 项目，你可以使用`@TypeScript-eslint/parser`。
+- 在`.eslintrc.*`文件中，可以这样配置：
 
  ```js
  module.exports = {
@@ -67,8 +79,8 @@
 
 2. **插件（Plugins）**：
 
-* ESLint 插件可以提供额外的规则和功能。例如，`@TypeScript-eslint/eslint-plugin`是用于 TypeScript 的插件。
-* 配置插件如下：
+- ESLint 插件可以提供额外的规则和功能。例如，`@TypeScript-eslint/eslint-plugin`是用于 TypeScript 的插件。
+- 配置插件如下：
 
  ```js
  module.exports = {
@@ -78,8 +90,8 @@
 
 3. **规则（Rules）**：
 
-* 规则用于定义代码的风格和质量要求。每个规则都有一个可配置的选项，可以设置为`off`（关闭规则）、`warn`（警告）或`error`（错误）。
-* 例如，以下配置禁止使用未声明的变量，并要求使用分号：
+- 规则用于定义代码的风格和质量要求。每个规则都有一个可配置的选项，可以设置为`off`（关闭规则）、`warn`（警告）或`error`（错误）。
+- 例如，以下配置禁止使用未声明的变量，并要求使用分号：
 
  ```js
  module.exports = {
@@ -92,8 +104,8 @@
 
 4. **环境（Environments）**：
 
-* 指定代码运行的环境，以便 ESLint 可以正确地识别全局变量和内置模块。
-* 例如，如果你的代码在浏览器中运行，可以配置`browser`环境：
+- 指定代码运行的环境，以便 ESLint 可以正确地识别全局变量和内置模块。
+- 例如，如果你的代码在浏览器中运行，可以配置`browser`环境：
 
  ```js
  module.exports = {
@@ -107,20 +119,29 @@
 
 1. **命令行使用**：
 
-* 可以在命令行中使用`eslint`命令来检查项目中的文件。例如：
-* `npx eslint.`将检查当前目录下的所有文件。
+- 可以在命令行中使用`eslint`命令来检查项目中的文件。例如：
+- `npx eslint.`将检查当前目录下的所有文件。
 
 2. **集成到编辑器**：
 
-* 许多代码编辑器都有 ESLint 插件，可以在编辑代码时实时显示错误和警告。
-* 配置编辑器的 ESLint 插件，使其使用项目中的`.eslintrc.*`文件进行代码检查。
+- 许多代码编辑器都有 ESLint 插件，可以在编辑代码时实时显示错误和警告。
+- 配置编辑器的 ESLint 插件，使其使用项目中的`.eslintrc.*`文件进行代码检查。
 
 3. **集成到构建工具**：
 
-* 可以将 ESLint 集成到构建工具（如 Webpack、Gulp 等）中，以便在构建过程中自动检查代码。
-* 例如，对于 Webpack，可以使用`eslint-webpack-plugin`插件来集成 ESLint。
+- 可以将 ESLint 集成到构建工具（如 Webpack、Gulp 等）中，以便在构建过程中自动检查代码。
+- 例如，对于 Webpack，可以使用`eslint-webpack-plugin`插件来集成 ESLint。
+
+**延伸阅读**
+
+- [ESLint 官方配置指南](https://eslint.org/docs/user-guide/configuring/)
+- [ESLint 与 Prettier 集成](https://prettier.io/docs/en/integrating-with-linters.html)
+
+</Answer>
 
 ## eslint 有哪些实用的插件， 该如何配置 {#p2-eslint-plugin}
+
+<Answer>
 
 ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率。以下是一些常见的 ESLint 插件及配置方法：
 
@@ -128,35 +149,35 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 1. `eslint-plugin-import`：
 
-* 作用：用于检查和规范导入语句。可以确保导入路径的正确性、防止重复导入、检查导入顺序等。
-* 例如，它可以检测未使用的导入、循环导入等问题，并给出相应的错误提示。
+- 作用：用于检查和规范导入语句。可以确保导入路径的正确性、防止重复导入、检查导入顺序等。
+- 例如，它可以检测未使用的导入、循环导入等问题，并给出相应的错误提示。
 
 2. `eslint-plugin-vue`：
 
-* 作用：专门为 Vue.js 项目设计的插件。可以检查 Vue 单文件组件（`.vue`文件）中的模板、脚本和样式部分的代码规范。
-* 例如，它可以检测模板中的错误使用的指令、脚本中的未定义变量等问题。
+- 作用：专门为 Vue.js 项目设计的插件。可以检查 Vue 单文件组件（`.vue`文件）中的模板、脚本和样式部分的代码规范。
+- 例如，它可以检测模板中的错误使用的指令、脚本中的未定义变量等问题。
 
 3. `eslint-plugin-prettier`：
 
-* 作用：将 Prettier 的代码格式化规则集成到 ESLint 中，确保代码在风格上的一致性。
-* 例如，它可以自动修复代码的缩进、空格、换行等格式问题，使代码更加美观易读。
+- 作用：将 Prettier 的代码格式化规则集成到 ESLint 中，确保代码在风格上的一致性。
+- 例如，它可以自动修复代码的缩进、空格、换行等格式问题，使代码更加美观易读。
 
 4. `eslint-plugin-jsx-a11y`：
 
-* 作用：用于检查 React 和 Vue 等框架中的 JSX 代码的可访问性问题。
-* 例如，它可以检测图像是否缺少替代文本、表单元素是否有正确的标签等问题，以提高应用的可访问性。
+- 作用：用于检查 React 和 Vue 等框架中的 JSX 代码的可访问性问题。
+- 例如，它可以检测图像是否缺少替代文本、表单元素是否有正确的标签等问题，以提高应用的可访问性。
 
 **二、配置方法**
 
 1. 安装插件：
 
-* 使用 npm 或 yarn 安装所需的插件。例如，安装`eslint-plugin-import`插件：
+- 使用 npm 或 yarn 安装所需的插件。例如，安装`eslint-plugin-import`插件：
 
  ```bash
  npm install eslint-plugin-import --save-dev
  ```
 
-* 或者使用 yarn：
+- 或者使用 yarn：
 
  ```bash
  yarn add eslint-plugin-import --dev
@@ -164,12 +185,12 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 2. 创建`.eslintrc`文件：
 
-* 在项目根目录下创建一个`.eslintrc`文件，用于配置 ESLint。
+- 在项目根目录下创建一个`.eslintrc`文件，用于配置 ESLint。
 
 3. 配置插件：
 
-* 在`.eslintrc`文件中，添加插件的名称到`plugins`数组中，并在`rules`对象中配置相应的规则。
-* 例如，配置`eslint-plugin-import`插件：
+- 在`.eslintrc`文件中，添加插件的名称到`plugins`数组中，并在`rules`对象中配置相应的规则。
+- 例如，配置`eslint-plugin-import`插件：
 
  ```json
  {
@@ -198,13 +219,23 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
  }
  ```
 
-* 上述配置中，`plugins`数组中添加了`import`插件，`rules`对象中配置了两个规则：`import/no-unresolved`用于检查导入的模块是否存在，`import/order`用于规范导入的顺序。
+- 上述配置中，`plugins`数组中添加了`import`插件，`rules`对象中配置了两个规则：`import/no-unresolved`用于检查导入的模块是否存在，`import/order`用于规范导入的顺序。
 
 4. 集成到开发流程中：
 
-* 根据你的开发环境和工具，将 ESLint 集成到你的开发流程中。例如，在 VS Code 中，可以安装 ESLint 扩展，并在设置中配置自动修复和实时检查。
+- 根据你的开发环境和工具，将 ESLint 集成到你的开发流程中。例如，在 VS Code 中，可以安装 ESLint 扩展，并在设置中配置自动修复和实时检查。
 
-## slint 如何集成到 webpack {#p2-eslint-webpack}
+**延伸阅读**
+
+- [ESLint 官方插件列表](https://eslint.org/docs/user-guide/configuring/plugins)
+- [eslint-plugin-react 官方文档](https://github.com/jsx-eslint/eslint-plugin-react)
+- [eslint-plugin-vue 官方文档](https://eslint.vuejs.org/)
+
+</Answer>
+
+## ESLint 如何集成到 webpack {#p2-eslint-webpack}
+
+<Answer>
 
 要将 ESLint 集成到 Webpack 中，可以按照以下步骤进行操作：
 
@@ -212,13 +243,13 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 1. 确保已经安装了 Webpack 和 ESLint。如果还没有安装，可以使用以下命令进行安装：
 
-* 使用 npm：
+- 使用 npm：
 
  ```
  npm install webpack webpack-cli eslint --save-dev
  ```
 
-* 使用 yarn：
+- 使用 yarn：
 
  ```
  yarn add webpack webpack-cli eslint --dev
@@ -226,13 +257,13 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 2. 安装`eslint-webpack-plugin`插件，这个插件可以将 ESLint 集成到 Webpack 构建过程中。
 
-* 使用 npm：
+- 使用 npm：
 
  ```
  npm install eslint-webpack-plugin --save-dev
  ```
 
-* 使用 yarn：
+- 使用 yarn：
 
  ```
  yarn add eslint-webpack-plugin --dev
@@ -270,7 +301,16 @@ ESLint 有很多实用的插件，可以帮助提高代码质量和开发效率�
 
 当运行 Webpack 构建时，`eslint-webpack-plugin`会在构建过程中自动运行 ESLint 检查。如果有不符合 ESLint 规则的代码，会在控制台输出错误信息。
 
-## 如何定制化开发一个 eslint 插件， 功能是实现提示检验某一个项目里面的字符串error {#p2-eslint-plugin}
+**延伸阅读**
+
+- [eslint-webpack-plugin 官方文档](https://webpack.js.org/plugins/eslint-webpack-plugin/)
+- [Webpack 插件开发指南](https://webpack.js.org/contribute/writing-a-plugin/)
+
+</Answer>
+
+## 如何定制化开发一个 eslint 插件，功能是实现提示检验某一个项目里面的字符串 error {#p2-eslint-custom-plugin}
+
+<Answer>
 
 **一、创建插件项目**
 
@@ -365,21 +405,259 @@ npm install /path/to/your/plugin/eslint-plugin-custom-string-check --save-dev
 }
 ```
 
-## 请解释什么是 ARIA 和屏幕阅读器 (screenreaders)，以及如何使网站实现无障碍访问 (accessible)?
+**延伸阅读**
 
-## Polyfill 和 shim  ？{#p1-polyfill-shim}
+- [ESLint 插件开发官方指南](https://eslint.org/docs/developer-guide/working-with-plugins)
+- [AST Explorer](https://astexplorer.net/) - 用于分析和理解 AST 结构
+- [ESLint 规则开发教程](https://eslint.org/docs/developer-guide/working-with-rules)
 
-参考 [What is the difference between a shim and a polyfill?](https://stackoverflow.com/questions/6599815/what-is-the-difference-between-a-shim-and-a-polyfill)
+</Answer>
 
-## corejs 是做什么用的
+## 请解释什么是 ARIA 和屏幕阅读器 (screenreaders)，以及如何使网站实现无障碍访问 (accessible)？{#p2-accessibility}
 
-## 描述 seo 的最佳实践或你最近使用的技术
+<Answer>
 
-## 什么是 FOUC (无样式内容闪烁)？你如何来避免 FOUC？
+**ARIA (Accessible Rich Internet Applications)**
 
-## 请谈谈你对网页标准和标准制定机构重要性的理解?
+ARIA 是一套属性和角色，用于增强 HTML 元素的语义信息，帮助辅助技术（如屏幕阅读器）更好地理解和操作网页内容。
 
-## 日志监控：如何还原用户操作流程 {#debug}
+**屏幕阅读器的工作原理**
+
+屏幕阅读器通过语音合成或盲文显示器将网页内容转换为用户可理解的形式。它们依赖语义化的 HTML 结构和 ARIA 属性来理解页面内容和交互元素。
+
+**无障碍访问实现方法**
+
+1. **语义化 HTML**：使用正确的标签（`<button>`、`<nav>`、`<main>` 等）
+2. **ARIA 属性**：添加 `aria-label`、`aria-describedby`、`role` 等属性
+3. **键盘导航**：确保所有交互元素可通过键盘访问
+4. **对比度**：保证足够的颜色对比度
+5. **替代文本**：为图片添加有意义的 `alt` 属性
+
+**延伸阅读**
+
+- [WAI-ARIA 权威指南](https://www.w3.org/WAI/ARIA/)
+- [WebAIM 无障碍检查清单](https://webaim.org/standards/wcag/checklist)
+
+</Answer>
+
+## Polyfill 和 shim 有什么区别？{#p1-polyfill-shim}
+
+<Answer>
+
+**核心概念**
+
+- **Polyfill**：为旧浏览器提供新功能的代码实现，模拟标准 API 的行为
+- **Shim**：更广泛的概念，指任何填补功能差异的代码层，包括修复现有功能
+
+**主要区别**
+
+| 特性 | Polyfill | Shim |
+|------|----------|------|
+| 范围 | 仅针对标准 API | 可以是任何功能差异 |
+| 目的 | 实现缺失的标准功能 | 修复或改善现有功能 |
+| 行为 | 完全模拟标准 API | 可能改变原有行为 |
+| 示例 | `Array.prototype.includes` polyfill | jQuery（统一 DOM 操作） |
+
+**实际应用**
+
+```javascript
+// Polyfill 示例 - 为旧浏览器添加 Array.includes
+if (!Array.prototype.includes) {
+  Array.prototype.includes = function(searchElement) {
+    return this.indexOf(searchElement) !== -1;
+  };
+}
+
+// Shim 示例 - 统一事件处理
+function addEventListener(element, event, handler) {
+  if (element.addEventListener) {
+    element.addEventListener(event, handler, false);
+  } else if (element.attachEvent) {
+    element.attachEvent('on' + event, handler);
+  }
+}
+```
+
+**延伸阅读**
+
+- [MDN Polyfill 指南](https://developer.mozilla.org/zh-CN/docs/Glossary/Polyfill)
+- [Core-js Polyfill 库](https://github.com/zloirock/core-js)
+
+</Answer>
+
+## corejs 是做什么用的？{#p2-corejs}
+
+<Answer>
+
+**Core-js 核心功能**
+
+Core-js 是一个 JavaScript 标准库的 polyfill 集合，为旧浏览器提供现代 JavaScript API 支持。
+
+**主要特性**
+
+1. **全面的 Polyfill 覆盖**：支持 ES6+、Web Standards API
+2. **模块化设计**：可按需加载特定功能
+3. **高度兼容**：支持几乎所有浏览器环境
+4. **积极维护**：持续更新以支持最新标准
+
+**典型使用场景**
+
+```javascript
+// 全量引入
+import 'core-js/stable';
+
+// 按需引入
+import 'core-js/features/promise';
+import 'core-js/features/array/includes';
+
+// 与 Babel 配合使用
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "useBuiltIns": "usage",
+      "corejs": 3
+    }]
+  ]
+}
+```
+
+**延伸阅读**
+
+- [Core-js 官方文档](https://github.com/zloirock/core-js)
+- [Babel 与 Core-js 集成指南](https://babeljs.io/docs/en/babel-polyfill)
+
+</Answer>
+
+## 描述 SEO 的最佳实践或你最近使用的技术 {#p2-seo-best-practices}
+
+<Answer>
+
+**现代 SEO 最佳实践**
+
+1. **技术 SEO**
+   - 使用语义化 HTML 标签
+   - 实现 Schema.org 结构化数据
+   - 优化 Core Web Vitals 指标
+   - 确保移动友好性
+
+2. **内容优化**
+   - 高质量原创内容
+   - 关键词自然分布
+   - 优化标题和描述
+   - 内链建设
+
+3. **性能优化**
+   - 快速加载速度（LCP < 2.5s）
+   - 良好的交互性（FID < 100ms）
+   - 视觉稳定性（CLS < 0.1）
+
+4. **最新技术应用**
+   - 服务端渲染（SSR/SSG）
+   - PWA 技术
+   - AMP 页面（适用场景）
+   - AI 内容优化工具
+
+**延伸阅读**
+
+- [Google SEO 指南 2024](https://developers.google.com/search/docs)
+- [Core Web Vitals 优化](https://web.dev/vitals/)
+
+</Answer>
+
+## 什么是 FOUC (无样式内容闪烁)？你如何来避免 FOUC？{#p2-fouc}
+
+<Answer>
+
+**FOUC 定义**
+
+FOUC (Flash of Unstyled Content) 是指页面在 CSS 加载完成前显示未样式化内容，然后突然应用样式造成的视觉闪烁现象。
+
+**产生原因**
+
+1. CSS 文件放置位置不当
+2. CSS 文件加载时间过长
+3. JavaScript 阻塞渲染
+4. 字体文件异步加载
+
+**避免方法**
+
+1. **CSS 位置优化**
+
+```html
+<!-- 将 CSS 放在 <head> 中 -->
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+```
+
+2. **内联关键 CSS**
+
+```html
+<style>
+  /* 关键路径 CSS 内联 */
+  .header { display: flex; }
+</style>
+```
+
+3. **预加载资源**
+
+```html
+<link rel="preload" href="fonts/main.woff2" as="font" crossorigin>
+```
+
+4. **避免 @import**
+
+```css
+/* 避免 */
+@import url("styles.css");
+
+/* 推荐使用 <link> */
+```
+
+**延伸阅读**
+
+- [Critical Rendering Path 优化](https://web.dev/critical-rendering-path/)
+- [消除渲染阻塞资源](https://web.dev/render-blocking-resources/)
+
+</Answer>
+
+## 请谈谈你对网页标准和标准制定机构重要性的理解？{#p2-web-standards}
+
+<Answer>
+
+**网页标准的重要性**
+
+1. **互操作性**：确保网站在不同浏览器和设备上一致运行
+2. **可访问性**：保障所有用户都能访问网络内容
+3. **长期维护性**：标准化代码更易维护和升级
+4. **创新推动**：为新技术发展提供统一框架
+
+**主要标准制定机构**
+
+| 机构 | 职责 | 主要标准 |
+|------|------|---------|
+| **W3C** | Web 核心技术标准 | HTML、CSS、DOM、Web API |
+| **WHATWG** | 现代 Web 标准 | HTML Living Standard |
+| **ECMA** | 脚本语言标准 | ECMAScript (JavaScript) |
+| **IETF** | 网络协议标准 | HTTP、WebSocket、TLS |
+
+**标准遵循的价值**
+
+- 降低开发和维护成本
+- 提高代码质量和可读性
+- 促进技术生态健康发展
+- 保证向后兼容性
+
+**延伸阅读**
+
+- [W3C 标准制定流程](https://www.w3.org/standards/)
+- [Web 标准发展史](https://webstandards.org/learn/reference/web_standards_history/)
+
+</Answer>
+
+## 日志监控：如何还原用户操作流程 {#p2-user-behavior-tracking}
+
+<Answer>
 
 一种手段来获取用户某一时段连续的操作行为，也就是录制用户行为，包括整个会话中的每一个点击、滑动、输入等行为，同时支持回放录制的操作行为，完整且真实地重现用户行为以帮助我们回溯或分析某些使用场景。
 
@@ -403,9 +681,9 @@ npm install /path/to/your/plugin/eslint-plugin-custom-string-check --save-dev
 
 录制用户行为最容易想到的就是将屏幕操作通过视频的方式录制下来，目前浏览器本身已经提供了一套基于音视轨的实时数据流传输方案 [WebRTC](https://developer.mozilla.org/zh-CN/docs/Web/API/WebRTC_API)（Web Real-Time Communications），在我们的录屏使用场景主要关注以下几个 API：
 
-* [getDisplayMedia()](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia) - 提示用户给予使用媒体输入的许可从而获取屏幕的流；
-* [MediaRecorder()](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaRecorder/MediaRecorder) - 生成对指定的媒体流进行录制的 MediaRecorder 对象；
-* [ondataavailable](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaRecorder/dataavailable_event) - 当 MediaRecorder 将媒体数据传递到应用程序以供使用时将触发该事件；
+- [getDisplayMedia()](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaDevices/getUserMedia) - 提示用户给予使用媒体输入的许可从而获取屏幕的流；
+- [MediaRecorder()](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaRecorder/MediaRecorder) - 生成对指定的媒体流进行录制的 MediaRecorder 对象；
+- [ondataavailable](https://developer.mozilla.org/zh-CN/docs/Web/API/MediaRecorder/dataavailable_event) - 当 MediaRecorder 将媒体数据传递到应用程序以供使用时将触发该事件；
 
 整体录制流程如下：
 
@@ -581,11 +859,16 @@ rrweb 主要由 3 部分组成：
 
 细节可以参考官网文档即可
 
- 参考文档
+**延伸阅读**
 
-[资料](https://juejin.cn/post/7280429214607769658)
+- [用户行为录制与回放](https://juejin.cn/post/7280429214607769658)
+- [Web 录制技术详解](https://web.dev/articles/media-recording-video)
+
+</Answer>
 
 ## source map 可有办法将请求的调用源码地址包括代码行数也上报上去 {#p1-source-map}
+
+<Answer>
 
 在使用了代码混淆（例如 Webpack 的 mina-hash、chunkhash 或 contenthash）的前端代码中，即使执行了混淆，依然可以通过以下方法在日志监控时提供足够的上下文信息，主要包括被请求的源代码地址以及代码行数：
 
@@ -594,16 +877,16 @@ rrweb 主要由 3 部分组成：
 1. **生成 Source Maps:**
  在构建过程中生成功能强大的源码映射（Source Maps）文件是标准做法。Source Maps 主要用于将混淆、压缩后的 JavaScript 代码映射回到其原始版本，允许在浏览器调试工具中查看原始代码和追踪错误。
 
-* **保存映射文件:** 在生产版本中生成如`.map`的 Source Map 文件，并确保它们正常处理（通常是将它们放置在服务器上的一个公开但安全的位置）。
-* **反映在 Source Maps 中的映射:** Source Maps 文件应将原始的源文件路径和行号映射到构建后的代码中对应的位置。
+- **保存映射文件:** 在生产版本中生成如`.map`的 Source Map 文件，并确保它们正常处理（通常是将它们放置在服务器上的一个公开但安全的位置）。
+- **反映在 Source Maps 中的映射:** Source Maps 文件应将原始的源文件路径和行号映射到构建后的代码中对应的位置。
 
 2. **错误跟踪系统集成:**
  使用错误跟踪工具（也常被称为 Error Monitoring 平台, 如 Sentry、LogRocket、Bugsnag 等），这些工具通常兼容并支持 Source Maps:
 
-* **自动和源码追踪:**
+- **自动和源码追踪:**
  漏洞和崩溃报告将自动包含被未混淆的源码引用，您只需确保生产版本的 Source Maps 配置正确。
 
-* **代码行号报告:**
+- **代码行号报告:**
  用户报告的堆栈跟踪信息将包括对应底层源文件，而非混淆后的行号。
 
  自定义错误日志逻辑
@@ -611,7 +894,7 @@ rrweb 主要由 3 部分组成：
 1. **覆盖全局的错误处理器：**
  对于更高级的错误追踪，你可能需要在前端代码中维护自定义的错误处理逻辑。
 
-* **使用`.Window.onerror`或`try...catch`:**
+- **使用`.Window.onerror`或`try...catch`:**
  在`Window.onerror`中捕捉到运行时错误时，或者在自定义函数内`try...catch`捕获的错误，你可以从错误的堆栈跟踪中提取当前运行代码的位置，并尝试将符号化的堆栈信息发送到后端服务器。
 
 2. **在后端查阅符号化堆栈:**
@@ -619,18 +902,27 @@ rrweb 主要由 3 部分组成：
 
  注意
 
-* 确保 Source Maps 不公开到客户端以避免潜在的安全风险。应该将它们存放于受控的服务器环境，以避免源码泄露或不当使用。
-* 以上方案更适合于开发或测试环境提供详细调试信息，确保在最终部署产品之前只公开给授权的人员。
+- 确保 Source Maps 不公开到客户端以避免潜在的安全风险。应该将它们存放于受控的服务器环境，以避免源码泄露或不当使用。
+- 以上方案更适合于开发或测试环境提供详细调试信息，确保在最终部署产品之前只公开给授权的人员。
 
-## 如何做国际化？ {#i18}
+**延伸阅读**
+
+- [Source Map 详解](https://developer.mozilla.org/zh-CN/docs/Tools/Debugger/How_to/Use_a_source_map)
+- [生产环境 Source Map 配置](https://webpack.js.org/configuration/devtool/)
+
+</Answer>
+
+## 如何做国际化？ {#p2-i18n}
+
+<Answer>
 
 前端应用实现国际化（i18n）主要是为了支持多语言环境，提高用户体验。这里有几种常用的方案：
 
 1. **使用国际化库**：这是最常用的方法之一，可以通过引用第三方库来管理不同语言环境的资源文件。比如：
 
-* **React**：可以使用`react-intl`或`react-i18next`。
-* **Vue**：可以使用`vue-i18n`。
-* **Angular**：可以使用`@ngx-translate/core`。
+- **React**：可以使用`react-intl`或`react-i18next`。
+- **Vue**：可以使用`vue-i18n`。
+- **Angular**：可以使用`@ngx-translate/core`。
 
  这些库允许你将文本资源分开管理，并根据用户的语言偏好动态加载相应的资源。
 
@@ -638,9 +930,9 @@ rrweb 主要由 3 部分组成：
 
 3. **自建国际化框架**：根据项目的具体需求，自定义国际化实现。这通常包括：
 
-* 创建资源文件：为每种语言创建一个资源文件，用于存储翻译字符串。
-* 语言选择功能：允许用户选择偏好的语言。
-* 加载对应资源文件：根据用户的语言偏好，动态加载对应的资源文件并在界面上显示相应的文本。
+- 创建资源文件：为每种语言创建一个资源文件，用于存储翻译字符串。
+- 语言选择功能：允许用户选择偏好的语言。
+- 加载对应资源文件：根据用户的语言偏好，动态加载对应的资源文件并在界面上显示相应的文本。
 
 4. **服务端支持**：有些情况下，前端应用可能需要服务端的支持来实现国际化，如动态提供不同语言的数据内容。
 
@@ -650,7 +942,17 @@ rrweb 主要由 3 部分组成：
 
 在实际应用中，根据项目的大小、复杂度以及特定需求，可以选择一种或多种方案结合使用，以达到最佳的国际化效果。
 
-## 站点如何防止爬虫？ {#robot}
+**延伸阅读**
+
+- [React i18n 最佳实践](https://react.i18next.com/)
+- [Vue.js 国际化指南](https://vue-i18n.intlify.dev/)
+- [Web 国际化标准](https://www.w3.org/International/)
+
+</Answer>
+
+## 站点如何防止爬虫？ {#p2-anti-crawler}
+
+<Answer>
 
 站点防止爬虫通常涉及一系列技术和策略的组合。以下是一些常用的方法：
 
@@ -709,15 +1011,22 @@ Disallow: /
 
 定期更改网站的 URL 结构、内容排版等，使得爬虫开发人员需要不断更新爬虫程序来跟进网站的改动。
 
-详见 [robot](https://datatracker.ietf.org/doc/rfc9309/)
+**延伸阅读**
+
+- [Robots.txt RFC 规范](https://datatracker.ietf.org/doc/rfc9309/)
+- [反爬虫策略详解](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/User-Agent)
+
+</Answer>
 
 ## SemVer（Semantic Versioning） {#p0-semver}
 
+<Answer>
+
 Semantic Versioning（语义化版本）是一种为软件组件定义版本号的规范。它使用`“major.minor.patch”`的格式来表示版本号。其中：
 
-* Major（主版本号）：当你做了不兼容的 API 修改时，你需要更新主版本号。
-* Minor（次版本号）：当你做了向下兼容的功能性新增时，你需要更新次版本号。
-* Patch（修订号）：当你做了向下兼容的问题修正时，你需要更新修订号。
+- Major（主版本号）：当你做了不兼容的 API 修改时，你需要更新主版本号。
+- Minor（次版本号）：当你做了向下兼容的功能性新增时，你需要更新次版本号。
+- Patch（修订号）：当你做了向下兼容的问题修正时，你需要更新修订号。
 
 Semantic Versioning 的目的是为了让软件版本号的变化具有可读性和可预测性，这样用户就可以通过版本号来了解软件包的更新内容和影响。
 
@@ -725,17 +1034,77 @@ Semantic Versioning 的目的是为了让软件版本号的变化具有可读性
 
 在升级版本时，常常使用一些符号来指定允许升级的范围，其中包括 ^ 和 ~ 等。
 
-* ^ 表示向后兼容地升级版本号，只允许升级到次版本号或修订版本号，不允许升级到主版本号。
-* ~ 表示只允许升级到修订版本号，不允许升级到次版本号或主版本号。
+- ^ 表示向后兼容地升级版本号，只允许升级到次版本号或修订版本号，不允许升级到主版本号。
+- ~ 表示只允许升级到修订版本号，不允许升级到次版本号或主版本号。
 
 例如，对于版本号为 1.2.3：
 
-* ^1.2.3 允许升级到 1.2.4、1.3.0 等修订号或次版号的版本，但不允许升级到 2.0.0。
-* ~1.2.3 只允许升级到 1.2.4、1.2.5 等修订版本号的版本，但不允许升级到 1.3.0、2.0.0 等更高的版本。
+- ^1.2.3 允许升级到 1.2.4、1.3.0 等修订号或次版号的版本，但不允许升级到 2.0.0。
+- ~1.2.3 只允许升级到 1.2.4、1.2.5 等修订版本号的版本，但不允许升级到 1.3.0、2.0.0 等更高的版本。
 
-## 如何在前端团队快速落地代码规范 {#p0-rule}
+**延伸阅读**
 
-* [资料](https://juejin.cn/post/7033210664844066853)
-* [资料](https://juejin.cn/post/7007419705543622669)
-* [资料](https://juejin.cn/post/7167707693333872647)
-* [资料](https://juejin.cn/post/6844904142289240071)
+- [SemVer 官方规范](https://semver.org/lang/zh-CN/)
+- [NPM 版本管理指南](https://docs.npmjs.com/about-semantic-versioning)
+
+</Answer>
+
+## 如何在前端团队快速落地代码规范 {#p0-code-standards}
+
+<Answer>
+
+**快速落地策略**
+
+1. **工具化自动检查**
+   - ESLint + Prettier 配置
+   - Git hooks (husky + lint-staged)
+   - CI/CD 集成检查
+
+2. **渐进式推进**
+   - 先在新项目应用
+   - 老项目逐步迁移
+   - 设置过渡期和容错机制
+
+3. **团队共识建立**
+   - 制定团队规范文档
+   - 定期代码 Review
+   - 规范培训和分享
+
+4. **IDE 集成**
+   - VSCode 插件配置
+   - 统一开发环境设置
+   - 快捷修复和格式化
+
+**实施步骤**
+
+```json
+// .eslintrc.js 团队统一配置
+{
+  "extends": ["@company/eslint-config"],
+  "rules": {
+    "semi": ["error", "always"],
+    "quotes": ["error", "single"]
+  }
+}
+
+// package.json
+{
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": ["eslint --fix", "git add"]
+  }
+}
+```
+
+**延伸阅读**
+
+- [前端代码规范最佳实践](https://juejin.cn/post/7033210664844066853)
+- [团队工程化落地指南](https://juejin.cn/post/7007419705543622669)
+- [自动化代码检查方案](https://juejin.cn/post/7167707693333872647)
+- [ESLint 团队配置实践](https://juejin.cn/post/6844904142289240071)
+
+</Answer>

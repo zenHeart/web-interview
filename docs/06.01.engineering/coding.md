@@ -1,12 +1,47 @@
 # 编码
 
-## 实现 Awaited 类型定义
+## 实现 Awaited 类型定义 {#p2-awaited-type}
+
+<Answer>
+
+`Awaited<T>` 是 TypeScript 4.5+ 引入的内置工具类型，用于获取 Promise 的 resolve 值类型。
+
+**核心实现思路**
+
+```typescript
+type Awaited<T> = T extends null | undefined
+  ? T // 如果 T 是 null 或 undefined，直接返回
+  : T extends object & { then(onfulfilled: infer F, ...args: any[]): any }
+    ? F extends (value: infer V, ...args: any[]) => any
+      ? Awaited<V> // 递归处理嵌套的 Promise
+      : never
+    : T; // 如果 T 不是 Promise-like，直接返回 T
+
+// 使用示例
+type Example1 = Awaited<Promise<string>>; // string
+type Example2 = Awaited<Promise<Promise<number>>>; // number
+type Example3 = Awaited<string>; // string
+```
+
+**实现解析**
+
+1. **null/undefined 处理**：直接返回原类型
+2. **Promise-like 检测**：检查对象是否有 `then` 方法
+3. **递归展开**：处理嵌套的 Promise 结构
+4. **非 Promise 处理**：普通类型直接返回
+
+**延伸阅读**
+
+- [TypeScript Awaited 官方文档](https://www.typescriptlang.org/docs/handbook/utility-types.html#awaitedtype)
+- [Conditional Types 深入理解](https://www.typescriptlang.org/docs/handbook/2/conditional-types.html)
+
+</Answer>
 
 ## 应用上线后， 怎么通知用户刷新当前页面？ {#p2-update-app}
 
-**关键词**：静态资源更新、页面版本更新、服务端推送
+<Answer>
 
-**关键词**：静态资源更新、页面版本更新
+**关键词**：静态资源更新、页面版本更新、服务端推送
 
 这个话题非常的有意思，问题的答案是比较开发的，这里仅代表作者本人的个人经验来做回答。 当然也可以自行去搜集掘金上的大佬们的博文。
 
@@ -54,7 +89,17 @@ Service workers 位于浏览器和网络之间，可以控制页面的资源缓�
 >
 > 这篇文章也不错: [资料](https://juejin.cn/post/7330255976506458153). 实现方式是通过 websocket.
 
+**延伸阅读**
+
+- [前端应用版本更新方案](https://juejin.cn/post/7185451392994115645)
+- [Service Worker 缓存策略](https://web.dev/articles/service-worker-caching-and-http-caching)
+- [Server-Sent Events 详解](https://developer.mozilla.org/zh-CN/docs/Web/API/Server-sent_events)
+
+</Answer>
+
 ## 简单实现一个洋葱模式中间件 {#p0-onnion-model}
+
+<Answer>
 
 洋葱模型是一种常用的中间件模型，例如在 Koa 框架中就广泛应用了这种模型。这种模型的特点是请求被传递到下一个中间件之前，需要先经过当前中间件处理，然后再逐层返回。
 
@@ -110,7 +155,16 @@ composed({})
 
 在 `composed` 函数中，我们将一个空的 `ctx` 对象作为参数传递给第一个中间件函数。`dispatch` 函数递归地调用中间件数组中的每一个中间件函数，并将 `ctx` 对象和下一个中间件函数作为参数传递。当最后一个中间件函数完成处理时，递归调用结束，请求处理完成。
 
+**延伸阅读**
+
+- [Koa 洋葱模型详解](https://koajs.com/#introduction)
+- [中间件模式深入理解](https://github.com/koajs/compose)
+
+</Answer>
+
 ## 大文件上传了解多少 {#p0-big-file-upload}
+
+<Answer>
 
 如果太大的文件，比如一个视频1g 2g那么大，直接采用上面的栗子中的方法上传可能会出链接现超时的情况，而且也会超过服务端允许上传文件的大小限制，所以解决这个问题我们可以将文件进行分片上传，每次只上传很小的一部分 比如2M。
 
@@ -118,11 +172,11 @@ composed({})
 
 过程如下：
 
-* 把大文件进行分段 比如2M，发送到服务器携带一个标志，暂时用当前的时间戳，用于标识一个完整的文件
-* 服务端保存各段文件
-* 浏览器端所有分片上传完成，发送给服务端一个合并文件的请求
-* 服务端根据文件标识、类型、各分片顺序进行文件合并
-* 删除分片文件
+- 把大文件进行分段 比如2M，发送到服务器携带一个标志，暂时用当前的时间戳，用于标识一个完整的文件
+- 服务端保存各段文件
+- 浏览器端所有分片上传完成，发送给服务端一个合并文件的请求
+- 服务端根据文件标识、类型、各分片顺序进行文件合并
+- 删除分片文件
 
 客户端 JS 代码实现如下
 
@@ -266,9 +320,9 @@ app.use((ctx) => {
 
 在上面我们实现了文件分片上传和最终的合并，现在要做的就是如何检测这些分片，不再重新上传即可。 这里我们可以在本地进行保存已上传成功的分片，重新上传的时候使用`spark-md5`来生成文件 hash，区分此文件是否已上传。
 
-* 为每个分段生成 hash 值，使用 `spark-md5` 库
-* 将上传成功的分段信息保存到本地
-* 重新上传时，进行和本地分段 hash 值的对比，如果相同的话则跳过，继续下一个分段的上传
+- 为每个分段生成 hash 值，使用 `spark-md5` 库
+- 将上传成功的分段信息保存到本地
+- 重新上传时，进行和本地分段 hash 值的对比，如果相同的话则跳过，继续下一个分段的上传
 
 **方案一**： 保存在本地 `indexDB/localStorage` 等地方， 推荐使用 `localForage` 这个库
 `npm install localforage`
@@ -329,7 +383,17 @@ for (let i = 0; i < chunkCount; i++) {
 
 方法1是从本地获取分片信息,这里只需要将此方法的能力改为从服务端获取分片信息就行了。
 
+**延伸阅读**
+
+- [前端大文件上传最佳实践](https://web.dev/articles/file-upload-best-practices)
+- [File API 详解](https://developer.mozilla.org/zh-CN/docs/Web/API/File)
+- [断点续传技术原理](https://developer.mozilla.org/zh-CN/docs/Web/API/Blob/slice)
+
+</Answer>
+
 ## 解决重复引用 node_modules 里面的不同版本的包(包重复问题) {#p1-webpack-different-version}
+
+<Answer>
 
 解决重复引用 `node_modules` 中不同版本的包的问题，可以通过以下几种方式：
 
@@ -397,3 +461,11 @@ module.exports = {
 ```
 
 这样 webpack 在查找依赖库的时候，会先在项目根目录下的 src 目录中查找，如果没有找到再去 node\_modules 目录中查找，避免了不同模块中引用相同依赖库不同版本的问题。
+
+**延伸阅读**
+
+- [Webpack resolve.alias 配置](https://webpack.js.org/configuration/resolve/#resolvealias)
+- [NPM 依赖管理最佳实践](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#dependencies)
+- [Yarn 工作空间](https://yarnpkg.com/features/workspaces)
+
+</Answer>
