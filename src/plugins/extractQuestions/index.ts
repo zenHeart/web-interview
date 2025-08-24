@@ -127,7 +127,10 @@ export default function extractQuestionsPlugin (
         // 遍历所有文件，questions 逻辑保持不变，同时递归 knowledgeMap，顺序与文件顺序一致
         for (const filePath of files) {
           const content = await fs.promises.readFile(filePath, 'utf-8')
-          const matches = content.match(/^## (.+)$/gm) || []
+          // 仅收集带优先级锚点的任意层级标题为题目，例如：
+          // # 标题 {#p1-some-slug}
+          // ## 子标题 {#p0-xxx}
+          const headingRegex = /^(#{1,6})\s+(.+?)\s*(\{#([pP][0-5])-[^}]+})\s*$/gm
           const relativePath = path.relative(docsDir, filePath)
           const pathParts = relativePath.split(path.sep)
           // 用原始 subject 目录名和去标号 key
@@ -141,26 +144,21 @@ export default function extractQuestionsPlugin (
           // topics: [{raw, key}]
           const topics = topicParts.length > 0 ? [...topicParts, { raw: fileRaw, key: fileKey }] : [{ raw: fileRaw, key: fileKey }]
           const fileH1 = content.match(/^# (.+)$/m)?.[1]
-          // === questions 逻辑保持不变 ===
+          // === 仅采集符合锚点规则的标题为题目 ===
           const topicPathArr = topics.map(t => t.key)
-          // 修正 subject/topic 变量作用域
           const subject = subjectKey
-          const topicForQuestion = Array.isArray(topics) ? topics.map(t => t.key) : topics[0].key
-          for (const match of matches) {
-            const titleWithAnchor = match.slice(3).trim()
-            const anchorMatch = titleWithAnchor.match(/{#(p\d+)-.*?}$/)?.[1]
-            const title = titleWithAnchor.replace(/{#.*?}$/, '').trim()
-            const priority = anchorMatch?.toUpperCase?.() || 'P4'
-            const fragments = anchorMatch
-              ? titleWithAnchor.match(/{(#p\d+-.*?)}$/)?.[1]
-              : `#${title.toLowerCase().replace(/\s+/g, '-')}`
-            const topicPath = Array.isArray(topicForQuestion) ? topicForQuestion.join('/') : topicForQuestion
+          for (const m of content.matchAll(headingRegex)) {
+            const title = m[2].trim()
+            const anchorFull = m[3] // 如 {#p1-some-slug}
+            const pToken = (m[4] || 'p4').toUpperCase()
+            const fragments = anchorFull ? anchorFull.slice(1, -1) : `#${title.toLowerCase().replace(/\s+/g, '-')}`
+            const topicPath = topics.map(t => t.key).join('/')
             const link = `${siteConfig.baseUrl}docs/${subject}/${topicPath}${fragments}`
             questions.push({
               title,
               subject: subject || 'Other',
-              topic: topicForQuestion,
-              priority,
+              topic: topics.map(t => t.key),
+              priority: pToken,
               link,
               meta: { fileH1 }
             })
