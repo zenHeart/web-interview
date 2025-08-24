@@ -1,4 +1,4 @@
-# 编码
+# 编码✅
 
 ## 实现 Awaited 类型定义 {#p2-awaited-type}
 
