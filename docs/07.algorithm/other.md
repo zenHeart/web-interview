@@ -1,139 +1,250 @@
-# 杂项
+import bigNumber from '!!raw-loader!./answers/other/bigNumber.js';
+import bigNumberTest from '!!raw-loader!./answers/other/bigNumber.test.js';
+import topK from '!!raw-loader!./answers/other/topK.js';
+import topKTest from '!!raw-loader!./answers/other/topK.test.js';
+import islands from '!!raw-loader!./answers/other/islands.js';
+import islandsTest from '!!raw-loader!./answers/other/islands.test.js';
 
-## 大数字符串相加 大数字符串相乘 {#p0-big-number}
+# 杂项✅
 
-计算两个非负大整数(字符串形式的) num1 和 num2 的和
-你不能使用任何內建的用于处理大整数的库（比如 BigInteger）， 也不能直接将输入的字符串转换为整数形式。
+本章涵盖算法面试中的经典问题，包括大数运算、海量数据处理、图论应用等重要主题。
+
+## 大数字符串运算如何实现？ {#P0-big-number}
 
 ```js
-/**
- * 字符串相加
- * 思路：双指针倒序遍历，逐位相加，有余数加在高一位
- * @param {string} num1
- * @param {string} num2
- * @return {string}
- */
-function addTwoString (num1, num2) {
-  const res = []
-  let carry = 0
-  let i = num1.length - 1
-  let j = num2.length - 1
-  while (i >= 0 || j >= 0 || carry) {
-    const sum = Number(num1[i] || 0) + Number(num2[j] || 0) + carry
-    const mod = sum % 10
-    res.unshift(mod)
-    carry = Math.floor(sum / 10)
-    i--
-    j--
-  }
-  return res.join('')
+// 实现大数字符串相加和相乘
+// 不能使用任何內建的用于处理大整数的库（比如 BigInteger）
+// 也不能直接将输入的字符串转换为整数形式
+function addStrings(num1, num2) {
+  // 请实现大数字符串相加
 }
 
-/**
- * 字符串相乘
- * @param {string} num1
- * @param {string} num2
- */
-function multiplyManyToMany (num1, num2) {
-  let res = ''
-  for (let i = num2.length - 1; i >= 0; i--) {
-    let tempRes = ''
-    // 末尾补进位0
-    for (let j = 0; j < num2.length - 1 - i; j++) {
-      tempRes += '0'
-    }
-    tempRes = multiplyManyToOne(num1, num2[i]) + tempRes
-    res = addTwoString(res, tempRes)
-  }
-  return res
-}
-
-/**
- * 字符串 多乘一
- * @param {string} num1
- * @param {char} x
- * @return {string}
- */
-function multiplyManyToOne (num1, x) {
-  const res = []
-  let carry = 0
-  for (let i = num1.length - 1; i >= 0; i--) {
-    const product = Number(num1[i]) * Number(x) + carry
-    const mod = product % 10
-    res.unshift(mod)
-    carry = Math.floor(product / 10)
-  }
-  if (carry) {
-    res.unshift(carry)
-  }
-  return res.join('')
-}
-
-// Test
-console.log(multiplyManyToOne('123', '5')) // '615'
-console.log(multiplyManyToOne('123', '4')) // '492'
-console.log(addTwoString('615', '4920')) // '5535'
-console.log(multiplyManyToMany('123', '45')) // '5535'
-```
-
-## 海量数据下 topk 的问题？
-
-该章节汇总算法常见考点
-
-从10亿个数中找出最大的10000个数是一项非常具有挑战性的任务，需要使用高效的算法和数据结构来处理。
-
-以下是一种基于分治思想的常见方法：
-
-将10亿个数分成1000个小文件，每个文件包含100万个数。
-对每个小文件进行排序，选出每个文件中最大的1000个数，并将它们放入一个临时文件中。
-将1000个临时文件合并成一个大文件，并再次对其进行排序。
-选出最大的10000个数。
-
-这种方法的时间复杂度为O(N*log(N/K))，其中N是所有数据的数量，K是每个小文件中的数据量。由于K相对较小，因此这种方法非常高效。
-
-bfs
-
-```TypeScript
-function numIslands (grid: string[][]): number {
-  if (grid.length === 0) return 0
-
-  const rows = grid.length
-  const cols = grid[0].length
-  let count = 0
-
-  // BFS遍历岛屿
-  const bfs = (row: number, col: number) => {
-    const queue = [[row, col]]
-    grid[row][col] = '0'
-
-    while (queue.length) {
-      const [currRow, currCol] = queue.shift()!
-
-      // 四个方向
-      const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]
-      for (const [dx, dy] of directions) {
-        const newRow = currRow + dx
-        const newCol = currCol + dy
-
-        if (newRow >= 0 && newRow < rows &&
-                    newCol >= 0 && newCol < cols &&
-                    grid[newRow][newCol] === '1') {
-          queue.push([newRow, newCol])
-          grid[newRow][newCol] = '0' // 入队时就标记
-        }
-      }
-    }
-  }
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (grid[row][col] === '1') {
-        count++
-        bfs(row, col)
-      }
-    }
-  }
-
-  return count
+function multiplyStrings(num1, num2) {
+  // 请实现大数字符串相乘  
 }
 ```
+
+<Answer>
+
+**核心概念**
+
+大数字符串运算用于处理超出JavaScript数值精度限制的整数运算。通过模拟小学算术运算过程，逐位进行计算并处理进位，实现任意精度的整数运算。
+
+**实现策略**
+
+**大数相加算法**：
+
+1. **双指针倒序遍历**：从两个数字字符串的末尾开始
+2. **逐位相加**：对应位数字相加，加上进位
+3. **进位处理**：和超过9时产生进位，当前位保留余数
+4. **长度处理**：较长数字的剩余位数继续处理
+5. **结果构建**：将计算结果从前往后组装成字符串
+
+**大数相乘算法**：
+
+1. **分解为单位乘法**：num2的每一位与num1相乘
+2. **位置偏移**：根据位数添加相应的0
+3. **累加结果**：将所有部分积相加得到最终结果
+4. **特殊情况**：处理0的乘法和单位数乘法
+
+**示例实现**
+
+<TestCode
+  files={{
+    "/bigNumber.js": bigNumber,
+    "/bigNumber.test.js": bigNumberTest,
+  }}
+/>
+
+**扩展功能**
+
+- **大数减法**：借位处理，注意被减数必须大于减数
+- **大数除法**：长除法模拟，返回商和余数
+- **大数比较**：长度优先，同长度时字典序比较
+- **大数幂运算**：快速幂算法优化
+
+**性能优化**
+
+- **Karatsuba乘法**：分治算法，时间复杂度O(n^1.585)
+- **FFT乘法**：快速傅里叶变换，适用于超大数
+- **内存优化**：避免频繁字符串拼接，使用数组操作
+- **并行计算**：将大数分块并行处理
+
+**面试官视角**
+
+该题考察候选人的算法实现能力和细节处理：
+
+- **要点清单**: 理解进位借位机制；正确处理边界情况；掌握字符串操作技巧；能分析时间空间复杂度
+- **加分项**: 了解多种乘法算法；能优化性能；处理负数情况；有实际项目应用经验
+- **常见失误**: 进位处理错误；字符串索引越界；忽视前导零；不处理特殊情况（如0）
+
+**延伸阅读**
+
+- [高精度运算详解](https://oi-wiki.org/math/bignum/) — 算法竞赛中的大数处理
+- [Karatsuba算法](https://en.wikipedia.org/wiki/Karatsuba_algorithm) — 高效大数乘法
+
+</Answer>
+
+## 海量数据中如何找TopK？ {#P1-massive-topk}
+
+<Answer>
+
+**核心概念**
+
+海量数据TopK问题是在大规模数据集中找出最大（或最小）的K个元素。由于数据量巨大，无法全部加载到内存，需要使用特殊的算法和数据结构来高效解决。
+
+**解决方案**
+
+**1. 小顶堆方法（内存足够时）**
+
+- 维护一个大小为K的小顶堆
+- 遍历数据，如果新元素大于堆顶，则替换堆顶
+- 时间复杂度：O(N log K)，空间复杂度：O(K)
+
+**2. 分治法（海量数据）**
+
+- 将大数据集分成多个小块
+- 对每个小块分别求TopK
+- 合并所有小块的TopK结果，再求TopK
+
+**3. 快速选择算法**
+
+- 类似快排的分区思想
+- 平均时间复杂度：O(N)，但需要随机访问数据
+
+**4. 外部排序**
+
+- 适用于数据无法完全加载到内存的情况
+- 使用归并排序的思想处理大文件
+
+**示例实现**
+
+<TestCode
+  files={{
+    "/topK.js": topK,
+    "/topK.test.js": topKTest,
+  }}
+/>
+
+**实际应用场景**
+
+- **搜索引擎**: 找出热门搜索词
+- **推荐系统**: 选择用户最感兴趣的内容
+- **监控系统**: 找出访问量最大的IP地址
+- **数据分析**: 销量最高的商品统计
+- **网络安全**: 检测异常流量模式
+
+**海量数据处理策略**
+
+**分布式处理**：
+
+1. 使用一致性哈希将数据分布到多台机器
+2. 每台机器处理自己的数据块，得到局部TopK
+3. 汇总所有机器的结果，计算全局TopK
+
+**内存优化**：
+
+- 使用位图、布隆过滤器等节省内存的数据结构
+- 分批次处理数据，避免内存溢出
+- 使用压缩算法减少数据存储空间
+
+**面试官视角**
+
+该题考察候选人对大数据处理的理解：
+
+- **要点清单**: 理解不同算法适用场景；能分析时间空间复杂度；掌握堆数据结构；了解分治思想
+- **加分项**: 有大数据处理经验；了解分布式算法；能优化内存使用；知道实际工程问题
+- **常见失误**: 只知道排序解法；不考虑内存限制；堆操作实现错误；忽视数据分布特点
+
+**延伸阅读**
+
+- [海量数据处理算法](https://github.com/julycoding/The-Art-Of-Programming-By-July) — 经典算法总结
+- [分布式系统原理](https://pdos.csail.mit.edu/6.824/) — MIT分布式系统课程
+
+</Answer>
+
+## 岛屿数量问题如何解决？ {#P0-islands-bfs}
+
+```typescript
+// 给定一个由 '1'（陆地）和 '0'（水）组成的的二维网格，计算岛屿的数量
+// 输入：grid = [
+//   ["1","1","1","1","0"],
+//   ["1","1","0","1","0"], 
+//   ["1","1","0","0","0"],
+//   ["0","0","0","0","0"]
+// ]
+// 输出：1
+function numIslands(grid: string[][]): number {
+  // 请使用BFS或DFS实现
+}
+```
+
+<Answer>
+
+**核心概念**
+
+岛屿数量问题是图论中的连通分量问题。每个岛屿是由相邻（水平或垂直相邻）的陆地'1'组成的连通区域。需要遍历整个网格，统计独立的岛屿数量。
+
+**算法思路**
+
+**广度优先搜索（BFS）方案**：
+
+1. **遍历网格**：扫描每个位置
+2. **发现陆地**：遇到'1'时，岛屿计数+1
+3. **BFS标记**：使用队列遍历整个岛屿，将所有'1'标记为'0'
+4. **四方向搜索**：检查上下左右四个相邻位置
+5. **避免重复**：已访问的陆地标记为'0'防止重复计算
+
+**深度优先搜索（DFS）方案**：
+
+- 使用递归替代队列
+- 更简洁但可能栈溢出（深度过大时）
+
+**时间复杂度**：O(M×N)，其中M和N分别是网格的行数和列数
+**空间复杂度**：O(min(M,N))，队列最大大小
+
+**示例实现**
+
+<TestCode
+  files={{
+    "/islands.js": islands,
+    "/islands.test.js": islandsTest,
+  }}
+/>
+
+**相关变体问题**
+
+- **岛屿的最大面积**: 在找岛屿的同时计算面积，返回最大值
+- **岛屿周长**: 计算岛屿边界长度，检查每个陆地格子的四个边
+- **被围绕的区域**: 将被岛屿完全包围的水域标记出来
+- **岛屿数量II**: 动态添加陆地时实时计算岛屿数量（并查集）
+
+**实际应用场景**
+
+- **图像处理**: 连通域标记，物体识别
+- **地理信息系统**: 地形分析，水域划分
+- **游戏开发**: 地图生成，区域划分
+- **网络分析**: 社交网络中的群组识别
+- **生物信息**: 基因序列中的模式识别
+
+**优化策略**
+
+- **原地标记**: 直接修改原网格避免额外的visited数组
+- **并查集优化**: 适用于动态增删岛屿的场景
+- **多线程处理**: 将大网格分块并行处理
+- **压缩存储**: 使用位图压缩大型稀疏网格
+
+**面试官视角**
+
+该题考察候选人对图遍历算法的掌握：
+
+- **要点清单**: 理解BFS和DFS区别；正确处理边界条件；能优化空间复杂度；掌握相关变体
+- **加分项**: 了解并查集解法；能分析复杂度；有实际应用经验；能处理大规模数据
+- **常见失误**: 边界检查遗漏；重复访问未处理；递归栈溢出；不理解连通性概念
+
+**延伸阅读**
+
+- [图论基础](https://cp-algorithms.com/graph/depth-first-search.html) — 图遍历算法详解
+- [并查集详解](https://oi-wiki.org/ds/dsu/) — 动态连通性问题解决方案
+
+</Answer>

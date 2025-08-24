@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS文本溢出处理演示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            padding: 24px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+
+        .section-title {
+            color: #333;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .demo-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        /* 单行文本溢出 */
+        .single-line-ellipsis {
+            width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        /* 多行文本溢出 - WebKit */
+        .multi-line-ellipsis-webkit {
+            width: 300px;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.5;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        /* 多行文本溢出 - 兼容方案 */
+        .multi-line-ellipsis-compatible {
+            width: 300px;
+            height: 72px;
+            line-height: 24px;
+            overflow: hidden;
+            position: relative;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .multi-line-ellipsis-compatible::after {
+            content: "...";
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            padding-left: 40px;
+            background: linear-gradient(to right, transparent, #f8f9fa 55%);
+        }
+
+        /* 渐变淡出效果 */
+        .fade-out-overflow {
+            width: 300px;
+            height: 72px;
+            overflow: hidden;
+            position: relative;
+            line-height: 1.5;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .fade-out-overflow::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 24px;
+            background: linear-gradient(to bottom, transparent, #f8f9fa);
+        }
+
+        /* 可交互的展开/收起 */
+        .expandable-text {
+            width: 300px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            background: #f8f9fa;
+            position: relative;
+        }
+
+        .expandable-content {
+            max-height: 72px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            line-height: 1.5;
+        }
+
+        .expandable-content.expanded {
+            max-height: 500px;
+        }
+
+        .expand-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .expand-btn:hover {
+            background: #0056b3;
+        }
+
+        /* 不同效果对比 */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        /* 响应式处理 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
+            }
+            
+            .single-line-ellipsis,
+            .multi-line-ellipsis-webkit,
+            .multi-line-ellipsis-compatible,
+            .fade-out-overflow,
+            .expandable-text {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">CSS 文本溢出处理演示</h1>
+        
+        <div class="demo-section">
+            <h2 class="section-title">1. 单行文本溢出</h2>
+            <div class="demo-box">
+                <div class="single-line-ellipsis">
+                    这是一段很长的文本内容，当超过容器宽度时会自动显示省略号，这是最常见的文本溢出处理方式。
+                </div>
+            </div>
+            <pre><code>/* 单行文本省略 */
+.single-line-ellipsis {
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}</code></pre>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="section-title">2. 多行文本溢出 - WebKit方案</h2>
+            <div class="demo-box">
+                <div class="multi-line-ellipsis-webkit">
+                    这是一段很长的文本内容，当超过指定行数时会自动显示省略号。这种方案主要适用于WebKit内核的浏览器，如Chrome和Safari。文本会在第三行末尾显示省略号。
+                </div>
+            </div>
+            <pre><code>/* WebKit多行文本省略 */
+.multi-line-ellipsis-webkit {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}</code></pre>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="section-title">3. 多行文本溢出 - 兼容方案</h2>
+            <div class="demo-box">
+                <div class="multi-line-ellipsis-compatible">
+                    这是一段很长的文本内容，使用伪元素来实现多行文本的省略效果。这种方案兼容性更好，适用于各种浏览器。通过定位伪元素在文本末尾显示省略号。
+                </div>
+            </div>
+            <pre><code>/* 兼容性多行文本省略 */
+.multi-line-ellipsis-compatible {
+    height: 72px; /* 3行高度 */
+    overflow: hidden;
+    position: relative;
+}
+.multi-line-ellipsis-compatible::after {
+    content: "...";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to right, transparent, white 55%);
+}</code></pre>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="section-title">4. 渐变淡出效果</h2>
+            <div class="demo-box">
+                <div class="fade-out-overflow">
+                    这是一段很长的文本内容，使用渐变效果来处理溢出。不是显示省略号，而是让文本逐渐淡出，给用户一种平滑过渡的视觉体验。这种效果在某些设计场景中会更加优雅。
+                </div>
+            </div>
+            <pre><code>/* 渐变淡出效果 */
+.fade-out-overflow {
+    height: 72px;
+    overflow: hidden;
+    position: relative;
+}
+.fade-out-overflow::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 24px;
+    background: linear-gradient(to bottom, transparent, white);
+}</code></pre>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="section-title">5. 可交互展开/收起</h2>
+            <div class="demo-box">
+                <div class="expandable-text">
+                    <div class="expandable-content" id="expandableContent">
+                        这是一段很长的文本内容，初始状态下只显示前几行，用户可以点击按钮展开查看全部内容。这种方案提供了更好的用户体验，让用户可以根据需要控制显示的内容量。当文本很长时，这种交互方式特别有用，既保持了页面的整洁，又给用户提供了查看完整内容的选项。
+                    </div>
+                    <button class="expand-btn" onclick="toggleExpand()">展开</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="section-title">6. 不同方案效果对比</h2>
+            <div class="comparison-grid">
+                <div class="comparison-item">
+                    <div class="comparison-title">单行省略</div>
+                    <div class="single-line-ellipsis">
+                        超长文本内容演示效果
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-title">多行省略</div>
+                    <div class="multi-line-ellipsis-webkit">
+                        这是多行文本省略效果的演示，会在指定行数后显示省略号
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-title">渐变淡出</div>
+                    <div class="fade-out-overflow">
+                        这是渐变淡出效果的演示，文本会平滑过渡到透明
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isExpanded = false;
+        
+        function toggleExpand() {
+            const content = document.getElementById('expandableContent');
+            const btn = document.querySelector('.expand-btn');
+            
+            if (isExpanded) {
+                content.classList.remove('expanded');
+                btn.textContent = '展开';
+                isExpanded = false;
+            } else {
+                content.classList.add('expanded');
+                btn.textContent = '收起';
+                isExpanded = true;
+            }
+        }
+    </script>
+</body>
+</html>

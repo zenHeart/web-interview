@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS打字机效果演示</title>
+    <style>
+        body {
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .demo-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        /* 基础打字机效果 */
+        .typewriter-basic {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+            border-right: 3px solid #ff6b6b;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: 
+                typing 3.5s steps(28, end),
+                blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #ff6b6b }
+        }
+
+        /* 多行打字机效果 */
+        .typewriter-multiline {
+            margin: 40px 0;
+        }
+
+        .typewriter-line {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 0;
+            font-size: 16px;
+            color: #555;
+            margin: 10px 0;
+            border-right: 2px solid transparent;
+        }
+
+        .typewriter-line.active {
+            border-right-color: #4ecdc4;
+            animation: 
+                typing-multi 2s steps(40, end) forwards,
+                blink-multi 1s step-end infinite;
+        }
+
+        .typewriter-line:nth-child(1) { animation-delay: 0s; }
+        .typewriter-line:nth-child(2) { animation-delay: 2.5s; }
+        .typewriter-line:nth-child(3) { animation-delay: 5s; }
+        .typewriter-line:nth-child(4) { animation-delay: 7.5s; }
+
+        @keyframes typing-multi {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-multi {
+            from, to { border-color: transparent }
+            50% { border-color: #4ecdc4 }
+        }
+
+        /* 回删效果 */
+        .typewriter-backspace {
+            margin: 40px 0;
+            font-size: 20px;
+            color: #333;
+            border-right: 3px solid #45b7d1;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: 
+                type-and-delete 6s steps(20, end) infinite;
+        }
+
+        @keyframes type-and-delete {
+            0%, 10% { width: 0 }
+            20%, 50% { width: 100% }
+            60%, 90% { width: 0 }
+            100% { width: 0 }
+        }
+
+        /* 彩色打字机 */
+        .typewriter-colored {
+            margin: 40px 0;
+            font-size: 18px;
+            font-weight: 600;
+            border-right: 3px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
+            animation: 
+                typing-colored 4s steps(35, end) forwards,
+                rainbow-caret 0.8s ease-in-out infinite;
+        }
+
+        @keyframes typing-colored {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes rainbow-caret {
+            0% { border-color: #ff6b6b }
+            16% { border-color: #ffa500 }
+            33% { border-color: #ffff00 }
+            50% { border-color: #00ff00 }
+            66% { border-color: #0000ff }
+            83% { border-color: #8b00ff }
+            100% { border-color: #ff6b6b }
+        }
+
+        .typewriter-colored .char {
+            animation: rainbow-text 2s ease-in-out infinite;
+        }
+
+        @keyframes rainbow-text {
+            0% { color: #ff6b6b }
+            16% { color: #ffa500 }
+            33% { color: #ffff00 }
+            50% { color: #00ff00 }
+            66% { color: #0000ff }
+            83% { color: #8b00ff }
+            100% { color: #ff6b6b }
+        }
+
+        .section-title {
+            color: #666;
+            font-size: 16px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 class="title">CSS 打字机效果演示</h1>
+        
+        <div class="section-title">1. 基础打字机效果</div>
+        <div class="typewriter-basic">
+            欢迎来到 CSS 打字机效果演示！
+        </div>
+
+        <div class="section-title">2. 多行打字机效果</div>
+        <div class="typewriter-multiline">
+            <div class="typewriter-line">第一行：CSS 动画让网页更生动</div>
+            <div class="typewriter-line">第二行：步进函数控制打字速度</div>
+            <div class="typewriter-line">第三行：边框闪烁模拟光标效果</div>
+            <div class="typewriter-line">第四行：组合动画创造复杂效果</div>
+        </div>
+
+        <div class="section-title">3. 回删打字机效果</div>
+        <div class="typewriter-backspace">
+            自动回删重打效果演示
+        </div>
+
+        <div class="section-title">4. 彩色打字机效果</div>
+        <div class="typewriter-colored">
+            <span class="char">彩</span>
+            <span class="char">色</span>
+            <span class="char">打</span>
+            <span class="char">字</span>
+            <span class="char">机</span>
+            <span class="char">效</span>
+            <span class="char">果</span>
+            <span class="char">！</span>
+            <span class="char">🌈</span>
+        </div>
+    </div>
+
+    <script>
+        // 启动多行打字机效果
+        window.addEventListener('load', () => {
+            const lines = document.querySelectorAll('.typewriter-line');
+            lines.forEach((line, index) => {
+                setTimeout(() => {
+                    line.classList.add('active');
+                }, index * 2500);
+            });
+        });
+    </script>
+</body>
+</html>
