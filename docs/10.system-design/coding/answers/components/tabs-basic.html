@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .tabs { display:flex; gap:6px; margin-bottom:8px }
+    .tabs button { padding:6px 10px }
+    .act { background:#1677ff; color:#fff; border:none; border-radius:4px }
+    .panel { border:1px solid #eee; border-radius:6px; padding:12px }
+  </style>
+</head>
+<body>
+  <div class="tabs">
+    <button data-k="a" class="act">Tab A</button>
+    <button data-k="b">Tab B</button>
+  </div>
+  <div id="panel" class="panel">面板 A 内容</div>
+  <script>
+    const panel = document.getElementById('panel')
+    document.querySelector('.tabs').addEventListener('click', (e)=>{
+      const k = e.target.dataset.k
+      if (!k) return
+      document.querySelectorAll('.tabs button').forEach(b=> b.classList.toggle('act', b.dataset.k===k))
+      panel.textContent = k === 'a' ? '面板 A 内容' : '面板 B 内容'
+    })
+  </script>
+</body>
+</html>
+
+

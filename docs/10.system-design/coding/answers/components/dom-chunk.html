@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .btn { padding:6px 10px; background:#1677ff; color:#fff; border:none; border-radius:4px; cursor:pointer }
+    .list { margin-top: 8px }
+  </style>
+</head>
+<body>
+  <button id="run" class="btn">开始分段渲染 1000 项</button>
+  <div id="list" class="list"></div>
+  <script>
+    document.getElementById('run').onclick = () => {
+      const total = 1000
+      const data = Array.from({ length: total }, (_, i) => i + 1)
+      timeChunk(data, render, 20, 30)()
+    }
+    function timeChunk(arr, fn, count, interval){
+      let timer
+      function start(){
+        const len = Math.min(count || 1, arr.length)
+        for (let i = 0; i < len; i++) fn(arr.shift())
+      }
+      return function(){
+        timer = setInterval(()=>{
+          if (arr.length === 0) { clearInterval(timer); return }
+          start()
+        }, interval || 50)
+      }
+    }
+    function render(n){
+      const el = document.createElement('div')
+      el.textContent = '项 ' + n
+      document.getElementById('list').appendChild(el)
+    }
+  </script>
+</body>
+</html>
+
+
