@@ -16,13 +16,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #555;
+  color: var(--ifm-font-color-base);
   font-weight: bold;
 }
 .subject-progress-text {
    width: 60px;
   margin-left: 8px;
-  color: #888;
+  color: var(--ifm-color-emphasis-600, #888);
   font-size: 13px;
 }
 
@@ -34,8 +34,8 @@
    width: 64px;
    height: 64px;
    border-radius: 50%;
-   background: #fff;
-   color: #888;
+   background: var(--ifm-background-surface-color, #fff);
+   color: var(--ifm-color-emphasis-600, #888);
    display: flex;
    align-items: center;
    justify-content: center;
@@ -54,9 +54,10 @@
   right: 0;
   bottom: 32px;
   z-index: 1002;
-  background: #fff;
+  background: var(--ifm-background-surface-color, #fff);
   border-radius: 16px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  border: 1px solid var(--ifm-color-emphasis-200, #eaeaea);
   padding: 28px 32px 20px 32px;
   min-width: 320px;
   max-width: 360px;
@@ -68,7 +69,7 @@
   top: 16px;
   right: 18px;
   font-size: 20px;
-  color: #888;
+  color: var(--ifm-color-emphasis-600, #888);
   cursor: pointer;
   font-weight: 400;
 }
@@ -89,6 +90,6 @@
 }
 .progress-text {
   font-size: 15px;
-  color: #333;
+  color: var(--ifm-font-color-base);
   margin-bottom: 8px;
 }

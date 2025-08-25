@@ -34,7 +34,7 @@ function formatDuration (ms: number) {
   return str
 }
 
-const SUBJECT_BAR_COLOR = 'rgb(76, 175, 80)'
+const SUBJECT_BAR_COLOR = 'var(--ifm-color-primary)'
 
 const Progress: React.FC<ProgressProps> = ({ questions }) => {
   const total = questions.length
@@ -118,7 +118,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           cy="32"
           r="30"
           fill="none"
-          stroke="#f3f5f7"
+          stroke="var(--ifm-color-emphasis-200, #f3f5f7)"
           strokeWidth="4"
         />
         <circle
@@ -126,7 +126,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           cy="32"
           r="30"
           fill="none"
-          stroke="rgb(76, 175, 80)"
+          stroke="var(--ifm-color-primary)"
           strokeWidth="4"
           strokeDasharray={2 * Math.PI * 30}
           strokeDashoffset={2 * Math.PI * 30 * (1 - progress / 100)}
@@ -138,9 +138,9 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
       <span style={{
         position: 'relative',
         zIndex: 1,
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: 500,
-        color: '#888'
+        color: 'var(--ifm-color-emphasis-600, #888)'
       }}>
         {Math.round(progress)}%
       </span>
@@ -165,7 +165,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           <div className="progress-bar" style={{
             width: '100%',
             height: 8,
-            background: '#eee',
+            background: 'var(--ifm-color-emphasis-200, #eee)',
             borderRadius: 4,
             marginBottom: 10,
             position: 'relative'
@@ -173,7 +173,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
             <div style={{
               width: `${progress}%`,
               height: '100%',
-              background: '#4caf50',
+              background: 'var(--ifm-color-primary)',
               borderRadius: 4,
               transition: 'width 0.3s'
             }}></div>
@@ -182,7 +182,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
             {completed}/{total} 已完成 ({progress.toFixed(0)}%)
             <p
               style={{
-                color: '#d32f2f',
+                color: 'var(--ifm-color-danger, #d32f2f)',
                 fontWeight: 'bold',
                 fontSize: '15px',
                 margin: 0,
@@ -194,7 +194,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
             {leftCount > 0 && leftMs > 0 && (
               <p
                 style={{
-                  color: '#1976d2',
+                  color: 'var(--ifm-color-info, #1976d2)',
                   fontWeight: 'bold',
                   fontSize: '14px',
                   margin: 0,
@@ -214,7 +214,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
                   className="subject-progress-bar"
                   style={{
                     width: '60%',
-                    background: '#eee',
+                    background: 'var(--ifm-color-emphasis-200, #eee)',
                     display: 'inline-block',
                     margin: '0 8px',
                     height: 10,
@@ -243,8 +243,8 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
                       transform: 'translate(-50%,-50%)',
                       fontSize: 12,
                       fontWeight: 700,
-                      color: item.percent > 50 ? '#fff' : '#388e3c',
-                      textShadow: item.percent > 50 ? '0 1px 2px #388e3c' : 'none',
+                      color: item.percent > 50 ? '#fff' : 'var(--ifm-color-primary-darkest, #388e3c)',
+                      textShadow: item.percent > 50 ? '0 1px 2px var(--ifm-color-primary-darkest, #388e3c)' : 'none',
                       pointerEvents: 'none'
                     }}
                   >

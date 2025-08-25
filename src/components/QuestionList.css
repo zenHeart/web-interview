@@ -11,7 +11,7 @@
 
 .subject-title {
   font-size: 2.5em;
-  color: #213547;
+  color: var(--ifm-color-primary);
   margin-bottom: 24px;
   font-weight: 600;
 }
@@ -26,7 +26,7 @@
 
 /* Topic 块样式 */
 .topic-block {
-  background: #f9f9f9;
+  background: var(--ifm-background-surface-color, #f9f9f9);
   border-radius: 8px;
   padding: 20px;
   display: flex;
@@ -41,7 +41,7 @@
 
 /* Topic 标题样式 */
 .topic-title {
-  color: #42b883;
+  color: var(--ifm-color-primary);
   font-size: 1.2em;
   margin-bottom: 16px;
   font-weight: 600;
@@ -53,7 +53,7 @@
   overflow-y: auto;
   /* 自定义滚动条样式 */
   scrollbar-width: thin;
-  scrollbar-color: #42b883 #f9f9f9;
+  scrollbar-color: var(--ifm-color-primary) var(--ifm-background-surface-color, #f9f9f9);
 }
 
 /* Webkit 浏览器的滚动条样式 */
@@ -62,11 +62,11 @@
 }
 
 .question-list-container::-webkit-scrollbar-track {
-  background: #f9f9f9;
+  background: var(--ifm-background-surface-color, #f9f9f9);
 }
 
 .question-list-container::-webkit-scrollbar-thumb {
-  background-color: #42b883;
+  background-color: var(--ifm-color-primary);
   border-radius: 3px;
 }
 
@@ -79,7 +79,7 @@
 
 /* 问题项样式 */
 .question-item {
-  color: #476582;
+  color: var(--ifm-font-color-base);
   padding: 8px 0;
   font-size: 0.95em;
   line-height: 1.4;
@@ -88,7 +88,12 @@
 }
 
 .question-item:hover {
-  color: #42b883;
+  color: var(--ifm-color-primary);
+}
+
+/* 深色模式适配：轻微提升块背景与边框对比度 */
+[data-theme="dark"] .topic-block {
+  background: var(--ifm-color-emphasis-200, #1f1f1f);
 }
 
 /* 响应式布局 */

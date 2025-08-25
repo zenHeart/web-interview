@@ -28,5 +28,5 @@
 
 .homeBtns a,
 .homeBtns a:hover {
-  color: black;
+  color: inherit;
 }

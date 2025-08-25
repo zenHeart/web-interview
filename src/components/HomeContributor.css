@@ -1,17 +1,23 @@
 .home-contributor {
+  --wi-cta-bg: var(--ifm-color-emphasis-100, #f3f4f6);
+  --wi-cta-border: var(--ifm-color-emphasis-200, #eaeaea);
   text-align: center;
-  background-color: #f3f4f6;
+  background-color: var(--wi-cta-bg);
+  border: 1px solid var(--wi-cta-border);
+  border-radius: 8px;
   padding: 20px;
 }
 
 .contributor-title {
   font-size: 2em;
   font-weight: bold;
+  color: var(--ifm-color-primary);
 }
 
 .contributor-description {
   margin: 10px 0;
   font-size: 1.2em;
+  color: var(--ifm-font-color-base);
 }
 
 .contributor-button {
@@ -26,4 +32,9 @@
 
 .contributor-button:hover {
   background-color: #444;
+}
+
+[data-theme="dark"] .home-contributor {
+  --wi-cta-bg: var(--ifm-color-emphasis-200, #1e1e1e);
+  --wi-cta-border: var(--ifm-color-emphasis-300, #2a2a2a);
 }

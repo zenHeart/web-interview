@@ -7,11 +7,14 @@
 }
 
 .subject-card {
-   border: 1px solid #eaeaea;
+   --wi-card-border: var(--ifm-color-emphasis-200, #eaeaea);
+   --wi-card-bg: var(--ifm-background-surface-color, #fff);
+   border: 1px solid var(--wi-card-border);
+   background: var(--wi-card-bg);
    padding: 10px;
    border-radius: 8px;
    height: 200px;
-   overflow: scroll;
+   overflow: auto;
    width: 32%;
 }
 
@@ -30,6 +33,7 @@
 .subject-title {
   font-size: 1.5em;
   margin-bottom: 10px;
+  color: var(--ifm-color-primary);
 }
 
 .wi-topics-container {
@@ -39,10 +43,22 @@
 }
 
 .topic-tag {
-  background-color: #f4f4f5;
+  --wi-tag-bg: var(--ifm-color-emphasis-100, #f4f4f5);
+  --wi-tag-fg: var(--ifm-font-color-base);
+  background-color: var(--wi-tag-bg);
+  color: var(--wi-tag-fg);
   text-align: center;
   border-radius: 12px;
   padding: 2px 8px;
   font-size: 0.9em;
   margin-bottom: 10px;
+}
+
+[data-theme="dark"] .subject-card {
+  --wi-card-border: var(--ifm-color-emphasis-300, #2a2a2a);
+  --wi-card-bg: var(--ifm-background-surface-color, #111);
+}
+
+[data-theme="dark"] .topic-tag {
+  --wi-tag-bg: var(--ifm-color-emphasis-200, #2a2a2a);
 }
