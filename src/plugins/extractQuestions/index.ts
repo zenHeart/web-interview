@@ -154,10 +154,15 @@ export default function extractQuestionsPlugin (
             const fragments = anchorFull ? anchorFull.slice(1, -1) : `#${title.toLowerCase().replace(/\s+/g, '-')}`
             const topicPath = topics.map(t => t.key).join('/')
             const link = `${siteConfig.baseUrl}docs/${subject}/${topicPath}${fragments}`
+            // H1 单文件题目：仅归属到父目录作为主题
+            const headingLevel = m[1].length
+            const displayTopicPathArr = (headingLevel === 1 && topicParts.length > 0)
+              ? topicParts.map(t => t.key)
+              : topics.map(t => t.key)
             questions.push({
               title,
               subject: subject || 'Other',
-              topic: topics.map(t => t.key),
+              topic: displayTopicPathArr,
               priority: pToken,
               link,
               meta: { fileH1 }
