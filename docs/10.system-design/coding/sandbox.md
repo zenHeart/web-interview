@@ -1,4 +1,12 @@
-# 实现一个沙箱系统  {#p0-sandbox}
+# 如何实现一个前端沙箱系统？  {#P0-sandbox}
+
+<Answer>
+
+**核心概念/解决方案:**
+
+- 隔离粒度：JS（作用域/Proxy）、CSS（Shadow DOM/CSS Modules）、DOM（影子树）
+- 实现路线：IIFE/with/new Function、Snapshot/Legacy/Proxy Sandbox，逃逸与防护
+- 多实例与性能：多例 Proxy/fakeWindow、绑定函数与 getter、快照还原
 
 微前端已经成为前端领域比较火爆的话题，在技术方面，微前端有一个始终绕不过去的话题就是前端沙箱
 
@@ -16,8 +24,8 @@
 
 我们大致可以把沙箱的实现总体分为两个部分：
 
-* 构建一个闭包环境
-* 模拟原生浏览器对象
+- 构建一个闭包环境
+- 模拟原生浏览器对象
 
  构建闭包环境
 
@@ -576,11 +584,11 @@ proxySandbox 由于是拷贝复制了一份 fakeWindow，不会污染全局 wind
 
 常见的有：
 
-* CSS Module
-* namespace
-* Dynamic StyleSheet
-* css in js
-* Shadow DOM 常见的我们这边不再赘述，这里我们重点提一下Shadow DO。
+- CSS Module
+- namespace
+- Dynamic StyleSheet
+- css in js
+- Shadow DOM 常见的我们这边不再赘述，这里我们重点提一下Shadow DO。
 
  Shadow DOM
 
@@ -588,4 +596,10 @@ Shadow DOM 允许将隐藏的 DOM 树附加到常规的 DOM 树中——它以 s
 
 ### 延伸阅读
 
-* [sandbox](https://zhuanlan.zhihu.com/p/675043217)
+- [sandbox](https://zhuanlan.zhihu.com/p/675043217)
+
+**面试官视角:**
+
+- 关注逃逸场景（top/self/window）、DOM/CSS 污染、性能与兼容性权衡
+
+</Answer>

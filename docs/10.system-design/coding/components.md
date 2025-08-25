@@ -1,4 +1,4 @@
-# 组件库设计
+# 如何设计组件库？ {#P0-component-library}
 
 ## 虚拟列表 {#p0-virtual-list}
 
@@ -164,12 +164,11 @@ const virtualScroll = new VirtualScroll(container, itemHeight, itemCount, render
 
 这种方法的优势包括：
 
-* 不需要绑定滚动事件，防止滚动性能问题。
-* 浏览器会自动优化观察者的回调。
-* 不需要手动计算当前应该渲染的项目，当用户快速滚动时也不会遇到空白内容。
+- 不需要绑定滚动事件，防止滚动性能问题。
+- 浏览器会自动优化观察者的回调。
+- 不需要手动计算当前应该渲染的项目，当用户快速滚动时也不会遇到空白内容。
 
 ## 实现一个拖曳列表组件 {#p1-drag-list}
-
 
 ## （Ant Design）的 Tooltip 组件是如何实现的 {#p0-tooltip}
 
@@ -195,10 +194,10 @@ Antd（Ant Design）的 Tooltip 组件是通过 CSS 和 JavaScript 结合实现�
 
 在实际开发中，可以使用一些常见的技术手段来计算动态偏移样式，例如：
 
-* 使用 CSS 的 position: absolute 将提示框定位在触发元素的相对位置上。
-* 使用 JavaScript 的 getBoundingClientRect() 方法获取触发元素的位置信息，包括宽度、高度、左偏移和上偏移等。
-* 结合触发元素的位置信息和组件配置项中的偏移参数，通过计算得到最终的偏移值。
-* 将计算得到的偏移值应用于提示框的样式属性，如 top、left、transform 等，使其相对于触发元素进行动态偏移。
+- 使用 CSS 的 position: absolute 将提示框定位在触发元素的相对位置上。
+- 使用 JavaScript 的 getBoundingClientRect() 方法获取触发元素的位置信息，包括宽度、高度、左偏移和上偏移等。
+- 结合触发元素的位置信息和组件配置项中的偏移参数，通过计算得到最终的偏移值。
+- 将计算得到的偏移值应用于提示框的样式属性，如 top、left、transform 等，使其相对于触发元素进行动态偏移。
 
 需要注意的是，具体的实现方式可能因框架、库或组件的不同而有所差异，但核心思想是通过监听事件、获取位置信息和计算样式来实现动态偏移效果。
 
@@ -416,7 +415,7 @@ applyThemePreference()
 
 1. **定义 CSS 变量**：
 
-* 在 CSS 中，可以使用`--`来定义变量。例如，可以定义一些代表主题色的变量：
+- 在 CSS 中，可以使用`--`来定义变量。例如，可以定义一些代表主题色的变量：
 
 ```css
 :root {
@@ -425,11 +424,11 @@ applyThemePreference()
 }
 ```
 
-* 这里定义了两个变量`--primary-color`和`--secondary-color`，分别代表主色和辅助色。
+- 这里定义了两个变量`--primary-color`和`--secondary-color`，分别代表主色和辅助色。
 
 2. **在 CSS 中使用变量**：
 
-* 然后在 CSS 规则中使用这些变量：
+- 然后在 CSS 规则中使用这些变量：
 
 ```css
 .button {
@@ -438,11 +437,11 @@ applyThemePreference()
 }
 ```
 
-* 在这个例子中，`.button`类的按钮背景颜色使用了`--primary-color`变量定义的颜色。
+- 在这个例子中，`.button`类的按钮背景颜色使用了`--primary-color`变量定义的颜色。
 
 3. **在 JavaScript 中切换主题**：
 
-* 在 JavaScript 中，可以通过修改`document.documentElement.style`来改变 CSS 变量的值，从而切换主题色：
+- 在 JavaScript 中，可以通过修改`document.documentElement.style`来改变 CSS 变量的值，从而切换主题色：
 
 ```js
 const setTheme = (theme) => {
@@ -467,13 +466,13 @@ setTheme(theme1)
 setTheme(theme2)
 ```
 
-* 在这个例子中，`setTheme`函数接受一个主题对象，然后通过`document.documentElement.style.setProperty`方法修改 CSS 变量的值。可以定义多个主题对象，然后根据用户的选择切换主题。
+- 在这个例子中，`setTheme`函数接受一个主题对象，然后通过`document.documentElement.style.setProperty`方法修改 CSS 变量的值。可以定义多个主题对象，然后根据用户的选择切换主题。
 
 **二、使用预处理器（如 Sass、Less）**
 
 1. **定义变量和混合**：
 
-* 在 Sass 或 Less 中，可以定义变量来代表主题色。例如，在 Sass 中：
+- 在 Sass 或 Less 中，可以定义变量来代表主题色。例如，在 Sass 中：
 
 ```scss
 $primary-color: #007bff;
@@ -485,15 +484,15 @@ $secondary-color: #6c757d;
 }
 ```
 
-* 这里定义了变量`$primary-color`和`$secondary-color`，并在`.button`类中使用了这些变量。
+- 这里定义了变量`$primary-color`和`$secondary-color`，并在`.button`类中使用了这些变量。
 
 2. **创建多个主题文件**：
 
-* 可以创建多个主题文件，每个文件定义不同的变量值。例如，创建`theme1.scss`和`theme2.scss`两个文件，分别定义不同的主题色。
+- 可以创建多个主题文件，每个文件定义不同的变量值。例如，创建`theme1.scss`和`theme2.scss`两个文件，分别定义不同的主题色。
 
 3. **在 JavaScript 中切换主题文件**：
 
-* 在 HTML 中，可以通过`<link>`标签引入不同的 CSS 文件来切换主题。在 JavaScript 中，可以动态地修改`<link>`标签的`href`属性来切换主题文件：
+- 在 HTML 中，可以通过`<link>`标签引入不同的 CSS 文件来切换主题。在 JavaScript 中，可以动态地修改`<link>`标签的`href`属性来切换主题文件：
 
 ```js
 const setTheme = (theme) => {
@@ -516,13 +515,13 @@ setTheme(theme1)
 setTheme(theme2)
 ```
 
-* 在这个例子中，`setTheme`函数接受一个主题对象，然后通过修改`<link>`标签的`href`属性来切换主题文件。可以定义多个主题对象，每个对象包含不同的主题文件路径。
+- 在这个例子中，`setTheme`函数接受一个主题对象，然后通过修改`<link>`标签的`href`属性来切换主题文件。可以定义多个主题对象，每个对象包含不同的主题文件路径。
 
 **三、使用 JavaScript 动态修改样式**
 
 1. **定义样式类**：
 
-* 在 CSS 中定义多个样式类，每个类代表一种主题。例如：
+- 在 CSS 中定义多个样式类，每个类代表一种主题。例如：
 
 ```css
 .theme1 {
@@ -536,11 +535,11 @@ setTheme(theme2)
 }
 ```
 
-* 这里定义了两个样式类`.theme1`和`.theme2`，分别代表不同的主题。
+- 这里定义了两个样式类`.theme1`和`.theme2`，分别代表不同的主题。
 
 2. **在 JavaScript 中切换样式类**：
 
-* 在 JavaScript 中，可以通过修改元素的`classList`属性来切换样式类，从而切换主题：
+- 在 JavaScript 中，可以通过修改元素的`classList`属性来切换样式类，从而切换主题：
 
 ```js
 const setTheme = (theme) => {
@@ -556,7 +555,7 @@ setTheme('theme1')
 setTheme('theme2')
 ```
 
-* 在这个例子中，`setTheme`函数接受一个主题类名作为参数，然后通过修改元素的`classList`属性来切换主题。首先移除当前元素的所有主题类名，然后添加指定的主题类名。
+- 在这个例子中，`setTheme`函数接受一个主题类名作为参数，然后通过修改元素的`classList`属性来切换主题。首先移除当前元素的所有主题类名，然后添加指定的主题类名。
 
 ## 手写 dom 分段渲染 {#p0-domer-render}
 
@@ -602,7 +601,7 @@ renderDOMList();
 
 具体实现：
 
-* 第一步：点击右边的导航菜单，利用 scrollIntoView 方法使内容区域对应的元素出现在可视区域中。
+- 第一步：点击右边的导航菜单，利用 scrollIntoView 方法使内容区域对应的元素出现在可视区域中。
 
 ```js
 const rightBox = document.querySelector('.rightBox')
@@ -621,7 +620,7 @@ rightBox.addEventListener(
 )
 ```
 
-* 第二步：页面容器滚动时，当目标元素出现在检测区域内则联动改变对应导航的样式。
+- 第二步：页面容器滚动时，当目标元素出现在检测区域内则联动改变对应导航的样式。
 
 ```js
 const observer = new IntersectionObserver(
@@ -756,9 +755,9 @@ window.addEventListener('unload', (event) => {
 
  注意事项
 
-* 不是所有浏览器都完全一样地支持这些事件和 `navigator.sendBeacon` 方法。实施时应当考虑兼容性。
-* 在 `beforeunload` 和 `unload` 事件中执行大量的同步操作或长时间运行的脚本可能会导致用户体验下降。推荐尽量使用简洁快速的逻辑。
-* `beforeunload` 事件可以控制是否提示用户离开页面的确认对话框，但自定义的确认对话框信息可能不被所有浏览器支持。
-* 使用 `navigator.sendBeacon` 来发送数据是因为它能在请求中携带足够的数据量，且即使页面卸载过程中也能确保数据被发送。
+- 不是所有浏览器都完全一样地支持这些事件和 `navigator.sendBeacon` 方法。实施时应当考虑兼容性。
+- 在 `beforeunload` 和 `unload` 事件中执行大量的同步操作或长时间运行的脚本可能会导致用户体验下降。推荐尽量使用简洁快速的逻辑。
+- `beforeunload` 事件可以控制是否提示用户离开页面的确认对话框，但自定义的确认对话框信息可能不被所有浏览器支持。
+- 使用 `navigator.sendBeacon` 来发送数据是因为它能在请求中携带足够的数据量，且即使页面卸载过程中也能确保数据被发送。
 
 根据你的应用需求，选择合适的事件和方法，确保页面关闭时能够执行你的逻辑。

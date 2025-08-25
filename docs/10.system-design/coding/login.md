@@ -1,11 +1,19 @@
-# 登录鉴权 {#p0-login}
+# 前端登录鉴权如何设计？ {#P0-login}
+
+<Answer>
+
+**核心概念/解决方案:**
+
+- 身份与会话：Session/Cookie、JWT、OIDC/OAuth2、SSO；续期与撤销
+- 存储与安全：HttpOnly/Secure/SameSite、CSRF 防护、XSS 防护、Token 滚动
+- 多端与场景：扫码登录、跨域/多子域、长会话与风控
 
 前端登录鉴权的方式主要有以下几种：
 
 1. 基于Session Cookie的鉴权：
 
-* cookie: 用户在登录成功后，服务器会生成一个包含用户信息的Cookie，并返回给前端。前端在后续的请求中会自动携带这个Cookie，在服务器端进行验证和识别用户身份。
-* Session: 用户登录成功后，服务器会在后端保存用户的登录状态信息，并生成一个唯一的Session ID，将这个Session ID 返回给前端。前端在后续的请求中需要携带这个Session ID，服务器通过Session ID 来验证用户身份。
+- cookie: 用户在登录成功后，服务器会生成一个包含用户信息的Cookie，并返回给前端。前端在后续的请求中会自动携带这个Cookie，在服务器端进行验证和识别用户身份。
+- Session: 用户登录成功后，服务器会在后端保存用户的登录状态信息，并生成一个唯一的Session ID，将这个Session ID 返回给前端。前端在后续的请求中需要携带这个Session ID，服务器通过Session ID 来验证用户身份。
 
 2. 单点登录（Single Sign-On，SSO）：单点登录是一种将多个应用系统进行集成的认证方式。用户只需登录一次，即可在多个系统中完成认证，避免了重复登录的麻烦。常见的单点登录协议有CAS（Central Authentication Service）、SAML（Security Assertion Markup Language）等。
 
@@ -25,10 +33,10 @@ Token可以是一个字符串，通常是经过加密和签名的，以确保其
 
 Token的使用具有以下特点：
 
-* 无状态：服务器不需要在数据库中存储会话信息，所有必要的信息都包含在Token中。
-* 可扩展性：Token可以存储更多的用户信息，甚至可以包含自定义的数据。
-* 安全性：Token可以使用加密算法进行签名，以确保数据的完整性和安全性。
-* 跨域支持：Token可以在跨域请求中通过在请求头中添加Authorization字段进行传递。
+- 无状态：服务器不需要在数据库中存储会话信息，所有必要的信息都包含在Token中。
+- 可扩展性：Token可以存储更多的用户信息，甚至可以包含自定义的数据。
+- 安全性：Token可以使用加密算法进行签名，以确保数据的完整性和安全性。
+- 跨域支持：Token可以在跨域请求中通过在请求头中添加Authorization字段进行传递。
 
 Token在前后端分离的架构中广泛应用，特别是在RESTful API的身份验证中常见。它比传统的基于Cookie的会话管理更灵活，并且适用于各种不同的客户端，例如Web、移动应用和第三方接入等。
 
@@ -36,13 +44,13 @@ Token在前后端分离的架构中广泛应用，特别是在RESTful API的身�
 
 Token一般在客户端存在以下几个地方：
 
-* Cookie：Token可以存储在客户端的Cookie中。服务器在响应请求时，可以将Token作为一个Cookie发送给客户端，客户端在后续的请求中会自动将Token包含在请求的Cookie中发送给服务器。
+- Cookie：Token可以存储在客户端的Cookie中。服务器在响应请求时，可以将Token作为一个Cookie发送给客户端，客户端在后续的请求中会自动将Token包含在请求的Cookie中发送给服务器。
 
-* Local Storage/Session Storage：Token也可以存储在客户端的Local Storage或Session Storage中。这些是HTML5提供的客户端存储机制，可以在浏览器中长期保存数据。
+- Local Storage/Session Storage：Token也可以存储在客户端的Local Storage或Session Storage中。这些是HTML5提供的客户端存储机制，可以在浏览器中长期保存数据。
 
-* Web Storage API：除了Local Storage和Session Storage，Token也可以使用Web Storage API中的其他存储机制，比如IndexedDB、WebSQL等。
+- Web Storage API：除了Local Storage和Session Storage，Token也可以使用Web Storage API中的其他存储机制，比如IndexedDB、WebSQL等。
 
-* 请求头：Token也可以包含在客户端发送的请求头中，一般是在Authorization头中携带Token。
+- 请求头：Token也可以包含在客户端发送的请求头中，一般是在Authorization头中携带Token。
 
 需要注意的是，无论将Token存储在哪个地方，都需要采取相应的安全措施，如HTTPS传输、加密存储等，以保护Token的安全性。
 
@@ -50,21 +58,21 @@ Token一般在客户端存在以下几个地方：
 
 存放在Cookie中相对来说是比较常见的做法，但是并不是最安全的方式。存放在Cookie中的Token可能存在以下安全风险：
 
-* **跨站脚本攻击（XSS）**：如果网站存在XSS漏洞，攻击者可以通过注入恶意脚本来获取用户的Cookie信息，包括Token。攻击者可以利用Token冒充用户进行恶意操作。
+- **跨站脚本攻击（XSS）**：如果网站存在XSS漏洞，攻击者可以通过注入恶意脚本来获取用户的Cookie信息，包括Token。攻击者可以利用Token冒充用户进行恶意操作。
 
-* **跨站请求伪造（CSRF）**：攻击者可以利用CSRF漏洞，诱使用户在已经登录的情况下访问恶意网站，该网站可能利用用户的Token发起伪造的请求，从而执行未经授权的操作。
+- **跨站请求伪造（CSRF）**：攻击者可以利用CSRF漏洞，诱使用户在已经登录的情况下访问恶意网站，该网站可能利用用户的Token发起伪造的请求，从而执行未经授权的操作。
 
-* **不可控的访问权限**：将Token存放在Cookie中，意味着浏览器在每次请求中都会自动携带该Token。如果用户在使用公共计算机或共享设备时忘记退出登录，那么其他人可以通过使用同一个浏览器来访问用户的账户。
+- **不可控的访问权限**：将Token存放在Cookie中，意味着浏览器在每次请求中都会自动携带该Token。如果用户在使用公共计算机或共享设备时忘记退出登录，那么其他人可以通过使用同一个浏览器来访问用户的账户。
 
 为了增加Token的安全性，可以采取以下措施：
 
-* **使用HttpOnly标识**：将Cookie设置为HttpOnly，可以防止XSS攻击者通过脚本访问Cookie。
+- **使用HttpOnly标识**：将Cookie设置为HttpOnly，可以防止XSS攻击者通过脚本访问Cookie。
 
-* **使用Secure标识**：将Cookie设置为Secure，只能在通过HTTPS协议传输时发送给服务器，避免明文传输。
+- **使用Secure标识**：将Cookie设置为Secure，只能在通过HTTPS协议传输时发送给服务器，避免明文传输。
 
-* **设置Token的过期时间**：可以设置Token的过期时间，使得Token在一定时间后失效，减少被滥用的风险。
+- **设置Token的过期时间**：可以设置Token的过期时间，使得Token在一定时间后失效，减少被滥用的风险。
 
-* **使用其他存储方式**：考虑将Token存储在其他地方，如Local Storage或Session Storage，并采取加密等额外的安全措施保护Token的安全性。
+- **使用其他存储方式**：考虑将Token存储在其他地方，如Local Storage或Session Storage，并采取加密等额外的安全措施保护Token的安全性。
 
  cookie 和 token 的关系
 
@@ -222,14 +230,14 @@ Token 加密一般有两个步骤：
 1. 进入 Jerry App 首页（未登录状态）
 2. 点击 "Enter cell phone number" 输入框
 3. 页面上推动画分两段执行：
-   * 第一段：上推距离 = 键盘高度 - x
-   * 第二段：上推距离 = x
+   - 第一段：上推距离 = 键盘高度 - x
+   - 第二段：上推距离 = x
    （其中 x 约等于输入框顶部到页面底部的距离）
 
 注：在某些情况下，第二段动画结束时，光标会刚好与键盘顶部对齐
 （可以试着在键盘弹出的时候，稍微滚动下内容，关闭键盘再尝试打开，会比较容易复现该情况）
 
-### 闪烁问题
+## 闪烁问题
 
 #### FAQ 标签组列表
 
@@ -275,3 +283,13 @@ Token 加密一般有两个步骤：
 6. 中转站将该响应返回给手机端的应用，并携带一个用于表示该会话的令牌，此时手机和PC之间的认证流程就完成了。
 
 7. 当用户在PC端进行其他操作时，应用将会话令牌附加在请求中，并通过中转站向手机端的应用发起请求。手机端的应用使用会话令牌（也就是之前生成的令牌）来识别并验证会话状态，从而允许用户在PC端进行需要登录的操作。
+
+**面试官视角:**
+
+- 是否能权衡无状态/有状态会话、登出与撤销、刷新令牌与滚动；CSRF/XSS
+
+**延伸阅读:**
+
+- OAuth2.1/PKCE、RFC 6265（Cookie）、OpenID Connect Core
+
+</Answer>

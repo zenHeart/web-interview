@@ -1,4 +1,13 @@
-# 设计推特 {#p0-design-twitter}
+# 如何设计 Twitter/Feed 系统？ {#P0-design-twitter}
+
+<Answer>
+
+**核心概念/解决方案:**
+
+- 读多写少、低延迟：PUSH/PULL/Hybrid 投喂；Redis 多级缓存；写入与回源保护
+- KOL 放大与热点：分层投喂、异步流式计算、预聚合与热门池
+- 数据建模：用户关系索引双写（follower/followee）、时间有序索引
+- 可用性与成本：读写隔离、分区与容量规划、降级与限流熔断
 
 2. 细节确定
 
@@ -309,3 +318,15 @@ class Twitter {
   }
 }
 ```
+
+**面试官视角:**
+
+- 关注热点/KOL 冲击、缓存一致性、重试与幂等；跨区多活与时序一致性
+- 指标：P99 延迟、投喂成功率、缓存命中率、写放大与成本；降级策略
+
+**延伸阅读:**
+
+- Fanout on write vs read、Timeline 年代记设计经验
+- Redis 设计与应用、Kafka/Flink 流式投喂
+
+</Answer>
