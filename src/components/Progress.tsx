@@ -34,16 +34,7 @@ function formatDuration (ms: number) {
   return str
 }
 
-const getColorByIndex = (idx: number, total: number) => {
-  // 绿色到灰色色阶
-  const start = [76, 175, 80] // #4CAF50
-  const end = [200, 200, 200] // #C8C8C8
-  const ratio = total <= 1 ? 0 : idx / (total - 1)
-  const r = Math.round(start[0] + (end[0] - start[0]) * ratio)
-  const g = Math.round(start[1] + (end[1] - start[1]) * ratio)
-  const b = Math.round(start[2] + (end[2] - start[2]) * ratio)
-  return `rgb(${r},${g},${b})`
-}
+const SUBJECT_BAR_COLOR = 'rgb(76, 175, 80)'
 
 const Progress: React.FC<ProgressProps> = ({ questions }) => {
   const total = questions.length
@@ -216,9 +207,9 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           </div>
           {/* 各学科进度条 */}
           <div className="subject-progress-list">
-            {subjectProgress.map((item, idx) => (
+            {subjectProgress.map((item) => (
               <div className="subject-progress-row" key={item.subject}>
-                <span className="subject-progress-label">{item.subject}</span>
+                <span className="subject-progress-label" title={item.subject}>{item.subject}</span>
                 <div
                   className="subject-progress-bar"
                   style={{
@@ -237,7 +228,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
                     style={{
                       width: `${item.percent}%`,
                       height: '100%',
-                      background: getColorByIndex(idx, subjectProgress.length),
+                      background: SUBJECT_BAR_COLOR,
                       borderRadius: 5,
                       transition: 'width 0.3s',
                       position: 'relative'
