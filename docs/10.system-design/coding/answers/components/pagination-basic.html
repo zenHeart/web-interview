@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .pg { display:flex; gap:6px; align-items:center }
+    .pg button { padding:4px 8px }
+    .act { font-weight: 700 }
+  </style>
+</head>
+<body>
+  <div class="pg" id="pg"></div>
+  <ul id="list"></ul>
+  <script>
+    const total = 96, pageSize = 10
+    let page = 1
+    function render(){
+      const pages = Math.ceil(total/pageSize)
+      const pg = document.getElementById('pg')
+      pg.innerHTML = `<button data-op="prev">上一页</button>` +
+        Array.from({length: pages}, (_,i)=>`<button data-p="${i+1}" class="${page===i+1?'act':''}">${i+1}</button>`).join('') +
+        `<button data-op="next">下一页</button>`
+      const start = (page-1)*pageSize
+      const items = Array.from({length: Math.min(pageSize, total-start)}, (_,i)=>`第 ${(start+i)+1} 条`)
+      document.getElementById('list').innerHTML = items.map(t=>`<li>${t}</li>`).join('')
+    }
+    document.getElementById('pg').addEventListener('click', (e)=>{
+      const p = e.target.dataset.p
+      const op = e.target.dataset.op
+      const pages = Math.ceil(total/pageSize)
+      if (p) page = +p
+      if (op==='prev') page = Math.max(1, page-1)
+      if (op==='next') page = Math.min(pages, page+1)
+      render()
+    })
+    render()
+  </script>
+</body>
+</html>
+
+

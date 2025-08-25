@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .btn { padding:6px 10px; background:#1677ff; border:none; color:#fff; border-radius:4px; cursor:pointer }
+    .mask { position: fixed; inset:0; background: rgba(0,0,0,.35); opacity:0; pointer-events:none; transition:.2s }
+    .mask.show { opacity:1; pointer-events:auto }
+    .drawer { position: fixed; top:0; right:0; width: 320px; height: 100vh; background:#fff; box-shadow: -4px 0 16px rgba(0,0,0,.2); transform: translateX(100%); transition: transform .2s; padding:16px }
+    .drawer.show { transform: translateX(0) }
+  </style>
+</head>
+<body>
+  <button id="open" class="btn">打开抽屉</button>
+  <div id="mask" class="mask"></div>
+  <div id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="title">
+    <h3 id="title">抽屉示例</h3>
+    <p>内容区域...</p>
+    <button id="close">关闭</button>
+  </div>
+  <script>
+    const mask = document.getElementById('mask')
+    const drawer = document.getElementById('drawer')
+    const openBtn = document.getElementById('open')
+    const closeBtn = document.getElementById('close')
+    function open(){ mask.classList.add('show'); drawer.classList.add('show'); drawer.focus() }
+    function close(){ mask.classList.remove('show'); drawer.classList.remove('show'); openBtn.focus() }
+    openBtn.onclick = open
+    closeBtn.onclick = close
+    mask.onclick = close
+    document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') close() })
+  </script>
+</body>
+</html>
+
+

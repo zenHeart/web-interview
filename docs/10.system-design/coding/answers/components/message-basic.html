@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .btn { padding:6px 10px; background:#1677ff; border:none; color:#fff; border-radius:4px; cursor:pointer }
+    .wrap { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); display:flex; flex-direction:column; gap: 8px; z-index: 9999 }
+    .toast { background:#fff; border:1px solid #eee; border-radius:6px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.1) }
+  </style>
+</head>
+<body>
+  <button id="show" class="btn">弹出消息</button>
+  <div id="wrap" class="wrap" aria-live="polite"></div>
+  <script>
+    document.getElementById('show').onclick = () => message('操作成功')
+    function message(text, duration=1500){
+      const wrap = document.getElementById('wrap')
+      const el = document.createElement('div')
+      el.className = 'toast'
+      el.textContent = text
+      wrap.appendChild(el)
+      setTimeout(()=>{ el.remove() }, duration)
+    }
+  </script>
+</body>
+</html>
+
+

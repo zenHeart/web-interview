@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .bar { width: 360px; height: 8px; background:#f5f5f5; border-radius: 999px; overflow: hidden; margin-top: 8px }
+    .bar > i { display:block; height: 100%; background:#52c41a; width:0 }
+  </style>
+</head>
+<body>
+  <input type="file" id="file" />
+  <button id="start">模拟上传</button>
+  <div class="bar"><i id="prog"></i></div>
+  <script>
+    const CHUNK = 256 * 1024
+    document.getElementById('start').onclick = async function(){
+      const f = document.getElementById('file').files[0]
+      if (!f) return alert('请选择文件')
+      const total = Math.ceil(f.size / CHUNK)
+      let done = 0
+      for (let offset = 0; offset < f.size; offset += CHUNK) {
+        const blob = f.slice(offset, offset + CHUNK)
+        await fakeRequest(blob)
+        done++
+        document.getElementById('prog').style.width = ((done/total)*100).toFixed(2)+'%'
+      }
+      alert('上传完成')
+    }
+    function fakeRequest(){ return new Promise(r=> setTimeout(r, 60)) }
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style> body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; } </style>
+</head>
+<body>
+  <label>开始：<input id="s" type="date"></label>
+  <label>结束：<input id="e" type="date"></label>
+  <script>
+    const s = document.getElementById('s'), e = document.getElementById('e')
+    s.addEventListener('change', ()=>{ e.min = s.value })
+    e.addEventListener('change', ()=>{ s.max = e.value })
+  </script>
+</body>
+</html>
+
+
