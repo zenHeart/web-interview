@@ -137,8 +137,8 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           fill="none"
           stroke="rgb(76, 175, 80)"
           strokeWidth="4"
-          strokeDasharray={2 * Math.PI * 28}
-          strokeDashoffset={2 * Math.PI * 28 * (1 - progress / 100)}
+          strokeDasharray={2 * Math.PI * 30}
+          strokeDashoffset={2 * Math.PI * 30 * (1 - progress / 100)}
           strokeLinecap="round"
           transform="rotate(-90 32 32)"
           style={{ transition: 'stroke-dashoffset 0.4s' }}
