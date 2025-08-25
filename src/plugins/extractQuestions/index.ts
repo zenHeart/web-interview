@@ -130,7 +130,7 @@ export default function extractQuestionsPlugin (
           // 仅收集带优先级锚点的任意层级标题为题目，例如：
           // # 标题 {#p1-some-slug}
           // ## 子标题 {#p0-xxx}
-          const headingRegex = /^(#{1,6})\s+(.+?)\s*(\{#([pP][0-5])-[^}]+})\s*$/gm
+          const headingRegex = /^(#{1,3})\s+(.+?)\s*(\{#([pP][0-5])-[^}]+})\s*$/gm
           const relativePath = path.relative(docsDir, filePath)
           const pathParts = relativePath.split(path.sep)
           // 用原始 subject 目录名和去标号 key

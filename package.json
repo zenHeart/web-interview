@@ -19,6 +19,7 @@
     "prepare": "husky",
     "demo:tfo": "node docs/network/tcp/examples/tfo.js",
     "topics": "./scripts/topics.sh"
+  ,"question:lint": "node scripts/question-lint.js"
   },
   "repository": {
     "type": "git",

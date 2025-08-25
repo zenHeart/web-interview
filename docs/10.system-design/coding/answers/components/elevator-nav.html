@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      }
+      .layout {
+        display: flex;
+        height: 100vh;
+      }
+      .content {
+        flex: 1;
+        overflow: auto;
+        padding: 24px 48px;
+        scroll-behavior: smooth;
+      }
+      .section {
+        height: 80vh;
+        border: 1px solid #eee;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        background: #fff;
+      }
+      .rightBox {
+        width: 200px;
+        border-left: 1px solid #eee;
+        padding: 12px;
+      }
+      .rightBox ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .rightBox li {
+        padding: 8px 12px;
+        cursor: pointer;
+        border-radius: 6px;
+        margin-bottom: 6px;
+      }
+      .rightBox li.active {
+        background: #1677ff;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="content" id="content">
+        <div class="section sec1">Section 1</div>
+        <div class="section sec2">Section 2</div>
+        <div class="section sec3">Section 3</div>
+        <div class="section sec4">Section 4</div>
+        <div class="section sec5">Section 5</div>
+      </div>
+      <div class="rightBox" id="nav">
+        <ul>
+          <li class="sec1Li active">Sec 1</li>
+          <li class="sec2Li">Sec 2</li>
+          <li class="sec3Li">Sec 3</li>
+          <li class="sec4Li">Sec 4</li>
+          <li class="sec5Li">Sec 5</li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      const content = document.getElementById('content');
+      const nav = document.getElementById('nav');
+
+      nav.addEventListener('click', (e) => {
+        const target = e.target;
+        if (target.tagName !== 'LI') return;
+        const sectionClass = target.className.replace('Li', '');
+        content.querySelector('.' + sectionClass).scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const sectionClass = entry.target.classList[1];
+            const targetLi = nav.querySelector('.' + sectionClass + 'Li');
+            if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+              nav.querySelectorAll('li').forEach((el) => el.classList.remove('active'));
+              targetLi.classList.add('active');
+            }
+          });
+        },
+        {
+          root: content,
+          threshold: [0.2, 0.4, 0.6, 0.8],
+        }
+      );
+
+      content.querySelectorAll('.section').forEach((sec) => observer.observe(sec));
+    </script>
+  </body>
+  </html>
+
+
