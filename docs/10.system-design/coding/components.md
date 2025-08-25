@@ -170,20 +170,6 @@ const virtualScroll = new VirtualScroll(container, itemHeight, itemCount, render
 
 ## 实现一个拖曳列表组件 {#p1-drag-list}
 
-## 取出一个 html 树，并返回标签类型和各标签出现次数？ {#p0-dom-count}
-
-<Answer>
-
-import DomCount from '!!raw-loader!./answers/dom-count.html';
-
-<Sandpack
-  template="static"
-  files={{
-    "/index.html": DomCount,
-  }}
-/>
-
-</Answer>
 
 ## （Ant Design）的 Tooltip 组件是如何实现的 {#p0-tooltip}
 

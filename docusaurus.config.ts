@@ -74,7 +74,6 @@ const config: Config = {
           numberPrefixParser,
           exclude: [
             '**/*.test.{js,jsx,ts,tsx}', // 排除测试文件
-            '**/10.system-design/**', // 排除所有 questions 目录
             '**/questions/**', // 排除所有 questions 目录
             '**/quiz/**', // 排除所有例题目录
             '**/answers/**', // 排除所有 answers 目录
