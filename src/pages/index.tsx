@@ -40,7 +40,7 @@ function HomepageHeader () {
                   <div style={{ fontSize: '0.9rem', opacity: 0.85, marginTop: '0.5rem' }}>
                      最近更新：
                      <a
-                        href={`${repoUrl}/commit/${lastCommit.hash}`}
+                        href={`${repoUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         title={lastCommit.message}
