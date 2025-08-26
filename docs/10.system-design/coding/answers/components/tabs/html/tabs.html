@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .tablist{display:flex;gap:8px;margin-bottom:8px}
+      .tab{padding:6px 12px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;cursor:pointer}
+      .tab.is-active{background:#1677ff;color:#fff;border-color:#1677ff}
+      .tabpanel{border:1px solid #f0f0f0;border-radius:6px;padding:8px}
+    </style>
+  </head>
+  <body>
+    <div class="tablist" role="tablist" aria-label="Tabs" id="tablist" tabindex="0"></div>
+    <div role="tabpanel" class="tabpanel" id="panel"></div>
+    <script>
+      const items = [
+        { key:'a', label:'选项A', content:'A 内容' },
+        { key:'b', label:'选项B', content:'B 内容' },
+        { key:'c', label:'选项C', content:'C 内容' }
+      ]
+      let activeKey = items[0].key
+      const list = document.getElementById('tablist'), panel=document.getElementById('panel')
+      function render(){
+        list.innerHTML=''
+        items.forEach(it=>{
+          const btn = document.createElement('button'); btn.className='tab'+(it.key===activeKey?' is-active':''); btn.setAttribute('role','tab'); btn.setAttribute('aria-selected', String(it.key===activeKey)); btn.tabIndex = it.key===activeKey?0:-1; btn.textContent=it.label
+          btn.onclick=()=>{ activeKey=it.key; render() }
+          list.appendChild(btn)
+        })
+        panel.textContent = items.find(i=>i.key===activeKey).content
+      }
+      list.addEventListener('keydown', (e)=>{
+        const idx = items.findIndex(i=>i.key===activeKey)
+        if (e.key==='ArrowRight') activeKey = items[(idx+1)%items.length].key
+        if (e.key==='ArrowLeft') activeKey = items[(idx-1+items.length)%items.length].key
+        if (e.key==='Home') activeKey = items[0].key
+        if (e.key==='End') activeKey = items[items.length-1].key
+        render()
+      })
+      render()
+    </script>
+  </body>
+</html>

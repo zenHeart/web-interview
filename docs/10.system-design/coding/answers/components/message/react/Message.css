@@ -1,0 +1,3 @@
+.msg{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#fff;border:1px solid #e5e5e5;box-shadow:0 6px 16px rgba(0,0,0,.08);padding:8px 12px;border-radius:6px;min-width:160px}
+.msg-success{border-color:#52c41a}.msg-warning{border-color:#faad14}.msg-error{border-color:#ff4d4f}.msg-info{border-color:#1677ff}
+.msg-close{margin-left:12px;border:none;background:transparent;cursor:pointer}

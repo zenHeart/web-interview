@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .car{position:relative;overflow:hidden;border:1px solid #d9d9d9;border-radius:8px;width:320px;height:160px}
+      .car-track{display:flex;transition:transform .3s ease}
+      .car-item{flex:0 0 auto;width:320px;height:160px;display:flex;align-items:center;justify-content:center;background:#fafafa}
+      .car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer}
+      .car-prev{left:8px}.car-next{right:8px}
+    </style>
+  </head>
+  <body>
+    <div class="car" id="car">
+      <div class="car-track" id="track">
+        <div class="car-item">1</div>
+        <div class="car-item">2</div>
+        <div class="car-item">3</div>
+      </div>
+      <button class="car-btn car-prev" id="prev">‹</button>
+      <button class="car-btn car-next" id="next">›</button>
+    </div>
+    <script>
+      const track=document.getElementById('track'), prev=document.getElementById('prev'), next=document.getElementById('next'); let index=0
+      function update(){ track.style.transform = `translateX(-${index*320}px)` }
+      prev.onclick=()=>{ index=(index-1+3)%3; update() }
+      next.onclick=()=>{ index=(index+1)%3; update() }
+      setInterval(()=>{ index=(index+1)%3; update() }, 1500)
+    </script>
+  </body>
+</html>

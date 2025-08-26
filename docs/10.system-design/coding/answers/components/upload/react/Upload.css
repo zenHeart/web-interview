@@ -1,0 +1,8 @@
+.u-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.u-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.u-item{border:1px solid #d9d9d9;border-radius:6px;padding:8px}
+.u-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+.u-bar{height:6px;background:#f5f5f5;border-radius:3px;overflow:hidden;margin-top:6px}
+.u-bar>span{display:block;height:100%;background:#1677ff}
+.u-status{font-size:12px}
+.u-done{color:#52c41a}.u-error{color:#ff4d4f}.u-canceled{color:#999}

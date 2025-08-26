@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .tbl-wrap{overflow:auto;max-height:260px;border:1px solid #d9d9d9;border-radius:6px}
+      .tbl{border-collapse:separate;border-spacing:0;min-width:600px}
+      th,td{padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;background:#fff}
+      thead th{position:sticky;top:0;background:#fafafa;z-index:2}
+      .is-sticky-left{position:sticky;left:0;background:#fff;z-index:1}
+    </style>
+  </head>
+  <body>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr id="thead"></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <script>
+      const columns = [
+        { key: 'name', title: '姓名', width: 140 },
+        { key: 'age', title: '年龄', width: 80 },
+        { key: 'city', title: '城市', width: 160 },
+        { key: 'job', title: '职业', width: 200 },
+      ]
+      const data = Array.from({ length: 30 }, (_, i) => ({ name: `用户 ${i+1}`, age: 20 + (i%10), city: '杭州', job: '前端工程师' }))
+      const thead = document.getElementById('thead'), tbody = document.getElementById('tbody')
+      columns.forEach((c, i)=>{ const th = document.createElement('th'); th.textContent=c.title; th.style.width=c.width+'px'; if (i===0) th.className='is-sticky-left'; thead.appendChild(th) })
+      data.forEach(row=>{ const tr = document.createElement('tr'); columns.forEach((c,i)=>{ const td = document.createElement('td'); td.textContent=String(row[c.key]??''); if(i===0) td.className='is-sticky-left'; tr.appendChild(td) }); tbody.appendChild(tr) })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+.elv-wrap{display:flex;gap:16px}
+.elv-nav{list-style:none;margin:0;padding:0;position:sticky;top:8px}
+.elv-nav li{padding:6px 10px;cursor:pointer}
+.elv-nav li.active{background:#e6f4ff}
+.elv-content{height:360px;overflow:auto;border:1px solid #d9d9d9;border-radius:6px;padding:8px}
+.elv-section{height:300px;margin-bottom:12px;border-bottom:1px solid #f0f0f0}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .cascader{position:relative;display:inline-block;min-width:240px;font-size:14px}
+      .cascader-trigger{border:1px solid #d9d9d9;border-radius:6px;padding:6px 28px 6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+      .cascader-placeholder{color:#999}
+      .cascader-arrow{position:absolute;right:8px}
+      .cascader-panel{position:absolute;left:0;top:100%;display:flex;background:#fff;border:1px solid #d9d9d9;border-radius:6px;margin-top:4px;box-shadow:0 6px 16px rgba(0,0,0,.08);z-index:10}
+      .cascader-col{width:180px;max-height:220px;overflow:auto;margin:0;padding:4px 0;list-style:none;border-right:1px solid #f0f0f0}
+      .cascader-col:last-child{border-right:0}
+      .cascader-option{padding:6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+      .cascader-option.is-active{background:#e6f4ff}
+      .cascader-option.is-disabled{color:#aaa;cursor:not-allowed}
+      .cascader-empty{padding:8px 10px;color:#999}
+    </style>
+  </head>
+  <body>
+    <div class="cascader" id="cd">
+      <div class="cascader-trigger" id="ctrl"><span id="txt" class="cascader-placeholder">请选择</span><span class="cascader-arrow">▾</span></div>
+      <div class="cascader-panel" id="panel" style="display:none"></div>
+    </div>
+    <div style="margin-top:8px">选中路径：<span id="val">未选择</span></div>
+    <script>
+      const data = [
+        { value:'zj', label:'浙江', children:[ { value:'hz', label:'杭州', children:[ { value:'xh', label:'西湖', isLeaf:true }, { value:'yl', label:'余杭', isLeaf:true } ] }, { value:'nb', label:'宁波', isLeaf:true } ] },
+        { value:'js', label:'江苏', isLeaf:false }
+      ]
+      let open=false, path=[]
+      const panel = document.getElementById('panel'), txt=document.getElementById('txt'), val=document.getElementById('val'), ctrl=document.getElementById('ctrl')
+      function columns(){ const cols=[data]; for (const o of path) cols.push(o.children||[]); return cols }
+      function render(){
+        panel.style.display = open? 'flex':'none'
+        const labels = path.map(o=>o.label).join(' / ')
+        txt.textContent = labels || '请选择'
+        txt.className = labels? '': 'cascader-placeholder'
+        val.textContent = path.map(o=>o.value).join(' / ') || '未选择'
+        panel.innerHTML = ''
+        columns().forEach((opts, level)=>{
+          const ul = document.createElement('ul'); ul.className='cascader-col'
+          if (opts.length===0) { ul.innerHTML='<li class="cascader-empty">暂无数据</li>'; panel.appendChild(ul); return }
+          opts.forEach(o=>{
+            const li = document.createElement('li'); li.className='cascader-option'; li.innerHTML = `<span>${o.label}</span>${o.isLeaf?'':'<span class="cascader-next">›</span>'}`
+            li.onclick = async ()=> select(level, o)
+            ul.appendChild(li)
+          })
+          panel.appendChild(ul)
+        })
+      }
+      async function loadData (selectedPath){
+        const last = selectedPath[selectedPath.length-1]
+        await new Promise(r=>setTimeout(r,300))
+        if (last.value==='js') return [ { value:'nj', label:'南京', isLeaf:true }, { value:'sz', label:'苏州', isLeaf:true } ]
+        return []
+      }
+      async function select (level, o){
+        path = path.slice(0, level); path[level]=o
+        if (!o.isLeaf && (!o.children || o.children.length===0)) { o.children = await loadData(path) }
+        if (o.isLeaf || !o.children || o.children.length===0) { open=false }
+        render()
+      }
+      ctrl.onclick = ()=>{ open=!open; render() }
+      render()
+    </script>
+  </body>
+</html>

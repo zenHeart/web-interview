@@ -1,0 +1,5 @@
+.tbl-wrap{overflow:auto;max-height:260px;border:1px solid #d9d9d9;border-radius:6px}
+.tbl{border-collapse:separate;border-spacing:0;min-width:600px}
+th,td{padding:8px 12px;border-bottom:1px solid #f0f0f0;white-space:nowrap;background:#fff}
+thead th{position:sticky;top:0;background:#fafafa;z-index:2}
+.is-sticky-left{position:sticky;left:0;background:#fff;z-index:1}

@@ -1,0 +1,93 @@
+<!-- dialog-modal.html -->
+<script>
+class DialogModal extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.render();
+  }
+  render() {
+    this.shadowRoot.innerHTML = `
+      <style>
+        .modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+        .modal { background: #fff; border-radius: 8px; min-width: 300px; padding: 24px; box-shadow: 0 2px 8px #0002; }
+        .close { position: absolute; top: 8px; right: 12px; cursor: pointer; font-size: 20px; }
+      </style>
+      <div class="modal-mask" tabindex="-1">
+        <div class="modal">
+          <span class="close" id="close">&times;</span>
+          <slot></slot>
+        </div>
+      </div>
+    `;
+    this.shadowRoot.getElementById('close').onclick = () => this.close();
+    this.shadowRoot.querySelector('.modal-mask').onclick = (e) => {
+      if (e.target === e.currentTarget) this.close();
+    };
+  }
+  open() { this.style.display = 'block'; }
+  close() { this.style.display = 'none'; }
+  connectedCallback() { this.style.display = 'none'; }
+}
+customElements.define('dialog-modal', DialogModal);
+
+window.ModalApi = {
+  open({ title, content, onClose, onConfirm, onCancel } = {}) {
+    let modal = document.createElement('dialog-modal');
+    // 支持函数式内容（如 JSX 预渲染结果）
+    let titleHtml = typeof title === 'function' ? title() : title || '';
+    let contentHtml = typeof content === 'function' ? content() : content || '';
+    modal.innerHTML = `
+      <div class="modal-title">${titleHtml}</div>
+      <div class="modal-content">${contentHtml}</div>
+      <div class="modal-footer">
+        <button id="confirm">确定</button>
+        <button id="cancel">取消</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.open();
+    // 关闭（遮罩/关闭按钮/ESC）
+    const closeHandler = () => {
+      modal.close();
+      modal.remove();
+      onClose && onClose();
+    };
+    modal.shadowRoot.getElementById('close').onclick = closeHandler;
+    modal.shadowRoot.querySelector('.modal-mask').onclick = (e) => {
+      if (e.target === e.currentTarget) closeHandler();
+    };
+    // 确定/取消
+    modal.querySelector('#confirm').onclick = () => {
+      onConfirm && onConfirm();
+      modal.close();
+      modal.remove();
+    };
+    modal.querySelector('#cancel').onclick = () => {
+      onCancel && onCancel();
+      modal.close();
+      modal.remove();
+    };
+    return modal;
+  }
+};
+</script>
+
+<!-- 组件模式 -->
+<dialog-modal>
+  <div class="modal-title">标题</div>
+  <div class="modal-content">内容区域</div>
+  <div class="modal-footer">
+    <button id="confirm">确定</button>
+    <button id="cancel">取消</button>
+  </div>
+</dialog-modal>
+
+<!-- API模式 -->
+<button onclick="ModalApi.open({
+  title: () => '<h1>标题</h1>',
+  content: () => '<p>内容</p>',
+  onClose: () => console.log('Modal closed'),
+  onConfirm: () => console.log('Modal confirmed'),
+  onCancel: () => console.log('Modal canceled')
+})">API弹窗</button>

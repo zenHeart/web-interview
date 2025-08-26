@@ -1,0 +1,5 @@
+.car{position:relative;overflow:hidden;border:1px solid #d9d9d9;border-radius:8px}
+.car-track{display:flex;transition:transform .3s ease}
+.car-item{flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:#fafafa}
+.car-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer}
+.car-prev{left:8px}.car-next{right:8px}

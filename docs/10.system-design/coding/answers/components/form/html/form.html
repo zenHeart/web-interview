@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      label{display:block;margin-top:8px}
+      [aria-invalid="true"]{outline:1px solid #ff4d4f}
+      [role="alert"]{color:#ff4d4f;margin-left:8px}
+    </style>
+  </head>
+  <body>
+    <form id="f">
+      <label>姓名<input id="name" /></label><span id="e_name" role="alert"></span>
+      <label>邮箱<input id="mail" /></label><span id="e_mail" role="alert"></span>
+      <button type="submit">提交</button>
+    </form>
+    <script>
+      const values = { name: '', mail: '' }
+      const errors = { name: null, mail: null }
+      const required = (m='必填项') => v => (v==null||v==='')?m:null
+      const email = (m='邮箱格式不正确') => v => (/^\S+@\S+\.\S+$/.test(String(v))?null:m)
+      const schema = { name:[required()], mail:[required(), email()] }
+
+      async function validateField(name){
+        for (const fn of (schema[name]||[])){
+          const r = await fn(values[name], values); if (r) return r
+        }
+        return null
+      }
+      async function setValue(name, v){
+        values[name]=v; const err = await validateField(name); errors[name]=err; render()
+      }
+      async function validate(){
+        let ok = true
+        for (const n of Object.keys(schema)){
+          const err = await validateField(n); errors[n]=err; if (err) ok=false
+        }
+        render(); return ok
+      }
+      function render(){
+        name.setAttribute('aria-invalid', String(!!errors.name))
+        mail.setAttribute('aria-invalid', String(!!errors.mail))
+        e_name.textContent = errors.name||''
+        e_mail.textContent = errors.mail||''
+      }
+
+      f.addEventListener('submit', async (e)=>{ e.preventDefault(); console.log('valid:', await validate(), values, errors) })
+      name.addEventListener('input', (e)=>setValue('name', e.target.value))
+      mail.addEventListener('input', (e)=>setValue('mail', e.target.value))
+    </script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+.cascader{position:relative;display:inline-block;min-width:240px;font-size:14px}
+.cascader-trigger{border:1px solid #d9d9d9;border-radius:6px;padding:6px 28px 6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.cascader-placeholder{color:#999}
+.cascader-arrow{position:absolute;right:8px}
+.cascader-panel{position:absolute;left:0;top:100%;display:flex;background:#fff;border:1px solid #d9d9d9;border-radius:6px;margin-top:4px;box-shadow:0 6px 16px rgba(0,0,0,.08);z-index:10}
+.cascader-col{width:180px;max-height:220px;overflow:auto;margin:0;padding:4px 0;list-style:none;border-right:1px solid #f0f0f0}
+.cascader-col:last-child{border-right:0}
+.cascader-option{padding:6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.cascader-option.is-active{background:#e6f4ff}
+.cascader-option.is-disabled{color:#aaa;cursor:not-allowed}
+.cascader-empty{padding:8px 10px;color:#999}

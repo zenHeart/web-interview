@@ -1,0 +1,6 @@
+.pager{display:flex;align-items:center;gap:8px}
+.pager-btn{padding:4px 8px}
+.pager-list{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.pager-page{padding:4px 8px;border:1px solid #d9d9d9;border-radius:4px;background:#fff;cursor:pointer}
+.pager-page.is-current{background:#1677ff;color:#fff;border-color:#1677ff}
+.pager-ellipsis{padding:4px 8px;color:#999}

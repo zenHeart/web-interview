@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .select{position:relative;display:inline-block;min-width:200px;font-size:14px}
+      .select-control{border:1px solid #d9d9d9;border-radius:6px;padding:6px 28px 6px 10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+      .select-placeholder{color:#999}
+      .select-arrow{position:absolute;right:8px}
+      .select-dropdown{position:absolute;left:0;right:0;top:100%;background:#fff;border:1px solid #d9d9d9;border-radius:6px;margin-top:4px;box-shadow:0 6px 16px rgba(0,0,0,.08);z-index:10}
+      .select-input{width:100%;padding:6px 8px;border:0;border-bottom:1px solid #f0f0f0;outline:none}
+      .select-list{max-height:180px;overflow:auto;margin:0;padding:4px 0;list-style:none}
+      .select-option{padding:6px 10px;cursor:pointer}
+      .select-option.is-active{background:#e6f4ff}
+      .select-option.is-disabled{color:#aaa;cursor:not-allowed}
+      .select-empty{padding:8px 10px;color:#999}
+    </style>
+  </head>
+  <body>
+    <div class="select" id="sel" tabindex="0">
+      <div class="select-control" id="ctrl"><span class="select-placeholder" id="label">请选择</span><span class="select-arrow">▾</span></div>
+      <div class="select-dropdown" id="dd" style="display:none">
+        <input class="select-input" id="kw" placeholder="搜索..." />
+        <ul class="select-list" id="list"></ul>
+      </div>
+    </div>
+    <div style="margin-top:8px">当前值：<span id="val">未选择</span></div>
+    <script>
+      const options = Array.from({length:50}, (_,i)=>({ value:String(i+1), label:`选项 ${i+1}` }))
+      const state = { open:false, value:undefined, keyword:'', activeIndex:-1 }
+      const sel = document.getElementById('sel'), dd = document.getElementById('dd'), kw = document.getElementById('kw'), list = document.getElementById('list'), label = document.getElementById('label'), val = document.getElementById('val'), ctrl = document.getElementById('ctrl')
+      function filtered(){ const k = state.keyword.trim().toLowerCase(); return k? options.filter(o=>o.label.toLowerCase().includes(k)) : options }
+      function render(){
+        dd.style.display = state.open? 'block':'none'
+        const selOpt = options.find(o=>o.value===state.value)
+        label.textContent = selOpt? selOpt.label : '请选择'
+        label.className = selOpt? '' : 'select-placeholder'
+        val.textContent = state.value || '未选择'
+        const fs = filtered(); list.innerHTML = fs.length? '' : '<li class="select-empty">无匹配项</li>'
+        fs.forEach((o,i)=>{
+          const li = document.createElement('li')
+          li.className = 'select-option' + (i===state.activeIndex? ' is-active' : '')
+          li.textContent = o.label
+          li.onclick = ()=> commit(o)
+          li.onmouseenter = ()=>{ state.activeIndex=i; render() }
+          list.appendChild(li)
+        })
+      }
+      function commit(o){ state.value=o.value; state.open=false; state.keyword=''; kw.value=''; render() }
+      ctrl.onclick = ()=>{ state.open=!state.open; render(); if (state.open) kw.focus() }
+      kw.oninput = (e)=>{ state.keyword = e.target.value; state.activeIndex=0; render() }
+      sel.addEventListener('keydown', (e)=>{
+        if (!state.open && (e.key==='ArrowDown' || e.key==='Enter')) { state.open=true; render(); kw.focus(); return }
+        if (!state.open) return
+        const fs = filtered()
+        if (e.key==='Escape'){ state.open=false; render(); return }
+        if (e.key==='ArrowDown'){ e.preventDefault(); state.activeIndex=Math.min(state.activeIndex+1, fs.length-1); render() }
+        else if (e.key==='ArrowUp'){ e.preventDefault(); state.activeIndex=Math.max(state.activeIndex-1, 0); render() }
+        else if (e.key==='Enter'){ e.preventDefault(); commit(fs[state.activeIndex]) }
+      })
+      render()
+    </script>
+  </body>
+</html>

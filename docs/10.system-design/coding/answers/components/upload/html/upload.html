@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .u-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+      .u-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+      .u-item{border:1px solid #d9d9d9;border-radius:6px;padding:8px}
+      .u-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+      .u-bar{height:6px;background:#f5f5f5;border-radius:3px;overflow:hidden;margin-top:6px}
+      .u-bar>span{display:block;height:100%;background:#1677ff}
+      .u-status{font-size:12px}
+      .u-done{color:#52c41a}.u-error{color:#ff4d4f}.u-canceled{color:#999}
+    </style>
+  </head>
+  <body>
+    <div class="u-toolbar">
+      <input type="file" id="file" multiple />
+      <button id="cancel">取消全部</button>
+    </div>
+    <ul id="list" class="u-list"></ul>
+    <script>
+      const abort = { canceled: false }
+      const listEl = document.getElementById('list')
+      document.getElementById('file').addEventListener('change', onSelect)
+      document.getElementById('cancel').addEventListener('click', ()=> abort.canceled = true)
+
+      function simulateUploadChunk(file, start, end){ return new Promise(r=>setTimeout(r, 60+Math.random()*140)) }
+
+      async function uploadFile(file){
+        const total = file.size; const name = file.name
+        const li = document.createElement('li'); li.className='u-item'
+        li.innerHTML = `<div class="u-row"><span class="u-name"></span><span class="u-size"></span><span class="u-status u-uploading">uploading</span></div><div class="u-bar"><span style="width:0%"></span></div>`
+        li.querySelector('.u-name').textContent = name
+        li.querySelector('.u-size').textContent = Math.round(total/1024)+ ' KB'
+        const bar = li.querySelector('.u-bar>span')
+        listEl.appendChild(li)
+
+        const chunkSize = 128*1024
+        const chunks = []
+        for (let start=0; start<total; start+=chunkSize) chunks.push([start, Math.min(start+chunkSize,total)])
+        let uploaded = 0, cursor = 0
+        async function worker(){
+          while (cursor<chunks.length && !abort.canceled){
+            const [s,e] = chunks[cursor++]
+            await simulateUploadChunk(file, s, e)
+            uploaded += (e-s)
+            const percent = Math.min(100, Math.round(uploaded/total*100))
+            bar.style.width = percent + '%'
+          }
+        }
+        await Promise.all(Array.from({length:3}, worker))
+        li.querySelector('.u-status').className = 'u-status ' + (abort.canceled? 'u-canceled' : 'u-done')
+        li.querySelector('.u-status').textContent = abort.canceled? 'canceled' : 'done'
+      }
+
+      function onSelect(e){
+        const files = e.target.files
+        if (!files || !files.length) return
+        abort.canceled = false
+        Array.from(files).forEach(uploadFile)
+        e.target.value = ''
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .tree{font-size:14px}
+      .tree-level{list-style:none;margin:0;padding:0}
+      .tree-item{line-height:24px;display:block}
+      .tree-toggle{display:inline-block;width:16px;cursor:pointer;color:#666}
+      .tree-title{cursor:pointer}
+      .tree-title.is-selected{background:#e6f4ff}
+    </style>
+  </head>
+  <body>
+    <ul id="root" class="tree-level" role="tree"></ul>
+    <div style="margin-top:8px">选中：<span id="sel">无</span></div>
+    <script>
+      const data = [
+        { key: 'zj', title: '浙江', children: [
+          { key: 'hz', title: '杭州', children: [ { key: 'xh', title: '西湖' }, { key: 'yl', title: '余杭' } ] },
+          { key: 'nb', title: '宁波' }
+        ]},
+        { key: 'js', title: '江苏', children: [ { key: 'nj', title: '南京' }, { key: 'sz', title: '苏州' } ] }
+      ]
+      const expanded = new Set(['zj','hz']); let selected
+      function renderNodes (ul, nodes, level=0){
+        ul.innerHTML=''
+        nodes.forEach(n=>{
+          const li = document.createElement('li'); li.className='tree-item'; li.setAttribute('role','treeitem'); if (n.children) li.setAttribute('aria-expanded', String(expanded.has(n.key)))
+          const toggle = document.createElement('span'); toggle.className='tree-toggle'; toggle.textContent = n.children ? (expanded.has(n.key)?'▾':'▸'):'·'; toggle.onclick=()=>{ if (n.children){ expanded.has(n.key)? expanded.delete(n.key): expanded.add(n.key); update() } }
+          const title = document.createElement('span'); title.className='tree-title'+(selected===n.key?' is-selected':''); title.textContent=n.title; title.onclick=()=>{ selected=n.key; update() }
+          li.style.paddingLeft = (level*16)+'px'
+          li.appendChild(toggle); li.appendChild(title); ul.appendChild(li)
+          if (n.children && expanded.has(n.key)){
+            const childUl = document.createElement('ul'); childUl.className='tree-level'; childUl.setAttribute('role','group'); ul.appendChild(childUl)
+            renderNodes(childUl, n.children, level+1)
+          }
+        })
+      }
+      function update(){ renderNodes(document.getElementById('root'), data, 0); document.getElementById('sel').textContent = selected || '无' }
+      update()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .elv-wrap{display:flex;gap:16px}
+      .elv-nav{list-style:none;margin:0;padding:0;position:sticky;top:8px}
+      .elv-nav li{padding:6px 10px;cursor:pointer}
+      .elv-nav li.active{background:#e6f4ff}
+      .elv-content{height:360px;overflow:auto;border:1px solid #d9d9d9;border-radius:6px;padding:8px}
+      .elv-section{height:300px;margin-bottom:12px;border-bottom:1px solid #f0f0f0}
+    </style>
+  </head>
+  <body>
+    <div class="elv-wrap">
+      <ul class="elv-nav" id="nav"></ul>
+      <div class="elv-content" id="content"></div>
+    </div>
+    <script>
+      const sections=[{id:'s1',title:'一'},{id:'s2',title:'二'},{id:'s3',title:'三'}]
+      const nav=document.getElementById('nav'), content=document.getElementById('content')
+      sections.forEach(s=>{ const li=document.createElement('li'); li.textContent=s.title; li.onclick=()=>document.getElementById(s.id).scrollIntoView({behavior:'smooth',block:'center'}); nav.appendChild(li); const div=document.createElement('div'); div.id=s.id; div.className='elv-section'; div.textContent=s.title+' 内容'; content.appendChild(div) })
+      const obs=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting&&e.intersectionRatio>0.65){ nav.childNodes.forEach((n,i)=>n.classList.toggle('active', sections[i].id===e.target.id)) } }) }, { threshold:[0.2,0.3,0.4,0.5,0.6,0.7,0.8] })
+      sections.forEach(s=>obs.observe(document.getElementById(s.id)))
+    </script>
+  </body>
+</html>

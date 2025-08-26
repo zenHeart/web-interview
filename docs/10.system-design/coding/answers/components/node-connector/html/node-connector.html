@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .nc-wrap{position:relative;width:360px;height:240px;border:1px solid #d9d9d9;border-radius:8px;background:#fafafa}
+      .nc-svg{position:absolute;left:0;top:0}
+      .nc-node{position:absolute;width:32px;height:32px;border-radius:50%;background:#1677ff;cursor:grab}
+    </style>
+  </head>
+  <body>
+    <div class="nc-wrap" id="wrap">
+      <svg class="nc-svg" width="100%" height="100%">
+        <line id="line" x1="80" y1="80" x2="260" y2="180" stroke="#1677ff" stroke-width="2" />
+      </svg>
+      <div class="nc-node" id="a" style="left:64px;top:64px"></div>
+      <div class="nc-node" id="b" style="left:244px;top:164px"></div>
+    </div>
+    <script>
+      const wrap=document.getElementById('wrap'), a=document.getElementById('a'), b=document.getElementById('b'), line=document.getElementById('line')
+      let which=null
+      function pos(el){ return { x: el.offsetLeft+16, y: el.offsetTop+16 } }
+      function move(e){ if(!which) return; const rect=wrap.getBoundingClientRect(); const el = which==='a'?a:b; el.style.left=(e.clientX-rect.left-16)+'px'; el.style.top=(e.clientY-rect.top-16)+'px'; const pa=pos(a), pb=pos(b); line.setAttribute('x1',pa.x); line.setAttribute('y1',pa.y); line.setAttribute('x2',pb.x); line.setAttribute('y2',pb.y) }
+      a.onmousedown=()=>which='a'; b.onmousedown=()=>which='b'
+      wrap.onmouseup=()=>which=null
+      wrap.onmousemove=move
+    </script>
+  </body>
+</html>

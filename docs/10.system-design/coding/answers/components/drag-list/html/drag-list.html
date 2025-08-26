@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .dl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+      .dl-item{border:1px solid #d9d9d9;border-radius:6px;padding:6px 10px;background:#fff;cursor:grab}
+      .dl-item.is-drag{opacity:0.6}
+    </style>
+  </head>
+  <body>
+    <ul id="list" class="dl" role="list" aria-label="可拖拽列表"></ul>
+    <script>
+      const items = ['A','B','C','D','E']
+      const list = document.getElementById('list')
+      let dragIndex = null
+      function render(){
+        list.innerHTML=''
+        items.forEach((text,i)=>{
+          const li = document.createElement('li'); li.textContent=text; li.className='dl-item'; li.draggable=true
+          li.addEventListener('dragstart', ()=>{ dragIndex=i; li.classList.add('is-drag') })
+          li.addEventListener('dragover', e=>e.preventDefault())
+          li.addEventListener('drop', ()=>{ if(dragIndex===null||dragIndex===i) return; const [m]=items.splice(dragIndex,1); items.splice(i,0,m); dragIndex=null; render() })
+          list.appendChild(li)
+        })
+      }
+      render()
+    </script>
+  </body>
+</html>

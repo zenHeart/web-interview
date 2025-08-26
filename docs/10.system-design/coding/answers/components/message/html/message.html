@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .msg{position:fixed;left:50%;top:24px;transform:translateX(-50%);background:#fff;border:1px solid #e5e5e5;box-shadow:0 6px 16px rgba(0,0,0,.08);padding:8px 12px;border-radius:6px;min-width:160px}
+      .msg-success{border-color:#52c41a}.msg-warning{border-color:#faad14}.msg-error{border-color:#ff4d4f}.msg-info{border-color:#1677ff}
+      .msg-close{margin-left:12px;border:none;background:transparent;cursor:pointer}
+    </style>
+  </head>
+  <body>
+    <div style="display:flex;gap:8px;">
+      <button onclick="message('info','信息提示')">Info</button>
+      <button onclick="message('success','成功提示')">Success</button>
+      <button onclick="message('warning','警告提示')">Warning</button>
+      <button onclick="message('error','错误提示')">Error</button>
+    </div>
+    <script>
+      function message(type, text, duration = 2000){
+        const el = document.createElement('div');
+        el.className = `msg msg-${type}`;
+        el.innerHTML = `<span>${text}</span><button class=\"msg-close\">×</button>`;
+        document.body.appendChild(el);
+        const timer = setTimeout(close, duration);
+        el.querySelector('.msg-close').onclick = close;
+        function close(){ clearTimeout(timer); el.remove(); }
+        return { close }
+      }
+    </script>
+  </body>
+</html>

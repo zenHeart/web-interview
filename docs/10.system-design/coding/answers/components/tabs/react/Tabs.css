@@ -1,0 +1,4 @@
+.tablist{display:flex;gap:8px;margin-bottom:8px}
+.tab{padding:6px 12px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;cursor:pointer}
+.tab.is-active{background:#1677ff;color:#fff;border-color:#1677ff}
+.tabpanel{border:1px solid #f0f0f0;border-radius:6px;padding:8px}

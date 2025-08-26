@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .affix{display:inline-block}
+      .affix-fixed{position:fixed;z-index:1000}
+      .affix-btn{padding:6px 12px;border:1px solid #d9d9d9;border-radius:6px;background:#fff;cursor:pointer}
+    </style>
+  </head>
+  <body style="height:600px;padding-top:200px">
+    <div id="wrap"><button id="btn" class="affix affix-btn">吸顶按钮</button></div>
+    <div style="height:1000px"></div>
+    <script>
+      const wrap = document.getElementById('wrap'), btn = document.getElementById('btn'), offsetTop = 0
+      function compute(){
+        const rect = wrap.getBoundingClientRect()
+        const shouldFix = rect.top <= offsetTop
+        btn.className = 'affix affix-btn' + (shouldFix? ' affix-fixed':'')
+        if (shouldFix){ btn.style.top = offsetTop+'px'; btn.style.left = (rect.left + window.scrollX) + 'px'; btn.style.width = rect.width + 'px' }
+      }
+      window.addEventListener('scroll', compute, { passive:true }); window.addEventListener('resize', compute); compute()
+    </script>
+  </body>
+</html>

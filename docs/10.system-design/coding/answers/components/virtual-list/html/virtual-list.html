@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      .vl-container{overflow:auto;border:1px solid #d9d9d9;border-radius:6px;height:300px}
+      .vl-item{height:30px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid #f0f0f0}
+    </style>
+  </head>
+  <body>
+    <div class="vl-container" id="box">
+      <div id="space" style="position:relative"></div>
+    </div>
+    <script>
+      const count=1000, itemHeight=30, height=300
+      const box=document.getElementById('box'), space=document.getElementById('space')
+      space.style.height = (count*itemHeight)+'px'
+      function render(){
+        const scrollTop = box.scrollTop
+        const visible = Math.ceil(height/itemHeight)+2
+        const start = Math.max(0, Math.floor(scrollTop/itemHeight)-1)
+        const end = Math.min(count-1, start+visible)
+        const offsetY = start*itemHeight
+        let html = `<div style="transform:translateY(${offsetY}px)">`
+        for(let i=start;i<=end;i++) html += `<div class=\"vl-item\">行 ${i+1}</div>`
+        html += '</div>'
+        space.innerHTML = html
+      }
+      box.addEventListener('scroll', render, { passive:true }); render()
+    </script>
+  </body>
+</html>
