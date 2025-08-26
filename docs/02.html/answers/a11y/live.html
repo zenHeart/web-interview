@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Region</title>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+</head>
+<body>
+  <h1>动态内容宣告（ARIA Live）</h1>
+  <button id="add">开始任务</button>
+  <div role="status" aria-live="polite" id="status"></div>
+
+  <script>
+    const status = document.getElementById('status')
+    document.getElementById('add').addEventListener('click', () => {
+      status.textContent = '任务已开始…'
+      setTimeout(() => {
+        status.textContent = '任务完成'
+        console.log('通过 role="status" 宣告任务完成')
+      }, 1200)
+    })
+  </script>
+</body>
+</html>
+
+

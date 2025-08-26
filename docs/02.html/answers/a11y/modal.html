@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可访问对话框</title>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+  <style>
+    .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; }
+    .dialog { background: #fff; margin: 10% auto; max-width: 480px; padding: 16px; outline: none; }
+    .backdrop[aria-hidden="false"] { display: block; }
+  </style>
+</head>
+<body>
+  <h1>模态对话框可访问性</h1>
+  <button id="open">打开对话框</button>
+
+  <div class="backdrop" id="backdrop" aria-hidden="true">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="title" aria-describedby="desc" tabindex="-1">
+      <h2 id="title">删除确认</h2>
+      <p id="desc">此操作不可撤销，确认继续吗？</p>
+      <button id="confirm">确认</button>
+      <button id="close">取消</button>
+    </div>
+  </div>
+
+  <script>
+    const openBtn = document.getElementById('open')
+    const backdrop = document.getElementById('backdrop')
+    const dialog = backdrop.querySelector('.dialog')
+    const closeBtn = document.getElementById('close')
+    const confirmBtn = document.getElementById('confirm')
+
+    function open () {
+      backdrop.setAttribute('aria-hidden', 'false')
+      dialog.focus()
+      document.addEventListener('keydown', onKeydown)
+      console.log('Dialog opened')
+    }
+    function close () {
+      backdrop.setAttribute('aria-hidden', 'true')
+      openBtn.focus()
+      document.removeEventListener('keydown', onKeydown)
+      console.log('Dialog closed')
+    }
+    function onKeydown (e) {
+      if (e.key === 'Escape') close()
+    }
+    openBtn.addEventListener('click', open)
+    closeBtn.addEventListener('click', close)
+    confirmBtn.addEventListener('click', close)
+  </script>
+</body>
+</html>
+
+

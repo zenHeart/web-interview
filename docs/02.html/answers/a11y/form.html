@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可访问表单</title>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+</head>
+<body>
+  <h1>表单可访问性</h1>
+  <form aria-describedby="form-desc">
+    <p id="form-desc">所有输入都有 <code>label</code> 关联，错误通过 <code>aria-describedby</code> 宣告。</p>
+
+    <label for="email">邮箱</label>
+    <input id="email" name="email" type="email" required aria-describedby="email-err" />
+    <small id="email-err" role="alert" aria-live="polite"></small>
+
+    <label for="pwd">密码</label>
+    <input id="pwd" name="pwd" type="password" required />
+
+    <button>提交</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('form')
+    const email = document.getElementById('email')
+    const emailErr = document.getElementById('email-err')
+    form.addEventListener('submit', (e) => {
+      e.preventDefault()
+      if (!email.value.includes('@')) {
+        emailErr.textContent = '请输入有效邮箱地址'
+        email.focus()
+        return
+      }
+      emailErr.textContent = ''
+      console.log('表单通过基础校验')
+    })
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>语义化结构与地标</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; line-height: 1.6; }
+    .skip-link { position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+    .skip-link:focus { position: static; width: auto; height: auto; }
+    header, nav, main, aside, footer { padding: 8px 12px; margin: 8px 0; border: 1px dashed #bbb; }
+    nav a { margin-right: 8px; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+  </head>
+<body>
+  <a href="#main" class="skip-link">跳到主要内容</a>
+
+  <header aria-label="站点头部">
+    <h1>示例站点</h1>
+  </header>
+
+  <nav aria-label="主导航">
+    <a href="#">首页</a>
+    <a href="#">产品</a>
+    <a href="#">关于</a>
+  </nav>
+
+  <main id="main">
+    <article>
+      <h2>文章标题</h2>
+      <p>使用 header/nav/main/footer 等语义元素有助于辅助技术快速定位页面结构。</p>
+    </article>
+  </main>
+
+  <aside aria-label="侧边栏">
+    <p>侧栏信息</p>
+  </aside>
+
+  <footer aria-label="页脚">
+    <p>© 2025 示例</p>
+  </footer>
+</body>
+</html>
+
+

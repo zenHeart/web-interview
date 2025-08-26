@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>可访问按钮</title>
+  <link rel="stylesheet" href="https://unpkg.com/mvp.css" />
+</head>
+<body>
+  <h1>按钮可访问性</h1>
+  <p>使用 button 元素而不是 div+click；确保可聚焦、键盘可触达、状态可感知。</p>
+
+  <button type="button" id="btn">提交</button>
+  <p id="status" role="status" aria-live="polite"></p>
+
+  <script>
+    const btn = document.getElementById('btn')
+    const status = document.getElementById('status')
+    btn.addEventListener('click', () => {
+      status.textContent = '已提交'
+      console.log('按钮被点击，并通过 role="status" 宣告')
+    })
+  </script>
+</body>
+</html>
+
+
