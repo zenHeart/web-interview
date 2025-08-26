@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AST Parsers Demo</title>
+  <!-- Esprima / Acorn / Babel Parser UMD -->
+  <script src="https://unpkg.com/esprima@4.0.1/dist/esprima.js"></script>
+  <script src="https://unpkg.com/acorn@8.11.3/dist/acorn.js"></script>
+  <script src="https://unpkg.com/@babel/parser@7.26.4/dist/babel-parser.min.js"></script>
+</head>
+<body>
+  <h1>AST 解析器对比（Esprima / Acorn / Babel Parser）</h1>
+  <p>打开下方 Console 查看三种解析器的解析结果简要输出。</p>
+
+  <script>
+    const samples = [
+      {
+        title: '基础语句',
+        code: 'const x = 5;\nfunction add(a, b) { return a + b }',
+      },
+      {
+        title: 'ES 提案语法（可选链）',
+        code: 'const v = obj?.a?.b ?? 0',
+      },
+    ]
+
+    function logAstSummary (label, ast) {
+      const type = ast && ast.type
+      const bodyLen = ast && ast.body ? ast.body.length : undefined
+      console.log(`[${label}] type=%s bodyLen=%s`, type, bodyLen)
+    }
+
+    for (const s of samples) {
+      console.log('\n===== 示例：%s =====', s.title)
+      console.log('Code:\n' + s.code)
+
+      // Esprima（主要对 ES2019 前标准支持较好）
+      try {
+        const astEsprima = esprima.parseScript(s.code, { tolerant: true, loc: false, range: false })
+        logAstSummary('Esprima', astEsprima)
+      } catch (e) {
+        console.log('[Esprima] Error:', e && e.message)
+      }
+
+      // Acorn（可通过 ecmaVersion 配置，语法扩展需插件）
+      try {
+        const astAcorn = acorn.parse(s.code, { ecmaVersion: 2024, sourceType: 'script', allowHashBang: true })
+        logAstSummary('Acorn', astAcorn)
+      } catch (e) {
+        console.log('[Acorn] Error:', e && e.message)
+      }
+
+      // Babel Parser（语法覆盖最广，支持各类提案，默认 module）
+      try {
+        const astBabel = babelParser.parse(s.code, { sourceType: 'module', plugins: [
+          'optionalChaining', 'nullishCoalescingOperator'
+        ]})
+        logAstSummary('Babel', astBabel)
+      } catch (e) {
+        console.log('[Babel] Error:', e && e.message)
+      }
+    }
+  </script>
+</body>
+</html>
+
+

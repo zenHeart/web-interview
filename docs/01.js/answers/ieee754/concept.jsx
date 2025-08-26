@@ -15,7 +15,6 @@ const Ieee754ConceptCard = ({ value = 32.375 }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '100vh',
     padding: '1rem'
   }
 
