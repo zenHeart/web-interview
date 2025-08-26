@@ -12,12 +12,17 @@ set -euo pipefail
 RootPath=$(cd "$(dirname "$0")/.." && pwd)
 cd "$RootPath"
 
-# 仅允许使用名为 web 的远端 (pages 强制 web)
+# 部署远端固定为 web；源代码远端固定为 origin（从 origin/main 读取提交信息）
 if ! git remote get-url web >/dev/null 2>&1; then
     echo "[deploy] 未找到名为 'web' 的远端，请先配置：git remote add web <git-url>" >&2
     exit 1
 fi
+if ! git remote get-url origin >/dev/null 2>&1; then
+    echo "[deploy] 未找到 'origin' 远端，无法读取 origin/main 提交信息" >&2
+    exit 1
+fi
 DEPLOY_REMOTE=web
+SOURCE_REMOTE=origin
 rep_url=$(git remote get-url web)
 
 current_branch=$(git symbolic-ref --short HEAD)
@@ -32,28 +37,27 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
     exit 1
 fi
 
-# 确保 main 已与远端同步
-if git rev-parse --abbrev-ref --symbolic-full-name @{u} >/dev/null 2>&1; then
-        git fetch "$DEPLOY_REMOTE" main --quiet
-    local_hash=$(git rev-parse HEAD)
-    remote_hash=$(git rev-parse @{u})
-    if [[ "$local_hash" != "$remote_hash" ]]; then
-        echo "[deploy] 本地 main 未推送到远端（local=$local_hash remote=$remote_hash）。请先 git push。" >&2
-        exit 1
-    fi
-else
-        echo "[deploy] main 分支未设置上游(remote tracking)。请先执行：git push -u web main" >&2
+# 获取 origin/main 最新（源）提交；与部署远端无关
+echo "[deploy] fetch origin/main..."
+git fetch --quiet "$SOURCE_REMOTE" main
+if ! git rev-parse "$SOURCE_REMOTE/main" >/dev/null 2>&1; then
+    echo "[deploy] 获取 origin/main 失败" >&2
     exit 1
 fi
+origin_hash=$(git rev-parse "$SOURCE_REMOTE/main")
+local_hash=$(git rev-parse HEAD)
+if [[ "$local_hash" != "$origin_hash" ]]; then
+    echo "[deploy] 警告：本地 main ($local_hash) 与 origin/main ($origin_hash) 不一致，将以 origin/main 作为构建来源。" >&2
+fi
 
-# 获取最新提交信息
-SOURCE_COMMIT_HASH=$(git rev-parse HEAD)
-SOURCE_COMMIT_SHORT=$(git rev-parse --short HEAD)
-SOURCE_COMMIT_SUBJECT=$(git log -1 --pretty=%s)
-SOURCE_COMMIT_BODY=$(git log -1 --pretty=%b)
+# 获取 origin/main 最新提交信息
+SOURCE_COMMIT_HASH=$origin_hash
+SOURCE_COMMIT_SHORT=$(git rev-parse --short "$SOURCE_REMOTE/main")
+SOURCE_COMMIT_SUBJECT=$(git log -1 --pretty=%s "$SOURCE_REMOTE/main")
+SOURCE_COMMIT_BODY=$(git log -1 --pretty=%b "$SOURCE_REMOTE/main")
 BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-echo "[deploy] 构建源提交: $SOURCE_COMMIT_HASH - $SOURCE_COMMIT_SUBJECT"
+echo "[deploy] 构建源提交(origin/main): $SOURCE_COMMIT_HASH - $SOURCE_COMMIT_SUBJECT"
 
 # 构建（使用已有 lock 保证可重复）
 npm run build
