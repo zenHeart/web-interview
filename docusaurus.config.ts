@@ -3,6 +3,7 @@ import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 import type { Options as DocsOptions } from '@docusaurus/plugin-content-docs'
 import extractQuestionsPlugin, { numberPrefixParser } from './src/plugins/extractQuestions/index'
+import lastCommitInfoPlugin from './src/plugins/lastCommitInfo/index'
 import devProxy from './src/plugins/devProxy/index'
 const isLocal = process.env.NODE_ENV === 'development'
 
@@ -29,6 +30,7 @@ const config: Config = {
   },
   plugins: [
     devProxy,
+    lastCommitInfoPlugin,
     [
       extractQuestionsPlugin,
       {
@@ -69,7 +71,7 @@ const config: Config = {
       {
         docs: {
           path: 'docs',
-          sidebarCollapsed: false,
+          sidebarCollapsed: true,
           sidebarPath: './sidebars.ts',
           numberPrefixParser,
           exclude: [
