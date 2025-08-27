@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <style>
       .vl-container{overflow:auto;border:1px solid #d9d9d9;border-radius:6px;height:300px}
-      .vl-item{height:30px;display:flex;align-items:center;padding:0 8px;border-bottom:1px solid #f0f0f0}
+      .vl-item{display:flex;align-items:center;padding:4px 8px;border-bottom:1px solid #f0f0f0}
     </style>
   </head>
   <body>
@@ -12,19 +12,61 @@
       <div id="space" style="position:relative"></div>
     </div>
     <script>
-      const count=1000, itemHeight=30, height=300
+      const count=1000, height=300, estimated=36, overscan=120
       const box=document.getElementById('box'), space=document.getElementById('space')
-      space.style.height = (count*itemHeight)+'px'
+
+      const heights = Array.from({length:count}, ()=>estimated)
+      let offsets = new Array(count)
+      function recomputeOffsets(){
+        let acc=0
+        for(let i=0;i<count;i++){ offsets[i]=acc; acc += heights[i] }
+        space.style.height = acc + 'px'
+      }
+      recomputeOffsets()
+
+      function findStart(top){
+        let low=0, high=count-1
+        while(low<=high){
+          const mid=(low+high)>>1
+          if(offsets[mid] + heights[mid] < top) low=mid+1
+          else high=mid-1
+        }
+        return Math.max(0, Math.min(count-1, low))
+      }
+      function findEnd(bottom){
+        let low=0, high=count-1
+        while(low<=high){
+          const mid=(low+high)>>1
+          if(offsets[mid] <= bottom) low=mid+1
+          else high=mid-1
+        }
+        return Math.max(0, Math.min(count-1, low))
+      }
+
+      const ro = new ResizeObserver(entries => {
+        let changed=false
+        for(const entry of entries){
+          const el = entry.target
+          const idx = Number(el.getAttribute('data-index'))
+          const h = Math.ceil(entry.contentRect.height)
+          if(h>0 && heights[idx]!==h){ heights[idx]=h; changed=true }
+        }
+        if(changed){ recomputeOffsets(); render() }
+      })
+
       function render(){
         const scrollTop = box.scrollTop
-        const visible = Math.ceil(height/itemHeight)+2
-        const start = Math.max(0, Math.floor(scrollTop/itemHeight)-1)
-        const end = Math.min(count-1, start+visible)
-        const offsetY = start*itemHeight
+        const start = findStart(Math.max(0, scrollTop - overscan))
+        const end = findEnd(scrollTop + height + overscan)
+        const offsetY = offsets[start] || 0
         let html = `<div style="transform:translateY(${offsetY}px)">`
-        for(let i=start;i<=end;i++) html += `<div class=\"vl-item\">行 ${i+1}</div>`
+        for(let i=start;i<=Math.min(count-1, Math.max(start, end));i++){
+          html += `<div class=\"vl-item\" data-index=\"${i}\">#${i+1} ${'内容 '.repeat((i%5)+1)}</div>`
+        }
         html += '</div>'
         space.innerHTML = html
+        // observe after mount
+        for(const el of space.querySelectorAll('.vl-item')) ro.observe(el)
       }
       box.addEventListener('scroll', render, { passive:true }); render()
     </script>
