@@ -1,7 +1,6 @@
 .container {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  /* dynamic left/top injected inline */
   width: 360px;
   height: 600px;
   background: #fff;
@@ -23,8 +22,7 @@
 
 .quickEntry {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  /* dynamic left/top injected inline */
   cursor: move;
   z-index: 999;
   user-select: none;

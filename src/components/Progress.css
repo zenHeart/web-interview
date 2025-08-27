@@ -27,22 +27,21 @@
 }
 
 .progress-fab {
-   position: fixed;
-   right: 24px;
-   bottom: 24px;
-   z-index: 1001;
-   width: 64px;
-   height: 64px;
-   border-radius: 50%;
-   background: var(--ifm-background-surface-color, #fff);
-   color: var(--ifm-color-emphasis-600, #888);
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
-   cursor: pointer;
-   user-select: none;
-   padding: 0;
+  position: fixed; /* dynamic left/top inline */
+  z-index: 1001;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--ifm-background-surface-color, #fff);
+  color: var(--ifm-color-emphasis-600, #888);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  cursor: move;
+  user-select: none;
+  padding: 0;
+  touch-action: none;
 }
 .progress-fab:hover {
    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
@@ -50,9 +49,7 @@
 
 .progress-detail-popup {
   animation: progress-popup-fadein 0.18s;
-  position: fixed;
-  right: 0;
-  bottom: 32px;
+  position: fixed; /* dynamic left/top inline near fab */
   z-index: 1002;
   background: var(--ifm-background-surface-color, #fff);
   border-radius: 16px;
@@ -85,9 +82,7 @@
 }
 
 /* 适配弹窗内的进度条和文本 */
-.progress-bar {
-  /* 主要样式已内联 */
-}
+/* .progress-bar styles are applied inline; no class-level declarations needed */
 .progress-text {
   font-size: 15px;
   color: var(--ifm-font-color-base);

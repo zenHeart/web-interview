@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import Chat, { Bubble, useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
 import ThinkingBlock from './messages/ThinkBlock'
 import MarkdownContent from './messages/MarkdownContent'
+import useDraggable from '../hooks/useDraggable'
 
 interface MessageContent {
   text: string;
@@ -15,8 +16,26 @@ const ChatWindow: React.FC = () => {
   // ChatUI v3 useMessages no longer returns setTyping; provide backward-compatible noop
   const msgTools = useMessages([])
   const { messages, appendMsg, updateMsg } = msgTools
-  // Fallback to a no-op to avoid runtime errors if legacy calls remain
   const setTyping: (v: boolean) => void = (msgTools as any).setTyping || (() => {})
+
+  // Draggable position (shared for entry & window)
+  const [initialReady, setInitialReady] = useState(false)
+  const drag = useDraggable({
+    getInitial: () => {
+      if (typeof window === 'undefined') return { x: 0, y: 0 }
+      const w = window.innerWidth
+      const h = window.innerHeight
+      const width = 360
+      const height = 600
+      const right = 20
+      const bottomGap = 120 // leave space for progress fab (64 + margin)
+      const x = Math.max(0, w - width - right)
+      const y = Math.max(0, h - height - bottomGap)
+      return { x, y }
+    }
+  })
+
+  useEffect(() => setInitialReady(true), [])
 
   // 处理发送消息
   const handleSend = async (type: string, val: string) => {
@@ -143,7 +162,12 @@ const ChatWindow: React.FC = () => {
   return (
     <>
       {!isVisible && (
-        <div className={styles.quickEntry} onClick={() => setIsVisible(true)}>
+        <div
+          className={styles.quickEntry}
+          onClick={() => setIsVisible(true)}
+          style={drag.style}
+          {...drag.bind}
+        >
           <div className={styles.quickEntryInner}>
             <div className={styles.quickEntryIcon}>🤖</div>
             <div className={styles.quickEntryText}>点我体验</div>
@@ -152,7 +176,11 @@ const ChatWindow: React.FC = () => {
       )}
 
       {isVisible && (
-        <div className={styles.container}>
+        <div
+          className={styles.container}
+          style={drag.style}
+          {...drag.bind}
+        >
           <Chat
             locale="zh-CN"
             navbar={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './Progress.css'
 import type { Question } from '@site/src/plugins/extractQuestions'
 import record from './KanbanBoard/record'
@@ -72,6 +72,62 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
       : '0秒'
   })
   const [showDetail, setShowDetail] = useState(false)
+  // Draggable position for the floating FAB
+  const [fabPos, setFabPos] = useState(() => {
+    if (typeof window === 'undefined') return { x: 0, y: 0 }
+    const w = window.innerWidth
+    const h = window.innerHeight
+    return { x: w - 64 - 24, y: h - 64 - 24 }
+  })
+  const draggingRef = useRef(false)
+  const offsetRef = useRef({ x: 0, y: 0 })
+  const fabRef = useRef<HTMLDivElement | null>(null)
+  const popupRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const resize = () => {
+      setFabPos(p => ({
+        x: Math.min(p.x, window.innerWidth - 64 - 8),
+        y: Math.min(p.y, window.innerHeight - 64 - 8)
+      }))
+    }
+    window.addEventListener('resize', resize)
+    return () => window.removeEventListener('resize', resize)
+  }, [])
+
+  const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const point = 'touches' in e ? e.touches[0] : e
+    draggingRef.current = true
+    offsetRef.current = { x: point.clientX - fabPos.x, y: point.clientY - fabPos.y }
+    document.body.style.userSelect = 'none'
+  }
+  useEffect(() => {
+    const move = (e: MouseEvent | TouchEvent) => {
+      if (!draggingRef.current) return
+      const point = 'touches' in e ? e.touches[0] : (e as MouseEvent)
+      const nx = point.clientX - offsetRef.current.x
+      const ny = point.clientY - offsetRef.current.y
+      setFabPos({
+        x: Math.min(Math.max(nx, 0), window.innerWidth - 64),
+        y: Math.min(Math.max(ny, 0), window.innerHeight - 64)
+      })
+    }
+    const end = () => {
+      if (!draggingRef.current) return
+      draggingRef.current = false
+      document.body.style.userSelect = ''
+    }
+    window.addEventListener('mousemove', move)
+    window.addEventListener('touchmove', move, { passive: false })
+    window.addEventListener('mouseup', end)
+    window.addEventListener('touchend', end)
+    return () => {
+      window.removeEventListener('mousemove', move)
+      window.removeEventListener('touchmove', move)
+      window.removeEventListener('mouseup', end)
+      window.removeEventListener('touchend', end)
+    }
+  }, [fabPos])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -108,9 +164,13 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
     <>
       {/* 悬浮环形进度按钮 */}
       <div
+        ref={fabRef}
         className="progress-fab"
         onClick={handleToggleDetail}
         title="查看学习进度"
+        style={{ left: fabPos.x, top: fabPos.y }}
+        onMouseDown={onDragStart}
+        onTouchStart={onDragStart}
       >
       <svg width="64" height="64" viewBox="0 0 64 64" style={{ position: 'absolute', left: 0, top: 0 }}>
         <circle
@@ -148,8 +208,28 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
       {/* 详细进度弹窗 */}
       {showDetail && (
         <div
+          ref={popupRef}
           id="progress-detail-popup"
           className="progress-detail-popup"
+          style={(() => {
+            if (typeof window === 'undefined') return { left: 0, top: 0 }
+            const popupWidth = 360
+            const xRight = fabPos.x + 64
+            const left = Math.min(
+              Math.max(xRight - popupWidth, 8),
+              window.innerWidth - popupWidth - 8
+            )
+            const measuredHeight = popupRef.current?.offsetHeight || 260
+            const topPreferred = fabPos.y - measuredHeight - 16
+            const top =
+              topPreferred < 8
+                ? Math.min(
+                    fabPos.y + 72,
+                    window.innerHeight - measuredHeight - 8
+                  )
+                : topPreferred
+            return { left, top }
+          })()}
         >
           {/* 关闭按钮 */}
           <span
