@@ -12,7 +12,8 @@ const config: Config = {
     mermaid: true
   },
   customFields: {
-    questions: []
+    questions: [],
+    isLocalDev: isLocal
   },
   themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
   title: '前端面试',

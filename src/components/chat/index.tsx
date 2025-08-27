@@ -5,6 +5,8 @@ import styles from './index.module.css'
 import ThinkingBlock from './messages/ThinkBlock'
 import MarkdownContent from './messages/MarkdownContent'
 import useDraggable from '../hooks/useDraggable'
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+
 
 interface MessageContent {
   text: string;
@@ -36,6 +38,10 @@ const ChatWindow: React.FC = () => {
   })
 
   useEffect(() => setInitialReady(true), [])
+
+  const { siteConfig } = useDocusaurusContext()
+  const isLocalDev = siteConfig.customFields.isLocalDev
+  if (!isLocalDev) return null
 
   // 处理发送消息
   const handleSend = async (type: string, val: string) => {
@@ -181,19 +187,28 @@ const ChatWindow: React.FC = () => {
           style={drag.style}
           {...drag.bind}
         >
-          <Chat
-            locale="zh-CN"
-            navbar={{
-              title: '智能助手',
-              leftContent: {
-                icon: 'close',
-                onClick: () => setIsVisible(false)
-              }
-            }}
-            messages={messages}
-            renderMessageContent={renderMessageContent}
-            onSend={handleSend}
-          />
+          <div className={styles.headerBar} {...drag.bind} title="拖动位置">
+            <div className={styles.headerTitle}>
+              <span>🤖 智能助手</span>
+            </div>
+            <div
+              className={styles.closeBtn}
+              onClick={() => setIsVisible(false)}
+              title="收起"
+              role="button"
+              aria-label="关闭"
+            >
+              ×
+            </div>
+          </div>
+          <div style={{ height: 'calc(100% - 40px)' }}>
+            <Chat
+              locale="zh-CN"
+              messages={messages}
+              renderMessageContent={renderMessageContent}
+              onSend={handleSend}
+            />
+          </div>
         </div>
       )}
     </>
