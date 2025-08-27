@@ -12,7 +12,11 @@ interface MessageContent {
 
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
-  const { messages, appendMsg, setTyping, updateMsg } = useMessages([])
+  // ChatUI v3 useMessages no longer returns setTyping; provide backward-compatible noop
+  const msgTools = useMessages([])
+  const { messages, appendMsg, updateMsg } = msgTools
+  // Fallback to a no-op to avoid runtime errors if legacy calls remain
+  const setTyping: (v: boolean) => void = (msgTools as any).setTyping || (() => {})
 
   // 处理发送消息
   const handleSend = async (type: string, val: string) => {

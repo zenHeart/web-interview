@@ -18,8 +18,8 @@
     "lint": "git diff --cached --name-only --diff-filter=ACM | xargs eslint",
     "prepare": "husky",
     "demo:tfo": "node docs/network/tcp/examples/tfo.js",
-    "topics": "./scripts/topics.sh"
-  ,"question:lint": "node scripts/question-lint.js"
+    "topics": "./scripts/topics.sh",
+    "question:lint": "node scripts/question-lint.js"
   },
   "repository": {
     "type": "git",
@@ -64,6 +64,7 @@
     "virtual-dom": "^2.1.1"
   },
   "dependencies": {
+    "@chatui/core": "^3.1.0",
     "@codesandbox/sandpack-react": "^2.20.0",
     "@docusaurus/core": "3.8.1",
     "@docusaurus/faster": "^3.8.1",
@@ -80,6 +81,9 @@
     "raw-loader": "^4.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
     "vue": "^3.5.13"
   },
   "browserslist": {
