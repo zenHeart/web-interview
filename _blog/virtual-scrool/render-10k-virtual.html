@@ -1,0 +1,60 @@
+<style>
+   .container {
+      height: 500px;
+      width: 50vh;
+      overflow: scroll;
+   }
+   .container-info {
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+   }
+   .item {
+      font-size: 14px;
+   }
+</style>
+<div class="container">
+</div>
+<div class="container-info">
+   <strong id="scrollHeight"></strong>
+   <strong id="scrollTop"></strong>
+   <strong id="clientHeight"></strong>
+</div>
+<script>
+   const container = document.querySelector('.container');
+   const fragment = document.createDocumentFragment();
+   // 1. 只记录元素的对象信息
+   const items = []
+   for (let i = 0; i < 10000; i++) {
+      items.push({
+         height: 20,
+         border: '1px solid #000',
+         background: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      })
+   }
+   // 2. 计算需要显示的高度
+   const showInfo = {
+      // 内容高度
+      innerHeight: 22* items.length,
+      containerHeight: container.clientHeight,
+   }
+
+   // 3. 如果 innerHeight 小于等于高度直接显示
+
+
+
+
+
+   container.appendChild(fragment);
+
+   container.addEventListener('scroll', () => {
+      document.getElementById('scrollTop').textContent = `scrollTop: ${container.scrollTop}px`;
+      document.getElementById('scrollHeight').textContent = `scrollHeight: ${container.scrollHeight}px`;
+      document.getElementById('clientHeight').textContent = `clientHeight: ${container.clientHeight}px`;
+   });
+
+   document.getElementById('scrollTop').textContent = `scrollTop: ${container.scrollTop}px`;
+   document.getElementById('scrollHeight').textContent = `scrollHeight: ${container.scrollHeight}px`;
+   document.getElementById('clientHeight').textContent = `clientHeight: ${container.clientHeight}px`;
+</script>

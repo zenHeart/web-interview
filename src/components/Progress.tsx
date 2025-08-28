@@ -95,6 +95,17 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
     return () => window.removeEventListener('resize', resize)
   }, [])
 
+  // 首次客户端渲染后修正位置（SSR 初始为 0,0 导致出现左上角闪烁）
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    setFabPos(p => {
+      if (p.x !== 0 || p.y !== 0) return p // 已经初始化过
+      const w = window.innerWidth
+      const h = window.innerHeight
+      return { x: w - 64 - 24, y: h - 64 - 24 }
+    })
+  }, [])
+
   const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     const point = 'touches' in e ? e.touches[0] : e
     draggingRef.current = true
@@ -224,9 +235,9 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
             const top =
               topPreferred < 8
                 ? Math.min(
-                    fabPos.y + 72,
-                    window.innerHeight - measuredHeight - 8
-                  )
+                  fabPos.y + 72,
+                  window.innerHeight - measuredHeight - 8
+                )
                 : topPreferred
             return { left, top }
           })()}
