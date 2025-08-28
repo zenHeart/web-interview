@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import type { MouseEvent as ReactMouseEvent, TouchEvent as ReactTouchEvent } from 'react'
 
 export interface DraggableOptions {
   getInitial: () => { x: number; y: number };
@@ -12,6 +13,9 @@ export function useDraggable (options: DraggableOptions) {
   const [pos, setPos] = useState<{ x: number; y: number }>(() => getInitial())
   const draggingRef = useRef(false)
   const offsetRef = useRef({ x: 0, y: 0 })
+  const startPointRef = useRef({ x: 0, y: 0 })
+  const movedRef = useRef(false)
+  const MOVE_THRESHOLD = 6 // px
 
   const clamp = useCallback((x: number, y: number) => {
     const w = window.innerWidth
@@ -26,10 +30,12 @@ export function useDraggable (options: DraggableOptions) {
     }
   }, [bounds])
 
-  const start = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-    const point = 'touches' in e ? e.touches[0] : (e as React.MouseEvent)
+  const start = useCallback((e: ReactMouseEvent | ReactTouchEvent) => {
+    const point = 'touches' in e ? e.touches[0] : (e as ReactMouseEvent)
     draggingRef.current = true
     offsetRef.current = { x: point.clientX - pos.x, y: point.clientY - pos.y }
+    startPointRef.current = { x: point.clientX, y: point.clientY }
+    movedRef.current = false
     // Improve perf: disable text selection during drag
     document.body.style.userSelect = 'none'
   }, [pos])
@@ -37,6 +43,11 @@ export function useDraggable (options: DraggableOptions) {
   const move = useCallback((e: MouseEvent | TouchEvent) => {
     if (!draggingRef.current) return
     const point = 'touches' in e ? e.touches[0] : (e as MouseEvent)
+    if (!movedRef.current) {
+      const dx = point.clientX - startPointRef.current.x
+      const dy = point.clientY - startPointRef.current.y
+      if (Math.hypot(dx, dy) > MOVE_THRESHOLD) movedRef.current = true
+    }
     const next = clamp(point.clientX - offsetRef.current.x, point.clientY - offsetRef.current.y)
     setPos(next)
     onChange?.(next)
@@ -67,6 +78,8 @@ export function useDraggable (options: DraggableOptions) {
 
   return {
     pos,
+    isDragging: draggingRef.current,
+    isMoved: () => movedRef.current,
     bind: {
       onMouseDown: start,
       onTouchStart: start

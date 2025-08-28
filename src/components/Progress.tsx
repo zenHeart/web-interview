@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 import './Progress.css'
 import type { Question } from '@site/src/plugins/extractQuestions'
 import record from './KanbanBoard/record'
@@ -73,14 +74,13 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
   })
   const [showDetail, setShowDetail] = useState(false)
   // Draggable position for the floating FAB
-  const [fabPos, setFabPos] = useState(() => {
-    if (typeof window === 'undefined') return { x: 0, y: 0 }
-    const w = window.innerWidth
-    const h = window.innerHeight
-    return { x: w - 64 - 24, y: h - 64 - 24 }
-  })
+  // 初始不读取 window，避免 SSR 报错；默认放左下（先给一个较靠下的估值，客户端再精确定位）
+  const [fabPos, setFabPos] = useState<{ x: number; y: number }>({ x: 16, y: 400 })
   const draggingRef = useRef(false)
   const offsetRef = useRef({ x: 0, y: 0 })
+  const dragMovedRef = useRef(false)
+  const dragStartPointRef = useRef({ x: 0, y: 0 })
+  const MOVE_THRESHOLD = 6
   const fabRef = useRef<HTMLDivElement | null>(null)
   const popupRef = useRef<HTMLDivElement | null>(null)
 
@@ -95,27 +95,29 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
     return () => window.removeEventListener('resize', resize)
   }, [])
 
-  // 首次客户端渲染后修正位置（SSR 初始为 0,0 导致出现左上角闪烁）
+  // 首次客户端渲染后设置到右下角（SSR 阶段不访问 window）
   useEffect(() => {
     if (typeof window === 'undefined') return
-    setFabPos(p => {
-      if (p.x !== 0 || p.y !== 0) return p // 已经初始化过
-      const w = window.innerWidth
-      const h = window.innerHeight
-      return { x: w - 64 - 24, y: h - 64 - 24 }
-    })
+    setFabPos({ x: window.innerWidth - 64 - 24, y: window.innerHeight - 64 - 24 })
   }, [])
 
   const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     const point = 'touches' in e ? e.touches[0] : e
     draggingRef.current = true
     offsetRef.current = { x: point.clientX - fabPos.x, y: point.clientY - fabPos.y }
+    dragStartPointRef.current = { x: point.clientX, y: point.clientY }
+    dragMovedRef.current = false
     document.body.style.userSelect = 'none'
   }
   useEffect(() => {
     const move = (e: MouseEvent | TouchEvent) => {
       if (!draggingRef.current) return
       const point = 'touches' in e ? e.touches[0] : (e as MouseEvent)
+      if (!dragMovedRef.current) {
+        const dx = point.clientX - dragStartPointRef.current.x
+        const dy = point.clientY - dragStartPointRef.current.y
+        if (Math.hypot(dx, dy) > MOVE_THRESHOLD) dragMovedRef.current = true
+      }
       const nx = point.clientX - offsetRef.current.x
       const ny = point.clientY - offsetRef.current.y
       setFabPos({
@@ -156,7 +158,10 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
   }, [total, completed])
 
   // 悬浮按钮点击事件
-  const handleToggleDetail = () => setShowDetail(v => !v)
+  const handleToggleDetail = () => {
+    if (dragMovedRef.current) return
+    setShowDetail(v => !v)
+  }
 
   // 点击弹窗外部关闭
   useEffect(() => {
@@ -177,7 +182,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
       <div
         ref={fabRef}
         className="progress-fab"
-        onClick={handleToggleDetail}
+  onClick={handleToggleDetail}
         title="查看学习进度"
         style={{ left: fabPos.x, top: fabPos.y }}
         onMouseDown={onDragStart}
@@ -358,6 +363,10 @@ function ProgressBar () {
   const { questions = [] } = usePluginData('extract-questions-plugin') as {
     questions: Question[];
   }
-  return <Progress questions={questions} />
+  return (
+    <BrowserOnly fallback={null}>
+      {() => <Progress questions={questions} />}
+    </BrowserOnly>
+  )
 }
 export default ProgressBar

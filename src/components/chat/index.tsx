@@ -1,27 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import Chat, { Bubble, useMessages } from '@chatui/core'
+import React, { useState } from 'react'
+import Chat, { useMessages } from '@chatui/core'
 import '@chatui/core/dist/index.css'
 import styles from './index.module.css'
 import ThinkingBlock from './messages/ThinkBlock'
 import MarkdownContent from './messages/MarkdownContent'
 import useDraggable from '../hooks/useDraggable'
-import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-
-
-interface MessageContent {
-  text: string;
-  thinking?: string;
-}
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext'
 
 const ChatWindow: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false)
   // ChatUI v3 useMessages no longer returns setTyping; provide backward-compatible noop
   const msgTools = useMessages([])
   const { messages, appendMsg, updateMsg } = msgTools
-  const setTyping: (v: boolean) => void = (msgTools as any).setTyping || (() => {})
+  const setTyping: (v: boolean) => void = (msgTools as unknown as { setTyping?: (v: boolean) => void }).setTyping || (() => { /* noop */ })
 
   // Draggable position (shared for entry & window)
-  const [initialReady, setInitialReady] = useState(false)
   const drag = useDraggable({
     getInitial: () => {
       if (typeof window === 'undefined') return { x: 0, y: 0 }
@@ -37,7 +30,7 @@ const ChatWindow: React.FC = () => {
     }
   })
 
-  useEffect(() => setInitialReady(true), [])
+  // no-op effect removed (was initialReady)
 
   const { siteConfig } = useDocusaurusContext()
   const isLocalDev = siteConfig.customFields.isLocalDev
@@ -155,8 +148,9 @@ const ChatWindow: React.FC = () => {
   }
 
   // 修改消息渲染组件
-  const renderMessageContent = (msg: any) => {
-    const { content } = msg
+  interface BasicMessage { content?: { text?: string; thinking?: string } }
+  const renderMessageContent = (msg: BasicMessage) => {
+    const content = msg.content || {}
     return (
       <div>
         {content.thinking && <ThinkingBlock content={content.thinking} />}
@@ -170,7 +164,7 @@ const ChatWindow: React.FC = () => {
       {!isVisible && (
         <div
           className={styles.quickEntry}
-          onClick={() => setIsVisible(true)}
+          onClick={() => { if (drag.isMoved && drag.isMoved()) return; setIsVisible(true) }}
           style={drag.style}
           {...drag.bind}
         >
