@@ -73,9 +73,8 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
       : '0秒'
   })
   const [showDetail, setShowDetail] = useState(false)
-  // Draggable position for the floating FAB
-  // 初始不读取 window，避免 SSR 报错；默认放左下（先给一个较靠下的估值，客户端再精确定位）
-  const [fabPos, setFabPos] = useState<{ x: number; y: number }>({ x: 16, y: 400 })
+  // 悬浮按钮位置（未拖拽前使用 CSS right/bottom，避免 SSR 读取 window）
+  const [fabPos, setFabPos] = useState<{ x: number; y: number } | null>(null)
   const draggingRef = useRef(false)
   const offsetRef = useRef({ x: 0, y: 0 })
   const dragMovedRef = useRef(false)
@@ -86,25 +85,37 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
 
   useEffect(() => {
     const resize = () => {
-      setFabPos(p => ({
-        x: Math.min(p.x, window.innerWidth - 64 - 8),
-        y: Math.min(p.y, window.innerHeight - 64 - 8)
-      }))
+      setFabPos(p => {
+        if (!p) return p
+        return {
+          x: Math.min(p.x, window.innerWidth - 64 - 8),
+          y: Math.min(p.y, window.innerHeight - 64 - 8)
+        }
+      })
     }
     window.addEventListener('resize', resize)
     return () => window.removeEventListener('resize', resize)
   }, [])
 
-  // 首次客户端渲染后设置到右下角（SSR 阶段不访问 window）
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    setFabPos({ x: window.innerWidth - 64 - 24, y: window.innerHeight - 64 - 24 })
-  }, [])
+  // 确保已有数值坐标（用于弹窗或拖拽计算）
+  const ensureFabPos = () => {
+    if (fabPos || typeof window === 'undefined') return
+    if (fabRef.current) {
+      const rect = fabRef.current.getBoundingClientRect()
+      setFabPos({ x: rect.left, y: rect.top })
+    }
+  }
 
   const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     const point = 'touches' in e ? e.touches[0] : e
+    // 懒加载坐标
+    if (!fabPos && fabRef.current) {
+      const rect = fabRef.current.getBoundingClientRect()
+      setFabPos({ x: rect.left, y: rect.top })
+    }
+    const current = fabPos || { x: point.clientX - 32, y: point.clientY - 32 }
     draggingRef.current = true
-    offsetRef.current = { x: point.clientX - fabPos.x, y: point.clientY - fabPos.y }
+    offsetRef.current = { x: point.clientX - current.x, y: point.clientY - current.y }
     dragStartPointRef.current = { x: point.clientX, y: point.clientY }
     dragMovedRef.current = false
     document.body.style.userSelect = 'none'
@@ -118,12 +129,14 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
         const dy = point.clientY - dragStartPointRef.current.y
         if (Math.hypot(dx, dy) > MOVE_THRESHOLD) dragMovedRef.current = true
       }
-      const nx = point.clientX - offsetRef.current.x
-      const ny = point.clientY - offsetRef.current.y
-      setFabPos({
-        x: Math.min(Math.max(nx, 0), window.innerWidth - 64),
-        y: Math.min(Math.max(ny, 0), window.innerHeight - 64)
-      })
+      if (fabPos) {
+        const nx = point.clientX - offsetRef.current.x
+        const ny = point.clientY - offsetRef.current.y
+        setFabPos({
+          x: Math.min(Math.max(nx, 0), window.innerWidth - 64),
+          y: Math.min(Math.max(ny, 0), window.innerHeight - 64)
+        })
+      }
     }
     const end = () => {
       if (!draggingRef.current) return
@@ -160,6 +173,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
   // 悬浮按钮点击事件
   const handleToggleDetail = () => {
     if (dragMovedRef.current) return
+    ensureFabPos()
     setShowDetail(v => !v)
   }
 
@@ -184,7 +198,7 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
         className="progress-fab"
   onClick={handleToggleDetail}
         title="查看学习进度"
-        style={{ left: fabPos.x, top: fabPos.y }}
+  style={fabPos ? { left: fabPos.x, top: fabPos.y } : { right: 24, bottom: 24, position: 'fixed' }}
         onMouseDown={onDragStart}
         onTouchStart={onDragStart}
       >
@@ -230,13 +244,21 @@ const Progress: React.FC<ProgressProps> = ({ questions }) => {
           style={(() => {
             if (typeof window === 'undefined') return { left: 0, top: 0 }
             const popupWidth = 360
-            const xRight = fabPos.x + 64
+            const pos = fabPos || (() => {
+              // 在首次打开详情时捕获位置
+              if (fabRef.current) {
+                const r = fabRef.current.getBoundingClientRect()
+                return { x: r.left, y: r.top }
+              }
+              return { x: 0, y: 0 }
+            })()
+            const xRight = pos.x + 64
             const left = Math.min(
               Math.max(xRight - popupWidth, 8),
               window.innerWidth - popupWidth - 8
             )
             const measuredHeight = popupRef.current?.offsetHeight || 260
-            const topPreferred = fabPos.y - measuredHeight - 16
+            const topPreferred = pos.y - measuredHeight - 16
             const top =
               topPreferred < 8
                 ? Math.min(
