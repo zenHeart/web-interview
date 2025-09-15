@@ -1,0 +1,94 @@
+<style>
+  .container {
+    height: 400px;
+    border: 1px solid #ccc;
+  }
+</style>
+<div class="container">
+  <custom-virtual-list item-height="30" id="custom-list"></custom-virtual-list>
+</div>
+<script>
+  class CustomVirtualList extends HTMLElement {
+    set renderItem(val) {
+      this._renderItem = val;
+    }
+    set data(val) {
+      this._data = val;
+    }
+    set itemHeight(val) {
+      this._itemHeight = Number(val)
+    }
+    connectedCallback() {
+      this.shadowRoot
+        .querySelector(".list")
+        .addEventListener("scroll", () => this.updateVisibleItems());
+      this.updateVisibleItems();
+    }
+    updateVisibleItems() {
+      const list = this.shadowRoot.querySelector(".list");
+      const scrollTop = list.scrollTop;
+      const containerHeight = list.clientHeight;
+      const startIdx = Math.floor(scrollTop / this.itemHeight);
+      const endIdx = Math.min(
+        this.data.length,
+        Math.ceil((scrollTop + containerHeight) / this.itemHeight)
+      );
+
+      const fragment = document.createDocumentFragment();
+      for (let i = startIdx; i < endIdx; i++) {
+        const item = this.renderItem
+          ? this.renderItem(this.data[i])
+          : document.createTextNode(JSON.stringify(this.data[i]));
+        item.style.position = "absolute";
+        item.style.top = i * this.itemHeight + "px";
+        item.style.height = this.itemHeight + "px";
+        item.style.width = "100%";
+        fragment.appendChild(item);
+      }
+
+      list.innerHTML = "";
+      list.appendChild(fragment);
+      list.style.position = "relative";
+      list.style.height = this.data.length * this.itemHeight + "px";
+    }
+    constructor() {
+      super();
+      const shadow = this.attachShadow({ mode: "open" });
+      shadow.innerHTML = `
+<style>
+   .list {
+      height: 100%;
+      overflow: auto;
+      background: #f0f0f0;
+   }
+</style>
+<div  id="list"> 
+</div>
+`;
+    }
+
+    render() {
+      const div = shadow.querySelector("#list");
+
+    }
+    initMockScroll() {
+      
+    }
+
+  }
+
+  customElements.define("custom-virtual-list", CustomVirtualList);
+
+  const customList = document.getElementById("cutome-list");
+  customList.renderItem = function renderItem(item) {
+    const div = document.createElement("div");
+    div.style.background =
+      "#" + (~~(Math.random() * 0xffffff)).toString(16).padStart(6, "0");
+    div.textContent = JSON.stringify(item);
+    return div;
+  };
+  customList.data = Array.from({ length: 1000 }, (_, i) => ({
+    id: i,
+    name: `Item ${i}`,
+  }));
+</script>

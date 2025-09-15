@@ -1,0 +1,17 @@
+
+<div style="height:200px;background:lightgray;overflow: scroll">
+   <div style="height: 400px;background: blue">
+   </div>
+   <img  style="background: gray; height: 100px;width: 100px;;" id="lazy-load" alt="">
+</div>
+<script>
+   const img = document.getElementById('lazy-load');
+
+   const observer = new IntersectionObserver(entrys => {
+      if (entrys[0].isIntersecting) {
+         img.src = 'https://picsum.photos/200/300'
+         observer.disconnect()
+      }
+   })
+   observer.observe(img)
+</script>
