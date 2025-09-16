@@ -229,29 +229,29 @@ IPC(Inter-Process Communication)是不同进程间交换数据和同步执行的
 
 ```js
 // Node.js 中的 IPC 示例
-import { fork } from 'child_process';
+import { fork } from 'child_process'
 
 // 创建子进程并建立 IPC 通道
-const child = fork('./worker.js');
+const child = fork('./worker.js')
 
 // 发送消息给子进程
-child.send({ 
-  type: 'task', 
-  data: { numbers: [1, 2, 3, 4, 5] } 
-});
+child.send({
+  type: 'task',
+  data: { numbers: [1, 2, 3, 4, 5] }
+})
 
 // 接收子进程消息
 child.on('message', (msg) => {
-  console.log('收到子进程结果:', msg.result);
-});
+  console.log('收到子进程结果:', msg.result)
+})
 
 // worker.js 文件
 process.on('message', (msg) => {
   if (msg.type === 'task') {
-    const sum = msg.data.numbers.reduce((a, b) => a + b, 0);
-    process.send({ type: 'result', result: sum });
+    const sum = msg.data.numbers.reduce((a, b) => a + b, 0)
+    process.send({ type: 'result', result: sum })
   }
-});
+})
 ```
 
 **前端开发应用:**
@@ -335,5 +335,119 @@ RBAC(基于角色)、ABAC(基于属性)等。
 - [OWASP访问控制](https://owasp.org/www-project-proactive-controls/v3/en/c7-enforce-access-controls)
   — Web应用安全权限控制最佳实践
 - [OAuth 2.0规范](https://tools.ietf.org/html/rfc6749) — 现代Web应用授权标准
+
+</Answer>
+
+## 操作系统是如何管理内存的？ {#P1-memory-management}
+
+<Answer>
+
+**核心概念:**
+
+操作系统内存管理通过虚拟内存技术实现物理内存的高效利用和进程隔离。主要包括分页、分段、段页式三种管理方式：分页将内存等分为固定大小的页面，通过页表实现地址映射；分段按逻辑意义划分程序段，支持动态大小；段页式结合两者优势，先分段再分页。现代系统普遍采用分页机制配合虚拟内存实现内存保护、共享和按需分配。
+
+**管理方式对比:**
+
+|方式|划分单位|大小|地址结构|访问开销|优势|劣势|
+|:---|:------|:---|:-------|:------|:---|:---|
+|分页|页面|固定(4KB)|页号+页内偏移|2次内存访问|内存利用率高，管理简单|不体现程序逻辑结构|
+|分段|逻辑段|可变|段号+段内偏移|2次内存访问|符合程序逻辑，便于共享|内存碎片，分配复杂|
+|段页式|段内分页|段可变，页固定|段号+页号+页内偏移|3次内存访问|结合两者优势|地址转换开销最大|
+
+**示例说明:**
+
+```js
+// 模拟页式内存管理的地址转换过程
+class PageMemoryManager {
+  constructor (pageSize = 4096) {
+    this.pageSize = pageSize
+    this.pageTable = new Map() // 页表：页号 -> 物理块号
+    this.physicalMemory = new Array(1024).fill(0) // 模拟1024个物理块
+    this.freeBlocks = new Set([...Array(1024).keys()]) // 空闲块集合
+  }
+
+  // 分配页面到物理块
+  allocatePage (pageNumber) {
+    if (this.freeBlocks.size === 0) {
+      throw new Error('物理内存不足')
+    }
+
+    const blockNumber = this.freeBlocks.values().next().value
+    this.freeBlocks.delete(blockNumber)
+    this.pageTable.set(pageNumber, blockNumber)
+
+    console.log(`页面 ${pageNumber} 映射到物理块 ${blockNumber}`)
+    return blockNumber
+  }
+
+  // 逻辑地址转换为物理地址
+  translateAddress (logicalAddress) {
+    const pageNumber = Math.floor(logicalAddress / this.pageSize)
+    const offset = logicalAddress % this.pageSize
+
+    // 检查页表中是否存在该页
+    if (!this.pageTable.has(pageNumber)) {
+      this.allocatePage(pageNumber) // 模拟缺页中断处理
+    }
+
+    const blockNumber = this.pageTable.get(pageNumber)
+    const physicalAddress = blockNumber * this.pageSize + offset
+
+    return {
+      logicalAddress,
+      pageNumber,
+      offset,
+      blockNumber,
+      physicalAddress
+    }
+  }
+
+  // 显示内存使用情况
+  getMemoryStatus () {
+    return {
+      totalBlocks: 1024,
+      usedBlocks: 1024 - this.freeBlocks.size,
+      freeBlocks: this.freeBlocks.size,
+      pageTableEntries: this.pageTable.size
+    }
+  }
+}
+
+// 使用示例
+const memManager = new PageMemoryManager(4096)
+
+// 模拟程序访问不同的逻辑地址
+const addresses = [0x1000, 0x5000, 0x9000, 0x1500]
+
+addresses.forEach(addr => {
+  const result = memManager.translateAddress(addr)
+  console.log(`逻辑地址 0x${addr.toString(16)} -> 物理地址 0x${result.physicalAddress.toString(16)}`)
+  console.log(`  页号: ${result.pageNumber}, 页内偏移: ${result.offset}`)
+  console.log(`  物理块号: ${result.blockNumber}`)
+})
+
+console.log('内存使用状况:', memManager.getMemoryStatus())
+```
+
+**前端开发关联:**
+
+- **浏览器进程模型**: Chrome采用多进程架构，每个标签页独立进程空间，避免相互影响
+- **Web Worker内存隔离**: Worker线程拥有独立的JavaScript堆，通过消息传递通信
+- **Node.js内存管理**: V8引擎的分代垃圾回收机制类似操作系统的内存分页管理
+- **WebAssembly线性内存**: WASM使用连续的线性内存模型，需要手动管理内存分配
+
+**面试官视角:**
+
+该题考察对系统底层原理的理解深度：
+
+- **要点清单**: 理解虚拟内存的核心思想；掌握页表、段表的作用机制；了解地址转换的完整过程；知道不同管理方式的权衡取舍
+- **加分项**: 能联系到前端内存优化实践；了解浏览器的内存管理机制；知道Node.js的内存限制和调优；理解WebAssembly的内存模型
+- **常见失误**: 混淆逻辑地址和物理地址；不理解页表的查找过程；忽视内存管理对性能的影响；无法关联到前端开发实践
+
+**延伸阅读:**
+
+- [Virtual Memory - OS Concepts](https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/9_VirtualMemory.html) — 虚拟内存管理经典教材章节
+- [Chrome Multi-process Architecture](https://www.chromium.org/developers/design-documents/multi-process-architecture) — Chrome浏览器多进程架构设计文档  
+- [V8 Memory Management](https://v8.dev/blog/trash-talk) — V8引擎内存管理和垃圾回收机制
 
 </Answer>
