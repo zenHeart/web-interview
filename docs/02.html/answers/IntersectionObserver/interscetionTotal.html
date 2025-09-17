@@ -1,0 +1,42 @@
+<style>
+   .container {
+      width: 400px;
+      height: 400px;
+      background: lightgray;
+      overflow: auto;
+      padding: 10px;
+      border: 10px solid blue;
+      margin: 20px;
+   }
+   .item {
+      height: 160px;
+      border: 10px solid red;
+      background: cyan;
+      padding:10px;
+      margin: 10px;
+      align-content: center;
+      text-align: center;
+   }
+</style>
+<div class="container">
+   <div class="item">1</div>
+   <div class="item">2</div>
+   <div class="item">3</div>
+</div>
+<script>
+   function log(entries, observer) {
+      console.table(entries)
+      console.dir(observer)
+   }
+   const root = document.getElementsByClassName('container')[0]
+   const io = new IntersectionObserver(log, {
+      root,
+      threshold: 1
+   })
+
+   const items = document.getElementsByClassName('item')
+   Array.from(items).forEach(item => {
+      io.observe(item)
+   })
+
+</script>

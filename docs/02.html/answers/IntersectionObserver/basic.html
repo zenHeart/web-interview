@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntersectionObserver 完整示例</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            height: 200vh;
+            padding: 20px;
+        }
+        
+        .root-container {
+            height: 400px;
+            overflow-y: scroll;
+            border: 2px solid #333;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .spacer {
+            height: 200px;
+            background: #f0f0f0;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .target {
+            width: 200px;
+            height: 100px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+        
+        .target.visible {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .controls {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            max-width: 300px;
+            font-size: 12px;
+        }
+        
+        .threshold-demo {
+            background: #e74c3c;
+            height: 150px;
+            margin: 30px auto;
+            position: relative;
+        }
+        
+        .threshold-demo::after {
+            content: attr(data-ratio);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .info-panel {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .root-margin-demo {
+            border: 2px dashed #3498db;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>IntersectionObserver 完整示例</h1>
+        
+        <div class="controls">
+            <h3>观察信息</h3>
+            <div id="observerInfo"></div>
+        </div>
+        
+        <!-- 基础示例 -->
+        <section>
+            <h2>1. 基础用法 - 默认设置</h2>
+            <div class="spacer">滚动区域</div>
+            <div class="target" id="target1">目标元素 1</div>
+            <div class="spacer">滚动区域</div>
+        </section>
+        
+        <!-- rootMargin 示例 -->
+        <section>
+            <h2>2. rootMargin 属性演示</h2>
+            <p>rootMargin: '50px 0px -50px 0px' - 扩展顶部50px，收缩底部50px</p>
+            <div class="root-margin-demo">
+                <div class="target" id="target2">rootMargin 目标</div>
+            </div>
+        </section>
+        
+        <!-- threshold 示例 -->
+        <section>
+            <h2>3. threshold 属性演示</h2>
+            <p>threshold: [0, 0.25, 0.5, 0.75, 1] - 多个阈值触发</p>
+            <div class="spacer">滚动查看阈值变化</div>
+            <div class="target threshold-demo" id="target3" data-ratio="0%">阈值演示</div>
+            <div class="spacer">继续滚动</div>
+        </section>
+        
+        <!-- 自定义 root 示例 -->
+        <section>
+            <h2>4. 自定义 root 容器</h2>
+            <p>指定滚动容器作为 root</p>
+            <div class="root-container" id="scrollContainer">
+                <div class="spacer">容器内容 - 开始</div>
+                <div class="target" id="target4">容器内目标</div>
+                <div class="spacer">容器内容 - 中间</div>
+                <div class="target" id="target5">另一个目标</div>
+                <div class="spacer">容器内容 - 结束</div>
+            </div>
+        </section>
+        
+        <!-- 图片懒加载示例 -->
+        <section>
+            <h2>5. 实际应用 - 图片懒加载</h2>
+            <div class="spacer">滚动到图片位置</div>
+            <img class="lazy-image" 
+                 data-src="https://picsum.photos/400/300?random=1" 
+                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em'%3E加载中...%3C/text%3E%3C/svg%3E"
+                 alt="懒加载图片">
+            <div class="spacer">更多内容</div>
+        </section>
+        
+        <div class="info-panel">
+            <h3>属性详解：</h3>
+            <ul>
+                <li><strong>root:</strong> 观察的根元素，null 表示视窗</li>
+                <li><strong>rootMargin:</strong> 根元素的边距，类似 CSS margin</li>
+                <li><strong>threshold:</strong> 触发回调的可见比例阈值</li>
+                <li><strong>target:</strong> 被观察的目标元素</li>
+                <li><strong>isIntersecting:</strong> 是否与根元素相交</li>
+                <li><strong>intersectionRatio:</strong> 相交区域占目标元素的比例</li>
+                <li><strong>boundingClientRect:</strong> 目标元素的边界信息</li>
+                <li><strong>rootBounds:</strong> 根元素的边界信息</li>
+                <li><strong>intersectionRect:</strong> 相交区域的边界信息</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const infoPanel = document.getElementById('observerInfo');
+        
+        // 更新信息面板
+        function updateInfo(entries, observerName) {
+            const info = entries.map(entry => {
+                return `
+                    <div style="margin-bottom: 10px; padding: 5px; background: rgba(255,255,255,0.1);">
+                        <strong>${observerName}</strong><br>
+                        目标: ${entry.target.id || entry.target.className}<br>
+                        相交: ${entry.isIntersecting}<br>
+                        比例: ${(entry.intersectionRatio * 100).toFixed(1)}%<br>
+                        时间: ${entry.time.toFixed(0)}ms
+                    </div>
+                `;
+            }).join('');
+            
+            infoPanel.innerHTML = info;
+        }
+        
+        // 1. 基础观察器 - 默认设置
+        const basicObserver = new IntersectionObserver((entries) => {
+            updateInfo(entries, '基础观察器');
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                } else {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        });
+        
+        basicObserver.observe(document.getElementById('target1'));
+        
+        // 2. rootMargin 演示
+        const rootMarginObserver = new IntersectionObserver((entries) => {
+            updateInfo(entries, 'RootMargin观察器');
+            entries.forEach(entry => {
+                entry.target.style.background = entry.isIntersecting 
+                    ? 'linear-gradient(45deg, #2ecc71, #3498db)' 
+                    : 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+            });
+        }, {
+            rootMargin: '50px 0px -50px 0px' // 顶部扩展50px，底部收缩50px
+        });
+        
+        rootMarginObserver.observe(document.getElementById('target2'));
+        
+        // 3. threshold 演示
+        const thresholdObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const ratio = Math.round(entry.intersectionRatio * 100);
+                entry.target.setAttribute('data-ratio', `${ratio}%`);
+                entry.target.style.opacity = 0.3 + (entry.intersectionRatio * 0.7);
+                
+                updateInfo(entries, `阈值观察器(${ratio}%)`);
+            });
+        }, {
+            threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]
+        });
+        
+        thresholdObserver.observe(document.getElementById('target3'));
+        
+        // 4. 自定义 root 容器
+        const customRootObserver = new IntersectionObserver((entries) => {
+            updateInfo(entries, '自定义Root观察器');
+            entries.forEach(entry => {
+                entry.target.style.transform = entry.isIntersecting 
+                    ? 'scale(1.05) rotate(2deg)' 
+                    : 'scale(1) rotate(0deg)';
+            });
+        }, {
+            root: document.getElementById('scrollContainer'),
+            rootMargin: '10px',
+            threshold: 0.5
+        });
+        
+        customRootObserver.observe(document.getElementById('target4'));
+        customRootObserver.observe(document.getElementById('target5'));
+        
+        // 5. 图片懒加载实现
+        const lazyImageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.style.transition = 'opacity 0.3s';
+                    
+                    img.onload = () => {
+                        img.style.opacity = '1';
+                        lazyImageObserver.unobserve(img);
+                    };
+                    
+                    updateInfo([entry], '懒加载观察器');
+                }
+            });
+        }, {
+            rootMargin: '50px'
+        });
+        
+        document.querySelectorAll('.lazy-image').forEach(img => {
+            lazyImageObserver.observe(img);
+        });
+        
+        // 性能监控
+        const performanceObserver = new IntersectionObserver((entries) => {
+            console.log('IntersectionObserver 回调执行次数:', entries.length);
+            console.log('当前时间戳:', performance.now());
+        });
+        
+        // 添加滚动事件对比（展示性能差异）
+        let scrollCount = 0;
+        window.addEventListener('scroll', () => {
+            scrollCount++;
+            if (scrollCount % 10 === 0) {
+                console.log('Scroll 事件触发次数:', scrollCount);
+            }
+        });
+        
+        // 展示各个属性的详细信息
+        const detailObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                console.group('IntersectionObserver 详细信息');
+                console.log('target:', entry.target);
+                console.log('isIntersecting:', entry.isIntersecting);
+                console.log('intersectionRatio:', entry.intersectionRatio);
+                console.log('intersectionRect:', entry.intersectionRect);
+                console.log('boundingClientRect:', entry.boundingClientRect);
+                console.log('rootBounds:', entry.rootBounds);
+                console.log('time:', entry.time);
+                console.groupEnd();
+            });
+        });
+        
+        // 观察所有目标元素用于详细信息展示
+        document.querySelectorAll('.target').forEach(target => {
+            detailObserver.observe(target);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<script>
+   a = {
+      1: 1,
+      2: 2,
+      type: 'myType',
+   }
+   b = {
+      1: 1,
+      2: 2,
+      c: 3,
+      d: 4,
+      type: 'myType',
+
+   }
+   c = {
+      1: 1,
+      2: 2,
+      type: 'myType',
+      ...Array(11).fill(0).reduce((a, _, i) => {
+         a[String.fromCharCode(97 + i)] = i
+         return a
+      }, {}),
+
+   }
+   console.log(a, b, c)
+</script>
