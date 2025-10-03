@@ -1,0 +1,6 @@
+function maxInSlideWindow (arr, k) {
+   
+
+
+
+}

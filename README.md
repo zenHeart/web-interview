@@ -46,3 +46,6 @@ npm  test
 * [] [饿了么 node 面试](https://github.com/ElemeFE/node-interview) 饿了么 nodejs 面试题库
 * [ ] [前端面试经典轮子](https://www.zhihu.com/question/29380608/answer/100068367896)
 * [ ] [大厂前端面试题](https://www.kancloud.cn/hanxuming/realquestionsforfrontend/3182436)
+* [ ] [牛客面试题](https://www.nowcoder.com/exam/oj?page=5&pageSize=100&search=&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=196)
+* [ ] [牛客华为题](https://www.nowcoder.com/exam/oj/ta?page=1&pageSize=100&search=&tpId=37&type=37)
+* [ ] [leetcode](https://leetcode.cn/problemset/)
