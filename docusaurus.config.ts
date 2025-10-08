@@ -9,7 +9,11 @@ const isLocal = process.env.NODE_ENV === 'development'
 
 const config: Config = {
   markdown: {
-    mermaid: true
+    mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+      onBrokenMarkdownImages: 'throw'
+    }
   },
   customFields: {
     questions: [],
@@ -22,9 +26,6 @@ const config: Config = {
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
   projectName: 'web-interview', // Usually your repo name.
   favicon: 'img/logo.svg',
-
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
   i18n: {
     defaultLocale: 'zh-hans',
     locales: ['zh-hans']

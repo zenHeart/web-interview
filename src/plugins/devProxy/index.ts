@@ -9,19 +9,18 @@ export default function devProxy (context: LoadContext, options: any): Plugin {
           headers: {
             'Access-Control-Allow-Origin': '*'
           },
-          proxy: {
-            '/api': {
-              target: 'http://localhost:11434',
-              secure: false,
-              changeOrigin: true,
-              logLevel: 'debug',
-              onProxyRes: (proxyRes: any, req: { method: string; url: string }, res: any) => {
-                //  console.log(
-                //            `[Proxy] ${req.method} ${req.url} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path}`
-                //  )
-              }
+          proxy: [{
+            context: ['/api'],
+            target: 'http://localhost:11434',
+            secure: false,
+            changeOrigin: true,
+            logLevel: 'debug',
+            onProxyRes: (proxyRes: any, req: { method: string; url: string }, res: any) => {
+              //  console.log(
+              //            `[Proxy] ${req.method} ${req.url} -> ${proxyRes.req.protocol}//${proxyRes.req.host}${proxyRes.req.path}`
+              //  )
             }
-          }
+          }]
         }
       }
     }
