@@ -1,30 +1,6 @@
-# 小米📝
-
-## 基本信息
-
-- **业务领域**: 智能硬件、互联网服务、IoT
-- **技术栈**: Web/Node.js/移动跨端/工程化
-- **团队规模**: 待补充
-- **办公地点**: 北京等
-- **公司性质**: 互联网
-- **薪资水平**: 待补充
-
-## 岗位类型
-
-### web前端开发工程师(5-10年)
-
-- RN 插件
-- 性能调优
-
-## 面试流程
-
-### 社会招聘
-
-1. 笔试 → 技术面(多轮) → 主管面 → 终面
+# 小米武汉前端面试题
 
 ## 题库
-
-### 技术问题
 
 - ready 与 DOMContentLoaded
 - React 技术栈：Electron/React Native
@@ -50,5 +26,11 @@
 - 构建：Webpack 插件、Rollup
 - Axios、请求出错中断其他请求
 - Vue：methods/watch/computed 区别、双向绑定、状态管理、Diff 算法、find
+- 详细说下 [视口概念](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSSOM_view/Viewport_concepts)
+- webpack 生产和开发环境配置区别
+- 找出一个字符串中重复次数最多的字母
+- 实现对象的深克隆
+- 将嵌套数组转化成单层数组（我用的递归，面试官提示js的类型转换，加了一个方法转化成string再split）
+- 如何获取页面上所有标签并打印其个数。（我问了怎么获取所有标签，告诉我querySelector('*')，让我尝试用数组的reduce方法，我说不太熟悉语法，最后用foreach实现了）
 
 > 资料来源：[掘金-小米面试题整理](https://juejin.im/entry/5b5b22476fb9a04fe637910d)

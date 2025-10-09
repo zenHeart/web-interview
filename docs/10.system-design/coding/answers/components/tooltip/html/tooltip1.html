@@ -1,0 +1,54 @@
+<my-tooltip>
+   <span>悬停查看</span>
+   <h1 slot="title">提示内容</template>
+</my-tooltip>
+<script>
+   customElements.define('my-tooltip', class extends HTMLElement {
+      constructor() {
+         super()
+      }
+
+      connectedCallback() {
+         this.render()
+      }
+      render() {
+         const templ = document.createElement('template')
+         templ.innerHTML = `
+         <style>
+            .tooltip-wrap {
+               position: relative;
+            }
+            .tooltip {
+               position: absolute;
+               z-index: 1;
+               display: none;
+            }   
+            .content:hover + .tooltip {
+               display: block;
+            }
+         </style>
+         <div class="tooltip-wrap">
+            <div class="content">
+               <slot></slot>
+            </div>
+            <div class="tooltip">
+               <slot name="title"></slot>
+            </div>
+         </div>
+         `
+         this.attachShadow({ mode: 'open' })
+         this.shadowRoot.appendChild(templ.content.cloneNode(true))
+         const tooltipWrap = this.shadowRoot.querySelector('.content')
+         tooltipWrap.addEventListener('mouseenter', this.showTip)
+         tooltipWrap.addEventListener('mouseleave', this.hideTip)
+      }
+
+      showTip = (...args) => {
+         console.log('showTip', this, args)
+      }  
+
+      hideTip = (...args) => {
+         console.log('hideTip', this, args)
+      }
+   })
+</script>
