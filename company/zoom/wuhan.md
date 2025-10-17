@@ -4,33 +4,68 @@
 
 ## 面试题
 
-1. 个人介绍，项目经历
-2. 判断一个字符串是否为合法ISBN10
-3. Vue双向绑定
-4. `Object.definePropety` 和 `Proxy` 区别
-5. `v-if` 和 `v-show` 区别
-6. `HTTPS` 和 `HTTP` 区别
-7. `TLS` 三次握手
-8. 数字签名
-9. 浏览器缓存
-10. cache-control
-11. cookie 和 session
-12. localStorage 和 sessionStorage
-13. 一堆数中的前十大数
-14. 封装一个防抖的 hooks
-15. 手写一个 bindX 的方法，那边发了题目和代码，要能实现它的一些功能
-16. 5.工作中告诉你可以改动别人的代码，你有什么想法？
-17. new实现过程
-18. 比如现在他写了很多if else if怎么改可以替代？
-19. 数据类型，怎么判断
-20. 改变this指向
-21. 封装的时候原来组件的一些功能会不会失效，怎么解决？怎么暴露给你使用方法
-22. 节流防抖怎么做的，怎么封装一个防抖的自定义指令
-23. useEffect使用场景
-24. vue组件通讯和react组件通讯
-25. vue生命周期和react生命周期对比
-26. keep-alive页面不想要这个缓存怎么办？
-27. 我说想做底层一点的，然后面试官说那接着问
-28. 浏览器跨域
-29. 浏览器存储方式差异
-30. 设计模式
+### 1 面
+
+1. 自我介绍
+2. 说下如何做的性能优化
+3. 说一下宏任务和微任务的区别
+4. 说一下 requestAnimationFrame
+5. 说一下 requestIdleCallback, 该回调会阻塞渲染么
+6. 说一下重排和重绘
+7. getBoundingClientRect 一定会触发重排么
+8. 有用过 TS 么
+9. 写下如下函数的 TS 定义
+
+```ts
+// 获取对象的 key
+interface Person {
+  name: string
+  age: number
+}
+
+setObject(person, 'name', 'tom')
+setObject(person, 'age', 12)
+```
+
+10. 完成如下算法
+
+```js
+/*
+实现一个 flatten 方法，输入一个嵌套的对象，输出一个扁平化的对象
+
+{
+  'a.b': 1,
+  'a.c': 2,
+  'a.d.e': 5,
+  'b[0]': 1,
+  'b[1]': 3,
+  'b[2].a': 2,
+  'b[2].b': 3,
+  'c': 3
+}
+
+*/
+flatten({
+  a: {
+    b: 1,
+    c: 2,
+    d: {
+      e: 5
+    }
+  },
+  b: [1, 3, {
+    a: 2,
+    b: 3
+  }],
+  c: 3
+})
+```
+
+11. 在题目 10 的实现下
+
+```js
+/**
+ * 如果是嵌套对象则输出为 X
+ * /
+
+```
