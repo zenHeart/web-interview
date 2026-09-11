@@ -39,8 +39,7 @@ const HomeQuestionsSummary: React.FC = () => {
     }
 
     acc[subject].topics[topicKey].count += 1
-    acc[subject].topics[topicKey].questions.push(question) // 保存问题以便后续使用
-
+    acc[subject].topics[topicKey].questions.push(question)
     return acc
   }, {} as Record<string, NumberedDomain>)
 
@@ -48,27 +47,40 @@ const HomeQuestionsSummary: React.FC = () => {
     <div className="home-questions-summary">
       {Object.entries(organizedQuestions)
         .sort((a, b) => a[1].number - b[1].number)
-        .map(([domainKey, subject]) => (
-          <div key={domainKey} className="subject-card">
-            <h2 className="subject-title">{subject.name}</h2>
-            <div className="wi-topics-container">
-              {Object.entries(subject.topics).map(([topicKey, topic]) => (
-                <a
-                  key={topicKey}
-                  className="topic-tag"
-                  target="_blank"
-                  rel="noreferrer"
-                  href={topic.questions[0]?.link} // 确保链接指向第一个问题
-                >
-                  {Array.isArray(topic.questions[0]?.topic)
-                    ? topic.questions[0].topic.join(' / ')
-                    : topic.questions[0]?.topic}
-                  {` (${topic.count})`}
-                </a>
-              ))}
+        .map(([domainKey, subject]) => {
+          const totalQuestions = Object.values(subject.topics).reduce(
+            (sum, t) => sum + t.count,
+            0
+          )
+          const formattedIndex = String(subject.number).padStart(2, '0')
+          return (
+            <div key={domainKey} className="subject-card">
+              <div className="subject-header">
+                <div className="subject-title-wrap">
+                  <span className="subject-id">{formattedIndex}</span>
+                  <h3 className="subject-title">{subject.name}</h3>
+                </div>
+                <span className="subject-count-badge">{totalQuestions} 题</span>
+              </div>
+              <div className="wi-topics-container">
+                {Object.entries(subject.topics).map(([topicKey, topic]) => (
+                  <a
+                    key={topicKey}
+                    className="topic-tag"
+                    href={topic.questions[0]?.link}
+                  >
+                    <span className="topic-title">
+                      {Array.isArray(topic.questions[0]?.topic)
+                        ? topic.questions[0].topic.join(' / ')
+                        : topic.questions[0]?.topic}
+                    </span>
+                    <span className="topic-count">{topic.count}</span>
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
     </div>
   )
 }

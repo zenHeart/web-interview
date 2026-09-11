@@ -1,39 +1,170 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * Design System based on /learn-design (印刷档案 × 瑞士网格 × 朱砂批注红)
+ * 哲学：清晰、克制与有效空间；层级靠字阶与 1px 线，不靠阴影；圆角 ≤ 4px
  */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* —— 纸面档案（明） —— */
+  --ld-bg: #faf9f6;
+  --ld-bg-soft: #f3f1ec;
+  --ld-text: #1a1c1e;
+  --ld-text-2: #52565c;
+  --ld-text-3: #8a8d93;
+  --ld-accent: #c8401e; /* 朱砂：批注、编号、强调 */
+  --ld-accent-hover: #b33617;
+  --ld-accent-soft: rgba(200, 64, 30, 0.08);
+  --ld-line: rgba(26, 28, 30, 0.12);
+  --ld-line-strong: rgba(26, 28, 30, 0.55);
+
+  /* Infima 变量映射 */
+  --ifm-color-primary: var(--ld-accent);
+  --ifm-color-primary-dark: #b33617;
+  --ifm-color-primary-darker: #a22f13;
+  --ifm-color-primary-darkest: #85240c;
+  --ifm-color-primary-light: #d64d2b;
+  --ifm-color-primary-lighter: #dc5937;
+  --ifm-color-primary-lightest: #e57557;
+
+  --ifm-background-color: var(--ld-bg);
+  --ifm-background-surface-color: var(--ld-bg-soft);
+  --ifm-font-color-base: var(--ld-text);
+
+  --ifm-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --ifm-font-family-monospace: "Space Grotesk", "JetBrains Mono", "Fira Code",
+    ui-monospace, monospace;
+
+  --ifm-code-font-size: 90%;
+  --ifm-line-height-base: 1.75;
+  --docusaurus-highlighted-code-line-bg: rgba(200, 64, 30, 0.08);
+
+  --wi-card-bg: var(--ld-bg-soft);
+  --wi-card-border: var(--ld-line);
+  --wi-card-hover-border: var(--ld-line-strong);
+  --wi-badge-bg: var(--ld-accent-soft);
+  --wi-badge-fg: var(--ld-accent);
+  --wi-badge-border: rgba(200, 64, 30, 0.2);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme="dark"] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+[data-theme='dark'] {
+  /* —— 墨黑档案（暗） —— */
+  --ld-bg: #14161a;
+  --ld-bg-soft: #1d2026;
+  --ld-text: #e8e6e1;
+  --ld-text-2: #a6aab2;
+  --ld-text-3: #6f747d;
+  --ld-accent: #e8683f; /* 暗色朱砂 */
+  --ld-accent-hover: #f07b55;
+  --ld-accent-soft: rgba(232, 104, 63, 0.12);
+  --ld-line: rgba(232, 230, 225, 0.14);
+  --ld-line-strong: rgba(232, 230, 225, 0.6);
+
+  --ifm-color-primary: var(--ld-accent);
+  --ifm-color-primary-dark: #e45528;
+  --ifm-color-primary-darker: #da4c1f;
+  --ifm-color-primary-darkest: #b43b16;
+  --ifm-color-primary-light: #ec7b56;
+  --ifm-color-primary-lighter: #ee8462;
+  --ifm-color-primary-lightest: #f3a085;
+
+  --ifm-background-color: var(--ld-bg);
+  --ifm-background-surface-color: var(--ld-bg-soft);
+  --ifm-font-color-base: var(--ld-text);
+
+  --docusaurus-highlighted-code-line-bg: rgba(232, 104, 63, 0.15);
+
+  --wi-card-bg: var(--ld-bg-soft);
+  --wi-card-border: var(--ld-line);
+  --wi-card-hover-border: var(--ld-line-strong);
+  --wi-badge-bg: var(--ld-accent-soft);
+  --wi-badge-fg: var(--ld-accent);
+  --wi-badge-border: rgba(232, 104, 63, 0.25);
 }
 
+/* 全局排版与瑞士网格线基调 */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  letter-spacing: 0.01em;
+}
+
+/* 瑞士细线秩序导航栏 */
+.navbar {
+  border-bottom: 1px solid var(--ld-line);
+  background-color: var(--ld-bg) !important;
+  box-shadow: none;
+  transition: border-color 0.2s ease;
+}
+
+.navbar__title {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 1.05rem;
+}
+
+.navbar__item {
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+/* 侧边栏：瑞士秩序细线与朱砂高亮 */
+.theme-doc-sidebar-menu .menu__link {
+  border-radius: 4px;
+  margin-bottom: 2px;
+  font-size: 0.9rem;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.theme-doc-sidebar-menu .menu__link--active:not(.menu__link--sublist) {
+  background-color: var(--ld-accent-soft) !important;
+  color: var(--ld-accent) !important;
+  font-weight: 600;
+  border-left: 2px solid var(--ld-accent);
+  border-radius: 0 4px 4px 0;
+}
+
+/* 极简纸面细滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ld-line-strong);
+  border-radius: 2px;
+}
+
+/* 题目卡片：瑞士网格 1px 线框，不靠阴影 */
 .question-wrapper {
-  margin: 2rem 0;
-  padding: 1rem;
-  border: 1px solid var(--ifm-color-primary);
-  border-radius: 8px;
+  margin: 2.2rem 0;
+  padding: 1.5rem;
+  background-color: var(--ld-bg-soft);
+  border: 1px solid var(--ld-line);
+  border-radius: 4px;
+  box-shadow: none;
+  transition: border-color 0.2s ease;
+}
+
+.question-wrapper:hover {
+  border-color: var(--ld-line-strong);
+}
+
+.question-wrapper h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ld-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .question-content,
@@ -42,32 +173,97 @@
   margin: 1rem 0;
 }
 
+/* 答题折叠抽屉：朱砂批注式 */
+details {
+  border: 1px solid var(--ld-line);
+  border-radius: 4px;
+  padding: 0.85rem 1.15rem;
+  background-color: var(--ld-bg);
+  margin-bottom: 1.25rem;
+  transition: border-color 0.2s ease;
+}
+
+details[open] {
+  border-color: var(--ld-line-strong);
+}
+
 details summary {
   cursor: pointer;
-  color: var(--ifm-color-primary);
-  font-weight: bold;
+  color: var(--ld-accent);
+  font-weight: 600;
+  font-size: 1rem;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 details[open] summary {
   margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--ld-line);
 }
 
-.question-wrapper h2 {
-  margin-top: 0;
-  color: var(--ifm-color-primary);
-  font-size: 1.5rem;
+/* 引用块：朱砂批注线（替换默认底色块） */
+.markdown blockquote {
+  margin: 1.25rem 0;
+  padding: 0.5rem 0 0.5rem 1.2rem;
+  border-left: 3px solid var(--ld-accent);
+  background: transparent;
+  color: var(--ld-text-2);
 }
 
+/* 代码块：档案纸边框化，去圆角紫调 */
 .codeBlockLines_TRxh {
-  max-height: 500px;
+  max-height: 520px;
 }
 
+.theme-code-block {
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: none;
+  border: 1px solid var(--ld-line);
+}
+
+.sp-wrapper {
+  margin-bottom: 24px !important;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: none;
+  border: 1px solid var(--ld-line);
+}
+
+/* 表格：瑞士印刷手册式 */
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--ld-line);
+  font-size: 14px;
+}
+
+.markdown table th {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ld-text-2);
+  background: var(--ld-bg-soft);
+  border-bottom: 1px solid var(--ld-line-strong);
+  padding: 10px 14px;
+}
+
+.markdown table td {
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid var(--ld-line);
+  background: transparent;
+}
+
+/* Mermaid 容器 */
 .markdown .docusaurus-mermaid-container {
   display: flex !important;
   justify-content: center;
-}
-
-
-.sp-wrapper {
-   margin-bottom: 20px !important;
+  padding: 1.25rem;
+  background-color: var(--ld-bg-soft);
+  border-radius: 4px;
+  border: 1px solid var(--ld-line);
+  margin: 1.5rem 0;
 }

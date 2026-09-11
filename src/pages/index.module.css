@@ -1,32 +1,248 @@
 /**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
+ * Learn-Design Swiss Grid & Archival Print Styles for Homepage
+ * Strictly following /Users/zenheart/code/github/learn-design:
+ * - Palette: Archival Warm Paper (#faf9f6) & Ink Black (#14161a), Cinnabar Red (#c8401e / #e8683f)
+ * - Zero indigo/purple gradients
+ * - Geometry: Restrained radius (≤ 4px), 1px Swiss rule lines, subtle shadows
+ * - Typography: Tabular numerals, uppercase mono eyebrows, editorial clarity
  */
 
 .heroBanner {
-  padding: 4rem 0;
+  padding: 5rem 0 4rem 0;
   text-align: center;
   position: relative;
-  overflow: hidden;
+  background-color: var(--ld-bg);
+  background-image: 
+    linear-gradient(var(--ld-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ld-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center top;
+  border-bottom: 1px solid var(--ld-line);
+}
+
+.heroContent {
+  max-width: 880px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.heroEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: var(--ld-bg-soft);
+  border: 1px solid var(--ld-line-strong);
+  color: var(--ld-accent);
+  font-family: var(--ld-font-mono);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ld-accent);
+  display: inline-block;
+}
+
+.heroTitle {
+  font-family: var(--ifm-font-family-base);
+  font-size: 3.6rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  color: var(--ld-text);
+}
+
+.heroSubtitle {
+  font-size: 1.18rem;
+  color: var(--ld-text-soft);
+  max-width: 680px;
+  margin: 0 auto 1.75rem auto;
+  line-height: 1.7;
+  font-weight: 400;
+}
+
+.commitInfo {
+  font-size: 0.82rem;
+  font-family: var(--ld-font-mono);
+  color: var(--ld-text-mute);
+  margin-top: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ld-bg-soft);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--ld-line);
+}
+
+.commitInfo a {
+  color: var(--ld-text-soft);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
+}
+
+.commitInfo a:hover {
+  color: var(--ld-accent);
+}
+
+.homeBtns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.primaryBtn {
+  background: var(--ld-accent);
+  color: #ffffff !important;
+  border: 1px solid var(--ld-accent);
+  padding: 0.75rem 1.8rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none !important;
+}
+
+.primaryBtn:hover {
+  background: var(--ld-accent-hover);
+  border-color: var(--ld-accent-hover);
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.secondaryBtn {
+  background: var(--ld-bg-soft);
+  color: var(--ld-text) !important;
+  border: 1px solid var(--ld-line-strong);
+  padding: 0.75rem 1.8rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.01em;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none !important;
+}
+
+.secondaryBtn:hover {
+  border-color: var(--ld-accent);
+  color: var(--ld-accent) !important;
+  background: var(--ld-accent-soft);
+  transform: translateY(-1px);
+}
+
+.metricsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 3.5rem;
+  padding-top: 2.2rem;
+  border-top: 1px solid var(--ld-line);
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.metricItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -0.75rem;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: var(--ld-line);
+}
+
+.metricVal {
+  font-family: var(--ld-font-mono);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ld-accent);
+  line-height: 1.1;
+  font-feature-settings: 'tnum';
+}
+
+.metricLabel {
+  font-size: 0.82rem;
+  color: var(--ld-text-mute);
+  font-weight: 500;
+  margin-top: 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+.sectionHeader {
+  text-align: left;
+  margin: 4.5rem 0 2rem 0;
+  border-bottom: 1px solid var(--ld-line);
+  padding-bottom: 1.25rem;
+}
+
+.sectionTag {
+  font-family: var(--ld-font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ld-accent);
+  margin-bottom: 0.4rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--ld-text);
+  margin-bottom: 0.5rem;
+}
+
+.sectionDesc {
+  font-size: 0.98rem;
+  color: var(--ld-text-soft);
+  max-width: 680px;
+  margin: 0;
+  line-height: 1.6;
 }
 
 @media screen and (max-width: 996px) {
   .heroBanner {
-    padding: 2rem;
+    padding: 3.5rem 1.25rem 2.5rem 1.25rem;
   }
-}
-
-.homeBtns {
-   --ifm-button-size-multiplier: 1.6;
-   display: flex;
-   flex-wrap: wrap;
-   align-items: center;
-   gap: 20px;
-   justify-content: center;
-   margin-top: 24px;
- }
-
-.homeBtns a,
-.homeBtns a:hover {
-  color: inherit;
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  .metricsRow {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  .metricItem:not(:last-child)::after {
+    display: none;
+  }
+  .metricVal {
+    font-size: 1.8rem;
+  }
 }

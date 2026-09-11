@@ -3,12 +3,13 @@
   /* dynamic left/top injected inline */
   width: 360px;
   height: 600px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: var(--ld-bg);
+  border: 1px solid var(--ld-line-strong);
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
   z-index: 999;
   overflow: hidden;
-  animation: slideUp 0.3s ease;
+  animation: slideUp 0.2s ease;
 }
 
 .headerBar {
@@ -17,12 +18,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 12px;
-  background: linear-gradient(90deg,#4f46e5,#6366f1);
+  background: var(--ld-accent);
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: grab;
   user-select: none;
+  font-family: var(--ld-font-mono);
+  letter-spacing: 0.02em;
 }
 .headerTitle {
   display: flex;
@@ -32,7 +35,7 @@
 .closeBtn {
   width: 22px;
   height: 22px;
-  border-radius: 4px;
+  border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -40,7 +43,7 @@
   color: #fff;
   font-size: 14px;
   cursor: pointer;
-  transition: background .18s;
+  transition: background .15s;
 }
 .closeBtn:hover {
   background: rgba(255,255,255,0.3);
@@ -74,32 +77,34 @@
 .quickEntryInner {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  background: #fff;
-  border-radius: 100px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 6px 14px;
+  background: var(--ld-bg-soft);
+  border: 1px solid var(--ld-line-strong);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .quickEntryIcon {
-  font-size: 24px;
+  font-size: 20px;
   margin-right: 8px;
 }
 
 .quickEntryText {
-  font-size: 14px;
-  color: #333;
-  font-weight: 500;
+  font-size: 13px;
+  color: var(--ld-text);
+  font-weight: 600;
+  font-family: var(--ld-font-mono);
 }
 
 /* ChatUI 样式覆盖 */
 :global(.ChatApp) {
   height: 100%;
-  border-radius: 12px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 :global(.ChatApp-content) {
-  background: #f7f7f7;
+  background: var(--ld-bg-soft);
 }
 
 :global(.ChatApp-messages) {
@@ -108,24 +113,27 @@
 
 :global(.Bubble) {
   max-width: 80%;
+  border-radius: 4px !important;
 }
 
 :global(.Composer) {
-  background: white;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  background: var(--ld-bg);
+  border-top: 1px solid var(--ld-line);
   padding: 12px;
 }
 
 :global(.Composer-input) {
-  background: #f7f7f7;
-  border-radius: 20px;
-  padding: 8px 16px;
+  background: var(--ld-bg-soft);
+  border-radius: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--ld-line);
+  color: var(--ld-text);
 }
 
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
