@@ -79,12 +79,39 @@ export default function extractQuestionsPlugin (
       const docsDir = path.join(siteDir, 'docs')
       try {
         // 使用 fast-glob 查找所有 markdown 文件
-        const files = await fastGlob(['**/*.{md,mdx}'], {
+        const rawFiles = await fastGlob(['**/*.{md,mdx}'], {
           cwd: docsDir,
           ignore: excludePatterns,
           absolute: true,
           dot: true
         })
+
+        // 自然数字前缀路径拓扑排序函数
+        const parsePart = (part: string): { num: number; name: string } => {
+          const match = part.match(/^(\d+(\.\d+)?)/)
+          if (match) {
+            return { num: parseFloat(match[1]), name: part }
+          }
+          return { num: 9999, name: part }
+        }
+        const compareDocPaths = (a: string, b: string): number => {
+          const partsA = a.split(path.sep)
+          const partsB = b.split(path.sep)
+          const minLen = Math.min(partsA.length, partsB.length)
+          for (let i = 0; i < minLen; i++) {
+            const itemA = parsePart(partsA[i])
+            const itemB = parsePart(partsB[i])
+            if (itemA.num !== itemB.num) {
+              return itemA.num - itemB.num
+            }
+            const cmp = partsA[i].localeCompare(partsB[i])
+            if (cmp !== 0) return cmp
+          }
+          return partsA.length - partsB.length
+        }
+        const files = rawFiles.sort((a, b) =>
+          compareDocPaths(path.relative(docsDir, a), path.relative(docsDir, b))
+        )
         // 1. 预读取所有 subject 的 index.md H1
         const subjectH1Map: Record<string, string> = {}
         const h1Cache: Record<string, string> = {}
@@ -112,10 +139,16 @@ export default function extractQuestionsPlugin (
           return aNum - bNum
         })
         for (const subjectDirName of subjectArr) {
-          // 优先查找 subject 目录下 index.md 的 H1
+          // 优先查找 subject 目录下 index.md 的 H1 或 _category_.json
           const indexMd = path.join(docsDir, subjectDirName, 'index.md')
+          const categoryJson = path.join(docsDir, subjectDirName, '_category_.json')
           let name = subjectDirName
-          if (fs.existsSync(indexMd)) {
+          if (fs.existsSync(categoryJson)) {
+            try {
+              const cat = JSON.parse(fs.readFileSync(categoryJson, 'utf-8'))
+              if (cat.label) name = cat.label
+            } catch {}
+          } else if (fs.existsSync(indexMd)) {
             const rel = path.relative(docsDir, indexMd).replace(/\.(md|mdx)$/, '')
             name = h1Cache[rel] || numberPrefixParser(subjectDirName).filename
           } else {
@@ -177,10 +210,16 @@ export default function extractQuestionsPlugin (
             const isLast = i === topics.length - 1
             let name = key
             if (!isLast) {
-              // 嵌套目录，优先查找该目录下 index.md 的 H1
+              // 嵌套目录，优先查找该目录下 _category_.json 或 index.md 的 H1
               const dirPath = parentRawPath + '/' + raw
+              const categoryJsonPath = path.join(docsDir, dirPath, '_category_.json')
               const indexMdPath = path.join(docsDir, dirPath, 'index.md')
-              if (fs.existsSync(indexMdPath)) {
+              if (fs.existsSync(categoryJsonPath)) {
+                try {
+                  const cat = JSON.parse(fs.readFileSync(categoryJsonPath, 'utf-8'))
+                  if (cat.label) name = cat.label
+                } catch {}
+              } else if (fs.existsSync(indexMdPath)) {
                 const rel = path.relative(docsDir, indexMdPath).replace(/\.(md|mdx)$/, '')
                 name = h1Cache[rel] || key
               } else {

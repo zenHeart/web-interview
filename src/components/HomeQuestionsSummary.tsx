@@ -1,6 +1,7 @@
 import React from 'react'
 import { usePluginData } from '@docusaurus/useGlobalData'
 import Link from '@docusaurus/Link'
+import type { KnowledgeMap } from '../plugins/extractQuestions'
 import './HomeQuestionsSummary.css'
 
 interface Question {
@@ -17,8 +18,32 @@ interface NumberedDomain {
 }
 
 const HomeQuestionsSummary: React.FC = () => {
-  const { questions = [] } = usePluginData('extract-questions-plugin') as {
+  const { questions = [], knowledgeMap = {} } = usePluginData('extract-questions-plugin') as {
     questions: Question[];
+    knowledgeMap: KnowledgeMap;
+  }
+
+  const getSubjectDisplayName = (subjectKey: string) => {
+    return knowledgeMap[subjectKey]?.name || subjectKey
+  }
+
+  const getTopicDisplayName = (subjectKey: string, topic: string | string[]) => {
+    const node = knowledgeMap[subjectKey]
+    if (!node) {
+      return Array.isArray(topic) ? topic.join(' / ') : topic
+    }
+    const topicArr = Array.isArray(topic) ? topic : [topic]
+    let cur: any = node
+    const names: string[] = []
+    for (const t of topicArr) {
+      if (cur?.children && cur.children[t]) {
+        names.push(cur.children[t].name)
+        cur = cur.children[t]
+      } else {
+        names.push(t)
+      }
+    }
+    return names.join(' / ')
   }
 
   // 按 subject 和 topic 组织数据，并计算每个 topic 的问题数量
@@ -60,7 +85,7 @@ const HomeQuestionsSummary: React.FC = () => {
                 <div className="subject-title-wrap">
                   <span className="subject-dot" />
                   <Link to={firstQuestionLink} className="subject-title-link">
-                    <h3 className="subject-title">{subject.name}</h3>
+                    <h3 className="subject-title">{getSubjectDisplayName(subject.name)}</h3>
                   </Link>
                 </div>
                 <Link to={firstQuestionLink} className="subject-count-badge">
@@ -76,9 +101,7 @@ const HomeQuestionsSummary: React.FC = () => {
                     to={topic.questions[0]?.link || '#'}
                   >
                     <span className="topic-title">
-                      {Array.isArray(topic.questions[0]?.topic)
-                        ? topic.questions[0].topic.join(' / ')
-                        : topic.questions[0]?.topic}
+                      {getTopicDisplayName(subject.name, topic.questions[0]?.topic)}
                     </span>
                     <span className="topic-count">{topic.count}</span>
                   </Link>

@@ -9,7 +9,7 @@ import islandsTest from '!!raw-loader!./answers/other/islands.test.js';
 
 本章涵盖算法面试中的经典问题，包括大数运算、海量数据处理、图论应用等重要主题。
 
-## 大数字符串运算如何实现？ {#P0-big-number}
+## 大数字符串运算如何实现？ {#p0-big-number}
 
 ```js
 // 实现大数字符串相加和相乘
@@ -85,7 +85,7 @@ function multiplyStrings(num1, num2) {
 
 </Answer>
 
-## 海量数据中如何找TopK？ {#P1-massive-topk}
+## 海量数据中如何找TopK？ {#p1-massive-topk}
 
 <Answer>
 
@@ -163,7 +163,7 @@ function multiplyStrings(num1, num2) {
 
 </Answer>
 
-## 岛屿数量问题如何解决？ {#P0-islands-bfs}
+## 岛屿数量问题如何解决？ {#p0-islands-bfs}
 
 ```typescript
 // 给定一个由 '1'（陆地）和 '0'（水）组成的的二维网格，计算岛屿的数量

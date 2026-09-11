@@ -2,7 +2,7 @@
 
 本章涵盖前端面试中的软技能考察，包括沟通协作、学习能力、项目经验、问题解决等核心能力的评估。
 
-## 当和上级或同事意见不同时，你是如何处理的？ {#P0-conflict-resolution}
+## 当和上级或同事意见不同时，你是如何处理的？ {#p0-conflict-resolution}
 
 <Answer>
 
@@ -54,7 +54,7 @@
 
 </Answer>
 
-## 有什么问题要问我？ {#P0-reverse-interview}
+## 有什么问题要问我？ {#p0-reverse-interview}
 
 <Answer>
 
@@ -128,7 +128,7 @@
 
 </Answer>
 
-## 你最近遇到过什么技术挑战？你是如何解决的？ {#P0-technical-challenge}
+## 你最近遇到过什么技术挑战？你是如何解决的？ {#p0-technical-challenge}
 
 <Answer>
 
@@ -233,7 +233,7 @@
 
 </Answer>
 
-## 你通过哪些方式获取前端学习资源？ {#P0-learning-resources}
+## 你通过哪些方式获取前端学习资源？ {#p0-learning-resources}
 
 <Answer>
 
@@ -325,7 +325,7 @@
 
 </Answer>
 
-## 描述一下你编写一个页面的完整工作流程？ {#P1-development-workflow}
+## 描述一下你编写一个页面的完整工作流程？ {#p1-development-workflow}
 
 <Answer>
 
@@ -454,7 +454,7 @@
 
 </Answer>
 
-## 你昨天/上周学了什么新东西？ {#P1-recent-learning}
+## 你昨天/上周学了什么新东西？ {#p1-recent-learning}
 
 <Answer>
 
@@ -595,7 +595,7 @@
 
 </Answer>
 
-## 你有设计过通用组件吗？能介绍一下设计思路吗？ {#P0-component-design}
+## 你有设计过通用组件吗？能介绍一下设计思路吗？ {#p0-component-design}
 
 <Answer>
 
@@ -769,7 +769,7 @@ v4.0: 生态完善
 
 </Answer>
 
-## 说一下你熟悉的版本控制系统和工作流程？ {#P1-version-control}
+## 说一下你熟悉的版本控制系统和工作流程？ {#p1-version-control}
 
 <Answer>
 
@@ -906,7 +906,7 @@ refactor(utils): extract common validation functions
 
 </Answer>
 
-## 如何在项目中考虑UI、安全性、性能、SEO、可维护性等因素？ {#P1-comprehensive-considerations}
+## 如何在项目中考虑UI、安全性、性能、SEO、可维护性等因素？ {#p1-comprehensive-considerations}
 
 <Answer>
 
@@ -1052,7 +1052,7 @@ SEO层面：
 
 </Answer>
 
-## 能说说你最得意的项目吗？ {#P0-proud-project}
+## 能说说你最得意的项目吗？ {#p0-proud-project}
 
 <Answer>
 
@@ -1189,7 +1189,7 @@ SEO层面：
 
 </Answer>
 
-## 编写代码的哪些方面最让你兴奋？ {#P2-coding-passion}
+## 编写代码的哪些方面最让你兴奋？ {#p2-coding-passion}
 
 <Answer>
 
@@ -1314,7 +1314,7 @@ SEO层面：
 
 </Answer>
 
-## 如果你今年要掌握一项新技术，会选择什么？ {#P2-technology-planning}
+## 如果你今年要掌握一项新技术，会选择什么？ {#p2-technology-planning}
 
 <Answer>
 
@@ -1456,7 +1456,7 @@ SEO层面：
 
 </Answer>
 
-## 你写代码时如何保证细节的准确性？ {#P1-attention-to-detail}
+## 你写代码时如何保证细节的准确性？ {#p1-attention-to-detail}
 
 <Answer>
 

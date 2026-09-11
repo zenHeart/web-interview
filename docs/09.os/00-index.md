@@ -7,7 +7,7 @@ import permissionModels from '!!raw-loader!./answers/permission-models.js';
 
 操作系统是前端开发者必须了解的基础知识，涵盖文件系统、进程线程、权限管理等核心概念，直接影响开发环境配置、构建优化和部署策略。
 
-## 什么是 inode？ {#P0-inode}
+## 什么是 inode？ {#p0-inode}
 
 <Answer>
 
@@ -41,7 +41,7 @@ inode（索引节点）是类Unix文件系统中存储文件元数据的数据�
 
 </Answer>
 
-## 软链接和硬链接的区别是什么？ {#P0-softlink-hardlink}
+## 软链接和硬链接的区别是什么？ {#p0-softlink-hardlink}
 
 <Answer>
 
@@ -99,7 +99,7 @@ cat soft_link.txt    # 报错：No such file or directory
 
 </Answer>
 
-## 常见的文件系统有哪些区别？ {#P1-filesystem}
+## 常见的文件系统有哪些区别？ {#p1-filesystem}
 
 <Answer>
 
@@ -153,7 +153,7 @@ cat soft_link.txt    # 报错：No such file or directory
 
 </Answer>
 
-## 进程和线程有什么区别？ {#P0-process-thread}
+## 进程和线程有什么区别？ {#p0-process-thread}
 
 <Answer>
 
@@ -206,7 +206,7 @@ cat soft_link.txt    # 报错：No such file or directory
 
 </Answer>
 
-## 什么是进程间通信(IPC)？ {#P1-ipc}
+## 什么是进程间通信(IPC)？ {#p1-ipc}
 
 <Answer>
 
@@ -277,7 +277,7 @@ process.on('message', (msg) => {
 
 </Answer>
 
-## 操作系统的权限管理模型有哪些？ {#P2-permission-models}
+## 操作系统的权限管理模型有哪些？ {#p2-permission-models}
 
 <Answer>
 
@@ -338,7 +338,7 @@ RBAC(基于角色)、ABAC(基于属性)等。
 
 </Answer>
 
-## 操作系统是如何管理内存的？ {#P1-memory-management}
+## 操作系统是如何管理内存的？ {#p1-memory-management}
 
 <Answer>
 

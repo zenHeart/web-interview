@@ -2,7 +2,7 @@
 
 本章节涵盖Node.js开发中的典型编程题，包括热更新实现、日志系统设计等实际应用场景。
 
-## 什么是热更新，Node.js如何实现热更新？ {#P0-hot-update}
+## 什么是热更新，Node.js如何实现热更新？ {#p0-hot-update}
 
 <Answer>
 
@@ -122,7 +122,7 @@ const server = http.createServer((req, res) => {
 
 </Answer>
 
-## 如何设计一个日志系统？ {#P0-log-system}
+## 如何设计一个日志系统？ {#p0-log-system}
 
 <Answer>
 

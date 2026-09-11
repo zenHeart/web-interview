@@ -2,7 +2,7 @@
 
 本主题覆盖实时通道取舍、队列/流式削峰、弹性与回压、可观测。
 
-## WebSocket/SSE/WebRTC 取舍？ {#P1-realtime-compare}
+## WebSocket/SSE/WebRTC 取舍？ {#p1-realtime-compare}
 
 <Answer>
 
@@ -18,7 +18,7 @@
 
 </Answer>
 
-## 如何用消息队列与流式计算削峰填谷？ {#P1-queue-stream}
+## 如何用消息队列与流式计算削峰填谷？ {#p1-queue-stream}
 
 <Answer>
 
@@ -28,7 +28,7 @@
 
 </Answer>
 
-## 如何设计回压与排队策略？ {#P2-backpressure}
+## 如何设计回压与排队策略？ {#p2-backpressure}
 
 <Answer>
 
@@ -38,7 +38,7 @@
 
 </Answer>
 
-## 连接与会话的弹性治理？ {#P2-conn-resilience}
+## 连接与会话的弹性治理？ {#p2-conn-resilience}
 
 <Answer>
 
@@ -48,7 +48,7 @@
 
 </Answer>
 
-## 端到端观测指标如何定义？ {#P1-obs-slo}
+## 端到端观测指标如何定义？ {#p1-obs-slo}
 
 <Answer>
 
@@ -58,7 +58,7 @@
 
 </Answer>
 
-## 在线协作/IM 的实时一致性？ {#P2-crdt-ot}
+## 在线协作/IM 的实时一致性？ {#p2-crdt-ot}
 
 <Answer>
 
@@ -68,7 +68,7 @@
 
 </Answer>
 
-## 推送/订阅的多租户隔离？ {#P2-multi-tenant}
+## 推送/订阅的多租户隔离？ {#p2-multi-tenant}
 
 <Answer>
 
@@ -78,7 +78,7 @@
 
 </Answer>
 
-## 边缘推送与离线能力？ {#P2-edge-push}
+## 边缘推送与离线能力？ {#p2-edge-push}
 
 <Answer>
 
@@ -88,7 +88,7 @@
 
 </Answer>
 
-## 实时系统的压测与演练？ {#P2-rt-loadtest}
+## 实时系统的压测与演练？ {#p2-rt-loadtest}
 
 <Answer>
 
@@ -98,7 +98,7 @@
 
 </Answer>
 
-## 故障注入与自愈策略？ {#P2-chaos}
+## 故障注入与自愈策略？ {#p2-chaos}
 
 <Answer>
 
