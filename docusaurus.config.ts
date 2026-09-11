@@ -28,7 +28,22 @@ const config: Config = {
     questions: [],
     isLocalDev: isLocal
   },
-  themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
+  themes: [
+    '@docusaurus/theme-live-codeblock',
+    '@docusaurus/theme-mermaid',
+    [
+      require.resolve('@easyops-cn/docusaurus-search-local'),
+      {
+        hashed: true,
+        language: ['en', 'zh'],
+        docsRouteBasePath: ['/docs', '/company', '/contributors', '/interview-guide'],
+        indexBlog: true,
+        blogRouteBasePath: '/blog',
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true
+      }
+    ]
+  ],
   title: '前端面试',
   url: 'https://blog.zenheart.site',
   baseUrl,
@@ -64,6 +79,19 @@ const config: Config = {
     [
       '@docusaurus/plugin-content-docs',
       {
+        id: 'interview-guide',
+        path: 'interview-guide',
+        routeBasePath: 'interview-guide',
+        sidebarPath: './sidebarsInterview.ts',
+        breadcrumbs: true,
+        showLastUpdateAuthor: true,
+        showLastUpdateTime: true,
+        numberPrefixParser
+      } satisfies DocsOptions
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
         id: 'contributors',
         path: 'contributors',
         routeBasePath: 'contributors',
@@ -93,6 +121,14 @@ const config: Config = {
             '**/*.question.{md,mdx}', // 排除所有 questions 目录
             '**/node_modules/**' // 排除所有 questions 目录
           ]
+        },
+        blog: {
+          showReadingTime: true,
+          blogTitle: '技术博客与更新日志',
+          blogDescription: 'Web Interview 题库演进、前端架构演进与版本更新日志',
+          blogSidebarTitle: '近期发布与更新',
+          blogSidebarCount: 'ALL',
+          postsPerPage: 10
         },
         theme: {
           customCss: './src/css/custom.css'
@@ -138,6 +174,14 @@ const config: Config = {
         },
 
         {
+          type: 'doc',
+          docId: 'index',
+          docsPluginId: 'interview-guide',
+          position: 'left',
+          label: '面试指南'
+        },
+
+        {
           to: '/reference',
           label: '索引',
           position: 'left'
@@ -145,6 +189,16 @@ const config: Config = {
         {
           to: '/kanban',
           label: '看板',
+          position: 'left'
+        },
+        {
+          to: '/blog',
+          label: '博客',
+          position: 'left'
+        },
+        {
+          to: '/blog/tags/changelog',
+          label: '更新日志',
           position: 'left'
         },
         {
