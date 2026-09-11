@@ -294,7 +294,7 @@ class DataService {
         name: '王五',
         email: 'wangwu@example.com',
         avatar: 'https://via.placeholder.com/60',
-        bio: '后端架构师，专注于高并发系统设计'
+        bio: '高级后端工程师，专注于高并发系统设计'
       }
     ];
   }

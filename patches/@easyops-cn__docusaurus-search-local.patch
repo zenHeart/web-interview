@@ -1,0 +1,60 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index ffd26a28fb58ee0cf740eb92e0784753a15bfa68..0000000000000000000000000000000000000000
+diff --git a/dist/client/client/theme/SearchBar/EmptyTemplate.js b/dist/client/client/theme/SearchBar/EmptyTemplate.js
+index 0c67ba65f422a1e185fe4836f67125a2d1689067..b3b7d5be13f4402c16e0013ac65cd36e4faaa1cf 100644
+--- a/dist/client/client/theme/SearchBar/EmptyTemplate.js
++++ b/dist/client/client/theme/SearchBar/EmptyTemplate.js
+@@ -2,11 +2,8 @@ import { translate } from "@docusaurus/Translate";
+ import { iconNoResults } from "./icons";
+ import styles from "./SearchBar.module.css";
+ export function EmptyTemplate() {
+-    if (process.env.NODE_ENV === "production") {
+-        return `<span class="${styles.noResults}"><span class="${styles.noResultsIcon}">${iconNoResults}</span><span>${translate({
+-            id: "theme.SearchBar.noResultsText",
+-            message: "No results",
+-        })}</span></span>`;
+-    }
+-    return `<span class="${styles.noResults}">⚠️ The search index is only available when you run docusaurus build!</span>`;
++    return `<span class="${styles.noResults}"><span class="${styles.noResultsIcon}">${iconNoResults}</span><span>${translate({
++        id: "theme.SearchBar.noResultsText",
++        message: "No results",
++    })}</span></span>`;
+ }
+diff --git a/dist/client/client/theme/searchByWorker.js b/dist/client/client/theme/searchByWorker.js
+index 5ceff29938e7235473b02dfa903c36ed4848bb12..2d4a3667b00c83beaab272f26cdc2970d8218f37 100644
+--- a/dist/client/client/theme/searchByWorker.js
++++ b/dist/client/client/theme/searchByWorker.js
+@@ -1,7 +1,7 @@
+ import * as Comlink from "comlink";
+ let remoteWorkerPromise;
+ function getRemoteWorker() {
+-    if (process.env.NODE_ENV === "production" && !remoteWorkerPromise) {
++    if (!remoteWorkerPromise) {
+         remoteWorkerPromise = (async () => {
+             const Remote = Comlink.wrap(new Worker(new URL("./worker.js", import.meta.url)));
+             return await new Remote();
+@@ -10,15 +10,19 @@ function getRemoteWorker() {
+     return remoteWorkerPromise;
+ }
+ export async function fetchIndexesByWorker(baseUrl, searchContext) {
+-    if (process.env.NODE_ENV === "production") {
++    try {
+         const remoteWorker = await getRemoteWorker();
+         await remoteWorker.fetchIndexes(baseUrl, searchContext);
++    } catch (e) {
++        console.warn("[Search] fetchIndexes error:", e);
+     }
+ }
+ export async function searchByWorker(baseUrl, searchContext, input, limit) {
+-    if (process.env.NODE_ENV === "production") {
++    try {
+         const remoteWorker = await getRemoteWorker();
+-        return remoteWorker.search(baseUrl, searchContext, input, limit);
++        return await remoteWorker.search(baseUrl, searchContext, input, limit);
++    } catch (e) {
++        console.warn("[Search] search error:", e);
++        return [];
+     }
+-    return [];
+ }
