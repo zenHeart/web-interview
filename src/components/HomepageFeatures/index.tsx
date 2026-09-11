@@ -3,97 +3,87 @@ import Heading from '@theme/Heading'
 import styles from './styles.module.css'
 
 type FeatureItem = {
-  id: string
   title: string
+  tag: string
   description: ReactNode
   icon: ReactNode
 }
 
 const FeatureList: FeatureItem[] = [
   {
-    id: '01',
-    title: '系统化知识图谱',
+    tag: 'Methodology',
+    title: '第一性原理金字塔',
     icon: (
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-        <path d="M6 6h10" />
-        <path d="M6 10h10" />
-        <path d="M6 14h6" />
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 22h20L12 2z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
       </svg>
     ),
     description: (
       <>
-        按 18 大核心技术领域和专题系统编排，标注严苛的 P0 / P1 / P2 考察优先级，帮助精准聚焦大厂考核重难点。
+        遵循“核心结论先行-机制原理解析-工业级代码-追问攻防链”四层模型，逻辑闭环，从容应对任何下探提问。
       </>
     )
   },
   {
-    id: '02',
-    title: '金字塔深度解析',
+    tag: 'Production Grade',
+    title: '工业级规范代码',
     icon: (
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-        <polyline points="14 2 14 8 20 8" />
-        <path d="m9 15 2 2 4-4" />
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+        <line x1="10" y1="4" x2="14" y2="20" />
       </svg>
     ),
     description: (
       <>
-        遵循“核心结论-原理剖析-工业级代码-面试官追问链”四层金字塔模型，配有交互沙箱与时序图，拒绝死记硬背。
+        拒绝 Demo 式敷衍片段，所有高频手写题均提供生产级 TypeScript 严格类型、边界防线与异常容灾保障。
       </>
     )
   },
   {
-    id: '03',
-    title: '全离线秒级检索',
+    tag: 'Interactive Sandbox',
+    title: '实时交互沙箱验证',
     icon: (
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        <path d="m11 8 3 3-3 3" />
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+        <line x1="8" y1="21" x2="16" y2="21" />
+        <line x1="12" y1="17" x2="12" y2="21" />
       </svg>
     ),
     description: (
       <>
-        内置高性能本地全文搜索引擎与体系看板，支持中英双语毫秒级精准检索与热词高亮，断网环境随时沉浸复习。
+        基于 Sandpack 内置即时运行环境与架构状态机可视化组件，边研读原理解析，边在浏览器零配置交互调试。
+      </>
+    )
+  },
+  {
+    tag: 'Interview Defense',
+    title: '面试官追问攻防链',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="22" y1="12" x2="18" y2="12" />
+        <line x1="6" y1="12" x2="2" y2="12" />
+        <line x1="12" y1="6" x2="12" y2="2" />
+        <line x1="12" y1="22" x2="12" y2="18" />
+      </svg>
+    ),
+    description: (
+      <>
+        深度还原大厂面试真实攻防场景，剖析面试官核心考察意图、高频下探陷阱与延伸反问策略。
       </>
     )
   }
 ]
 
-function Feature({ id, title, description, icon }: FeatureItem) {
+function Feature({ title, tag, description, icon }: FeatureItem) {
   return (
-    <div className={styles.feature}>
-      <div className={styles.cardHeader}>
-        <span className={styles.cardId}>{id}</span>
-        <div className={styles.iconWrapper}>{icon}</div>
+    <div className={styles.featureCard}>
+      <div className={styles.cardTop}>
+        <div className={styles.iconBox}>{icon}</div>
+        <span className={styles.cardTag}>{tag}</span>
       </div>
       <Heading as="h3" className={styles.featureTitle}>
         {title}
@@ -105,9 +95,9 @@ function Feature({ id, title, description, icon }: FeatureItem) {
 
 export default function HomepageFeatures(): ReactNode {
   return (
-    <section className={styles.features}>
-      {FeatureList.map((props) => (
-        <Feature key={props.id} {...props} />
+    <section className={styles.featuresGrid}>
+      {FeatureList.map((props, idx) => (
+        <Feature key={idx} {...props} />
       ))}
     </section>
   )

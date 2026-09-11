@@ -1,46 +1,33 @@
-const PriorityTag = ({ priority }: { priority: string }) => {
-  const styles = {
-    tag: {
-      display: 'inline-block',
-      padding: '2px 8px',
-      borderRadius: '4px',
-      fontSize: '12px',
-      marginLeft: '8px',
-      fontWeight: 600,
-      boxShadow: '0 1px 2px rgba(0,0,0,0.1)'
-    },
-    p0: {
-      backgroundColor: '#ffeaea',
-      color: '#dc3545',
-      border: '1px solid #ffcdd2'
-    },
-    p1: {
-      backgroundColor: '#fff3e0',
-      color: '#f57c00',
-      border: '1px solid #ffe0b2'
-    },
-    p2: {
-      backgroundColor: '#fff8e1',
-      color: '#ffa000',
-      border: '1px solid #ffecb3'
-    },
-    p3: {
-      backgroundColor: '#f1f8e9',
-      color: '#689f38',
-      border: '1px solid #dcedc8'
-    },
-    p4: {
-      backgroundColor: '#e8f5e9',
-      color: '#388e3c',
-      border: '1px solid #c8e6c9'
-    }
-  }
+import React from 'react'
 
-  const priorityStyle = {
-    ...styles.tag,
-    ...(styles[priority.toLowerCase() as keyof typeof styles] || {})
-  }
-
-  return <span style={priorityStyle}>{priority}</span>
+interface PriorityTagProps {
+  priority: string;
 }
+
+const PriorityTag: React.FC<PriorityTagProps> = ({ priority }) => {
+  const p = priority.toLowerCase()
+  const isP0 = p === 'p0'
+  const isP1 = p === 'p1'
+
+  const style: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '2px 8px',
+    borderRadius: '4px',
+    fontSize: '11px',
+    fontWeight: 700,
+    marginLeft: '8px',
+    fontFamily: 'var(--ifm-font-family-monospace)',
+    letterSpacing: '0.02em',
+    lineHeight: 1.3,
+    verticalAlign: 'middle',
+    backgroundColor: isP0 ? 'var(--wi-p0-soft)' : isP1 ? 'var(--wi-p1-soft)' : 'var(--wi-p2-soft)',
+    color: isP0 ? 'var(--wi-p0)' : isP1 ? 'var(--wi-p1)' : 'var(--wi-p2)',
+    border: `1px solid ${isP0 ? 'rgba(220, 38, 38, 0.25)' : isP1 ? 'rgba(5, 150, 105, 0.25)' : 'rgba(100, 116, 139, 0.25)'}`,
+    fontFeatureSettings: "'tnum'"
+  }
+
+  return <span style={style}>{priority.toUpperCase()}</span>
+}
+
 export default PriorityTag

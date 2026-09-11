@@ -1,55 +1,54 @@
 .container {
   position: fixed;
-  /* dynamic left/top injected inline */
   width: 360px;
   height: 600px;
-  background: var(--ld-bg);
-  border: 1px solid var(--ld-line-strong);
-  border-radius: 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  background-color: var(--wi-bg-surface);
+  border: 1px solid var(--wi-border-strong);
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   z-index: 999;
   overflow: hidden;
   animation: slideUp 0.2s ease;
 }
 
 .headerBar {
-  height: 40px;
+  height: 42px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
-  background: var(--ld-accent);
-  color: #fff;
+  padding: 0 14px;
+  background-color: var(--wi-accent);
+  color: #ffffff;
   font-size: 13px;
   font-weight: 600;
   cursor: grab;
   user-select: none;
-  font-family: var(--ld-font-mono);
+  font-family: var(--ifm-font-family-monospace);
   letter-spacing: 0.02em;
 }
+
 .headerTitle {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+
 .closeBtn {
   width: 22px;
   height: 22px;
-  border-radius: 3px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.18);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
   font-size: 14px;
   cursor: pointer;
-  transition: background .15s;
+  transition: background 0.15s;
 }
+
 .closeBtn:hover {
-  background: rgba(255,255,255,0.3);
-}
-.closeBtn:active {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .dragHandle {
@@ -57,13 +56,12 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 40px;
+  height: 42px;
   cursor: grab;
 }
 
 .quickEntry {
   position: fixed;
-  /* dynamic left/top injected inline */
   cursor: move;
   z-index: 999;
   user-select: none;
@@ -78,33 +76,32 @@
   display: flex;
   align-items: center;
   padding: 6px 14px;
-  background: var(--ld-bg-soft);
-  border: 1px solid var(--ld-line-strong);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: var(--wi-bg-surface);
+  border: 1px solid var(--wi-border-strong);
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .quickEntryIcon {
-  font-size: 20px;
+  font-size: 18px;
   margin-right: 8px;
 }
 
 .quickEntryText {
   font-size: 13px;
-  color: var(--ld-text);
+  color: var(--wi-text);
   font-weight: 600;
-  font-family: var(--ld-font-mono);
+  font-family: var(--ifm-font-family-monospace);
 }
 
-/* ChatUI 样式覆盖 */
 :global(.ChatApp) {
   height: 100%;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 :global(.ChatApp-content) {
-  background: var(--ld-bg-soft);
+  background-color: var(--wi-bg);
 }
 
 :global(.ChatApp-messages) {
@@ -113,21 +110,21 @@
 
 :global(.Bubble) {
   max-width: 80%;
-  border-radius: 4px !important;
+  border-radius: 6px !important;
 }
 
 :global(.Composer) {
-  background: var(--ld-bg);
-  border-top: 1px solid var(--ld-line);
+  background-color: var(--wi-bg-surface);
+  border-top: 1px solid var(--wi-border);
   padding: 12px;
 }
 
 :global(.Composer-input) {
-  background: var(--ld-bg-soft);
-  border-radius: 4px;
+  background-color: var(--wi-bg-subtle);
+  border-radius: 6px;
   padding: 8px 12px;
-  border: 1px solid var(--ld-line);
-  color: var(--ld-text);
+  border: 1px solid var(--wi-border);
+  color: var(--wi-text);
 }
 
 @keyframes slideUp {

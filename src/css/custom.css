@@ -1,87 +1,125 @@
 /**
- * Design System based on /learn-design (印刷档案 × 瑞士网格 × 朱砂批注红)
- * 哲学：清晰、克制与有效空间；层级靠字阶与 1px 线，不靠阴影；圆角 ≤ 4px
+ * Web Interview - Modern Engineering Design System
+ * 
+ * Deeply grounded in learn-design core principles:
+ * - Clarity, restraint, and effective space
+ * - User-question oriented information architecture
+ * - Reading comfort as prerequisite for information density
+ * - Progressive disclosure without losing reading position
+ * - Verifiable engineering status (Pass / Ready / Production Grade)
+ * 
+ * Palette: Modern Engineering Slate / Neutral with Emerald Tech Accent
+ * Strictly NO indigo/purple gradients. Clean 1px borders, restrained radius.
  */
 
 :root {
-  /* —— 纸面档案（明） —— */
-  --ld-bg: #faf9f6;
-  --ld-bg-soft: #f3f1ec;
-  --ld-text: #1a1c1e;
-  --ld-text-2: #52565c;
-  --ld-text-3: #8a8d93;
-  --ld-accent: #c8401e; /* 朱砂：批注、编号、强调 */
-  --ld-accent-hover: #b33617;
-  --ld-accent-soft: rgba(200, 64, 30, 0.08);
-  --ld-line: rgba(26, 28, 30, 0.12);
-  --ld-line-strong: rgba(26, 28, 30, 0.55);
+  /* —— 现代工程调色板 (浅色 / Light) —— */
+  --wi-bg: #f8fafc;
+  --wi-bg-surface: #ffffff;
+  --wi-bg-subtle: #f1f5f9;
+  --wi-bg-mute: #e2e8f0;
 
-  /* Infima 变量映射 */
-  --ifm-color-primary: var(--ld-accent);
-  --ifm-color-primary-dark: #b33617;
-  --ifm-color-primary-darker: #a22f13;
-  --ifm-color-primary-darkest: #85240c;
-  --ifm-color-primary-light: #d64d2b;
-  --ifm-color-primary-lighter: #dc5937;
-  --ifm-color-primary-lightest: #e57557;
+  --wi-text: #0f172a;
+  --wi-text-soft: #334155;
+  --wi-text-muted: #64748b;
+  --wi-text-faint: #94a3b8;
 
-  --ifm-background-color: var(--ld-bg);
-  --ifm-background-surface-color: var(--ld-bg-soft);
-  --ifm-font-color-base: var(--ld-text);
+  /* 核心工程极客绿 (Emerald) - 象征 Verified / Passed / Ready */
+  --wi-accent: #059669;
+  --wi-accent-hover: #047857;
+  --wi-accent-soft: rgba(5, 150, 105, 0.08);
+  --wi-accent-glow: rgba(5, 150, 105, 0.18);
+
+  /* 状态色彩 */
+  --wi-p0: #dc2626; /* P0 必考高频 - 警示红 */
+  --wi-p0-soft: rgba(220, 38, 38, 0.08);
+  --wi-p1: #059669; /* P1 进阶核心 - 极客绿 */
+  --wi-p1-soft: rgba(5, 150, 105, 0.08);
+  --wi-p2: #64748b; /* P2 扩展视野 - 沉稳灰 */
+  --wi-p2-soft: rgba(100, 116, 139, 0.08);
+
+  /* 边框体系 */
+  --wi-border: #e2e8f0;
+  --wi-border-strong: #cbd5e1;
+  --wi-border-accent: rgba(5, 150, 105, 0.35);
+
+  /* Docusaurus / Infima 变量全面映射 */
+  --ifm-color-primary: #059669;
+  --ifm-color-primary-dark: #047857;
+  --ifm-color-primary-darker: #065f46;
+  --ifm-color-primary-darkest: #064e3b;
+  --ifm-color-primary-light: #10b981;
+  --ifm-color-primary-lighter: #34d399;
+  --ifm-color-primary-lightest: #6ee7b7;
+
+  --ifm-background-color: var(--wi-bg);
+  --ifm-background-surface-color: var(--wi-bg-surface);
+  --ifm-font-color-base: var(--wi-text);
 
   --ifm-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --ifm-font-family-monospace: "Space Grotesk", "JetBrains Mono", "Fira Code",
-    ui-monospace, monospace;
+    Roboto, "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --ifm-font-family-monospace: "JetBrains Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --ifm-code-font-size: 90%;
-  --ifm-line-height-base: 1.75;
-  --docusaurus-highlighted-code-line-bg: rgba(200, 64, 30, 0.08);
+  --ifm-code-font-size: 88%;
+  --ifm-line-height-base: 1.7;
+  --ifm-heading-line-height: 1.35;
+  --ifm-global-radius: 6px;
+  --ifm-card-background-color: var(--wi-bg-surface);
 
-  --wi-card-bg: var(--ld-bg-soft);
-  --wi-card-border: var(--ld-line);
-  --wi-card-hover-border: var(--ld-line-strong);
-  --wi-badge-bg: var(--ld-accent-soft);
-  --wi-badge-fg: var(--ld-accent);
-  --wi-badge-border: rgba(200, 64, 30, 0.2);
+  --docusaurus-highlighted-code-line-bg: rgba(5, 150, 105, 0.08);
 }
 
 [data-theme='dark'] {
-  /* —— 墨黑档案（暗） —— */
-  --ld-bg: #14161a;
-  --ld-bg-soft: #1d2026;
-  --ld-text: #e8e6e1;
-  --ld-text-2: #a6aab2;
-  --ld-text-3: #6f747d;
-  --ld-accent: #e8683f; /* 暗色朱砂 */
-  --ld-accent-hover: #f07b55;
-  --ld-accent-soft: rgba(232, 104, 63, 0.12);
-  --ld-line: rgba(232, 230, 225, 0.14);
-  --ld-line-strong: rgba(232, 230, 225, 0.6);
+  /* —— 现代工程调色板 (暗色 / Dark) —— */
+  --wi-bg: #0b0f19;
+  --wi-bg-surface: #111827;
+  --wi-bg-subtle: #1e293b;
+  --wi-bg-mute: #334155;
 
-  --ifm-color-primary: var(--ld-accent);
-  --ifm-color-primary-dark: #e45528;
-  --ifm-color-primary-darker: #da4c1f;
-  --ifm-color-primary-darkest: #b43b16;
-  --ifm-color-primary-light: #ec7b56;
-  --ifm-color-primary-lighter: #ee8462;
-  --ifm-color-primary-lightest: #f3a085;
+  --wi-text: #f8fafc;
+  --wi-text-soft: #cbd5e1;
+  --wi-text-muted: #94a3b8;
+  --wi-text-faint: #64748b;
 
-  --ifm-background-color: var(--ld-bg);
-  --ifm-background-surface-color: var(--ld-bg-soft);
-  --ifm-font-color-base: var(--ld-text);
+  /* 暗色夜空极客绿 */
+  --wi-accent: #10b981;
+  --wi-accent-hover: #34d399;
+  --wi-accent-soft: rgba(16, 185, 129, 0.12);
+  --wi-accent-glow: rgba(16, 185, 129, 0.25);
 
-  --docusaurus-highlighted-code-line-bg: rgba(232, 104, 63, 0.15);
+  /* 暗色状态色彩 */
+  --wi-p0: #f87171;
+  --wi-p0-soft: rgba(248, 113, 113, 0.12);
+  --wi-p1: #34d399;
+  --wi-p1-soft: rgba(52, 211, 153, 0.12);
+  --wi-p2: #94a3b8;
+  --wi-p2-soft: rgba(148, 163, 184, 0.12);
 
-  --wi-card-bg: var(--ld-bg-soft);
-  --wi-card-border: var(--ld-line);
-  --wi-card-hover-border: var(--ld-line-strong);
-  --wi-badge-bg: var(--ld-accent-soft);
-  --wi-badge-fg: var(--ld-accent);
-  --wi-badge-border: rgba(232, 104, 63, 0.25);
+  /* 边框体系 */
+  --wi-border: #1e293b;
+  --wi-border-strong: #334155;
+  --wi-border-accent: rgba(16, 185, 129, 0.35);
+
+  /* Docusaurus / Infima 暗色变量映射 */
+  --ifm-color-primary: #10b981;
+  --ifm-color-primary-dark: #059669;
+  --ifm-color-primary-darker: #047857;
+  --ifm-color-primary-darkest: #064e3b;
+  --ifm-color-primary-light: #34d399;
+  --ifm-color-primary-lighter: #6ee7b7;
+  --ifm-color-primary-lightest: #a7f3d0;
+
+  --ifm-background-color: var(--wi-bg);
+  --ifm-background-surface-color: var(--wi-bg-surface);
+  --ifm-font-color-base: var(--wi-text);
+
+  --docusaurus-highlighted-code-line-bg: rgba(16, 185, 129, 0.12);
 }
 
-/* 全局排版与瑞士网格线基调 */
+/* ==========================================================================
+   全局字体渲染与版式重塑
+   ========================================================================== */
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -89,181 +127,294 @@ html {
 }
 
 body {
-  letter-spacing: 0.01em;
+  letter-spacing: 0.005em;
+  background-color: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
 }
 
-/* 瑞士细线秩序导航栏 */
+/* 导航栏 (Navbar) - 现代高透微模糊与细线分割 */
 .navbar {
-  border-bottom: 1px solid var(--ld-line);
-  background-color: var(--ld-bg) !important;
+  border-bottom: 1px solid var(--wi-border);
+  background-color: rgba(248, 250, 252, 0.85) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: none;
-  transition: border-color 0.2s ease;
+  height: 60px;
+  padding: 0 1.25rem;
+}
+
+[data-theme='dark'] .navbar {
+  background-color: rgba(11, 15, 25, 0.85) !important;
 }
 
 .navbar__title {
   font-weight: 700;
-  letter-spacing: 0.02em;
   font-size: 1.05rem;
+  letter-spacing: -0.015em;
 }
 
-.navbar__item {
+.navbar__link {
   font-weight: 500;
   font-size: 0.92rem;
+  color: var(--wi-text-soft);
+  transition: color 0.15s ease;
 }
 
-/* 侧边栏：瑞士秩序细线与朱砂高亮 */
-.theme-doc-sidebar-menu .menu__link {
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--wi-accent) !important;
+}
+
+/* ==========================================================================
+   侧边栏 (DocSidebar) - 知识层级清晰、激活项指示精准
+   ========================================================================== */
+.theme-doc-sidebar-container {
+  border-right: 1px solid var(--wi-border) !important;
+}
+
+.theme-doc-sidebar-menu {
+  padding: 1rem 0.5rem;
+}
+
+.menu__list-item {
+  margin-top: 2px;
+}
+
+.menu__link {
+  font-size: 0.88rem;
+  line-height: 1.45;
   border-radius: 4px;
-  margin-bottom: 2px;
-  font-size: 0.9rem;
-  transition: color 0.15s ease, background 0.15s ease;
+  padding: 6px 10px;
+  color: var(--wi-text-soft);
+  transition: all 0.15s ease;
 }
 
-.theme-doc-sidebar-menu .menu__link--active:not(.menu__link--sublist) {
-  background-color: var(--ld-accent-soft) !important;
-  color: var(--ld-accent) !important;
+.menu__link:hover {
+  background-color: var(--wi-bg-subtle);
+  color: var(--wi-text);
+}
+
+/* 侧边栏当前激活项：极客绿左指示线 + 柔和背景 */
+.menu__link--active:not(.menu__link--sublist) {
+  background-color: var(--wi-accent-soft) !important;
+  color: var(--wi-accent) !important;
   font-weight: 600;
-  border-left: 2px solid var(--ld-accent);
+  border-left: 2px solid var(--wi-accent);
   border-radius: 0 4px 4px 0;
+  padding-left: 8px;
 }
 
-/* 极简纸面细滚动条 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--ld-line-strong);
-  border-radius: 2px;
-}
-
-/* 题目卡片：瑞士网格 1px 线框，不靠阴影 */
-.question-wrapper {
-  margin: 2.2rem 0;
-  padding: 1.5rem;
-  background-color: var(--ld-bg-soft);
-  border: 1px solid var(--ld-line);
+.menu__list-item-collapsible {
   border-radius: 4px;
-  box-shadow: none;
-  transition: border-color 0.2s ease;
 }
 
-.question-wrapper:hover {
-  border-color: var(--ld-line-strong);
+.menu__list-item-collapsible:hover {
+  background-color: var(--wi-bg-subtle);
 }
 
-.question-wrapper h2 {
-  margin-top: 0;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--ld-text);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.question-content,
-.question-answer,
-.question-reference {
-  margin: 1rem 0;
-}
-
-/* 答题折叠抽屉：朱砂批注式 */
-details {
-  border: 1px solid var(--ld-line);
-  border-radius: 4px;
-  padding: 0.85rem 1.15rem;
-  background-color: var(--ld-bg);
-  margin-bottom: 1.25rem;
-  transition: border-color 0.2s ease;
-}
-
-details[open] {
-  border-color: var(--ld-line-strong);
-}
-
-details summary {
-  cursor: pointer;
-  color: var(--ld-accent);
-  font-weight: 600;
+/* ==========================================================================
+   正文排版 (DocItem / Markdown) - 专注阅读与金字塔层级
+   ========================================================================== */
+.markdown {
   font-size: 1rem;
+  line-height: 1.75;
+  color: var(--wi-text);
+}
+
+.markdown h1:first-child {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--wi-border);
+}
+
+.markdown h2 {
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--wi-border);
+}
+
+.markdown h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 核心结论与金字塔要点强化 */
+.markdown strong {
+  font-weight: 600;
+  color: var(--wi-text);
+}
+
+/* 行内代码标记 */
+.markdown code:not(pre code) {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.85em;
+  padding: 0.2em 0.45em;
+  border-radius: 4px;
+  background-color: var(--wi-bg-subtle);
+  border: 1px solid var(--wi-border);
+  color: var(--wi-text);
+  font-feature-settings: 'tnum';
+}
+
+/* 代码块容器 */
+div[class*='codeBlockContainer'] {
+  border: 1px solid var(--wi-border);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  margin-bottom: 1.5rem;
+}
+
+[data-theme='dark'] div[class*='codeBlockContainer'] {
+  border-color: var(--wi-border-strong);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 面试题答案专用折叠卡片 (<details>) */
+.markdown details {
+  background-color: var(--wi-bg-surface);
+  border: 1px solid var(--wi-border);
+  border-radius: 6px;
+  margin: 1.25rem 0;
+  padding: 0.75rem 1.25rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.markdown details:hover {
+  border-color: var(--wi-border-strong);
+}
+
+.markdown details[open] {
+  border-left: 3px solid var(--wi-accent);
+  background-color: var(--wi-bg-surface);
+}
+
+.markdown details summary {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--wi-text);
+  cursor: pointer;
+  padding: 0.25rem 0;
   user-select: none;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
-details[open] summary {
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--ld-line);
+.markdown details summary:hover {
+  color: var(--wi-accent);
 }
 
-/* 引用块：朱砂批注线（替换默认底色块） */
-.markdown blockquote {
-  margin: 1.25rem 0;
-  padding: 0.5rem 0 0.5rem 1.2rem;
-  border-left: 3px solid var(--ld-accent);
-  background: transparent;
-  color: var(--ld-text-2);
-}
-
-/* 代码块：档案纸边框化，去圆角紫调 */
-.codeBlockLines_TRxh {
-  max-height: 520px;
-}
-
-.theme-code-block {
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: none;
-  border: 1px solid var(--ld-line);
-}
-
-.sp-wrapper {
-  margin-bottom: 24px !important;
-  border-radius: 4px;
-  overflow: hidden;
-  box-shadow: none;
-  border: 1px solid var(--ld-line);
-}
-
-/* 表格：瑞士印刷手册式 */
+/* 表格 (Table) - 工业级严密对齐 */
 .markdown table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid var(--ld-line);
-  font-size: 14px;
-}
-
-.markdown table th {
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--ld-text-2);
-  background: var(--ld-bg-soft);
-  border-bottom: 1px solid var(--ld-line-strong);
-  padding: 10px 14px;
-}
-
-.markdown table td {
-  padding: 10px 14px;
-  border: none;
-  border-bottom: 1px solid var(--ld-line);
-  background: transparent;
-}
-
-/* Mermaid 容器 */
-.markdown .docusaurus-mermaid-container {
-  display: flex !important;
-  justify-content: center;
-  padding: 1.25rem;
-  background-color: var(--ld-bg-soft);
-  border-radius: 4px;
-  border: 1px solid var(--ld-line);
   margin: 1.5rem 0;
+  font-size: 0.9rem;
+  display: table;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--wi-border);
+}
+
+.markdown th {
+  background-color: var(--wi-bg-subtle);
+  color: var(--wi-text);
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--wi-border);
+}
+
+.markdown td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--wi-border);
+  color: var(--wi-text-soft);
+}
+
+.markdown tr:last-child td {
+  border-bottom: none;
+}
+
+.markdown tr:nth-child(even) td {
+  background-color: rgba(241, 245, 249, 0.35);
+}
+
+[data-theme='dark'] .markdown tr:nth-child(even) td {
+  background-color: rgba(30, 41, 59, 0.3);
+}
+
+/* ==========================================================================
+   右侧文章目录 (Table of Contents / TOC)
+   ========================================================================== */
+.table-of-contents {
+  font-size: 0.82rem;
+  border-left: 1px solid var(--wi-border);
+  padding-left: 0.75rem;
+}
+
+.table-of-contents__link {
+  color: var(--wi-text-muted);
+  transition: color 0.15s ease;
+  line-height: 1.5;
+}
+
+.table-of-contents__link:hover {
+  color: var(--wi-text);
+}
+
+.table-of-contents__link--active {
+  color: var(--wi-accent) !important;
+  font-weight: 600;
+}
+
+/* 面包屑导航 */
+.breadcrumbs {
+  margin-bottom: 1.25rem;
+}
+
+.breadcrumbs__link {
+  font-size: 0.84rem;
+  color: var(--wi-text-muted);
+}
+
+.breadcrumbs__link:hover {
+  color: var(--wi-accent);
+}
+
+/* 页脚 (Footer) */
+.footer {
+  border-top: 1px solid var(--wi-border);
+  background-color: var(--wi-bg-surface) !important;
+  color: var(--wi-text-muted) !important;
+  padding: 2.5rem 0;
+  font-size: 0.88rem;
+}
+
+[data-theme='dark'] .footer {
+  background-color: var(--wi-bg) !important;
+  border-color: var(--wi-border);
+}
+
+.footer__title {
+  color: var(--wi-text);
+  font-weight: 600;
+}
+
+.footer__link-item {
+  color: var(--wi-text-muted);
+}
+
+.footer__link-item:hover {
+  color: var(--wi-accent);
 }

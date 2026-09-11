@@ -1,5 +1,6 @@
 import React from 'react'
 import { usePluginData } from '@docusaurus/useGlobalData'
+import Link from '@docusaurus/Link'
 import './HomeQuestionsSummary.css'
 
 interface Question {
@@ -23,7 +24,6 @@ const HomeQuestionsSummary: React.FC = () => {
   // 按 subject 和 topic 组织数据，并计算每个 topic 的问题数量
   const organizedQuestions = questions.reduce((acc, question) => {
     const { subject, topic } = question
-    // 兼容 topic 为数组
     const topicKey = Array.isArray(topic) ? topic.join('/') : topic
 
     if (!acc[subject]) {
@@ -52,22 +52,28 @@ const HomeQuestionsSummary: React.FC = () => {
             (sum, t) => sum + t.count,
             0
           )
-          const formattedIndex = String(subject.number).padStart(2, '0')
+          const firstQuestionLink = Object.values(subject.topics)[0]?.questions[0]?.link || '#'
+
           return (
             <div key={domainKey} className="subject-card">
               <div className="subject-header">
                 <div className="subject-title-wrap">
-                  <span className="subject-id">{formattedIndex}</span>
-                  <h3 className="subject-title">{subject.name}</h3>
+                  <span className="subject-dot" />
+                  <Link to={firstQuestionLink} className="subject-title-link">
+                    <h3 className="subject-title">{subject.name}</h3>
+                  </Link>
                 </div>
-                <span className="subject-count-badge">{totalQuestions} 题</span>
+                <Link to={firstQuestionLink} className="subject-count-badge">
+                  <span>{totalQuestions} 题</span>
+                  <span className="badge-arrow">→</span>
+                </Link>
               </div>
               <div className="wi-topics-container">
                 {Object.entries(subject.topics).map(([topicKey, topic]) => (
-                  <a
+                  <Link
                     key={topicKey}
                     className="topic-tag"
-                    href={topic.questions[0]?.link}
+                    to={topic.questions[0]?.link || '#'}
                   >
                     <span className="topic-title">
                       {Array.isArray(topic.questions[0]?.topic)
@@ -75,7 +81,7 @@ const HomeQuestionsSummary: React.FC = () => {
                         : topic.questions[0]?.topic}
                     </span>
                     <span className="topic-count">{topic.count}</span>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
