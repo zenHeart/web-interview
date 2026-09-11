@@ -44,14 +44,14 @@ function HomepageHeader() {
 
         {lastCommit && (
           <div className={styles.commitInfo}>
-            <span>REF</span>
+            <span>最后更新时间：</span>
             <a
               href={repoUrl}
               target="_blank"
               rel="noopener noreferrer"
               title={lastCommit.message}
             >
-              {lastCommit.shortHash} ({lastCommit.dateReadable})
+              {lastCommit.dateReadable}
             </a>
           </div>
         )}
