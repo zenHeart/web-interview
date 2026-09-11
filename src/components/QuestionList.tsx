@@ -63,7 +63,7 @@ function QuestionList () {
     const node = knowledgeMap[subject]
     if (!node) return []
     if (Array.isArray(topic)) {
-      let cur = node
+      let cur: any = node
       for (const t of topic) {
         if (cur.children && cur.children[t]) {
           names.push(cur.children[t].name)

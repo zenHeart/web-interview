@@ -1,62 +1,171 @@
-# zoom
+# Zoom✅
 
-## 岗位要求
+## 基本信息
 
-### 资深前端开发工程师
+- **业务领域**: 全球云视频会议系统、AI 协同办公套件（Zoom Workplace / Zoom Docs / 多维表格）、Web 实时音视频流媒体
+- **技术栈**: React / TypeScript / WebAssembly / WebCodecs / WebRTC / WebGL / Canvas / Node.js
+- **团队规模**: 8,000+ 人（全球），中国研发中心数百人
+- **办公地点**: 武汉研发中心（光谷新发展国际中心 / 软件园）、合肥、杭州、美国加州圣何塞总部
+- **公司性质**: 纳斯达克知名上市外企（NASDAQ: ZM）
+- **薪资水平**: 资深前端 25k-50k * 14-16薪 + 美股 RSU 股票激励 + 补充公积金及外企福利
 
-职位描述
+---
 
-技术博客/开源项目有所贡献文档多维表格不接受居家办公JavaScriptVueReact计算机/软件工程相关专业前端开发经验架构师经验协同办公
-业务介绍
+## 岗位类型
 
-我们正在寻找具有多年前端开发经验，并迎刃而解各种技术难题的专家加入我们的团队，一同致力于研发一款 AI 创新型、高性能的 Web 实时协作系统。您将负责核心模块的设计、性能优化及技术难题的攻关，同时持续跟踪和学习新技术，并根据业务需求评估和引入新技术从而推动业务发展。
+- **资深前端开发工程师**: 负责 Zoom Web Client、会议控制台、Zoom Workplace 核心界面与插件生态研发。
+- **Web 实时协同引擎专家**: 负责 Zoom Docs 在线多维表格与富文本协同系统，攻坚 Canvas 虚拟绘制、OT/CRDT 协同与 AI 集成。
+- **WebRTC 音视频客户端专家**: 负责 WebAssembly 软解、WebCodecs 硬件加速视频解码、Canvas 虚拟背景分割与降噪。
 
-岗位职责：
+---
 
-1.参与产品核心模块的设计和优化，制定并推广前端开发规范和标准，提高开发效率和代码质量；
-2.参与前端稳定性建设，包括性能优化、监控、自动化测试框架等；
-3.参与评估和实现技术方案，持续跟踪和学习新技术，并根据业务需求评估和引入新技术；
-4.协助团队成员解决生产中的技术难题，包括调优性能、解决兼容性问题、修复缺陷等。
+## 技术特色
 
-任职要求：
+1. **工业级 Web 实时音视频传输与处理管线**：
+   - 在不支持标准原生客户端的受限浏览器环境中，采用 WebRTC DataChannel 结合 WebAssembly + WebCodecs 实现高吞吐媒体帧解码与 WebGL/Canvas 极速渲染。
+2. **AI 赋能的现代高性能协同文档 (Zoom Docs)**：
+   - 摆脱传统 DOM 树渲染瓶颈，全面拥抱轻量化虚拟画布（Canvas）与底层结构化状态模型，支持万人在线无冲突协作与 LLM 流式文本动态生成。
+3. **硅谷外企“Keep It Simple”技术哲学**：
+   - 追求代码架构的极致清晰与高可维护性，重视单元测试覆盖率（Jest/Vitest）、端到端自动化测试与严格的英文技术方案评审。
 
-1.本科及以上学历，计算机相关专业，有扎实的计算机基础知识；
-2.五年及以上前端开发经验，具有大型 Web 前端项目经验；
-3.具备 keep it simple 的能力，能够设计和实现简洁、高效、易于维护的前端架构和代码；
-4.具备阅读前端框架源码的能力，理解框架背后的思想，并持续改进现有项目的框架；
-5.具备良好的沟通和团队协作能力，具备推动项目、指导和带领工程师的能力；
-6.具备良好的英文读写能力；
-7.有协同文档经验、 AI 经验、优秀产品 sense 者优先。
+---
 
-## 网络题库
+## 面试流程概览
 
-1. 个人介绍，项目经历6/5
-2. 判断一个字符串是否为合法ISBN10
-3. Vue双向绑定
-4. `Object.definePropety` 和 `Proxy` 区别
-5. `v-if` 和 `v-show` 区别
-6. `HTTPS` 和 `HTTP` 区别
-7. `TLS` 三次握手
-8. 数字签名
-9. 浏览器缓存
-10. cache-control
-11. cookie 和 session
-12. localStorage 和 sessionStorage
-13. 一堆数中的前十大数
-14. 封装一个防抖的 hooks
-15. 手写一个 bindX 的方法，那边发了题目和代码，要能实现它的一些功能
-16. 5.工作中告诉你可以改动别人的代码，你有什么想法？
-17. new实现过程
-18. 比如现在他写了很多if else if怎么改可以替代？
-19. 数据类型，怎么判断
-20. 改变this指向
-21. 封装的时候原来组件的一些功能会不会失效，怎么解决？怎么暴露给你使用方法
-22. 节流防抖怎么做的，怎么封装一个防抖的自定义指令
-23. useEffect使用场景
-24. vue组件通讯和react组件通讯
-25. vue生命周期和react生命周期对比
-26. keep-alive页面不想要这个缓存怎么办？
-27. 我说想做底层一点的，然后面试官说那接着问
-28. 浏览器跨域
-29. 浏览器存储方式差异
-30. 设计模式
+### 校招流程
+1. **英文简历筛选与在线 HackerRank 编程测试**: 2 道英文算法题（动态规划、字符串匹配、递归回溯）。
+2. **技术一面 (60min)**: 全英文自我介绍、JavaScript/TypeScript 深度机制、现场手写中等难度算法。
+3. **技术二面 (60min)**: 浏览器微观机制（事件循环、requestAnimationFrame、重排重绘）、框架源码理解。
+4. **HR/主管终面 (45min)**: 团队文化匹配度、沟通能力与 Offer 发放。
+
+### 社招流程
+1. **简历初筛与技术一面 (60min)**: 重点考察计算机网络、浏览器渲染底层机制（`getBoundingClientRect` 重排机理）、TypeScript 类型体操与基础算法。
+2. **深度技术复试 (75min)**: 考察 AI 流式渲染处理（Markdown 截断与补齐）、高性能在线表格设计、OT 协同难题。
+3. **技术总监/架构复核面 (60min)**: 针对过往高难度挑战项目深挖、字符串计算器手写与前缀表达式扩展、架构权衡能力。
+4. **系统设计与文化面试 (45min)**: 知识库树形目录拖拽设计、条件类型设计、团队软实力考查。
+5. **HR 面与发薪**: 股票期权授予、薪资核算与背调。
+
+---
+
+## 题库
+
+### P0 核心必考题
+
+#### 1. 浏览器渲染管线中 `requestAnimationFrame` 与 `requestIdleCallback` 的调度时机与阻塞性？ {#p0-raf-vs-ric-scheduling}
+
+<Answer>
+**核心结论**：
+`requestAnimationFrame`（rAF）和 `requestIdleCallback`（rIC）是浏览器为不同优先级任务提供的两个核心调度机制：
+- **`requestAnimationFrame`**：严格绑定在**浏览器的帧渲染管线（Render Pipeline）中**，在每一次重排与重绘执行之前被同步调用（通常每秒 60 次或 120 次）。**在 rAF 回调中执行耗时长的长任务（Long Task）会直接导致当前帧渲染推迟，引发掉帧卡顿！**
+- **`requestIdleCallback`**：由浏览器在**完成当前帧的样式计算、布局、绘制及合成后，利用剩余的空闲时间（Idle Period）调度执行**。若当前帧繁忙或无空闲时间，rIC 不会执行；**但在 rIC 回调内部执行长任务依然会阻塞主线程，阻碍下一帧的即时响应！**
+
+**原理解析与帧周期剖析**：
+1. **一个 16.6ms 渲染帧的生命周期**：
+   - `输入事件处理 (touch/wheel/click)`
+   - `宏任务 (Tasks)`
+   - `微任务队列清空 (Microtasks)`
+   - `rAF 回调队列执行 (requestAnimationFrame)`
+   - `样式计算 (Recalculate Style)`
+   - `布局排版 (Layout / Reflow)`
+   - `图层绘制 (Paint / Repaint)`
+   - `GPU 合成 (Composite)`
+   - **空闲周期 (Idle Period)**：若上述流程仅耗费 6ms，剩余约 10ms 时间将唤起 `requestIdleCallback` 回调，并通过 `deadline.timeRemaining()` 告知剩余可用毫秒数。
+2. **React Fiber 为什么自己实现 Scheduler 而废除原生 `requestIdleCallback`？**：
+   - 原生 `requestIdleCallback` 在各浏览器间兼容性较差（Safari 长期不支持）；
+   - 其执行频率不可控（当页面处于后台或电池节能模式时，rIC 可能几秒钟才触发一次，造成低优先级状态更新被无限期搁置）；
+   - React 借助 `MessageChannel` 宏任务配合 `performance.now()` 手动实现了 5ms 级别的确定性并发时间分片调度器。
+
+**面试官视角**：
+- 考核候选人对现代前端框架（如 React 18 并发渲染调度）底层设计取舍的宏观认知与微观细节。
+</Answer>
+
+#### 2. `getBoundingClientRect()` 是否必然触发浏览器重排（Reflow）？布局抖动（Layout Thrashing）机理与根治？ {#p0-layout-thrashing-reflow}
+
+<Answer>
+**核心结论**：
+`getBoundingClientRect()` **并不必然触发重排**！浏览器内部维护了一个异步渲染变更队列（Render Queue），当执行修改样式的语句（如 `el.style.width = '100px'`）时，浏览器并不会立即同步重新计算布局，而是将操作排队合并。**仅当在队列处于“脏（Dirty）”状态时，代码调用了需要获取元素实时几何尺寸或视口位置的 API（如 `getBoundingClientRect`、`offsetWidth`、`scrollTop` 等），浏览器为了返回绝对精准的当前数值，被迫立即清空队列、打断常规渲染管线，强制触发同步重排（Forced Synchronous Layout）**。若队列本身干净，则该方法仅仅是一次纯粹的内存几何坐标读取，无任何重排开销。
+
+**布局抖动（Layout Thrashing）经典反例与重构**：
+```javascript
+// ❌ 极度危险的布局抖动：交替读写强迫浏览器在每个循环迭代中均触发一次强制重排！
+const boxes = document.querySelectorAll('.box');
+for (let i = 0; i < boxes.length; i++) {
+  const width = boxes[i].getBoundingClientRect().width; // 读操作（此时若有脏队列立即强制重排）
+  boxes[i].style.width = width + 10 + 'px';              // 写操作（使队列再次变脏！）
+}
+
+// ✅ 读写分离（Read/Write Separation）：彻底消除多余重排
+const widths = [];
+// 1. 批量读取阶段（仅在首次发生一次重排或直接纯读取）
+for (let i = 0; i < boxes.length; i++) {
+  widths.push(boxes[i].getBoundingClientRect().width);
+}
+// 2. 批量写入阶段（合并入队列，等待帧末统一更新）
+for (let i = 0; i < boxes.length; i++) {
+  boxes[i].style.width = widths[i] + 10 + 'px';
+}
+```
+
+**面试官视角**：
+- 考核候选人是否掌握浏览器渲染管线的核心性能优化本质，有无治理大型长表格与富文本编辑中微观卡顿的经验。
+</Answer>
+
+---
+
+### P1 高频必会题
+
+#### 1. TypeScript 泛型约束与 `keyof` / `extends` 在强类型安全属性读写中的应用？ {#p1-ts-generic-set-object}
+
+<Answer>
+**核心结论**：
+在构建强类型中后台与状态库时，对任意对象的动态属性赋值必须通过泛型双重约束，确保所传入的 `key` 必须是该对象自身真实存在的属性名（`K extends keyof T`），且所赋予的 `value` 必须严格兼容该属性在原始接口中声明的类型（`V extends T[K]`），从编译期杜绝拼写错误与类型不兼容。
+
+**标准代码实现**：
+```typescript
+interface Person {
+  name: string;
+  age: number;
+}
+
+// 严苛的双重泛型约束函数定义
+function setObject<T extends object, K extends keyof T>(
+  target: T,
+  key: K,
+  value: T[K]
+): void {
+  target[key] = value;
+}
+
+const person: Person = { name: 'Alice', age: 25 };
+
+// ✅ 编译通过
+setObject(person, 'name', 'Tom');
+setObject(person, 'age', 30);
+
+// ❌ 编译报错：类型 '"gender"' 不能赋给类型 '"name" | "age"'
+// setObject(person, 'gender', 'male');
+
+// ❌ 编译报错：类型 'string' 不能赋给类型 'number'
+// setObject(person, 'age', 'twelve');
+```
+
+**面试官视角**：
+- 考核候选人是否熟练运用 TypeScript 核心类型系统（索引类型查询 `keyof`、泛型约束 `extends`、索引访问类型 `T[K]`）编写高健壮性工业级代码。
+</Answer>
+
+---
+
+## 考察重点速览
+
+1. **浏览器渲染与性能极限**：强制同步重排机制、布局抖动规避、`requestAnimationFrame` 与调度器原理。
+2. **实时协同与图形排版**：Zoom Docs 架构、Canvas 高性能表格、OT 协同算法与单元格合并逻辑。
+3. **TypeScript 严苛工程实践**：泛型条件类型（Conditional Types）、类型推导 `infer`、类型安全工具函数。
+
+---
+
+## 备考建议
+
+1. **熟练掌握渲染微观性能**：透彻理解现代浏览器如何合并重排以及哪些 API 会强制触发同步布局。
+2. **准备英语口语与外企工程表达**：熟练用英文阐述技术难点、系统架构与个人技术亮点。
+3. **深入理解富文本与协同表格**：思考 Markdown 流式排版、Canvas 单元格选区与公式计算模型。
+

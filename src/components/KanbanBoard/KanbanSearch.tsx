@@ -98,7 +98,7 @@ function KanbanSearch ({ onSearch }: SearchProps) {
     // 移除已处理的字段搜索
     let remaining = query
 
-    fieldMatches.forEach((match) => {
+    fieldMatches.forEach((match: string) => {
       const [field, value] = match.split(':').map((s) => s.trim())
       // 处理优先级搜索，忽略大小写
       if (field.toLowerCase() === 'priority') {

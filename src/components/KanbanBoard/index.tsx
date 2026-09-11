@@ -148,7 +148,7 @@ function KanbanBoard () {
     const node = knowledgeMap[subject]
     if (!node) return []
     if (Array.isArray(topic)) {
-      let cur = node
+      let cur: any = node
       for (const t of topic) {
         if (cur.children && cur.children[t]) {
           names.push(cur.children[t].name)
@@ -192,7 +192,7 @@ function KanbanBoard () {
 
             <div className="task-list">
               {Object.entries(groupedQuestions[column.id] || {}).map(
-                ([subject, items]) => (
+                ([subject, items]: [string, any]) => (
                   <div key={subject} className="subject-group">
                     <div
                       className="subject-header"

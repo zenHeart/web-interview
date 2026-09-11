@@ -71,7 +71,7 @@ const JSXFeaturesDemo = () => {
             <div>
                空值: {null} {false} {undefined} {true}
             </div>
-            {count > 5 ? null : <p>当计数 > 5 时这段将消失</p>}
+            {count > 5 ? null : <p>当计数 &gt; 5 时这段将消失</p>}
          </section>
          
          {/* 原生元素与事件 */}

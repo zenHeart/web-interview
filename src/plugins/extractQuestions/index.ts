@@ -233,9 +233,8 @@ export default function extractQuestionsPlugin (
         }
         addTopicNode(tree[head].children, rest, name)
       }
-      function treeToArr (tree: any): Topic[] {
-        // @ts-ignore
-        return Object.entries(tree).map(([_, v]: [string, any]) => ({
+      function treeToArr (tree: any): any[] {
+        return Object.entries(tree || {}).map(([_, v]: [string, any]) => ({
           name: v.name,
           children: treeToArr(v.children)
         }))
