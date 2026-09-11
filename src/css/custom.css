@@ -67,6 +67,12 @@
   --ifm-global-radius: 6px;
   --ifm-card-background-color: var(--wi-bg-surface);
 
+  --ifm-navbar-height: 60px;
+  --ifm-navbar-background-color: var(--wi-bg-surface);
+  --ifm-navbar-shadow: none;
+  --ifm-navbar-sidebar-width: 85vw;
+  --ifm-z-index-fixed: 200;
+
   --docusaurus-highlighted-code-line-bg: rgba(5, 150, 105, 0.08);
 }
 
@@ -132,19 +138,60 @@ body {
   color: var(--ifm-font-color-base);
 }
 
-/* 导航栏 (Navbar) - 现代高透微模糊与细线分割 */
+/* 导航栏 (Navbar) - 现代高质感与细线分割（无 containing-block 陷阱） */
 .navbar {
   border-bottom: 1px solid var(--wi-border);
-  background-color: rgba(248, 250, 252, 0.85) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--wi-bg-surface);
   box-shadow: none;
-  height: 60px;
+  height: var(--ifm-navbar-height);
   padding: 0 1.25rem;
 }
 
-[data-theme='dark'] .navbar {
-  background-color: rgba(11, 15, 25, 0.85) !important;
+/* 仅在桌面宽屏 (min-width: 997px) 下应用微模糊，严禁在移动端形成 fixed 包含块陷阱 */
+@media screen and (min-width: 997px) {
+  .navbar {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  [data-theme='dark'] .navbar {
+    background-color: rgba(17, 24, 39, 0.9) !important;
+  }
+}
+
+/* 抽屉打开时强行解除任何 backdrop-filter，确保 fixed 抽屉与全屏遮罩定位到视口 */
+.navbar-sidebar--show,
+.navbar-sidebar--show .navbar {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* 移动端导航抽屉 (Mobile Navbar Sidebar) */
+.navbar-sidebar {
+  background-color: var(--wi-bg-surface) !important;
+  border-right: 1px solid var(--wi-border);
+  z-index: 200 !important;
+}
+
+.navbar-sidebar__backdrop {
+  z-index: 199 !important;
+  background-color: rgba(15, 23, 42, 0.6) !important;
+}
+
+/* 移动端文章目录 (Mobile TOC / 本页总览) 优化 */
+.tocCollapsible_subt,
+.theme-doc-toc-mobile {
+  border: 1px solid var(--wi-border) !important;
+  border-radius: 6px !important;
+  background-color: var(--wi-bg-surface) !important;
+  margin: 1rem 0;
+}
+
+.tocCollapsibleButton_S_56,
+.theme-doc-toc-mobile button {
+  font-weight: 600;
+  color: var(--wi-text) !important;
+  padding: 0.6rem 1rem;
 }
 
 .navbar__title {
