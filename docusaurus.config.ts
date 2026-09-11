@@ -159,56 +159,65 @@ const config: Config = {
       },
       items: [
         {
-          type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          type: 'dropdown',
+          label: '题库与指南',
           position: 'left',
-          label: '题库'
+          items: [
+            {
+              type: 'docSidebar',
+              sidebarId: 'tutorialSidebar',
+              label: '题库'
+            },
+            {
+              type: 'doc',
+              docId: 'index',
+              docsPluginId: 'company',
+              label: '公司'
+            },
+            {
+              type: 'doc',
+              docId: 'index',
+              docsPluginId: 'interview-guide',
+              label: '面试指南'
+            }
+          ]
         },
-
         {
-          type: 'doc',
-          docId: 'index',
-          docsPluginId: 'company', // 确保这里指向正确的插件 ID
+          type: 'dropdown',
+          label: '工具',
           position: 'left',
-          label: '公司'
+          items: [
+            {
+              to: '/reference',
+              label: '索引'
+            },
+            {
+              to: '/kanban',
+              label: '看板'
+            }
+          ]
         },
-
         {
-          type: 'doc',
-          docId: 'index',
-          docsPluginId: 'interview-guide',
+          type: 'dropdown',
+          label: '动态与社区',
           position: 'left',
-          label: '面试指南'
+          items: [
+            {
+              to: '/blog',
+              label: '博客'
+            },
+            {
+              to: '/blog/tags/changelog',
+              label: '更新日志'
+            },
+            {
+              type: 'doc',
+              docId: 'index',
+              docsPluginId: 'contributors',
+              label: '贡献指南'
+            }
+          ]
         },
-
-        {
-          to: '/reference',
-          label: '索引',
-          position: 'left'
-        },
-        {
-          to: '/kanban',
-          label: '看板',
-          position: 'left'
-        },
-        {
-          to: '/blog',
-          label: '博客',
-          position: 'left'
-        },
-        {
-          to: '/blog/tags/changelog',
-          label: '更新日志',
-          position: 'left'
-        },
-        {
-          type: 'doc',
-          docId: 'index',
-          docsPluginId: 'contributors', // 确保这里指向正确的插件 ID
-          position: 'left',
-          label: '贡献指南'
-        },
-        //   { to: 'blog', label: 'Blog', position: 'right' }, // or position: 'right'
         {
           href: 'https://github.com/zenHeart/web-interview',
           label: 'GitHub',
