@@ -17,6 +17,7 @@
 - [04.integration-apis.md](./04.integration-apis.md) — BFF/API/鉴权/上传/安全
 - [05-realtime-resilience.md](./05-realtime-resilience.md) — 实时/队列/回压/可观测
 - [06.system-architecture.md](./06.system-architecture.md) — 非系统设计类架构问题承载
+- [07.frontend-architecture.md](./07.frontend-architecture.md) — 现代前端系统设计与核心战役（遗留系统重构/Monorepo/跨端SDK/性能APM）
 
 :::tip 关联学科
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>IPC 大数据量传输性能实测</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 16px; background: #0f172a; color: #f8fafc; }
+    .card { background: #1e293b; padding: 14px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; }
+    button { background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    button:hover { background: #2563eb; }
+    button.fast { background: #10b981; }
+    button.fast:hover { background: #059669; }
+    .log-box { background: #020617; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #38bdf8; min-height: 140px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3 style="margin-top:0;">⚡ Electron IPC 零拷贝 vs 深拷贝性能实测</h3>
+    <p style="font-size: 13px; color: #94a3b8; margin: 4px 0;">
+      通过 MessageChannel 模拟进程/线程间传输 20MB 二进制数据，对比 structuredClone 深拷贝与 Transferable 对象所有权转移的耗时差异。
+    </p>
+    <div class="btn-group">
+      <button id="btnClone">1. 传统结构化深拷贝 (structuredClone)</button>
+      <button class="fast" id="btnTransfer">2. Transferable 对象零拷贝移交</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin: 0 0 8px 0;">实测控制台输出:</h4>
+    <div class="log-box" id="logs">点击上方按钮开始测速...</div>
+  </div>
+
+  <script>
+    const logBox = document.getElementById('logs');
+    function log(msg, color = '#e2e8f0') {
+      logBox.innerHTML += `<div style="color:${color}">${msg}</div>`;
+    }
+
+    const DATA_SIZE = 20 * 1024 * 1024; // 20MB
+    const channel = new MessageChannel();
+
+    channel.port2.onmessage = (e) => {
+      const receiveTime = performance.now();
+      const duration = (receiveTime - e.data.start).toFixed(2);
+      log(`[Receiver] 收到数据: ${e.data.buffer.byteLength / 1024 / 1024} MB, 端到端总传输耗时: ${duration} ms`, '#4ade80');
+    };
+
+    document.getElementById('btnClone').addEventListener('click', () => {
+      logBox.innerHTML = '';
+      log(`[Sender] 正在分配 20MB ArrayBuffer...`);
+      const buffer = new ArrayBuffer(DATA_SIZE);
+      const start = performance.now();
+      
+      log(`[IPC] 发送方式: 结构化深拷贝 (未转移所有权)...`);
+      channel.port1.postMessage({ buffer, start }); // 普通传递，触发深拷贝
+      
+      log(`[Sender] 发送后原 buffer 大小: ${buffer.byteLength / 1024 / 1024} MB (原内存未失活，发生完整深拷贝)`);
+    });
+
+    document.getElementById('btnTransfer').addEventListener('click', () => {
+      logBox.innerHTML = '';
+      log(`[Sender] 正在分配 20MB ArrayBuffer...`);
+      const buffer = new ArrayBuffer(DATA_SIZE);
+      const start = performance.now();
+      
+      log(`[IPC] 发送方式: Transferable Objects (转移底层物理内存所有权)...`);
+      channel.port1.postMessage({ buffer, start }, [buffer]); // 移交所有权
+      
+      log(`[Sender] 发送后原 buffer 大小: ${buffer.byteLength} 字节 (Neutered 彻底失活，实现零拷贝!)`, '#facc15');
+    });
+  </script>
+</body>
+</html>

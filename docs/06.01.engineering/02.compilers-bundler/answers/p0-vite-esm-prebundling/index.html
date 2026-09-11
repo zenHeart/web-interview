@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>Vite 原生 ESM 与预构建 Demo</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 20px; background: #0f172a; color: #f8fafc; }
+    .card { background: #1e293b; padding: 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 16px; }
+    .log-box { background: #020617; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 13px; color: #38bdf8; min-height: 120px; }
+    button { background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>⚡ 原生 ESM 按需加载与预构建合并模拟</h3>
+    <p style="font-size: 14px; color: #94a3b8;">
+      本 Demo 演示浏览器原生 ES Module 加载机制，以及 Vite 如何将 600+ 碎片模块合并为单个聚合产物消除瀑布流。
+    </p>
+    <button id="btnLoad">点击加载聚合预构建模块</button>
+  </div>
+
+  <div class="card">
+    <h4>控制台日志 (Console Stream):</h4>
+    <div class="log-box" id="logs">等待操作...</div>
+  </div>
+
+  <script type="module">
+    const logBox = document.getElementById('logs');
+    function log(msg) {
+      logBox.innerHTML += `<div>${msg}</div>`;
+    }
+
+    log('[Browser] 解析入口 HTML，已初始化原生 &lt;script type="module"&gt;');
+
+    document.getElementById('btnLoad').addEventListener('click', async () => {
+      logBox.innerHTML = '';
+      log('[Vite:Network] 触发动态导入 import("./bundled-module.js")...');
+      const start = performance.now();
+      
+      const { debounce, utilsVersion } = await import('./bundled-module.js');
+      const duration = (performance.now() - start).toFixed(2);
+      
+      log(`[Vite:Success] 成功加载单文件产物! 耗时: ${duration}ms (0 网络级联排队)`);
+      log(`[Module] 导出函数: ${typeof debounce}, 版本: ${utilsVersion}`);
+      log('[Module] 测试防抖执行...');
+      
+      const fn = debounce(() => log('✓ 防抖函数在 200ms 后成功触发！'), 200);
+      fn(); fn(); fn(); // 连续调用
+    });
+  </script>
+</body>
+</html>

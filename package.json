@@ -13,6 +13,7 @@
     "start": "docusaurus start --host 0.0.0.0 --port 3000",
     "build": "docusaurus build",
     "build:fast": "docusaurus build",
+    "build:gh": "BASE_URL=/web-interview/ docusaurus build",
     "build:preview": "docusaurus build && docusaurus serve --port 3000",
     "serve": "docusaurus serve --port 3000",
     "preview": "docusaurus serve --port 3000",

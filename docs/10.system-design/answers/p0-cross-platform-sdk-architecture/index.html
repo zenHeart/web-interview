@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>跨端统一 SDK 状态机与离线队列实测</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; padding: 16px; background: #0f172a; color: #f8fafc; }
+    .card { background: #1e293b; padding: 14px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 12px; }
+    .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-weight: bold; font-size: 13px; }
+    .btn-group { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    button { background: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+    button:hover { background: #2563eb; }
+    button.danger { background: #ef4444; }
+    button.danger:hover { background: #dc2626; }
+    button.success { background: #10b981; }
+    button.success:hover { background: #059669; }
+    .log-box { background: #020617; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #38bdf8; min-height: 140px; max-height: 200px; overflow-y: auto; line-height: 1.6; }
+    .queue-box { background: #1e1e2d; border: 1px dashed #64748b; padding: 8px 12px; border-radius: 6px; font-size: 12px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="margin:0;">📱 跨端统一 SDK 有限状态机 (FSM) 仿真</h3>
+      <span id="badge" class="status-badge" style="background:#fee2e2; color:#b91c1c;">DISCONNECTED</span>
+    </div>
+    <p style="font-size: 13px; color: #94a3b8; margin: 6px 0;">
+      演示 SDK 状态跃迁、离线操作拦截入队、网络恢复自动重连与离线队列冲刷 (Flush)。
+    </p>
+    <div class="btn-group">
+      <button class="success" id="btnConnect">1. 建立长连接 (connect)</button>
+      <button class="danger" id="btnDisconnect">2. 模拟网络异常断开</button>
+      <button id="btnSend">3. 发送业务指令 (sendAction)</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <strong>📦 内存离线缓冲队列 (Offline Queue):</strong>
+    <div class="queue-box" id="queueView">队列为空 (0 条等待冲刷)</div>
+  </div>
+
+  <div class="card">
+    <h4 style="margin: 0 0 8px 0;">SDK 事件时序流:</h4>
+    <div class="log-box" id="logs">SDK 已在当前运行时初始化完成.</div>
+  </div>
+
+  <script>
+    const badge = document.getElementById('badge');
+    const logBox = document.getElementById('logs');
+    const queueView = document.getElementById('queueView');
+
+    function log(msg, color = '#e2e8f0') {
+      logBox.innerHTML += `<div style="color:${color}">${msg}</div>`;
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    // FSM 状态机核心
+    class CrossPlatformSDK {
+      constructor() {
+        this.state = 'DISCONNECTED';
+        this.offlineQueue = [];
+      }
+
+      setState(newState) {
+        log(`[FSM 跃迁] ${this.state} -> ${newState}`, '#facc15');
+        this.state = newState;
+        
+        badge.textContent = newState;
+        if (newState === 'CONNECTED') {
+          badge.style.background = '#d1fae5';
+          badge.style.color = '#047857';
+        } else if (newState === 'CONNECTING') {
+          badge.style.background = '#fef3c7';
+          badge.style.color = '#b45309';
+        } else {
+          badge.style.background = '#fee2e2';
+          badge.style.color = '#b91c1c';
+        }
+      }
+
+      connect() {
+        if (this.state === 'CONNECTED' || this.state === 'CONNECTING') return;
+        this.setState('CONNECTING');
+        log('[PlatformAdapter] 发起底层 Socket 握手...');
+
+        setTimeout(() => {
+          this.setState('CONNECTED');
+          log('[Core] Socket 连接建立成功，开始周期心跳 (Ping/Pong)', '#4ade80');
+          this.flushQueue();
+        }, 800);
+      }
+
+      disconnect() {
+        this.setState('DISCONNECTED');
+        log('[Socket] 连接关闭，心跳停止', '#f87171');
+      }
+
+      send(actionName) {
+        const payload = { action: actionName, time: new Date().toLocaleTimeString() };
+        if (this.state === 'CONNECTED') {
+          log(`[Protocol:Online] 实时上送通道数据: ${JSON.stringify(payload)}`, '#38bdf8');
+        } else {
+          this.offlineQueue.push(payload);
+          log(`[Protocol:Offline] 网络离线，数据压入离线队列 (当前积压: ${this.offlineQueue.length} 条)`, '#fb923c');
+          this.updateQueueView();
+        }
+      }
+
+      flushQueue() {
+        if (this.offlineQueue.length === 0) return;
+        log(`[Flush] 检测到网络已恢复，开始按 FIFO 顺序冲刷 ${this.offlineQueue.length} 条离线数据...`, '#a855f7');
+        while(this.offlineQueue.length > 0) {
+          const item = this.offlineQueue.shift();
+          log(`  -> 成功重放离线数据: ${JSON.stringify(item)}`, '#c084fc');
+        }
+        this.updateQueueView();
+      }
+
+      updateQueueView() {
+        if (this.offlineQueue.length === 0) {
+          queueView.textContent = '队列为空 (0 条等待冲刷)';
+        } else {
+          queueView.textContent = this.offlineQueue.map(q => `[${q.time}] ${q.action}`).join(' | ');
+        }
+      }
+    }
+
+    const sdk = new CrossPlatformSDK();
+
+    document.getElementById('btnConnect').onclick = () => sdk.connect();
+    document.getElementById('btnDisconnect').onclick = () => sdk.disconnect();
+    document.getElementById('btnSend').onclick = () => {
+      const actions = ['UPLOAD_METRICS', 'SAVE_USER_DRAFT', 'ORDER_CHECKOUT', 'CLICK_EVENT'];
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      sdk.send(action);
+    };
+  </script>
+</body>
+</html>

@@ -59,7 +59,8 @@ BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 echo "[deploy] 构建源提交(origin/main): $SOURCE_COMMIT_HASH - $SOURCE_COMMIT_SUBJECT"
 
-# 构建（使用已有 lock 保证可重复）
+# 构建（使用已有 lock 保证可重复，并指定 gh-pages 远端 baseUrl）
+export BASE_URL="${BASE_URL:-/web-interview/}"
 npm run build
 
 cd "$RootPath/build"

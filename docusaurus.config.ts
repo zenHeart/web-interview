@@ -7,6 +7,15 @@ import lastCommitInfoPlugin from './src/plugins/lastCommitInfo/index'
 import devProxy from './src/plugins/devProxy/index'
 const isLocal = process.env.NODE_ENV === 'development'
 
+const normalizeBaseUrl = (raw: string = '/') => {
+  let url = raw.trim()
+  if (!url.startsWith('/')) url = '/' + url
+  if (!url.endsWith('/')) url = url + '/'
+  return url.replace(/\/+/g, '/')
+}
+
+const baseUrl = normalizeBaseUrl(process.env.BASE_URL || '/')
+
 const config: Config = {
   markdown: {
     mermaid: true,
@@ -22,7 +31,7 @@ const config: Config = {
   themes: ['@docusaurus/theme-live-codeblock', '@docusaurus/theme-mermaid'],
   title: '前端面试',
   url: 'https://blog.zenheart.site',
-  baseUrl: isLocal ? '' : '/web-interview/',
+  baseUrl,
   organizationName: 'zenHeart', // Usually your GitHub org/user name.
   projectName: 'web-interview', // Usually your repo name.
   favicon: 'img/logo.svg',

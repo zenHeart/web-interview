@@ -1,41 +1,28 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Sandpack } from '@codesandbox/sandpack-react'
+import { useColorMode } from '@site/src/components/hooks/useColorMode'
 
 interface LiveCodeProps {
-  filePath: string; // Accept a full relative file path
+  code?: string
+  filePath?: string
 }
 
-const LiveCode: React.FC<LiveCodeProps> = ({ filePath }) => {
-  const [code, setCode] = useState<string | null>(null)
-  const [loading, setLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const loadCode = async () => {
-      setLoading(true)
-      try {
-        const codeModule = await import(`!!raw-loader!${filePath}`)
-        setCode(codeModule.default) // Set the code content
-      } catch (error) {
-        console.error('Error loading code:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadCode()
-  }, [filePath]) // Reload code when filePath changes
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
+const LiveCode: React.FC<LiveCodeProps> = ({ code = '' }) => {
+  const { colorMode } = useColorMode()
 
   return (
-    <Sandpack
-      template="react"
-      files={{
-        '/App.js': code || '' // Use the loaded code
-      }}
-    />
+    <div style={{ margin: '1.5rem 0', borderRadius: '8px', overflow: 'hidden' }}>
+      <Sandpack
+        template="react"
+        theme={colorMode === 'dark' ? 'dark' : 'light'}
+        files={{
+          '/App.js': code
+        }}
+        options={{
+          editorHeight: 420
+        }}
+      />
+    </div>
   )
 }
 

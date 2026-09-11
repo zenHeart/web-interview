@@ -12,6 +12,12 @@ import TabItem from '@theme/TabItem'
 import { Sandpack } from '@codesandbox/sandpack-react'
 import * as LayoutComponent from '@site/src/components/Layout'
 
+import ViteHmrVisualizer from '@site/src/components/visualizers/ViteHmrVisualizer'
+import StranglerVisualizer from '@site/src/components/visualizers/StranglerVisualizer'
+import ElectronProcessVisualizer from '@site/src/components/visualizers/ElectronProcessVisualizer'
+import AgentTraceVisualizer from '@site/src/components/visualizers/AgentTraceVisualizer'
+import InpVisualizer from '@site/src/components/visualizers/InpVisualizer'
+
 export default {
   // Re-use the default mapping
   ...MDXComponents,
@@ -26,5 +32,10 @@ export default {
   Answer,
   Analysis,
   TestCode,
-  CustomSandPack
+  CustomSandPack,
+  ViteHmrVisualizer,
+  StranglerVisualizer,
+  ElectronProcessVisualizer,
+  AgentTraceVisualizer,
+  InpVisualizer
 }
