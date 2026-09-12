@@ -10,8 +10,9 @@ description: 评估前端面试题是否为高质量题目，基于项目文档�
 要求：
 
 * 不要生成题目的答案，只做质量评估
+* 遵循 [好问题标准与布鲁姆分类学](../../interview-guide/02.bloom-taxonomy-questions.md) 评估五大核心维度（有效性、信度、区分度、时间合理性、贴近实际）
 * 遵循 [copilot-instructions](../copilot-instructions.md) 定义的规则
-* 遵循答案结构，详见 [quesitons.md](../../contributors/template/01.question.md)
+* 遵循题目结构规范，详见 [questions.md](../../contributors/template/01.question.md) 与金牌范例 [01.type-value.md](../../docs/01.js/01.type-value.md)
 * 输出必须包含一个 **简化 Rubric 表格**
 * 表格后面必须有 **收录结论（✅ 收录 / ❌ 拒绝）** 和 **理由说明**
 * 如果拒绝，理由要明确（如偏记忆化 / 与岗位不符 / 耗时过长 / 无法区分水平等）

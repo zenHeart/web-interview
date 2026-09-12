@@ -151,6 +151,10 @@ const config: Config = {
         hideable: true
       }
     },
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 2
+    },
     navbar: {
       title: '前端面试',
       logo: {
