@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="zh-hans" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-network/mac-ip" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.10.2">
+<title data-rh="true">IP✅ | 前端面试</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://blog.zenheart.site/web-interview/docs/network/mac-ip"><meta data-rh="true" property="og:locale" content="zh_hans"><meta data-rh="true" name="docusaurus_locale" content="zh-hans"><meta data-rh="true" name="docsearch:language" content="zh-hans"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="IP✅ | 前端面试"><meta data-rh="true" name="description" content="什么是 MAC 地址？"><meta data-rh="true" property="og:description" content="什么是 MAC 地址？"><link data-rh="true" rel="icon" href="/web-interview/img/logo.svg"><link data-rh="true" rel="canonical" href="https://blog.zenheart.site/web-interview/docs/network/mac-ip"><link data-rh="true" rel="alternate" href="https://blog.zenheart.site/web-interview/docs/network/mac-ip" hreflang="zh-hans"><link data-rh="true" rel="alternate" href="https://blog.zenheart.site/web-interview/docs/network/mac-ip" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"IP✅","item":"https://blog.zenheart.site/web-interview/docs/network/mac-ip"}]}</script><link rel="alternate" type="application/rss+xml" href="/web-interview/blog/rss.xml" title="前端面试 RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/web-interview/blog/atom.xml" title="前端面试 Atom Feed"><link rel="stylesheet" href="/web-interview/assets/css/styles.679d0d7f.css">
+<script src="/web-interview/assets/js/runtime~main.111ce030.js" defer="defer"></script>
+<script src="/web-interview/assets/js/main.1c08e324.js" defer="defer"></script>
+</head>
+<body>
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||"light"),document.documentElement.setAttribute("data-theme-choice",t||"light")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/web-interview/img/logo.svg"><div role="region" aria-label="跳到主要内容"><a class="skipToContent_OTYR" href="#__docusaurus_skipToContent_fallback">跳到主要内容</a></div><nav aria-label="主导航" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="切换导航栏" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/web-interview/"><div class="navbar__logo"><img src="/web-interview/img/logo.svg" alt="Web Interview Logo" class="themedComponent_lgos themedComponent--light_cfMS"><img src="/web-interview/img/logo.svg" alt="Web Interview Logo" class="themedComponent_lgos themedComponent--dark_a8ew"></div><b class="navbar__title text--truncate">前端面试</b></a><div class="navbar__item dropdown dropdown--hoverable"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link">题库与指南</a><ul class="dropdown__menu"><li><a aria-current="page" class="dropdown__link dropdown__link--active" href="/web-interview/docs/js/type-value">题库</a></li><li><a class="dropdown__link" href="/web-interview/company/index">公司</a></li><li><a class="dropdown__link" href="/web-interview/interview-guide/">面试指南</a></li></ul></div><div class="navbar__item dropdown dropdown--hoverable"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link">工具</a><ul class="dropdown__menu"><li><a class="dropdown__link" href="/web-interview/reference">索引</a></li><li><a class="dropdown__link" href="/web-interview/kanban">看板</a></li></ul></div><div class="navbar__item dropdown dropdown--hoverable"><a href="#" aria-haspopup="true" aria-expanded="false" role="button" class="navbar__link">动态与社区</a><ul class="dropdown__menu"><li><a class="dropdown__link" href="/web-interview/blog">博客</a></li><li><a class="dropdown__link" href="/web-interview/blog/tags/changelog">更新日志</a></li><li><a class="dropdown__link" href="/web-interview/contributors/">贡献指南</a></li></ul></div></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/zenHeart/web-interview" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_IRlV"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_kJik colorModeToggle_VQBa"><button class="clean-btn toggleButton_aOIC toggleButtonDisabled_GiGk" type="button" disabled="" title="system mode" aria-label="切换浅色/暗黑模式（当前为system mode）"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_HX0Z lightToggleIcon_Ktr_"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_HX0Z darkToggleIcon_pzzD"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_HX0Z systemToggleIcon_UHSp"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_PR5T"><div class="navbar__search searchBarContainer_wm1z" dir="ltr"><svg aria-hidden="true" class="searchIcon_dGJa" focusable="false" viewBox="0 0 16 16"><path fill="currentColor" d="M6.02945 10.20327a4.17382 4.17382 0 1 1 4.17382-4.17382 4.15609 4.15609 0 0 1-4.17382 4.17382Zm9.69195 4.2199-4.8225-4.82338A5.88021 5.88021 0 0 0 12.058 6.02856 6.00467 6.00467 0 1 0 9.59979 10.8989l4.82338 4.82338a.89729.89729 0 0 0 1.29912 0 .89749.89749 0 0 0-.00087-1.29909Z"></path></svg><input placeholder="搜索" aria-label="Search" class="navbar__search-input searchInput_MVP7" value=""><div class="loadingRing_tRyZ searchBarLoadingRing_Hw7u"><div></div><div></div><div></div><div></div></div></div></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_pB7q"><div class="docsWrapper_oQ2B"><button aria-label="回到顶部" class="clean-btn theme-back-to-top-button backToTopButton_mVOv" type="button"></button><div class="docRoot_H86D"><aside class="theme-doc-sidebar-container docSidebarContainer_Uacn"><div class="sidebarViewport_NsKA"><div class="sidebar_Ag9v"><nav aria-label="文档侧边栏" class="menu thin-scrollbar menu_wFgB"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/js/type-value"><span class="categoryLinkLabel_n9Oe">js</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/html/concept"><span class="categoryLinkLabel_n9Oe">html</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/css/concept"><span class="categoryLinkLabel_n9Oe">css</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/nodejs/core-concept"><span class="categoryLinkLabel_n9Oe">nodejs</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/react/concept"><span class="categoryLinkLabel_n9Oe">react</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/vue/core-concepts"><span class="categoryLinkLabel_n9Oe">vue</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/RN/"><span class="categoryLinkLabel_n9Oe">React Native ✅</span></a><button aria-label="展开侧边栏分类 &#x27;React Native ✅&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/miniprogram/"><span class="categoryLinkLabel_n9Oe">小程序 ✅</span></a><button aria-label="展开侧边栏分类 &#x27;小程序 ✅&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/nuxt/"><span class="categoryLinkLabel_n9Oe">Nuxt 面试题</span></a><button aria-label="展开侧边栏分类 &#x27;Nuxt 面试题&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/electron/"><span class="categoryLinkLabel_n9Oe">Electron 桌面应用架构与核心技术</span></a><button aria-label="展开侧边栏分类 &#x27;Electron 桌面应用架构与核心技术&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/engineering/concept"><span class="categoryLinkLabel_n9Oe">engineering</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/typescript/core-types"><span class="categoryLinkLabel_n9Oe">typescript</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/category/ai-智能工程"><span class="categoryLinkLabel_n9Oe">AI 智能工程✅</span></a><button aria-label="展开侧边栏分类 &#x27;AI 智能工程✅&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/algorithm/"><span class="categoryLinkLabel_n9Oe">数据结构和算法</span></a><button aria-label="展开侧边栏分类 &#x27;数据结构和算法&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/web-interview/docs/network/concept"><span class="categoryLinkLabel_n9Oe">network</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/concept"><span class="linkLabel_gh9F">概念✅</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/web-interview/docs/network/mac-ip"><span class="linkLabel_gh9F">IP✅</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/udp-tcp"><span class="linkLabel_gh9F">udp tcp✅</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-2 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" tabindex="0" href="/web-interview/docs/network/http/http-basics"><span class="categoryLinkLabel_n9Oe">http</span></a></div></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/cdn"><span class="linkLabel_gh9F">CDN✅</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/websocket"><span class="linkLabel_gh9F">WebSocket✅</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/dns"><span class="linkLabel_gh9F">DNS✅</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/web-interview/docs/network/other"><span class="linkLabel_gh9F">其他✅</span></a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/os/index"><span class="categoryLinkLabel_n9Oe">os</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/system-design/"><span class="categoryLinkLabel_n9Oe">系统设计</span></a><button aria-label="展开侧边栏分类 &#x27;系统设计&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist" href="/web-interview/docs/paradigm/"><span class="categoryLinkLabel_n9Oe">编程范式</span></a><button aria-label="展开侧边栏分类 &#x27;编程范式&#x27;" aria-expanded="false" type="button" class="clean-btn menu__caret"></button></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_rTUf menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/web-interview/docs/interview/softskill"><span class="categoryLinkLabel_n9Oe">interview</span></a></div></li></ul></nav><button type="button" title="收起侧边栏" aria-label="收起侧边栏" class="button button--secondary button--outline collapseSidebarButton_yk3o"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_L9gH"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div></aside><main class="docMainContainer_A4WS"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_Iqf5"><div class="docItemContainer_uyfQ"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_s4xX" aria-label="页面路径"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="主页面" class="breadcrumbs__link" href="/web-interview/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_AS3R"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">network</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">IP✅</span></li></ul></nav><div class="tocCollapsible_hWYp theme-doc-toc-mobile tocMobile_y7H8"><button type="button" class="clean-btn tocCollapsibleButton_dhk8">本页总览</button></div><div class="theme-doc-markdown markdown"><header><h1>IP✅</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p0-mac-address">什么是 MAC 地址？<a href="#p0-mac-address" class="hash-link" aria-label="什么是 MAC 地址？的直接链接" title="什么是 MAC 地址？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>是什么</strong><br>
+<!-- -->MAC 地址（Media Access Control Address，介质访问控制地址）是网络设备的物理地址，用于在局域网中唯一标识设备。它由网卡制造商分配，通常不可更改。</p>
+</li>
+<li class="">
+<p><strong>特点</strong></p>
+<ul>
+<li class="">长度为 48 位（二进制），通常表示为 12 位十六进制格式（如 <code>00:1A:2B:3C:4D:5E</code>）。</li>
+<li class="">前 24 位为厂商标识符（OUI），后 24 位为设备标识符。</li>
+<li class="">工作在数据链路层，用于局域网内的通信。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>作用</strong></p>
+<ul>
+<li class="">唯一标识局域网中的设备。</li>
+<li class="">用于以太网通信中确定数据帧的源地址和目标地址。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>分类</strong></p>
+<ul>
+<li class=""><strong>单播地址</strong>：用于一对一通信。</li>
+<li class=""><strong>多播地址</strong>：用于一对多通信，MAC 地址的最低有效位为 1。</li>
+<li class=""><strong>广播地址</strong>：用于向网络中所有设备发送数据，地址为 <code>FF:FF:FF:FF:FF:FF</code>。</li>
+</ul>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p0-ip-address">什么是 IP 地址？<a href="#p0-ip-address" class="hash-link" aria-label="什么是 IP 地址？的直接链接" title="什么是 IP 地址？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>是什么</strong><br>
+<!-- -->IP 地址（Internet Protocol Address）是网络设备在网络中标识其位置的唯一标识符。它用于在网络中定位设备并实现设备之间的通信。</p>
+</li>
+<li class="">
+<p><strong>分类</strong></p>
+<ul>
+<li class=""><strong>IPv4 地址</strong>：由 32 位二进制组成，通常表示为点分十进制格式（如 <code>192.168.1.1</code>）。</li>
+<li class=""><strong>IPv6 地址</strong>：由 128 位二进制组成，通常表示为冒号分隔的十六进制格式（如 <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>）。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>作用</strong></p>
+<ul>
+<li class="">唯一标识网络中的设备。</li>
+<li class="">支持设备间的路由和通信。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>分类方式</strong></p>
+<ul>
+<li class=""><strong>按用途</strong>：<!-- -->
+<ul>
+<li class="">公网地址：用于互联网通信，全球唯一。</li>
+<li class="">私网地址：用于局域网通信，不能直接访问互联网（如 <code>192.168.0.0/16</code>）。</li>
+</ul>
+</li>
+<li class=""><strong>按类型</strong>：<!-- -->
+<ul>
+<li class="">单播地址：用于一对一通信。</li>
+<li class="">多播地址：用于一对多通信。</li>
+<li class="">广播地址：用于向网络中所有设备发送数据（仅适用于 IPv4）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p1-ip-classification">IP 地址的分类和子网划分<a href="#p1-ip-classification" class="hash-link" aria-label="IP 地址的分类和子网划分的直接链接" title="IP 地址的分类和子网划分的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>IP 地址分类</strong><br>
+<!-- -->IPv4 地址根据网络规模和用途分为以下几类：</p>
+<ul>
+<li class=""><strong>A 类地址</strong>：范围 <code>0.0.0.0</code> - <code>127.255.255.255</code>，默认子网掩码为 <code>255.0.0.0</code>，适用于大型网络。</li>
+<li class=""><strong>B 类地址</strong>：范围 <code>128.0.0.0</code> - <code>191.255.255.255</code>，默认子网掩码为 <code>255.255.0.0</code>，适用于中型网络。</li>
+<li class=""><strong>C 类地址</strong>：范围 <code>192.0.0.0</code> - <code>223.255.255.255</code>，默认子网掩码为 <code>255.255.255.0</code>，适用于小型网络。</li>
+<li class=""><strong>D 类地址</strong>：范围 <code>224.0.0.0</code> - <code>239.255.255.255</code>，用于多播。</li>
+<li class=""><strong>E 类地址</strong>：范围 <code>240.0.0.0</code> - <code>255.255.255.255</code>，保留地址。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>子网划分</strong><br>
+<!-- -->子网划分通过调整子网掩码将一个网络划分为多个子网，主要目的是提高地址利用率和网络管理效率。</p>
+<ul>
+<li class=""><strong>子网掩码</strong>：用于区分网络部分和主机部分。例如，<code>255.255.255.0</code> 表示前 24 位为网络部分，后 8 位为主机部分。</li>
+<li class=""><strong>CIDR 表示法</strong>：使用斜线后跟网络位数表示子网掩码，例如 <code>192.168.1.0/24</code>。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>计算方法</strong></p>
+<ul>
+<li class="">子网数量：<code>2^n</code>，其中 <code>n</code> 为借用的主机位数。</li>
+<li class="">每个子网的主机数量：<code>2^m - 2</code>，其中 <code>m</code> 为剩余的主机位数，减去 2 是因为需要保留网络地址和广播地址。</li>
+</ul>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p0-ipv4-ipv6">什么是 IPv4 和 IPv6？<a href="#p0-ipv4-ipv6" class="hash-link" aria-label="什么是 IPv4 和 IPv6？的直接链接" title="什么是 IPv4 和 IPv6？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>IPv4</strong></p>
+<ul>
+<li class=""><strong>是什么</strong>：IPv4 是第四版互联网协议，使用 32 位地址空间，最多支持约 42 亿个唯一地址。</li>
+<li class=""><strong>地址格式</strong>：点分十进制表示，例如 <code>192.168.1.1</code>。</li>
+<li class=""><strong>特点</strong>：<!-- -->
+<ul>
+<li class="">地址数量有限，已接近耗尽。</li>
+<li class="">支持广播通信。</li>
+<li class="">使用 ARP 协议解析 IP 地址到 MAC 地址。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p><strong>IPv6</strong>   IPv4 使用 32 位地址空间，地址数量有限，已无法满足全球设备的增长需求。IPv6 使用 128 位地址空间，能够为每个设备分配唯一地址，支持物联网（IoT）等场景。</p>
+<ul>
+<li class=""><strong>是什么</strong>：IPv6 是第六版互联网协议，使用 128 位地址空间，支持几乎无限的地址数量。</li>
+<li class=""><strong>地址格式</strong>：冒号分隔的十六进制表示，例如 <code>2001:0db8:85a3:0000:0000:8a2e:0370:7334</code>。</li>
+<li class=""><strong>特点</strong>：<!-- -->
+<ul>
+<li class="">地址数量极大，解决了 IPv4 地址耗尽问题。</li>
+<li class="">支持多播通信，不支持广播。</li>
+<li class="">使用邻居发现协议（NDP）替代 ARP。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p><strong>IPv4 和 IPv6 的区别</strong></p>
+<table><thead><tr><th>特性</th><th>IPv4</th><th>IPv6</th></tr></thead><tbody><tr><td>地址长度</td><td>32 位</td><td>128 位</td></tr><tr><td>地址数量</td><td>约 42 亿</td><td>几乎无限</td></tr><tr><td>地址表示</td><td>点分十进制</td><td>冒号分隔十六进制</td></tr><tr><td>广播支持</td><td>支持</td><td>不支持</td></tr><tr><td>安全性</td><td>无内置安全机制</td><td>内置 IPsec 支持</td></tr><tr><td>配置方式</td><td>手动或 DHCP</td><td>自动配置（无状态地址自动配置）</td></tr></tbody></table>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p2-ip-protocol">IP 报文的组成和结构<a href="#p2-ip-protocol" class="hash-link" aria-label="IP 报文的组成和结构的直接链接" title="IP 报文的组成和结构的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><p><strong>其他未标注字段含义如下</strong></p><ol>
+<li class=""><strong>Version</strong> (0-3): 指定 IP 协议版本号，IPv4 为 4，IPv6 为 6。</li>
+<li class=""><strong>IHL</strong> (4-7): 指定 IP 头部的长度，单位为 4 字节，用于定位数据部分的起始位置。</li>
+<li class=""><strong>Type of Service</strong> (8-15): 指定服务类型，用于区分数据包的优先级和服务质量。</li>
+<li class=""><strong>Total Length</strong> (16-31): 指定整个 IP 数据包的总长度（头部 + 数据部分），单位为字节。</li>
+<li class=""><strong>Identification</strong> (32-47): 用于标识数据包，分片时所有分片具有相同的标识值。</li>
+<li class=""><strong>Flags</strong> (48): 包含 3 位标志位，用于控制分片行为：<!-- -->
+<ul>
+<li class="">第 1 位：保留位，必须为 0。</li>
+<li class="">第 2 位：DF（Don&#x27;t Fragment），禁止分片标志。</li>
+<li class="">第 3 位：MF（More Fragments），表示是否有更多分片。</li>
+</ul>
+</li>
+<li class=""><strong>Fragment Offset</strong> (49-63): 指定当前分片在原始数据包中的位置，单位为 8 字节。</li>
+<li class=""><strong>Time to Live</strong> (64-71): 指定数据包的生存时间，经过每个路由器时减 1，减为 0 时丢弃数据包。</li>
+<li class=""><strong>Protocol</strong> (72-79): 指定上层协议类型，例如 TCP（6）、UDP（17）。</li>
+<li class=""><strong>Header Checksum</strong> (80-95): 用于检测 IP 头部的传输错误。</li>
+<li class=""><strong>Options and Padding</strong> (160-191): 可选字段用于扩展功能，填充字段用于对齐到 4 字节边界。</li>
+<li class=""><strong>Data</strong> (192-...): 实际传输的应用层数据，长度可变。</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p2-nat">什么是 NAT？NAT 的作用是什么？<a href="#p2-nat" class="hash-link" aria-label="什么是 NAT？NAT 的作用是什么？的直接链接" title="什么是 NAT？NAT 的作用是什么？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>是什么</strong><br>
+<!-- -->NAT（Network Address Translation，网络地址转换）是一种将私有 IP 地址转换为公有 IP 地址的技术，通常用于路由器或防火墙。</p>
+</li>
+<li class="">
+<p><strong>作用</strong></p>
+<ul>
+<li class=""><strong>节省 IP 地址</strong>：通过 NAT，多个设备可以共享一个公网 IP 地址访问互联网。</li>
+<li class=""><strong>提高安全性</strong>：隐藏内部网络结构，防止外部直接访问内部设备。</li>
+<li class=""><strong>支持网络重用</strong>：允许私有地址在不同网络中重复使用。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>类型</strong></p>
+<ul>
+<li class=""><strong>静态 NAT</strong>：一个私有 IP 地址映射到一个固定的公网 IP 地址。</li>
+<li class=""><strong>动态 NAT</strong>：从一组公网 IP 地址中动态分配一个地址给私有 IP 地址。</li>
+<li class=""><strong>PAT（端口地址转换）</strong>：多个私有 IP 地址通过不同的端口共享一个公网 IP 地址。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>应用场景</strong></p>
+<ul>
+<li class="">家庭网络：通过路由器的 NAT 功能共享一个公网 IP 地址。</li>
+<li class="">企业网络：通过 NAT 隐藏内部网络结构，增强安全性。</li>
+</ul>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p3-ip-fragmentation">什么是 IP 分片？<a href="#p3-ip-fragmentation" class="hash-link" aria-label="什么是 IP 分片？的直接链接" title="什么是 IP 分片？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>是什么</strong><br>
+<!-- -->IP 分片是指当数据包的大小超过网络的 MTU（最大传输单元）时，将数据包拆分为多个较小的片段进行传输。</p>
+</li>
+<li class="">
+<p><strong>为什么需要分片</strong></p>
+<ul>
+<li class="">不同网络的 MTU 大小可能不同（如以太网的 MTU 通常为 1500 字节）。</li>
+<li class="">为了确保数据包能够通过所有网络链路，必须将超过 MTU 的数据包进行分片。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>分片过程</strong></p>
+<ul>
+<li class="">每个分片都包含原始数据包的 IP 头部和部分数据。</li>
+<li class="">分片通过以下字段标识和重组：<!-- -->
+<ul>
+<li class=""><strong>标识字段（Identification）</strong>：标识属于同一数据包的所有分片。</li>
+<li class=""><strong>片偏移字段（Fragment Offset）</strong>：标识分片在原始数据包中的位置。</li>
+<li class=""><strong>更多分片标志（MF）</strong>：指示是否还有更多分片。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="">
+<p><strong>重组过程</strong></p>
+<ul>
+<li class="">接收方根据标识字段和片偏移字段将分片重新组装为完整的数据包。</li>
+<li class="">如果某个分片丢失，整个数据包将被丢弃。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>问题与优化</strong></p>
+<ul>
+<li class="">分片可能导致性能下降和丢包率增加。</li>
+<li class="">优化方法：尽量避免分片，使用路径 MTU 发现（PMTUD）技术确定最小 MTU。</li>
+</ul>
+</li>
+</ol></div></div></details>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="p4-arp-rarp">什么是 ARP 和 RARP？<a href="#p4-arp-rarp" class="hash-link" aria-label="什么是 ARP 和 RARP？的直接链接" title="什么是 ARP 和 RARP？的直接链接" translate="no">​</a></h2>
+<details open="" class="details_Fewz alert alert--info details_ZxqD" data-collapsed="false"><summary><strong>答案</strong></summary><div><div class="collapsibleContent_TP4W"><ol>
+<li class="">
+<p><strong>ARP（Address Resolution Protocol）</strong></p>
+<ul>
+<li class=""><strong>是什么</strong>：ARP 是一种协议，用于通过 IP 地址解析对应的 MAC 地址。</li>
+<li class=""><strong>工作原理</strong>：<!-- -->
+<ol>
+<li class="">主机发送广播 ARP 请求，询问某个 IP 地址对应的 MAC 地址。</li>
+<li class="">目标主机接收到请求后，发送 ARP 响应，告知其 MAC 地址。</li>
+</ol>
+</li>
+<li class=""><strong>应用场景</strong>：局域网内的通信需要通过 ARP 获取目标设备的 MAC 地址。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>RARP（Reverse Address Resolution Protocol）</strong></p>
+<ul>
+<li class=""><strong>是什么</strong>：RARP 是一种协议，用于通过 MAC 地址解析对应的 IP 地址。</li>
+<li class=""><strong>工作原理</strong>：<!-- -->
+<ol>
+<li class="">主机发送广播 RARP 请求，询问某个 MAC 地址对应的 IP 地址。</li>
+<li class="">RARP 服务器接收到请求后，返回对应的 IP 地址。</li>
+</ol>
+</li>
+<li class=""><strong>应用场景</strong>：无盘工作站通过 RARP 获取 IP 地址。</li>
+</ul>
+</li>
+<li class="">
+<p><strong>区别</strong></p>
+<ul>
+<li class="">ARP：IP 地址 -&gt; MAC 地址。</li>
+<li class="">RARP：MAC 地址 -&gt; IP 地址。</li>
+</ul>
+</li>
+</ol></div></div></details></div></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/web-interview/docs/network/concept"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">概念✅</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/web-interview/docs/network/udp-tcp"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">udp tcp✅</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_Hema thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#p0-mac-address" class="table-of-contents__link toc-highlight">什么是 MAC 地址？</a></li><li><a href="#p0-ip-address" class="table-of-contents__link toc-highlight">什么是 IP 地址？</a></li><li><a href="#p1-ip-classification" class="table-of-contents__link toc-highlight">IP 地址的分类和子网划分</a></li><li><a href="#p0-ipv4-ipv6" class="table-of-contents__link toc-highlight">什么是 IPv4 和 IPv6？</a></li><li><a href="#p2-ip-protocol" class="table-of-contents__link toc-highlight">IP 报文的组成和结构</a></li><li><a href="#p2-nat" class="table-of-contents__link toc-highlight">什么是 NAT？NAT 的作用是什么？</a></li><li><a href="#p3-ip-fragmentation" class="table-of-contents__link toc-highlight">什么是 IP 分片？</a></li><li><a href="#p4-arp-rarp" class="table-of-contents__link toc-highlight">什么是 ARP 和 RARP？</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Web Interview, Inc. Built with ZenHeart.</div></div></div></footer></div>
+</body>
+</html>
