@@ -53,12 +53,13 @@ Electron 核心架构
 ## 题目索引与导读
 
 - **[01. 进程模型与崩溃容灾](./01.process-model.md)**
-  - `{#p0-electron-process-model}`：Electron 多进程架构模型（Main / Renderer / Utility / Worker 进程）职责划分与选型？
-  - `{#p0-electron-crash-recovery}`：Electron 主进程崩溃与渲染进程崩溃（Crash）的兜底容灾与 Minidump 黑匣子捕获？
+  - `{#p0-electron-process-model}`：Electron 的多进程架构模型是怎样的？各个进程之间如何分工协作？
+  - `{#p0-electron-crash-recovery}`：Electron 主进程或渲染进程发生崩溃（Crash）时，如何捕获日志并进行容灾兜底？
 - **[02. 进程通信与安全防御](./02.ipc-security.md)**
-  - `{#p0-electron-ipc-performance}`：Electron IPC 进程间通信机制（ipcMain / ipcRenderer / MessagePort）与大数据量零拷贝传输优化？
-  - `{#p0-electron-security-baseline}`：Electron 安全基线防御（contextIsolation, nodeIntegration, contextBridge, preload 沙箱与 Webview 隔离）？
+  - `{#p0-electron-ipc-performance}`：Electron IPC 通信有哪些方式？大数据量传输时如何避免卡顿并实现零拷贝？
+  - `{#p0-electron-security-baseline}`：Electron 桌面应用有哪些常见的安全风险？如何构建严密的安全防御基线？
+  - `{#p0-electron-shared-memory-ipc}`：Electron 中如何用 SharedArrayBuffer 与 Atomics 实现多进程共享内存通信？如何防御 IPC 死锁？
 - **[03. 性能优化与自动更新](./03.performance-memory.md)**
-  - `{#p0-electron-cold-start}`：Electron 桌面客户端渲染进程冷启动耗时分析、秒开优化与窗口预热（Prewarm）策略？
-  - `{#p0-electron-memory-tab-discarding}`：Electron 多 Tab 架构下的内存治理与页面挂起休眠（Tab Discarding）机制？
-  - `{#p1-electron-auto-updater}`：Electron 跨平台自动更新（Auto-Updater）全流程架构设计与灰度回滚机制？
+  - `{#p0-electron-cold-start}`：Electron 客户端冷启动耗时过长，你一般会采取哪些秒开与窗口预热策略？
+  - `{#p0-electron-memory-tab-discarding}`：Electron 多 Tab 页签架构下内存飙升怎么解决？页面挂起休眠机制是如何实现的？
+  - `{#p1-electron-auto-updater}`：Electron 跨平台桌面客户端的自动更新机制是如何设计的？如何支持灰度与版本回滚？

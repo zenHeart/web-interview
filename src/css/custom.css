@@ -331,10 +331,15 @@ div[class*='codeBlockContainer'] {
 .markdown details {
   background-color: var(--wi-bg-surface);
   border: 1px solid var(--wi-border);
-  border-radius: 6px;
+  border-radius: 8px;
   margin: 1.25rem 0;
-  padding: 0.75rem 1.25rem;
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  padding: 0.85rem 1.25rem;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  /* 覆盖 Docusaurus 内部 details 装饰色变量，杜绝突兀的蓝色横线与样式穿透 */
+  --docusaurus-details-decoration-color: var(--wi-border);
+  --ifm-alert-border-color: var(--wi-border);
+  --ifm-alert-background-color: var(--wi-bg-surface);
 }
 
 .markdown details:hover {
@@ -351,15 +356,30 @@ div[class*='codeBlockContainer'] {
   font-size: 0.95rem;
   color: var(--wi-text);
   cursor: pointer;
-  padding: 0.25rem 0;
+  padding: 0.35rem 0;
+  margin: 0;
   user-select: none;
   display: flex;
   align-items: center;
   gap: 8px;
+  line-height: 1.5;
+  transition: color 0.15s ease;
 }
 
 .markdown details summary:hover {
   color: var(--wi-accent);
+}
+
+/* 彻底解决展开后 Docusaurus 自带横线与“答案”文案挤压重叠的问题 */
+.markdown details [class*='collapsibleContent'] {
+  margin-top: 0.85rem !important;
+  border-top: 1px solid var(--wi-border) !important;
+  padding-top: 1rem !important;
+}
+
+/* 确保内部正文首段与分割线留有舒适呼吸感 */
+.markdown details [class*='collapsibleContent'] > :first-child {
+  margin-top: 0 !important;
 }
 
 /* 表格 (Table) - 工业级严密对齐 */
