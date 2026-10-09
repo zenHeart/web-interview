@@ -1,0 +1,8 @@
+{
+  "label": "Electron 跨端桌面架构✅",
+  "position": 5.6,
+  "link": {
+    "type": "generated-index",
+    "description": "现代桌面端与 Electron 高性能跨端架构专栏：深入剖析多进程模型、IPC 零拷贝通信与死锁防御、安全基线防护、秒开与窗口预热、多 Tab 内存休眠治理与企业级自动更新体系。"
+  }
+}
