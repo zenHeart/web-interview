@@ -71,14 +71,18 @@ git init --initial-branch=deploy >/dev/null 2>&1 || git init >/dev/null 2>&1
 git add -A
 
 # 写入追溯元信息文件（可供前端或调试使用，可选）
-cat > deployment-meta.json <<EOF
-{
-    "sourceCommit": "$SOURCE_COMMIT_HASH",
-    "sourceCommitShort": "$SOURCE_COMMIT_SHORT",
-    "subject": "${SOURCE_COMMIT_SUBJECT//"/\"}",
-    "buildTimeUTC": "$BUILD_TIME"
+export SOURCE_COMMIT_HASH SOURCE_COMMIT_SHORT SOURCE_COMMIT_SUBJECT BUILD_TIME
+python3 -c "
+import json, os
+meta = {
+    'sourceCommit': os.environ.get('SOURCE_COMMIT_HASH', ''),
+    'sourceCommitShort': os.environ.get('SOURCE_COMMIT_SHORT', ''),
+    'subject': os.environ.get('SOURCE_COMMIT_SUBJECT', ''),
+    'buildTimeUTC': os.environ.get('BUILD_TIME', '')
 }
-EOF
+with open('deployment-meta.json', 'w', encoding='utf-8') as f:
+    json.dump(meta, f, indent=4, ensure_ascii=False)
+"
 git add deployment-meta.json
 
 COMMIT_MSG_HEADER="deploy: $SOURCE_COMMIT_SHORT $SOURCE_COMMIT_SUBJECT"
