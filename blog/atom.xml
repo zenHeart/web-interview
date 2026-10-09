@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://blog.zenheart.site/web-interview/blog</id>
+    <title>前端面试 Blog</title>
+    <updated>2026-09-11T00:00:00.000Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://blog.zenheart.site/web-interview/blog"/>
+    <subtitle>前端面试 Blog</subtitle>
+    <icon>https://blog.zenheart.site/web-interview/img/logo.svg</icon>
+    <entry>
+        <title type="html"><![CDATA[2026 前端核心题库大升级：Vite 8.x、现代 ECMAScript、React 19、交互式组件与搜索功能全量发布]]></title>
+        <id>https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers</id>
+        <link href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers"/>
+        <updated>2026-09-11T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[随着 2026 年前端技术栈与企业级招聘标准的全面演进，传统基于“纯文本背题”的前端面试模式已无法满足现代前端岗位的考核要求。]]></summary>
+        <content type="html"><![CDATA[<p>随着 2026 年前端技术栈与企业级招聘标准的全面演进，传统基于“纯文本背题”的前端面试模式已无法满足现代前端岗位的考核要求。</p>
+<p>本次升级对标 2026 年一线技术标准，全方位重构了知识体系，重磅上线了<strong>交互式可视化模拟器生态</strong>、<strong>可运行代码沙盒</strong>、<strong>Vite 8.x / ECMAScript 2024-2026 / React 19 / Vue 3.5+ Vapor 前沿专题</strong>，并正式集成了<strong>全站本地离线高性能搜索</strong>与<strong>面试方法论指南</strong>！</p>
+<h2 class="anchor anchorTargetStickyNavbar_VXtw" id="-核心升级亮点-changelog-highlights">🚀 核心升级亮点 (Changelog Highlights)<a href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers#-%E6%A0%B8%E5%BF%83%E5%8D%87%E7%BA%A7%E4%BA%AE%E7%82%B9-changelog-highlights" class="hash-link" aria-label="🚀 核心升级亮点 (Changelog Highlights)的直接链接" title="🚀 核心升级亮点 (Changelog Highlights)的直接链接" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_VXtw" id="1-2026-前端最新核心技术栈专题落地">1. 2026 前端最新核心技术栈专题落地<a href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers#1-2026-%E5%89%8D%E7%AB%AF%E6%9C%80%E6%96%B0%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E6%A0%88%E4%B8%93%E9%A2%98%E8%90%BD%E5%9C%B0" class="hash-link" aria-label="1. 2026 前端最新核心技术栈专题落地的直接链接" title="1. 2026 前端最新核心技术栈专题落地的直接链接" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Vite 8.x 单引擎统一架构</strong>：<!-- -->
+<ul>
+<li class="">彻底终结“开发 esbuild + 生产 Rollup”历史割裂，全面升级为基于 <strong>Rolldown</strong>（Rust + Oxc 深度整合）的单一底层编译器管线，实现 10x~30x 的构建速度跃升；</li>
+<li class="">配置全面平滑过渡至 <code>rolldownOptions</code>，深入解析稳定版 <strong>Environment API</strong> 与 <strong>Module Runner</strong> 跨运行时隔离机制。</li>
+</ul>
+</li>
+<li class=""><strong>现代 ECMAScript (ES2024 - ES2026) 前沿特性</strong>：<!-- -->
+<ul>
+<li class="">系统剖析 <code>Promise.try()</code>、<code>Promise.withResolvers()</code>、原生 <code>Iterator Helpers</code> 惰性流式计算（$O(1)$ 空间）与 <code>Set</code> 集合代数；</li>
+<li class="">详解底层二进制内存操作 <code>ArrayBuffer.prototype.transfer()</code> 零拷贝转移机制、<code>Uint8Array</code> 原生 Base64/Hex 编解码，以及 <code>Float16Array</code> 在端侧 AI 与 WebGPU 中的显存优化；</li>
+<li class="">突破性跨 Realm 错误判定 <code>Error.isError()</code> 与高精度浮点累加 <code>Math.sumPrecise()</code>。</li>
+</ul>
+</li>
+<li class=""><strong>React 19 异步动作新范式</strong>：<!-- -->
+<ul>
+<li class="">拆解 <code>useActionState</code>、<code>useOptimistic</code> 双状态流水线与自动回滚机理、<code>use()</code> Hook 跨生命周期与 Suspense 唤醒协议；</li>
+<li class="">深入剖析 React Compiler 基于 SSA-HIR 控制流图的全自动记忆化（Auto-memoization）与安全退让机制（Bailout）；</li>
+<li class="">详解 React Server Components (RSC) 底层 <strong>Flight 协议</strong> 行式 JSON 流传输与客户端选择性水合（Selective Hydration）。</li>
+</ul>
+</li>
+<li class=""><strong>Vue 3.5+ 响应式重构与 Vapor Mode</strong>：<!-- -->
+<ul>
+<li class="">弃用 WeakMap+Set，改用基于 Sub/Dep 双向链表与版本计数（Version Counting），内存占用下降 56%；</li>
+<li class="">剖析 Vapor Mode 脱离 Virtual DOM 直接生成原生 DOM 路径寻址与靶向更新指令的编译原理。</li>
+</ul>
+</li>
+<li class=""><strong>Node.js 22/23+ 现代全栈运行时</strong>：<!-- -->
+<ul>
+<li class=""><code>--experimental-strip-types</code> 原生运行 TypeScript、内置高性能数据库 <code>node:sqlite</code>、系统级安全权限沙箱 <code>Permission Model</code>。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_VXtw" id="2-5-大工业级架构交互式可视化组件interactive-visualizers">2. 5 大工业级架构交互式可视化组件（Interactive Visualizers）<a href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers#2-5-%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%BA%A7%E6%9E%B6%E6%9E%84%E4%BA%A4%E4%BA%92%E5%BC%8F%E5%8F%AF%E8%A7%86%E5%8C%96%E7%BB%84%E4%BB%B6interactive-visualizers" class="hash-link" aria-label="2. 5 大工业级架构交互式可视化组件（Interactive Visualizers）的直接链接" title="2. 5 大工业级架构交互式可视化组件（Interactive Visualizers）的直接链接" translate="no">​</a></h3>
+<p>全部自适应深浅色模式，支持在浏览器中即时交互与推导：</p>
+<ol>
+<li class=""><strong><code>&lt;ViteHmrVisualizer /&gt;</code></strong>：Vite ModuleGraph 依赖拓扑、脏模块冒泡过程与 <code>hot.accept()</code> 边界热更新模拟器；</li>
+<li class=""><strong><code>&lt;StranglerVisualizer /&gt;</code></strong>：超万行遗留系统 4 阶段绞杀演进（0% 准备 $\to$ 25% 边缘切流 $\to$ 70% 核心剥离 $\to$ 100% 完整退役）动态模拟器；</li>
+<li class=""><strong><code>&lt;ElectronProcessVisualizer /&gt;</code></strong>：主进程/渲染进程/Preload 架构拓扑，支持交互模拟触发渲染崩溃、OOM 内存超限与 Minidump 黑匣子捕获转储自愈演示；</li>
+<li class=""><strong><code>&lt;AgentTraceVisualizer /&gt;</code></strong>：前端智能体（Agent）载体架构，演示 SSE 流式逐字打字、ReAct 思考展开、MCP 工具调用申请与 Human-in-the-Loop 卡口确认；</li>
+<li class=""><strong><code>&lt;InpVisualizer /&gt;</code></strong>：Core Web Vitals INP 三段式交互甘特图拆解，对比 Long Task 阻塞（Poor 290ms）与任务切片调度优化（Good 28ms）。</li>
+</ol>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_VXtw" id="3-全站本地离线中英文搜索引擎集成">3. 全站本地离线中英文搜索引擎集成<a href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers#3-%E5%85%A8%E7%AB%99%E6%9C%AC%E5%9C%B0%E7%A6%BB%E7%BA%BF%E4%B8%AD%E8%8B%B1%E6%96%87%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E9%9B%86%E6%88%90" class="hash-link" aria-label="3. 全站本地离线中英文搜索引擎集成的直接链接" title="3. 全站本地离线中英文搜索引擎集成的直接链接" translate="no">​</a></h3>
+<ul>
+<li class="">集成 <code>@easyops-cn/docusaurus-search-local</code> 本地离线搜索引擎；</li>
+<li class="">支持快捷键 <code>Cmd+K</code> / <code>Ctrl+K</code> 随时唤醒全局搜索框；</li>
+<li class="">高质量中文分词与高亮匹配，涵盖题库（docs）、公司真题（company）、面试指南（interview-guide）与贡献指南（contributors）四大内容体系。</li>
+</ul>
+<hr>
+<h3 class="anchor anchorTargetStickyNavbar_VXtw" id="4-架构与目录金字塔式重构">4. 架构与目录金字塔式重构<a href="https://blog.zenheart.site/web-interview/blog/2026-frontend-core-questions-and-visualizers#4-%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%9B%AE%E5%BD%95%E9%87%91%E5%AD%97%E5%A1%94%E5%BC%8F%E9%87%8D%E6%9E%84" class="hash-link" aria-label="4. 架构与目录金字塔式重构的直接链接" title="4. 架构与目录金字塔式重构的直接链接" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>二元解耦</strong>：将求职与面试方法论从 <code>contributors</code> 中彻底解耦，全新设立独立的 <strong>「面试指南」</strong> 板块（<code>/interview-guide</code>），涵盖面试认知重构、布卢姆题型分类、大厂简历黄金法则与全流程通关指南；</li>
+<li class=""><strong>贡献指南纯粹化</strong>：使 <strong>「贡献指南」</strong>（<code>/contributors</code>）专注于工程架构解密、Git/PR 工作流规范、交互组件与 Sandpack 沙盒实战指南。</li>
+</ul>]]></content>
+        <author>
+            <name>zenheart</name>
+            <uri>https://github.com/zenHeart</uri>
+        </author>
+        <category label="changelog" term="changelog"/>
+        <category label="release" term="release"/>
+        <category label="architecture" term="architecture"/>
+        <category label="vite8" term="vite8"/>
+        <category label="react19" term="react19"/>
+        <category label="vue3.5" term="vue3.5"/>
+    </entry>
+</feed>
