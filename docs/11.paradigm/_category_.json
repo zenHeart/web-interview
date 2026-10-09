@@ -1,0 +1,8 @@
+{
+  "label": "编程范式与架构思想✅",
+  "position": 11,
+  "link": {
+    "type": "generated-index",
+    "description": "探讨现代软件工程核心编程范式与设计哲学：深入面向对象设计原则（SOLID）、函数式编程与不可变数据、现代响应式范式演进（Virtual DOM vs Signals 细粒度响应式）与 TC39 Signals 标准。"
+  }
+}
