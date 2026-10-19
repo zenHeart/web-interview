@@ -2,30 +2,33 @@
 # 刷新本地数据源镜像（repos/）。repos/ 已在 .gitignore，不入库。
 #
 # 用法：
-#   bash skills/question-bank-refresh/scripts/refresh-sources.sh          # 刷新全部
-#   bash skills/question-bank-refresh/scripts/refresh-sources.sh l2       # 只刷新真题仓
-#   bash skills/question-bank-refresh/scripts/refresh-sources.sh l0       # 只刷新官方仓
+#   bash skills/question-bank-refresh/scripts/refresh-sources.sh          # 补齐缺失 + 更新现有
+#   bash skills/question-bank-refresh/scripts/refresh-sources.sh l2       # 只处理真题仓
+#   bash skills/question-bank-refresh/scripts/refresh-sources.sh l0       # 只处理官方仓
+#   SKIP_UPDATE=1 bash skills/question-bank-refresh/scripts/refresh-sources.sh   # 只补齐，不更新
 #
-# 说明：
-#   - L2 真题仓用 --depth 1（需要读到文件内容）
-#   - L0 官方仓用 --depth 1 --filter=blob:none（读文件时按需联网下载 blob）
-#   - 已存在的目录做 fetch --depth 1 更新，不重复克隆
+# 环境变量：
+#   CLONE_TIMEOUT   单个 git 操作墙钟上限（秒），默认 120
+#   CONCURRENCY     并发数，默认 4（分批并行，bash 3.2 无 wait -n）
+#   SKIP_UPDATE=1   跳过对已存在仓库的 fetch 更新
+#
+# 设计要点（都是踩过的坑）：
+#   - 克隆优先于更新：新仓带来新考点，旧仓更新只是保鲜，先保证覆盖面
+#   - 分批并行：串行 22 个大仓 fetch 会占满整轮墙钟
+#   - 三层网络保护：GIT_TERMINAL_PROMPT=0 / http lowSpeed 限制 / 杀进程树看门狗
 set -euo pipefail
 
-# 网络保护：git 传输若 30 秒内低于 1KB/s 则主动中断，避免整轮刷新被单仓卡死。
-# GIT_TERMINAL_PROMPT=0 禁止交互式凭据提示（无人值守场景必须）。
 export GIT_TERMINAL_PROMPT=0
 GIT_LOW_SPEED_OPTS=(-c http.lowSpeedLimit=1000 -c http.lowSpeedTime=30)
 GIT_TIMEOUT_OPTS=(-c http.connectTimeout=20)
-# 单仓整体墙钟上限（秒）；超时即放弃该仓并继续下一个
-CLONE_TIMEOUT="${CLONE_TIMEOUT:-300}"
+CLONE_TIMEOUT="${CLONE_TIMEOUT:-120}"
+CONCURRENCY="${CONCURRENCY:-4}"
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 REPOS="$ROOT/repos"
 MODE="${1:-all}"
 mkdir -p "$REPOS"
 
-# repo-slug<TAB>本地目录名
 L2_LIST=$(cat <<'EOF'
 pro-collection/interview-question	interview-question
 yangshun/front-end-interview-handbook	front-end-interview-handbook
@@ -69,60 +72,99 @@ whatwg/html	whatwg-html
 EOF
 )
 
-# 看门狗：杀掉 git 进程树（子进程 git-remote-https 才是真正在传数据的那一个，
+# 杀掉 git 进程树（子进程 git-remote-https 才是真正在传数据的那一个，
 # 只杀父进程会留下孤儿进程继续传输，等于没超时）
 kill_tree() {
   local pid="$1"
-  pkill -TERM -P "$pid" 2>/dev/null || true   # 先杀子进程
-  kill -TERM "$pid" 2>/dev/null || true        # 再杀父进程
+  pkill -TERM -P "$pid" 2>/dev/null || true
+  kill -TERM "$pid" 2>/dev/null || true
   sleep 1
   pkill -KILL -P "$pid" 2>/dev/null || true
   kill -KILL "$pid" 2>/dev/null || true
 }
 
-clone_or_update() {
+# 克隆单个仓库（目录已存在则跳过）
+do_clone() {
   local slug="$1" name="$2" filter_flag="$3"
   local dir="$REPOS/$name"
   if [ -d "$dir/.git" ]; then
-    printf '  ~ %-42s (更新)\n' "$slug"
-    git -C "$dir" "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" fetch --depth 1 --quiet origin 2>/dev/null &
-    local fpid=$!
-    ( sleep "$CLONE_TIMEOUT"; kill_tree "$fpid" ) &
-    local fwatch=$!
-    wait "$fpid" 2>/dev/null || true
-    kill -TERM "$fwatch" 2>/dev/null || true
-    git -C "$dir" reset --hard --quiet "FETCH_HEAD" 2>/dev/null || true
-  else
-    printf '  + %-42s (克隆)\n' "$slug"
-    local extra=()
-    [ "$filter_flag" = "blobless" ] && extra=(--filter=blob:none)
-    # 看门狗：单仓墙钟超过 CLONE_TIMEOUT 即终止该仓，继续下一个，不拖死整轮
-    git clone --depth 1 "${extra[@]}" --quiet \
-      "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" \
-      "https://github.com/$slug.git" "$dir" 2>/dev/null &
-    local pid=$!
-    ( sleep "$CLONE_TIMEOUT"; kill_tree "$pid" ) &
-    local watchdog=$!
-    wait "$pid" 2>/dev/null || true
-    kill -TERM "$watchdog" 2>/dev/null || true
-    [ -d "$dir/.git" ] || printf '  ! 克隆失败或超时: %s\n' "$slug"
+    return 0
+  fi
+  printf '  + %-42s (克隆)\n' "$slug"
+  local extra=()
+  [ "$filter_flag" = "blobless" ] && extra=(--filter=blob:none)
+  git clone --depth 1 "${extra[@]}" --quiet \
+    "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" \
+    "https://github.com/$slug.git" "$dir" 2>/dev/null &
+  local pid=$!
+  ( sleep "$CLONE_TIMEOUT"; kill_tree "$pid" ) &
+  local watchdog=$!
+  wait "$pid" 2>/dev/null || true
+  kill -TERM "$watchdog" 2>/dev/null || true
+  [ -d "$dir/.git" ] || printf '  ! 克隆失败或超时: %s\n' "$slug"
+}
+
+# 更新单个已存在仓库
+do_update() {
+  local slug="$1" name="$2"
+  local dir="$REPOS/$name"
+  [ -d "$dir/.git" ] || return 0
+  printf '  ~ %-42s (更新)\n' "$slug"
+  git -C "$dir" "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" fetch --depth 1 --quiet origin 2>/dev/null &
+  local pid=$!
+  ( sleep "$CLONE_TIMEOUT"; kill_tree "$pid" ) &
+  local watchdog=$!
+  wait "$pid" 2>/dev/null || true
+  kill -TERM "$watchdog" 2>/dev/null || true
+  git -C "$dir" reset --hard --quiet "FETCH_HEAD" 2>/dev/null || true
+}
+
+# 分批并行执行：每批 CONCURRENCY 个同时跑，跑完一批再下一批
+run_batches() {
+  local op="$1" filter_flag="$2"
+  local list="$3"
+  local -a batch=()
+  local count=0
+  while IFS=$'\t' read -r slug name; do
+    [ -z "$slug" ] && continue
+    batch+=("$slug"$'\t'"$name")
+    count=$((count + 1))
+    if [ $((count % CONCURRENCY)) -eq 0 ]; then
+      for item in "${batch[@]}"; do
+        $op "${item%%$'\t'*}" "${item##*$'\t'}" "$filter_flag" &
+      done
+      wait
+      batch=()
+    fi
+  done <<< "$list"
+  if [ ${#batch[@]} -gt 0 ]; then
+    for item in "${batch[@]}"; do
+      $op "${item%%$'\t'*}" "${item##*$'\t'}" "$filter_flag" &
+    done
+    wait
   fi
 }
 
 if [ "$MODE" = "all" ] || [ "$MODE" = "l2" ]; then
   echo "[L2] 真题题库仓"
-  while IFS=$'\t' read -r slug name; do
-    [ -z "$slug" ] && continue
-    clone_or_update "$slug" "$name" full
-  done <<< "$L2_LIST"
+  run_batches do_clone full "$L2_LIST"
 fi
 
 if [ "$MODE" = "all" ] || [ "$MODE" = "l0" ]; then
   echo "[L0] 官方规范 / 源码仓"
-  while IFS=$'\t' read -r slug name; do
-    [ -z "$slug" ] && continue
-    clone_or_update "$slug" "$name" blobless
-  done <<< "$L0_LIST"
+  run_batches do_clone blobless "$L0_LIST"
+fi
+
+# 缺失补齐后再更新（可用 SKIP_UPDATE=1 跳过）
+if [ "${SKIP_UPDATE:-0}" != "1" ]; then
+  if [ "$MODE" = "all" ] || [ "$MODE" = "l2" ]; then
+    echo "[L2] 更新已有仓"
+    run_batches do_update full "$L2_LIST"
+  fi
+  if [ "$MODE" = "all" ] || [ "$MODE" = "l0" ]; then
+    echo "[L0] 更新已有仓"
+    run_batches do_update blobless "$L0_LIST"
+  fi
 fi
 
 echo
