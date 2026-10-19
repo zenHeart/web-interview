@@ -56,6 +56,8 @@
 | React | 19.3.0；19.2 引入 `<Activity>` / `useEffectEvent` / PPR resume；19.3 引入 `<ViewTransition>` / Fragment refs | "React 19.0 是最新" | facebook/react CHANGELOG |
 | TC39 | 同步 Iterator Helpers 已进 ES2025，**异步版仍 Stage 2**；**Decorators 于 2026-05 退回 Stage 2.7**；Temporal 已 Stage 4 但**规范正文未合入**；Async Context 仅 Stage 2 | "装饰器已定稿""异步迭代器助手已进标准" | `repos/proposals/README.md`、`finished-proposals.md` |
 | WebGPU | W3C **Candidate Recommendation Draft**（非 Recommendation）；规范仓是 `gpuweb/gpuweb` | "WebGPU 已是 W3C 标准" | w3.org/TR/webgpu |
+| MCP 渐进式发现 / Code Mode | 写在 **2026-07-28 客户端最佳实践**（`docs/docs/2026-07-28/develop/clients/client-best-practices.mdx`）里，属**推荐做法**而非协议层强制；`Progressive Disclosure` 是 **Working Group**，章程明写"无权批准规范变更"，grouping / tool-search / code-mode 仅为**候选策略**。三层契约为 Catalog(`search_tools`) → Inspect(`get_tool_details`) → Execute，切换阈值建议为上下文窗口的 **1%~5%** | "MCP 规范已定义 tool search / 渐进式披露已是协议特性" | `repos/specification/docs/docs/2026-07-28/develop/clients/client-best-practices.mdx`、`repos/specification/docs/community/working-groups/progressive-disclosure.mdx` |
+| 评测指标原始出处 | **BLEU** = Papineni et al., ACL 2002, pp. 311–318；**ROUGE** = Chin-Yew Lin, 2004（ROUGE-N/L）；**NDCG** = Järvelin & Kekäläinen, ACM TOIS 20(4), 2002, pp. 422–446；**PRM** = Lightman et al., *Let's Verify Step by Step*, arXiv:2305.20050（2023-05-31，过程监督在 MATH 上优于结果监督，模型解出 MATH 代表性子集 78%，开源 PRM800K 80 万条步骤级标注） | "PRM 是 2024 年的新方法" / 把 NDCG 当生成质量指标 / 把 BLEU 说成"已被淘汰" | aclanthology.org P02-1040 与 W04-1013、ACM TOIS 2002、arxiv.org/abs/2305.20050 |
 | Wasm | Wasm 3.0 (2025) 为最新规范版本；WasmGC 的结构类型**已在核心规范正文** | "WasmGC 仍是独立提案" | webassembly.github.io/spec |
 | 浏览器特性 | 必须分列**规范定稿 / 首个实现版本 / Baseline 状态与日期**三列 | 用"已支持"一笔带过 | web-features `data.json` + MDN BCD |
 

@@ -65,6 +65,7 @@
 | :--- | :--- | :--- | :--- |
 | 牛客面经帖 | 一线真实面经（2026-09/10 仍在更新） | `scripts/fetch-nowcoder.py` | SSR 内联 JSON；`desc` 常被截断，优先取 `content`；有频控 |
 | 牛客题库页 | 公司真题 | 只读 | 多数需登录 |
+| **牛客 AI Agent 专场面经（2026-09/10 高频）** | 一线真题的主要增量来源 | `scripts/fetch-nowcoder.py <url>` | 2026-10-20 已核到并录题的高价值帖：<br/>· `nowcoder.com/feed/main/detail/8ee12044e8284a8d8d6140dc2d0840ff`（深圳外企 Agent 开发 18 问）→ 工具定义膨胀/两层工具调用/意图识别/企业 Word·PDF RAG/召回质量<br/>· `nowcoder.com/discuss/800426409796624384`（蚂蚁国际一面 19 问）→ NDCG/搜索排序指标/重排序/Agent 评测<br/>· `nowcoder.com/feed/main/detail/54b3374bbfec494dba76294891edd9b4`（金山办公大模型实习一面）→ ROUGE 计算原理/LCS |
 | `web-features` (`data.json`) | Baseline 状态与日期 | CDN JSON | 1229 个 feature，可直接查 `status.baseline_high_date` |
 | MDN BCD | 各特性各浏览器 `version_added` | CDN JSON | 体积大（~20MB），用脚本解析而非整读 |
 | Chrome VersionHistory API | 当前稳定版 | 官方 API | — |
@@ -78,6 +79,8 @@
 | :--- | :--- | :--- |
 | 牛客部分帖子正文需登录 | 该帖不可用 | 记为缺口，换其它帖；**不要**凭标题脑补正文 |
 | 牛客频控导致骨架页 | 该轮抓取失效 | 隔开重试；`TITLE: 牛客网 - 找工作神器` 即判定未抓到 |
+| `mianjing.json` 的 `company` 字段看不出信源层级 | 容易把 L3 聚合站题面当真题录入 | 读 `source_url`：`github.com` / `raw.githubusercontent.com` / `*.github.io` = L2 可用；`developer.aliyun.com` / `developer.cloud.tencent.cn` / `gitcode.csdn.net` = **L3 只作线索** |
+| `web_search` 偶发 `MATRIX_TOOL_REQUEST_FAILED` | 检索通道不可用 | 改 `web_fetch` / `curl` 直接取官方页（arXiv abs 页、ACL Anthology 页） |
 | `blog.webassembly.org` SSL 握手失败 | 取不到 Wasm 3.0 官方公告原文 | 改用 `webassembly.github.io/spec/` 的 All Versions 段 |
 | Vite「10-30x faster」「full plugin compatibility」无第三方复现 | 性能宣称不可作事实 | 写成「官方声称」 |
 | Rspack「Webpack Compatible」无第三方独立验证 | 兼容性宣称不可作事实 | 附官方兼容性矩阵中的 "Partially compatible" 条目 |
