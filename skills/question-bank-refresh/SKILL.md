@@ -190,6 +190,19 @@ npm run build                         # Docusaurus 构建 0 错误
 > - **分批并行**：默认 4 并发（macOS 自带 bash 3.2 没有 `wait -n`，用「分批 `wait`」实现）；
 > - **`SKIP_UPDATE=1`**：只补齐不更新，网络拥塞时用。
 > 实测 34 个仓（12 真题仓 + 22 L0 官方仓）**4 分钟内补齐**，其中 `openai-agents-python` / `whatwg-html` / `vercel-ai` 三个仓 HEAD 为当日。
+>
+> **坑 17（镜像放按日期新建的工作区里，每晚会重克隆 1.2GB）**：每日任务的工作区是 `qb-refresh-<日期>`，镜像若跟着工作区走，每晚都要把 34 个仓重新克隆一遍、结束时再删一遍 1.2GB。
+> 正确做法：**镜像放持久共享目录，工作区里用符号链接指过去**。
+> ```bash
+> SHARED=/Users/chengle/code/github/.cache/web-interview-repos
+> mkdir -p "$(dirname "$SHARED")"
+> [ -d "$SHARED" ] || mv "$WT/repos" "$SHARED"     # 已有镜像直接搬过去
+> cd "$WT" && ln -sfn "$SHARED" repos
+> REPOS_DIR="$SHARED" bash skills/question-bank-refresh/scripts/refresh-sources.sh
+> ```
+> 两个配套细节：
+> - `.gitignore` 里要写 `repos`（**不带尾斜杠**）——目录模式 `repos/` 不匹配符号链接，会让它变成未跟踪文件；
+> - 脚本里统计仓数要用 `ls -1 "$REPOS"` 而不是 `find ... -type d`——`find` 默认不跟随符号链接，会数成 0。
 
 ---
 

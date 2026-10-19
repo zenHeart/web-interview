@@ -85,4 +85,6 @@ book
 dist/
 _docs/
 # 本地数据源镜像（权威数据源仓库 clone，不入库）
-repos/
+# 用 `repos` 而非 `repos/`：共享镜像可能是指向持久目录的符号链接，
+# 而 gitignore 的目录模式不匹配符号链接，会让它变成未跟踪文件。
+repos
