@@ -213,6 +213,36 @@ npm run build                         # Docusaurus 构建 0 错误
 > ```
 > 其它工作区一律用**带日期的独立分支名**（`feature/question-bank-refresh-<日期>`），永远不要在它们里面动 `main`。
 > 万一已经弄脏，`git restore --source=HEAD --staged --worktree -- .`（**不要**用 `git reset --hard`）即可复原，内容不会丢——因为改动早已在提交里。
+>
+> **坑 19（镜像刷新的 update 阶段会跑超 1 小时，必须与采集并行）**：坑 15/16 只覆盖了「单仓不挂死」和「补齐不超时」，但**「补齐 + 全量更新」合起来仍然会超时**。2026-10-20 实测：34 个仓全部已存在（clone 阶段瞬间完成），光 update 阶段就**跑满 60 分钟仍未结束**（理论上限 34 ÷ 4 × 120s ≈ 17 分钟，实际远超——大仓 `git fetch --depth 1` 的看门狗是软约束）。
+> 正确做法：
+> - **采集与镜像刷新并行**：update 阶段丢后台跑，主流程直接用**已有镜像**做采集与 L0 核验，不要串行等它；
+> - 镜像已齐时用 `SKIP_UPDATE=1`（只补齐不更新）——多数轮次不需要保鲜；
+> - 需要更新时**分两次跑**：`bash refresh-sources.sh l0` 与 `bash refresh-sources.sh l2`；
+> - 提高 `CONCURRENCY`（默认 4，可设 8）换取更短墙钟。
+> **镜像是否健康，用「各仓最后提交时间」判断，不要用「脚本是否跑完」判断**——脚本被超时杀掉时，镜像里已更新的那部分仓依然是新的（2026-10-20 实测：超时后 34 仓齐全，biome / rolldown / rspack / vite / vercel-ai / openai-agents-python 等关键 L0 仓均为当日或前日，`specification` 为 2026-10-17，足够支撑版本断言）。
+>
+> **坑 20（`gap-audit.py` 的主题探针有假阳性，报空白后必须手工 grep 复核）**：探针是**固定的正则短语匹配**，语序一变就漏判。实测：探针把「同域并发连接数」判为空白，但 `docs/08.network/04.http/01-http-basics.md:566` 实际已写「同域最多 6 个并行连接」——探针正则 `同域.*并发` 匹配不到「同域最多 6 个并行连接」这种语序。
+> **处置：探针报出的每个空白项，录题前都要手工 `grep` 一遍正文确认**。否则会对已覆盖的主题重复出题，破坏「同文件内锚点唯一」并稀释题库。
+>
+> **坑 21（`mianjing.json` 的 `company` 字段不是信源层级，要读 `source_url`）**：`company` 标着「题库」的条目，`source_url` 实际分两类——
+> - **L2 可用**：`github.com/youngyangyang04/llm-master/...`、`raw.githubusercontent.com/zgd716/AgentGuide/...`、`zchary1106.github.io/agent-interview-hub/...`（GitHub 原始仓 / Pages）；
+> - **L3 只能用做线索**：`developer.aliyun.com/article/...`、`developer.cloud.tencent.cn/article/...`、`gitcode.csdn.net/...`（大厂开发者社区转载）。
+> 2026-10-20 实测：「Harness Hill-Climbing」只出自 aliyun（L3）且**在 34 个镜像仓里 0 命中**，无 L0/L1/L2 佐证 → **不录**；而「BLEU/ROUGE 的局限」「过程指标」出自 GitHub 原始仓（L2）→ **可录**。
+> **判断信源层级要读 `source_url`，不能读 `company`**。L3 来源的题面不得直接录成真题，除非另找 L0/L1/L2 出处。
+>
+> **坑 22（论文级断言也要回原文核对，别凭记忆写年份）**：「某方法是哪一年提出的」和「框架第几版」是同一类风险。实测：容易写成「PRM 是 2024 年的新方法」，而原文是 Lightman 等 **2023-05-31** 的 arXiv:2305.20050《Let's Verify Step by Step》，开源 PRM800K（80 万条步骤级标注），且其结论**限于数学推理任务**（MATH），不可外推为「所有业务 Agent 都该上 PRM」。
+> 核对入口：arXiv `https://arxiv.org/abs/<id>`（abs 页含 authors / submitted 日期 / 摘要 / BibTeX）、ACL Anthology `https://aclanthology.org/<id>/`（含 venue / 页码 / 作者）。
+>
+> **坑 23（`web_search` 挂掉时，`web_fetch` + `curl` 照样能核原文，且更省上下文）**：`web_search` 偶发返回 `MATRIX_TOOL_REQUEST_FAILED`。此时直接取官方页面即可：
+> - `web_fetch "https://arxiv.org/abs/2305.20050"` —— 拿到 authors、submitted 日期、摘要；
+> - `curl -sL <url> | grep -iE "citation_author|citation_date|<title>" | sed 's/<[^>]*>//g'` —— 比整页 `web_fetch` 省得多，ACL Anthology 走这个套路能一次核到 venue / 页码 / 作者。
+> 注意 `web_fetch` 会把整页塞进上下文，**大页面一律用 `curl` + `grep` 定向取字段**。
+>
+> **坑 24（MCP 规范站有两套 URL 前缀，别拼错）**：
+> - 规范正文树：`https://modelcontextprotocol.io/specification/2026-07-28/...`（如 `changelog`、`basic/index`）；
+> - 文档树（client-best-practices、architecture 等在 `docs/docs/<version>/develop/clients/`）：`https://modelcontextprotocol.io/docs/2026-07-28/develop/clients/client-best-practices`。
+> 把文档树拼成 `/specification/<version>/develop/...` 会 **404**（实测）。从镜像仓找路径时对应关系是 `repos/specification/docs/docs/<version>/develop/clients/*.mdx` → 站点 `/docs/<version>/develop/clients/*`。用 `curl -sL -o /dev/null -w "%{http_code}"` 逐个探活再写进「延伸阅读」。
 
 ---
 

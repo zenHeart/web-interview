@@ -57,6 +57,9 @@ graph TB
         T4_5["线上 bad case 回流评测集与切片式退化发现"]
         T4_6["LLM-as-a-Judge 乐观偏差与人工锚点校准"]
         T4_7["大小模型混合路由：校验升级、兜底与限流"]
+        T4_8["工具定义的渐进式发现：Catalog-Inspect-Execute 三层与缓存约束"]
+        T4_9["评测指标选型：BLEU/ROUGE 失效边界与 NDCG 排序场景"]
+        T4_10["Agent 过程级评测指标与 PRM 步骤级监督"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -70,6 +73,8 @@ graph TB
         T5_8["多知识库 RAG 的检索式路由与跨库兜底"]
         T5_9["Agent 任务状态外置与断点续跑的一致性保证"]
         T5_10["长期记忆的隐私边界：分级准入与租户隔离"]
+        T5_11["RAG 召回质量分层诊断与 Rerank 精排"]
+        T5_12["Word/PDF 文档解析到向量库的五段入库流水线"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -145,6 +150,9 @@ graph TB
 - `{#p0-eval-badcase-feedback-loop}`：线上真实 bad case 怎么自动回流成评测集？修好一类之后怎么发现其他场景退化了？
 - `{#p0-llm-as-judge-bias-calibration}`：为什么让 Agent 自己给自己打分总是偏乐观？LLM-as-a-Judge 怎么用才可信？
 - `{#p0-model-routing-fallback}`：大小模型怎么路由？混合路由的兜底与限流怎么设计？
+- `{#p0-mcp-progressive-tool-discovery}`：工具定义把上下文窗口占满了：20 个工具每个都要写描述和示例，prompt 过长怎么办？
+- `{#p0-eval-metric-bleu-ndcg-selection}`：BLEU、ROUGE 这类 n-gram 指标为什么不能用来评 LLM 的生成？什么场景才轮到 NDCG？
+- `{#p0-agent-process-metrics-prm}`：只看最终答案能判断 Agent 好不好吗？过程指标该怎么设计，PRM 和结果评测差在哪？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -157,6 +165,8 @@ graph TB
 - `{#p0-rag-intent-routing-multikb}`：意图判断不准时，RAG 怎么保证检索到正确的知识库，而不是检索错库？
 - `{#p0-agent-state-recovery-resume}`：服务或容器重启后，Agent 的任务状态怎么恢复？任务执行到一半中断，怎么做到断点续跑？
 - `{#p0-agent-memory-privacy-boundary}`：记忆和个性化：如何让 Agent 长期记住用户习惯，又不泄漏隐私？
+- `{#p0-rag-recall-quality-rerank}`：RAG 召回质量怎么判断？召回不好该调什么参数，重排序怎么做？
+- `{#p0-rag-doc-parse-index-pipeline}`：企业知识问答要把 Word、PDF 灌进向量库，文档解析到入库的中间流程到底怎么走？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
