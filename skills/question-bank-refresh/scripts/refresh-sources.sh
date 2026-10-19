@@ -11,6 +11,10 @@
 #   CLONE_TIMEOUT   单个 git 操作墙钟上限（秒），默认 120
 #   CONCURRENCY     并发数，默认 4（分批并行，bash 3.2 无 wait -n）
 #   SKIP_UPDATE=1   跳过对已存在仓库的 fetch 更新
+#   REPOS_DIR       镜像存放目录，默认 $ROOT/repos。
+#                   每日任务用**持久共享目录**（如 ~/.cache/web-interview-repos），
+#                   再把工作区里的 repos 做成指向它的符号链接——
+#                   否则按日期新建的工作区每晚会把 1.2GB 镜像重新克隆一遍。
 #
 # 设计要点（都是踩过的坑）：
 #   - 克隆优先于更新：新仓带来新考点，旧仓更新只是保鲜，先保证覆盖面
@@ -25,7 +29,7 @@ CLONE_TIMEOUT="${CLONE_TIMEOUT:-120}"
 CONCURRENCY="${CONCURRENCY:-4}"
 
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
-REPOS="$ROOT/repos"
+REPOS="${REPOS_DIR:-$ROOT/repos}"
 MODE="${1:-all}"
 mkdir -p "$REPOS"
 
@@ -168,7 +172,8 @@ if [ "${SKIP_UPDATE:-0}" != "1" ]; then
 fi
 
 echo
-echo "镜像目录：$REPOS （共 $(find "$REPOS" -maxdepth 1 -mindepth 1 -type d | wc -l | tr -d ' ') 个）"
+# 用 ls 而非 find：REPOS 可能是指向持久目录的符号链接，find 默认不跟随符号链接会数成 0
+echo "镜像目录：$REPOS （共 $(ls -1 "$REPOS" 2>/dev/null | wc -l | tr -d ' ') 个）"
 echo "各仓最后提交时间（判断是否停更）："
 for d in "$REPOS"/*/; do
   [ -d "$d/.git" ] || continue
