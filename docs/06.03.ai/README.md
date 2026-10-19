@@ -46,6 +46,7 @@ graph TB
         T3_11["辩论式多 Agent 互相挑错的信息不对称设计"]
         T3_12["千级并发 Agent 沙箱的隔离选型与资源池调度"]
         T3_13["长任务超时预算分层与用户中断的可续跑语义"]
+        T3_14["Agent 多次执行的稳定性度量与轨迹分叉定位"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -134,6 +135,7 @@ graph TB
 - `{#p0-debate-agent-verification}`：让两个 Agent 互相挑错来提升准确性，怎么设计才不是「互相附和」？
 - `{#p0-agent-sandbox-pool-scheduling}`：要同时跑上千个 Agent 沙箱实例，资源池和调度怎么设计？沙箱怎么选型？
 - `{#p0-agent-timeout-and-user-interrupt}`：Agent 跑了 20 分钟还没结束，用户等不及了怎么停？超时该怎么设？
+- `{#p0-multi-agent-stability-evaluation}`：让 Agent 多次执行同一个任务，结果时好时坏，怎么度量稳定性、定位漂移来源？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
