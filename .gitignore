@@ -84,3 +84,5 @@ book
 
 dist/
 _docs/
+# 本地数据源镜像（权威数据源仓库 clone，不入库）
+repos/

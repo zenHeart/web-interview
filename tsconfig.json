@@ -8,5 +8,5 @@
       "@site/docs/*": ["./docs/*"],
     }
   },
-  "exclude": [".docusaurus", "build", "_drafts", "_docs", "docs/**/answers", "docs/**/coding/answers"]
+  "exclude": [".docusaurus", "build", "_drafts", "_docs", "repos", "docs/**/answers", "docs/**/coding/answers"]
 }
