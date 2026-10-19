@@ -69,15 +69,25 @@ whatwg/html	whatwg-html
 EOF
 )
 
+# 看门狗：杀掉 git 进程树（子进程 git-remote-https 才是真正在传数据的那一个，
+# 只杀父进程会留下孤儿进程继续传输，等于没超时）
+kill_tree() {
+  local pid="$1"
+  pkill -TERM -P "$pid" 2>/dev/null || true   # 先杀子进程
+  kill -TERM "$pid" 2>/dev/null || true        # 再杀父进程
+  sleep 1
+  pkill -KILL -P "$pid" 2>/dev/null || true
+  kill -KILL "$pid" 2>/dev/null || true
+}
+
 clone_or_update() {
   local slug="$1" name="$2" filter_flag="$3"
   local dir="$REPOS/$name"
   if [ -d "$dir/.git" ]; then
     printf '  ~ %-42s (更新)\n' "$slug"
-    # 看门狗同样覆盖 fetch 路径（实测 fetch 更容易挂住）
     git -C "$dir" "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" fetch --depth 1 --quiet origin 2>/dev/null &
     local fpid=$!
-    ( sleep "$CLONE_TIMEOUT"; kill -TERM "$fpid" 2>/dev/null ) &
+    ( sleep "$CLONE_TIMEOUT"; kill_tree "$fpid" ) &
     local fwatch=$!
     wait "$fpid" 2>/dev/null || true
     kill -TERM "$fwatch" 2>/dev/null || true
@@ -91,7 +101,7 @@ clone_or_update() {
       "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" \
       "https://github.com/$slug.git" "$dir" 2>/dev/null &
     local pid=$!
-    ( sleep "$CLONE_TIMEOUT"; kill -TERM "$pid" 2>/dev/null ) &
+    ( sleep "$CLONE_TIMEOUT"; kill_tree "$pid" ) &
     local watchdog=$!
     wait "$pid" 2>/dev/null || true
     kill -TERM "$watchdog" 2>/dev/null || true
