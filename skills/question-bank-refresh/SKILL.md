@@ -265,6 +265,15 @@ git push origin feature/question-bank-refresh
 
 > **坑 11**：`web` 远端默认**不存在**，部署前要先 `git remote add web <url>`。
 > **坑 12**：部署脚本要求**在 `main` 分支上**且工作区干净，所以流程是：功能分支改完 → 合到 `main` → 在 `main` 上跑部署。
+> **坑 25（部署后立刻 curl 可能拿到 CDN 旧页，误判成"部署失败"）**：`blog.zenheart.site` 前面挂了 CDN，响应头带 `cache-control: max-age=600` 与 `x-cache: HIT`。2026-10-20 实测：`deploy.sh` 推送成功（`gh-pages` 已前进、`deployment-meta.json` 的 `sourceCommit` 正确），但紧接着 curl 两个内容页，新锚点**全部 grep 到 0 个**；再过一两分钟重查，全部命中。
+> **处置：线上校验失败时，先看 `last-modified` 与 `x-cache` 头再下结论**——
+> ```bash
+> curl -sI "https://blog.zenheart.site/web-interview/docs/ai/protocols-ecosystem/" | grep -iE "last-modified|x-cache|age"
+> ```
+> `last-modified` 早于本次部署的构建时间 = 拿到的是旧缓存，**等 1~2 分钟或加 cache-busting 查询串重查**；`last-modified` 已更新却仍无锚点，才是真失败。
+> **另外别只校验内容页**：本次实测中 README 学科索引页**先**更新（命中 1），内容页**后**更新（先 0 后 1）——两者不同步是常态，**五个锚点都要逐个查，且以内容页为准**。
+>
+> **坑 26（`skills/` 下的改动也要走完整部署回路）**：本技能的坑列表、`references/sources.md` 不在站点构建范围内，但**改了它们就要重新走「提交 → PR → squash 合 main → 在 main 工作区 deploy」**，否则 `deployment-meta.json` 记录的 `sourceCommit` 会落后于 `main` HEAD，可追溯性断链。代价是一次约 3 分钟的 build，值得。
 
 ---
 
