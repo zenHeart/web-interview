@@ -33,15 +33,24 @@ export PATH="/usr/local/bin:$PATH"   # node / npm / pnpm / gh 都在 /usr/local/
 cd /Users/chengle/code/github/web-interview
 ```
 
-**工作区约定**：源码分支是 `main`，构建产物分支是 `gh-pages`。**在 `main` 上工作**，用隔离 worktree，不要在 `gh-pages` 上改源码：
+**工作区约定**：源码分支是 `main`，构建产物分支是 `gh-pages`。**在 `main` 上工作**，用隔离 worktree，不要在 `gh-pages` 上改源码。
+
+需要**两个** worktree，因为 `scripts/deploy.sh` 硬性要求「当前分支是 `main`」，而同一个分支不能被两个 worktree 同时检出：
 
 ```bash
 git fetch origin --prune
-git worktree add ../.worktrees/web-interview-refresh -b feature/question-bank-refresh origin/main
-cd ../.worktrees/web-interview-refresh
+
+# A) 长期保留的 main 工作区（部署用）
+git worktree add ../.worktrees/web-interview-main -b main origin/main   # 已存在则跳过
+
+# B) 当天的一次性工作区（改题库用，分支名带日期避免撞车）
+git worktree add ../.worktrees/qb-refresh-$(date +%Y%m%d) -b feature/question-bank-refresh-$(date +%Y%m%d) origin/main
+cd ../.worktrees/qb-refresh-$(date +%Y%m%d) && pnpm install
 ```
 
 > ⚠️ `main` 上**没有** `pnpm-lock.yaml`，所以不能用 `--frozen-lockfile`。用 `pnpm install`（corepack 固定 `pnpm@9.15.4`）即可；装出来的 `pnpm-lock.yaml` 不要提交。
+>
+> ⚠️ 部署工作区也要 `pnpm install`——`deploy.sh` 会在那里跑 `npm run build`，没有 `node_modules` 直接失败。
 
 ---
 
@@ -172,6 +181,8 @@ npm run build                         # Docusaurus 构建 0 错误
 > 相对路径的 `rm -rf build` 在某些受管 shell 下会被安全策略拦下，导致脏目录没清掉、构建继续失败。
 >
 > **坑 14（自检脚本的判定口径）**：`spec-audit.py` 判 ERROR 的只有三类——`<Answer>` 内出现 Markdown 标题、正文出现 `<` **紧跟**数字（`< 100ms` 带空格是安全的）、**纯正文**出现 `${...}`（围栏代码与行内反引号里都是字面量，安全）。答案金字塔与字数偏差只报 WARN，因为旧文档大量使用「核心概念 / 机制说明」等变体。
+>
+> **坑 15（镜像刷新会被网络拖死）**：`git clone` / `git fetch` 在网络拥塞时可能**长时间挂住**（实测一次 `biome` 的 fetch 挂了几分钟），整轮刷新就此卡住。脚本已内置三道保护：`GIT_TERMINAL_PROMPT=0`（禁止交互式凭据提示）、`http.lowSpeedLimit=1000 / lowSpeedTime=30`（传输过慢主动中断）、以及单仓墙钟看门狗 `CLONE_TIMEOUT`（默认 300 秒，超时放弃该仓并继续下一个）。**不要为了让脚本「跑完」而删掉这些保护**——单仓失败是可接受的，整轮卡死不可接受。
 
 ---
 

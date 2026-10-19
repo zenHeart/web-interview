@@ -12,6 +12,14 @@
 #   - 已存在的目录做 fetch --depth 1 更新，不重复克隆
 set -euo pipefail
 
+# 网络保护：git 传输若 30 秒内低于 1KB/s 则主动中断，避免整轮刷新被单仓卡死。
+# GIT_TERMINAL_PROMPT=0 禁止交互式凭据提示（无人值守场景必须）。
+export GIT_TERMINAL_PROMPT=0
+GIT_LOW_SPEED_OPTS=(-c http.lowSpeedLimit=1000 -c http.lowSpeedTime=30)
+GIT_TIMEOUT_OPTS=(-c http.connectTimeout=20)
+# 单仓整体墙钟上限（秒）；超时即放弃该仓并继续下一个
+CLONE_TIMEOUT="${CLONE_TIMEOUT:-300}"
+
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 REPOS="$ROOT/repos"
 MODE="${1:-all}"
@@ -62,19 +70,32 @@ EOF
 )
 
 clone_or_update() {
-  local slug="$1" name="$2" depth_flag="$3" filter_flag="$4"
+  local slug="$1" name="$2" filter_flag="$3"
   local dir="$REPOS/$name"
   if [ -d "$dir/.git" ]; then
     printf '  ~ %-42s (更新)\n' "$slug"
-    git -C "$dir" fetch --depth 1 --quiet origin 2>/dev/null || true
+    # 看门狗同样覆盖 fetch 路径（实测 fetch 更容易挂住）
+    git -C "$dir" "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" fetch --depth 1 --quiet origin 2>/dev/null &
+    local fpid=$!
+    ( sleep "$CLONE_TIMEOUT"; kill -TERM "$fpid" 2>/dev/null ) &
+    local fwatch=$!
+    wait "$fpid" 2>/dev/null || true
+    kill -TERM "$fwatch" 2>/dev/null || true
     git -C "$dir" reset --hard --quiet "FETCH_HEAD" 2>/dev/null || true
   else
     printf '  + %-42s (克隆)\n' "$slug"
-    if [ "$filter_flag" = "blobless" ]; then
-      git clone --depth 1 --filter=blob:none --quiet "https://github.com/$slug.git" "$dir" 2>/dev/null || printf '  ! 克隆失败: %s\n' "$slug"
-    else
-      git clone --depth 1 --quiet "https://github.com/$slug.git" "$dir" 2>/dev/null || printf '  ! 克隆失败: %s\n' "$slug"
-    fi
+    local extra=()
+    [ "$filter_flag" = "blobless" ] && extra=(--filter=blob:none)
+    # 看门狗：单仓墙钟超过 CLONE_TIMEOUT 即终止该仓，继续下一个，不拖死整轮
+    git clone --depth 1 "${extra[@]}" --quiet \
+      "${GIT_LOW_SPEED_OPTS[@]}" "${GIT_TIMEOUT_OPTS[@]}" \
+      "https://github.com/$slug.git" "$dir" 2>/dev/null &
+    local pid=$!
+    ( sleep "$CLONE_TIMEOUT"; kill -TERM "$pid" 2>/dev/null ) &
+    local watchdog=$!
+    wait "$pid" 2>/dev/null || true
+    kill -TERM "$watchdog" 2>/dev/null || true
+    [ -d "$dir/.git" ] || printf '  ! 克隆失败或超时: %s\n' "$slug"
   fi
 }
 
@@ -82,7 +103,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "l2" ]; then
   echo "[L2] 真题题库仓"
   while IFS=$'\t' read -r slug name; do
     [ -z "$slug" ] && continue
-    clone_or_update "$slug" "$name" shallow full
+    clone_or_update "$slug" "$name" full
   done <<< "$L2_LIST"
 fi
 
@@ -90,7 +111,7 @@ if [ "$MODE" = "all" ] || [ "$MODE" = "l0" ]; then
   echo "[L0] 官方规范 / 源码仓"
   while IFS=$'\t' read -r slug name; do
     [ -z "$slug" ] && continue
-    clone_or_update "$slug" "$name" shallow blobless
+    clone_or_update "$slug" "$name" blobless
   done <<< "$L0_LIST"
 fi
 
