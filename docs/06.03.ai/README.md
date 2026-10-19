@@ -22,6 +22,7 @@ graph TB
         T1_2["大模型幻觉根因 (Hallucination) 与前端工程防范降低机制"]
         T1_3["结构化输出与模式契约 (Structured Outputs / JSON Schema / Zod)"]
         T1_4["Embedding 向量嵌入原理、高维向量空间与余弦相似度"]
+        T1_5["微调 / RAG / Prompt 三条路线的选型边界与成本结构"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -38,6 +39,13 @@ graph TB
         T3_4["智能体宿主 (Agent Harness) 状态机与思考链流式可视化"]
         T3_5["高风险工具 Human-in-the-Loop (HITL) 动态授权拦截门禁"]
         T3_6["DAG 工作流编排画布 (AI Workflow Canvas / 拓扑排序 / 流式执行)"]
+        T3_7["Agent = Model + Harness：Harness 决定能力上限"]
+        T3_8["专职 Agent vs Skill 的抽象边界与上下文成本"]
+        T3_9["自主决策 vs 固定 Workflow 编排的切换信号"]
+        T3_10["多 Agent 并发协作的调度冲突 / 输出冲突 / 失败传播"]
+        T3_11["辩论式多 Agent 互相挑错的信息不对称设计"]
+        T3_12["千级并发 Agent 沙箱的隔离选型与资源池调度"]
+        T3_13["长任务超时预算分层与用户中断的可续跑语义"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -45,6 +53,9 @@ graph TB
         T4_2["团队级 AI 编程工具链落地与代码审查安全质量门 (Quality Gate)"]
         T4_3["Spec-Driven Development (SDD) 规约驱动工程体系"]
         T4_4["大模型应用自动化评测 (Eval Benchmark) 与回归防护"]
+        T4_5["线上 bad case 回流评测集与切片式退化发现"]
+        T4_6["LLM-as-a-Judge 乐观偏差与人工锚点校准"]
+        T4_7["大小模型混合路由：校验升级、兜底与限流"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -52,6 +63,12 @@ graph TB
         T5_2["前端端侧本地 RAG 知识库系统 (递归重叠分块 / 余弦检索 / Prompt 组装)"]
         T5_3["长会话滑动窗口递归摘要与多级记忆管理 (Working Memory)"]
         T5_4["服务端 Prompt Caching 前缀对齐与端到端 KV-Cache 复用机制"]
+        T5_5["长任务上下文腐化与行为漂移的检测与干预"]
+        T5_6["工具失败重试风暴：退避抖动、熔断与重试预算"]
+        T5_7["AGENTS.md 规则膨胀的分层治理与可执行化"]
+        T5_8["多知识库 RAG 的检索式路由与跨库兜底"]
+        T5_9["Agent 任务状态外置与断点续跑的一致性保证"]
+        T5_10["长期记忆的隐私边界：分级准入与租户隔离"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -95,6 +112,7 @@ graph TB
 - `{#p0-llm-hallucination-mitigation}`：为什么大模型会产生幻觉（Hallucination）？前端能从工程上做什么来防范和降低幻觉？
 - `{#p0-structured-outputs-json-schema}`：什么是结构化输出（Structured Outputs）？为什么基于 JSON Schema / Zod 约束比纯自然语言 Prompt 更可靠？
 - `{#p1-embedding-vector-search-basics}`：什么是 Embedding（向量嵌入）？向量空间与余弦相似度在前端语义搜索中是如何工作的？
+- `{#p1-finetune-vs-rag-vs-prompt}`：为什么用微调做代码生成，而不是纯 prompt 或 spec coding？微调和 RAG 各适合什么场景？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -109,18 +127,34 @@ graph TB
 - `{#p0-agent-frontend-harness}`：前端如何架构大模型 Agent 交互界面（Agent Harness）？ReAct 规划决策轨迹与思考链流式可视化？
 - `{#p0-agent-hitl-guardrail}`：Agent 执行高风险工具（如删除文件、对外转账）时，前端如何设计 Human-in-the-Loop (HITL) 动态授权拦截门禁？
 - `{#p0-ai-workflow-dag-canvas}`：如何设计类似 Dify / Coze 的可视化 DAG 工作流编排画布？拓扑排序与流式执行调试如何落地？
+- `{#p0-agent-model-harness-equation}`：Agent = Model + Harness 这个等式怎么理解？Harness 到底决定了 Agent 的什么？
+- `{#p0-agent-vs-skill-boundary}`：什么场景该做成一个专职 Agent，什么场景只需要一个 Skill？两者对上下文窗口的占用差多少？
+- `{#p0-agent-autonomy-vs-workflow-orchestration}`：Agent 该完全自主决策，还是用固定 Workflow 编排？出现什么信号说明该切换？
+- `{#p0-multi-agent-conflict-resolution}`：多个 Agent 并发协作时，如何处理调度冲突、输出冲突和子 Agent 失败？
+- `{#p0-debate-agent-verification}`：让两个 Agent 互相挑错来提升准确性，怎么设计才不是「互相附和」？
+- `{#p0-agent-sandbox-pool-scheduling}`：要同时跑上千个 Agent 沙箱实例，资源池和调度怎么设计？沙箱怎么选型？
+- `{#p0-agent-timeout-and-user-interrupt}`：Agent 跑了 20 分钟还没结束，用户等不及了怎么停？超时该怎么设？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
 - `{#p0-ai-coding-quality-gate}`：团队引入 Cursor / Copilot / Claude Code 后，前端团队如何建立代码质量审查门禁（Quality Gate）与防范幻觉？
 - `{#p0-spec-driven-development}`：什么是规格驱动开发（Spec-Driven Development, SDD）？如何通过规则资产库约束大模型生成符合架构的代码？
 - `{#p1-ai-eval-benchmark}`：如何搭建大模型应用与 Agent 的自动化评测（Eval）体系？指标如何量化与持续回归？
+- `{#p0-eval-badcase-feedback-loop}`：线上真实 bad case 怎么自动回流成评测集？修好一类之后怎么发现其他场景退化了？
+- `{#p0-llm-as-judge-bias-calibration}`：为什么让 Agent 自己给自己打分总是偏乐观？LLM-as-a-Judge 怎么用才可信？
+- `{#p0-model-routing-fallback}`：大小模型怎么路由？混合路由的兜底与限流怎么设计？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
 - `{#p0-rag-frontend-knowledge-base}`：前端如何构建端侧本地 RAG 系统？文档分块、客户端 Embedding 与余弦相似度检索是如何落地的？
 - `{#p1-agent-memory-context-compression}`：Agent 长会话场景下，面对有限的上下文窗口，如何设计多级记忆管理与滑动压缩机制？
 - `{#p0-prompt-caching-kv-cache-optimization}`：什么是 Prompt Caching（前缀缓存）与 KV-Cache 状态优化？静态与动态上下文编排如何降低首字时延（TTFT）与成本？
+- `{#p0-long-task-context-decay-drift}`：长任务跑久了，上下文会「腐化」、行为会「漂移」，怎么检测和干预？
+- `{#p0-agent-retry-storm-backoff}`：工具失败后重试，为什么容易演变成「重试风暴」？退避与熔断怎么设计？
+- `{#p0-agents-md-context-bloat}`：AGENTS.md / 规则文件越写越长，效果反而变差，怎么治理？
+- `{#p0-rag-intent-routing-multikb}`：意图判断不准时，RAG 怎么保证检索到正确的知识库，而不是检索错库？
+- `{#p0-agent-state-recovery-resume}`：服务或容器重启后，Agent 的任务状态怎么恢复？任务执行到一半中断，怎么做到断点续跑？
+- `{#p0-agent-memory-privacy-boundary}`：记忆和个性化：如何让 Agent 长期记住用户习惯，又不泄漏隐私？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
