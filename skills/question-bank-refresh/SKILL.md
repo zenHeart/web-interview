@@ -203,6 +203,16 @@ npm run build                         # Docusaurus 构建 0 错误
 > 两个配套细节：
 > - `.gitignore` 里要写 `repos`（**不带尾斜杠**）——目录模式 `repos/` 不匹配符号链接，会让它变成未跟踪文件；
 > - 脚本里统计仓数要用 `ls -1 "$REPOS"` 而不是 `find ... -type d`——`find` 默认不跟随符号链接，会数成 0。
+>
+> **坑 18（在别的 worktree 里 `git checkout -B main` 会悄悄弄坏 main 工作区）**：分支引用 `refs/heads/main` 是**所有 worktree 共享**的。在 A 工作区执行 `git checkout -B main origin/main`，git 会把 `main` 引用推到新提交，但**不会更新已经检出 main 的 B 工作区的索引与文件**——B 工作区的 `git status` 于是显示一堆「已暂存的修改」（内容其实是旧版本），而 `git pull` 却说「Already up to date」。
+> 后果很阴险：部署工作区一旦带脏状态，`scripts/deploy.sh` 会直接拒绝执行（要求工作区干净），而看起来又「已经是最新的」。
+> 正确做法：**要更新 main 工作区就进到它里面操作**——
+> ```bash
+> git -C /Users/chengle/code/github/.worktrees/web-interview-main fetch origin --prune
+> git -C /Users/chengle/code/github/.worktrees/web-interview-main pull --ff-only origin main
+> ```
+> 其它工作区一律用**带日期的独立分支名**（`feature/question-bank-refresh-<日期>`），永远不要在它们里面动 `main`。
+> 万一已经弄脏，`git restore --source=HEAD --staged --worktree -- .`（**不要**用 `git reset --hard`）即可复原，内容不会丢——因为改动早已在提交里。
 
 ---
 
