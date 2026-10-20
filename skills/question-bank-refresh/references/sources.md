@@ -66,6 +66,7 @@
 | 牛客面经帖 | 一线真实面经（2026-09/10 仍在更新） | `scripts/fetch-nowcoder.py` | SSR 内联 JSON；`desc` 常被截断，优先取 `content`；有频控 |
 | 牛客题库页 | 公司真题 | 只读 | 多数需登录 |
 | **牛客 AI Agent 专场面经（2026-09/10 高频）** | 一线真题的主要增量来源 | `scripts/fetch-nowcoder.py <url>` | 2026-10-20 已核到并录题的高价值帖：<br/>· `nowcoder.com/feed/main/detail/8ee12044e8284a8d8d6140dc2d0840ff`（深圳外企 Agent 开发 18 问）→ 工具定义膨胀/两层工具调用/意图识别/企业 Word·PDF RAG/召回质量<br/>· `nowcoder.com/discuss/800426409796624384`（蚂蚁国际一面 19 问）→ NDCG/搜索排序指标/重排序/Agent 评测<br/>· `nowcoder.com/feed/main/detail/54b3374bbfec494dba76294891edd9b4`（金山办公大模型实习一面）→ ROUGE 计算原理/LCS |
+| **牛客 AI Agent 专场面经（2026-10-21 批次）** | 本轮 6 道新题的一线出处 | `scripts/fetch-nowcoder.py <url>` | 已核到并录题的高价值帖：<br/>· `nowcoder.com/discuss/860538803759386624`（**AI-Agent 面试题汇总 - 大模型篇**）→ **位置编码 RoPE/ALiBi**、**复读机退化生成**（正文在 11500 字符处被作者截断，见坑 28）<br/>· `nowcoder.com/feed/main/detail/54b3374bbfec494dba76294891edd9b4`（金山办公大模型实习一面）→ **vLLM 原理与 batch 优化**（同帖另问「知道哪些位置编码？」）<br/>· `nowcoder.com/discuss/800426409796624384`（蚂蚁国际一面 19 问）→ **A2A 协议与 Agent 间通信**<br/>· `zchary1106.github.io/agent-interview-hub/question-signals.html`（L2 面经信号站，**带独立来源数、公司与轮次标注**）→ **Agent/Orchestrator/Harness/Runtime 四层职责**（4 个独立来源：字节/小红书/阿里）、**多步工具轨迹 Reward 与信用分配**（3 个独立来源：阿里/腾讯/字节） |
 | `web-features` (`data.json`) | Baseline 状态与日期 | CDN JSON | 1229 个 feature，可直接查 `status.baseline_high_date` |
 | MDN BCD | 各特性各浏览器 `version_added` | CDN JSON | 体积大（~20MB），用脚本解析而非整读 |
 | Chrome VersionHistory API | 当前稳定版 | 官方 API | — |
@@ -79,6 +80,8 @@
 | :--- | :--- | :--- |
 | 牛客部分帖子正文需登录 | 该帖不可用 | 记为缺口，换其它帖；**不要**凭标题脑补正文 |
 | 牛客频控导致骨架页 | 该轮抓取失效 | 隔开重试；`TITLE: 牛客网 - 找工作神器` 即判定未抓到 |
+| 牛客「标题正常但抽不到正文」 | 该帖当轮不可用 | **判据是抓下的 HTML 里有没有 `"content":"` 字段**（与 host 无关，`api-cdn` 与 `www` 返回同一后端同一结果）；隔开约 1 分钟重试即可恢复；另注意正文极短的帖子会被 `extract_blocks` 的长度阈值判成未抓到 |
+| 「延时消息 / 内存态持久化」主题空白 | 2026-10-21 确认为**真空白**（非探针假阳性）：全库只有 webpack 延迟队列的代码示例，语义无关 | **本轮不录**——2026 面经池里没有该主题的 L2 一线出处，硬凑等于自拟题面；留待后续牛客出现相关帖再补 |
 | `mianjing.json` 的 `company` 字段看不出信源层级 | 容易把 L3 聚合站题面当真题录入 | 读 `source_url`：`github.com` / `raw.githubusercontent.com` / `*.github.io` = L2 可用；`developer.aliyun.com` / `developer.cloud.tencent.cn` / `gitcode.csdn.net` = **L3 只作线索** |
 | `web_search` 偶发 `MATRIX_TOOL_REQUEST_FAILED` | 检索通道不可用 | 改 `web_fetch` / `curl` 直接取官方页（arXiv abs 页、ACL Anthology 页） |
 | `blog.webassembly.org` SSL 握手失败 | 取不到 Wasm 3.0 官方公告原文 | 改用 `webassembly.github.io/spec/` 的 All Versions 段 |
