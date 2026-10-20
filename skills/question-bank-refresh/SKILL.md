@@ -274,6 +274,67 @@ git push origin feature/question-bank-refresh
 > **另外别只校验内容页**：本次实测中 README 学科索引页**先**更新（命中 1），内容页**后**更新（先 0 后 1）——两者不同步是常态，**五个锚点都要逐个查，且以内容页为准**。
 >
 > **坑 26（`skills/` 下的改动也要走完整部署回路）**：本技能的坑列表、`references/sources.md` 不在站点构建范围内，但**改了它们就要重新走「提交 → PR → squash 合 main → 在 main 工作区 deploy」**，否则 `deployment-meta.json` 记录的 `sourceCommit` 会落后于 `main` HEAD，可追溯性断链。代价是一次约 3 分钟的 build，值得。
+>
+> **坑 27（牛客正文抽取失败与 host 无关，判据是 `content` 字段在不在）**：2026-10-21 实测，同一帖子用 `api-cdn.nowcoder.com` 与 `www.nowcoder.com` 抓，**返回的是同一后端的同一结果**——两者的字节数与 `content` 字段数完全一致。所以**不存在「换个 host 就能绕过」这回事**，别在这上面浪费时间。真正的失败形态有两种：
+> - `TITLE: 牛客网 - 找工作神器` = 整页骨架（原坑 6）；
+> - **标题正常但 `(未抽取到正文)`** = 页面拿到了、SSR 内联 JSON 的 `desc`/`content`/`richText` 没抽到（本次实测同一 URL 首次失败、约 1 分钟后重试即恢复）。
+>
+> 处置：**判据是抓下来的 HTML 里有没有 `"content":"` 字段**，不是 URL host；失败就隔开重试（同 URL 重试即可，无需换源）。另注意 `fetch-nowcoder.py` 的 `extract_blocks` 只收长度 > 40 的块，**正文极短的帖子会被判成「未抽取到正文」**，此时先看原始 HTML 再下结论。
+>
+> **坑 28（牛客「汇总帖」是有效 L2 出处，但正文可能被作者自己截断）**：`discuss/860538803759386624`（AI-Agent 面试题汇总）这类汇总帖的 `content` 字段长度是**作者粘贴时的上限**（实测恰好 11500 字符，且结尾停在代码块中间）。**抓到的正文「戛然而止」不一定是抓取失败，可能是原帖就这样**——重试无用，别把时间花在「补全正文」上。汇总帖里成组的真实题面（如位置编码、复读机、vLLM、A2A）依然是可用的一线出处。
+>
+> **坑 29（`question-lint.js` 的重复锚点检测是「按文件」的，不是全库）**：`scripts/question-lint.js` 里 `const seen = new Map()` 在 `lintFile()` **内部**创建，因此它只拦**同一文件内**的重复锚点；跨文件的重复锚点不会报错——这正是各学科 README 索引可以复述锚点的原因（实测全库有 96 种锚点跨文件重复）。
+> 后果：**question-lint 全绿 ≠ 锚点全库唯一**。新增题目后仍要自己确认全局唯一：
+> ```bash
+> grep -rho '{#[pP][0-5]-[^}]*}' docs/ | tr 'A-Z' 'a-z' | sort | uniq -d
+> ```
+> 命中项里绝大多数是「README 索引复述 + 正文定义」这一对，属仓库既有结构；**只需确认新加的锚点没有第三处出现**。
+>
+> **坑 30（`gap-audit.py` 的主题探针报空白后，仍要分「假阳性」与「真空白」两类处置）**：2026-10-21 实测两个报空白的项，处置方式完全不同：
+> - 「同域并发连接数」= **假阳性**（坑 20 再确认）——`docs/08.network/04.http/01-http-basics.md` 已写「同域最多 6 个并行连接」，探针正则匹配不到这种语序；
+> - 「延时消息 / 内存态持久化」= **真空白**（正文里只有 webpack 延迟队列的代码示例，语义无关），但**本轮仍不录**——不是不能录，而是**没有 L2 一线出处**（2026 面经池里无信号）。
+>
+> 处置准则：**真空白 + 有 L2 出处 → 录；真空白 + 无 L2 出处 → 记进缺口清单，不硬凑**。宁可留缺口，也不要为填空白而自拟题面。
+>
+> **坑 31（数学结论要在自己的实现上跑一遍才算核过）**：像「RoPE 的注意力内积只依赖相对距离」这类结论，光看论文不够。2026-10-21 用 TypeScript 复刻 `ropeRotate` 并数值验证：整体平移后内积差 **1.22e-8**（float32 精度内），而改变相对距离内积变化 **9.04e-1**——结论与实现同时成立。**面试官追问「怎么证明」时，能当场跑出这两组数字比背公式强得多。**
+> 核对时注意主流实现的两个细节：**半拆分布局**（`x[:d/2]` 与 `x[d/2:]`）与 **频率公式 `invFreq = base^(-2d/dim)`**，两者共同决定数值，别写错成交错配对。
+>
+> **坑 32（链接探活只看 HTTP 状态码，会漏判「迁移后的空壳页」）**：文档站搬家时，旧域名常保留一个 **返回 200 但没有正文的壳页**（JS 跳转或 meta refresh）。2026-10-21 实测：`langchain-ai.github.io/langgraph/` 返回 **200 但整页只有 757 字节**，内容是一段 "Documentation has moved" 跳转提示；真正的文档已迁到 `docs.langchain.com`。
+> 后果：**只看 `curl -w '%{http_code}'` 会以为链接有效**，但读者点进去拿不到资料；而且这类页里 `grep` 不到任何正文关键词，用「搜关键词」的方式校验也会误判为「页面没这内容」。
+> 处置——**探活要同时看状态码与正文体量/关键词**：
+> ```bash
+> for u in <url>; do
+>   curl -sL -o /tmp/p.html -w "%{http_code} %{size_download} $u\n" "$u"
+>   grep -oiE "<期望出现的关键词>" /tmp/p.html | sort -u | head -3
+> done
+> ```
+> 判据：状态码 200 **且** 体积明显大于壳页量级 **且** 能 grep 到期望关键词。2026-10-21 据此把 `docs/06.03.ai/03.agent-engineering.md` 的 3 处 LangGraph 链接（含 2 处既有链接）迁到 `docs.langchain.com`。
+>
+> **更省事的做法：整目录批量扫**。一次跑完某个学科的外链，把「非 200」与「体积过小」两类都捞出来，比逐条点链接快得多：
+> ```bash
+> python3 - <<'PY' > /tmp/links.txt
+> import re, pathlib
+> urls=set()
+> for p in pathlib.Path('docs/06.03.ai').glob('*.md'):
+>     for m in re.finditer(r'\]\((https?://[^)\s]+)\)', p.read_text(encoding='utf-8')):
+>         urls.add(m.group(1))
+> print("\n".join(sorted(urls)))
+> PY
+> while read -r u; do
+>   read -r code size <<<"$(curl -sL -o /tmp/lp.html -w '%{http_code} %{size_download}' --max-time 20 "$u")"
+>   { [ "$code" != 200 ] || [ "${size:-0}" -lt 3000 ]; } && printf "%-4s size=%-8s %s\n" "$code" "$size" "$u"
+> done < /tmp/links.txt
+> ```
+> 2026-10-21 实测：`docs/06.03.ai` 84 条外链里捞出 5 类问题——**2 类真坏链**（`anthropic.com/research/evaluating-llm-models` 已 404，改用 `/engineering/evaluating-ai-systems`；`sbert.net/examples/cross_encoder/applications/semantic-search.html` 已 404，改用同目录 `README.html`）、**2 类空壳页**（LangGraph、AutoGen 的站点根）、**其余是误报**。
+>
+> **扫出来的东西必须逐个判「真坏」还是「环境问题」，别照单全收**：
+> - `iana.org/.../application/pdf` 体积只有 1.3KB —— 那是 IANA 注册表的正常体量，**不是坏链**；
+> - `zustand-demo.pmnd.rs` 817 字节 —— 是 JS 单页应用外壳，**正常**；
+> - `chatgpt.com`、`nist.gov` 返回 000 —— 是**本机代理节点不可达**，不是链接坏了（同 URL 在浏览器能开），**不要改**；
+> - `openai.com/...` 返回 403 —— Cloudflare 拦爬虫，浏览器可开，**不要改**；
+> - `dl.acm.org/doi/...` 返回 403 —— 同理。
+>
+> 处置准则：**只改能确证「目标资源已不存在」的链接**（404 且站内无替代路径），**不因本机网络受限或反爬就改链接**。
 
 ---
 

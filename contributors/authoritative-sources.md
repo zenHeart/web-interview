@@ -1,6 +1,6 @@
 # Web Interview 权威数据源矩阵与行业追踪标准
 
-> 采集与对齐基准：**2026-10-20**（上次对齐 2026-10）。作为全库学科与主题差量扫描、题目架构与去伪存真的物理基准（Single Source of Truth, SSOT）。
+> 采集与对齐基准：**2026-10-21**（上次对齐 2026-10）。作为全库学科与主题差量扫描、题目架构与去伪存真的物理基准（Single Source of Truth, SSOT）。
 > 遵循 `/deep-research` 信源分层金字塔：E（实证） > L0（官方规范/源码/RFC） > L1（核心维护者） > L2（GitHub 高星/真题库） > L3（广角聚合）。
 
 > **本地镜像约定**：本文件所列 L0/L2 仓库在本地以 `repos/<repo-basename>` 浅克隆镜像（`--depth 1`，L0 另加 `--filter=blob:none`），`repos/` 已在 `.gitignore` 中，**不入库**。克隆脚本与清单见 `skills/question-bank-refresh/`。镜像存在的原因是：版本断言必须能在本地核对原文，不能凭记忆写。
@@ -43,7 +43,7 @@
 
 ---
 
-## 一之三、版本基线快照（2026-10-20 核对，题目中的版本断言以此为准）
+## 一之三、版本基线快照（2026-10-21 核对，题目中的版本断言以此为准）
 
 > 题目涉及"某框架到了第几版 / 某提案到了第几阶段 / 某规范是不是定稿"时，**必须**回本地镜像或官方原文核对，禁止凭记忆写。
 
@@ -60,6 +60,10 @@
 | 评测指标原始出处 | **BLEU** = Papineni et al., ACL 2002, pp. 311–318；**ROUGE** = Chin-Yew Lin, 2004（ROUGE-N/L）；**NDCG** = Järvelin & Kekäläinen, ACM TOIS 20(4), 2002, pp. 422–446；**PRM** = Lightman et al., *Let's Verify Step by Step*, arXiv:2305.20050（2023-05-31，过程监督在 MATH 上优于结果监督，模型解出 MATH 代表性子集 78%，开源 PRM800K 80 万条步骤级标注） | "PRM 是 2024 年的新方法" / 把 NDCG 当生成质量指标 / 把 BLEU 说成"已被淘汰" | aclanthology.org P02-1040 与 W04-1013、ACM TOIS 2002、arxiv.org/abs/2305.20050 |
 | Wasm | Wasm 3.0 (2025) 为最新规范版本；WasmGC 的结构类型**已在核心规范正文** | "WasmGC 仍是独立提案" | webassembly.github.io/spec |
 | 浏览器特性 | 必须分列**规范定稿 / 首个实现版本 / Baseline 状态与日期**三列 | 用"已支持"一笔带过 | web-features `data.json` + MDN BCD |
+| 位置编码 | **RoPE** = arXiv:2104.09864（2021-04-20，Su Jianlin 等，《RoFormer: Enhanced Transformer with Rotary Position Embedding》）；**ALiBi** = arXiv:2108.12409（2021-08-27，Press Ofir 等，《Train Short, Test Long》）；**YaRN** = arXiv:2309.00071（2023-08-31，Peng Bowen 等）。RoPE 的内积只依赖**相对距离**，但**直接扩窗会退化**，必须用位置插值 / NTK-aware / YaRN 等缩放 | "位置编码就是把位置加进词向量"（那是 BERT 式绝对 PE，RoPE 不是）/ "RoPE 原生支持任意长度外推" / "ALiBi 也是一种位置 embedding" | arxiv.org/abs/2104.09864、/2108.12409、/2309.00071 |
+| vLLM / 推理引擎 | **PagedAttention** 论文 = arXiv:2309.06180（2023-09-12，Kwon Woosuk 等），借鉴操作系统虚拟内存与分页；论文报告**同等延迟下吞吐提升 2~4 倍**（**官方声称，需按自身负载复现**）；**Continuous Batching** 的迭代级调度思路源自 **Orca**（USENIX OSDI '22，Yu Gyeong-In 等） | "vLLM 让模型生成更快"（提升的是**吞吐**不是单请求延迟）/ "PagedAttention 是一种注意力算法变体"（它是**显存管理**优化，不改输出） / 把 TTFT 与 TPOT 混成一个"延迟" | arxiv.org/abs/2309.06180、usenix.org/conference/osdi22/presentation/yu |
+| A2A (Agent2Agent) | 传输 **HTTP(S) + JSON-RPC 2.0**（方法 `SendMessage`），媒体类型 **`application/a2a+json`**，版本协商走 **`A2A-Version` 请求头**（扩展走 `A2A-Extensions`）；核心对象 **Agent Card / Message / Part / Artifact / Task**，`contextId` 串联多轮上下文；当前发布版 **1.0.0**（历史版 0.3.0 / 0.2.6 / 0.1.0），**v1.0 有两项破坏性变更**（附录 A.2：移除多态对象的内联 `kind` 判别符、Extended Agent Card 字段迁移），版本不支持时返回 **400 + `application/problem+json` + `supportedVersions`**；治理归 **The Linux Foundation**（Apache 2.0），官方公告显示已加入 **Agentic AI Foundation**；**Artifact 的版本串联不属于规范**（由客户端维护） | "A2A 是 MCP 的替代品或升级版"（**A2A 连 Agent、MCP 连工具**，互补）/ "A2A 已定稿不会变" / "凭据要放进协议消息体"（应走 HTTP 头，与消息分离） / 用内联 `kind` 字段区分 Part 类型（v1.0 已移除） | a2a-protocol.org/latest、/latest/specification/（附录 A 迁移指引）、/latest/topics/a2a-and-mcp/ |
+| 采样参数与复读机 | Hugging Face 官方生成参数中 **`repetition_penalty` 默认 1.0 表示不惩罚**（需显式调大才有约束力）；**`no_repeat_ngram_size` 是硬性禁止 n-gram 重复**，会破坏代码、JSON、报文等合法重复；`encoder_repetition_penalty` 只惩罚输入中未出现的序列 | "默认就开着重复惩罚" / "no_repeat_ngram_size 应该常开" / 把复读归因于"模型能力不足"（复读是**解码阶段**退化） | huggingface.co/docs/transformers/main/en/main_classes/text_generation |
 
 **「规范定稿 / Chrome 推出 / Baseline」三者不可互相替代**——这是本库最容易写出自相矛盾答案的地方。典型反例：Anchor Positioning 的 `anchor()` 在 Chrome 125 已有，但整体 Baseline = false；View Transitions 已是 Baseline low，但 Firefox 至今没有 `@view-transition` 规则。
 
