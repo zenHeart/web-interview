@@ -26,6 +26,7 @@ graph TB
         T1_6["位置编码机制 (RoPE / ALiBi) 与长上下文外推原理"]
         T1_7["复读机退化重复生成的成因诊断与分层干预"]
         T1_8["LoRA 与 QLoRA：参数高效微调的显存账本与量化前提"]
+        T1_9["ChatGPT 的强化学习：SFT / 奖励模型 / PPO 三段式对齐"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -55,6 +56,8 @@ graph TB
         T3_15["Agent / Orchestrator / Harness / Runtime 四层职责边界"]
         T3_16["Agent 多步工具轨迹的 Reward 设计与信用分配"]
         T3_17["审批快照与执行绑定：TOCTOU 缝隙与幂等兜底"]
+        T3_18["Agent 失败归因分解：模型能力 / 上下文 / 任务粒度 / 工具可靠性"]
+        T3_19["Agent 链路端到端延迟与成本优化：分解、并行、缓存、降级"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -88,6 +91,7 @@ graph TB
         T5_12["Word/PDF 文档解析到向量库的五段入库流水线"]
         T5_13["vLLM 推理引擎：PagedAttention 分页与连续批处理吞吐"]
         T5_14["RAG 父子索引：小块检索、大块喂给的粒度解耦"]
+        T5_15["Agent 记忆持久化分层：会话级 / 任务级 / 项目级与冲突更新"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -134,6 +138,7 @@ graph TB
 - `{#p1-finetune-vs-rag-vs-prompt}`：为什么用微调做代码生成，而不是纯 prompt 或 spec coding？微调和 RAG 各适合什么场景？
 - `{#p1-positional-encoding-rope}`：大模型怎么区分「猫追狗」和「狗追猫」？RoPE 旋转位置编码的原理与长上下文外推是怎么回事？
 - `{#p1-llm-degenerate-repetition}`：模型输出变成「复读机」，同一句话反复刷屏，怎么定位原因并修掉？
+- `{#p1-rlhf-reward-model-ppo}`：ChatGPT 里的强化学习是怎么实现的？为什么不直接拿人写的答案继续微调？
 - `{#p1-lora-vs-qlora}`：LoRA 和 QLoRA 有什么区别？为什么 QLoRA 能在单张 48GB 显卡上微调 65B 模型？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
@@ -161,6 +166,8 @@ graph TB
 - `{#p0-multi-agent-stability-evaluation}`：让 Agent 多次执行同一个任务，结果时好时坏，怎么度量稳定性、定位漂移来源？
 - `{#p1-agent-orchestrator-harness-runtime-layers}`：Agent、Orchestrator、Harness 和 Runtime 到底怎么分工？为什么要拆成四层？
 - `{#p1-agent-trajectory-reward-credit-assignment}`：要训一个会调工具的 Agent，多步轨迹的 Reward 怎么设计？信号稀疏时信用怎么分配？
+- `{#p1-agent-failure-attribution-small-model}`：线上 Agent 出现「指令遵循失败」，是模型能力不够还是工程没做好？怎么归因？
+- `{#p1-agent-chain-latency-cost-optimization}`：一个 Agent 任务要串好几次模型调用和工具调用，延迟和成本都压不下来，怎么优化？
 - `{#p1-agent-approval-execution-consistency}`：用户点了「确认」之后，怎么保证真正执行的内容和确认时看到的完全一致？审批后还能不能再调一次大模型？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
@@ -192,6 +199,7 @@ graph TB
 - `{#p0-rag-recall-quality-rerank}`：RAG 召回质量怎么判断？召回不好该调什么参数，重排序怎么做？
 - `{#p0-rag-doc-parse-index-pipeline}`：企业知识问答要把 Word、PDF 灌进向量库，文档解析到入库的中间流程到底怎么走？
 - `{#p1-vllm-paged-attention-batching}`：vLLM 是怎么把推理吞吐做上去的？PagedAttention 和 Continuous Batching 分别解决了什么瓶颈？
+- `{#p1-agent-memory-persistence-layers}`：Agent 的记忆怎么持久化？会话级、任务级、项目级怎么分层？提取和冲突更新怎么处理？
 - `{#p1-rag-parent-child-index}`：RAG 流程中为什么要引入父子索引？「小块检索、大块喂给模型」是怎么权衡的？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)

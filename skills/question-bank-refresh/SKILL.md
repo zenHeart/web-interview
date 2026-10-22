@@ -315,6 +315,21 @@ git push origin feature/question-bank-refresh
 > ```
 > 输出 `total: 0` 才算通过。**注意这个检查要覆盖 `origin/main` 已有的存量**——先跑一次全库扫描再动手改，能把"我新引入的"和"历史遗留的"分开归因。
 
+> **2026-10-23 复现补充（重要）**：同一个坑在本轮**再次发生**，且暴露出一个更隐蔽的细节——**一个汉字会被替换成 _两个_ U+FFFD**（实测「清单」的「单」（U+5355）被写成 `U+FFFD U+FFFD`）。后果是：**「把 U+FFFD 删掉」并不等于修复**，删完会留下一个缺字的句子（「已开采清的唯一权威来源」），**而且 lint、spec-audit、构建全绿**——它们都不检查这个。正确处置：**按上下文把原字补回去**，不能只删。
+> 写完中文正文的**固定动作**（每轮都要做，不能省）：
+> ```bash
+> python3 -c "
+> from pathlib import Path
+> bad=0
+> for p in list(Path('docs').rglob('*.md'))+list(Path('contributors').rglob('*.md'))+list(Path('skills').rglob('*.md')):
+>     t=p.read_text(encoding='utf-8',errors='replace')
+>     for i,l in enumerate(t.split(chr(10)),1):
+>         if chr(0xFFFD) in l: print(f'{p}:{i}: {l.strip()[:150]}'); bad+=1
+> print('suspect lines:', bad)
+> "
+> ```
+> 命中后**逐处人工读上下文补字**，不要批量替换。
+
 > **坑 34（未开采牛客帖的最快发现路径：mianjing.json 的 `sources` 里藏着全部帖 id）**：`mianjing.json` 每条记录的 `sources` 数组**列出了该题被哪些帖子引用过**，把这些 URL 里的 nowcoder 帖 id 去重，得到的就是**该语料池涉及的全部牛客帖**（2026-10-22 实测 385 条记录共指向 **14 个 distinct 帖 id**）。与 `references/sources.md` 里已记录的高价值帖**取差集**，差集就是**尚未开采的真题帖**——本轮据此一次挖到 6 个未开采帖（字节 AI Agent 开发岗面经、网易 agent 测试一二面、字节 ai agent 评测实习生、Shopee AI 开发二面等），开出 6 道新题。
 > 这个路径比 `gap-audit.py` 更直接：`gap-audit` 告诉你「哪些主题覆盖不足」，但**帖 id 差集告诉你「哪份原文还没读过」**——后者往往藏着成组的真题题面。
 > ```bash
@@ -393,6 +408,38 @@ git push origin feature/question-bank-refresh
 > - `dl.acm.org/doi/...` 返回 403 —— 同理。
 >
 > 处置准则：**只改能确证「目标资源已不存在」的链接**（404 且站内无替代路径），**不因本机网络受限或反爬就改链接**。
+
+> **坑 38（定时任务启动时，先扫所有遗留工作区的 `git status`，别只看当天那个）**：2026-10-23 批次启动时发现，`qb-refresh-20261022` 工作区里躺着**上一轮已写完但从未提交**的 6 道题（9 个文件、+1025 行），质量很高、引用齐备，但**因为上一轮在提交前中断，工作就悬在工作区里**——既没进 `main`，也没进远端。
+> 后果：如果按「建当天工作区 → 干活 → 提交」的标准流程走，这些成果会被**下一次 `git worktree remove` 静默销毁**（worktree remove 会连同未提交改动一起删掉）。
+> 处置（每轮开头必做）：
+> ```bash
+> for d in /Users/chengle/code/github/.worktrees/qb-refresh-*; do
+>   [ -d "$d" ] || continue
+>   echo "=== $d"; git -C "$d" status --porcelain | head
+> done
+> ```
+> 发现有未提交改动时：**先在它自己的分支上提交并 push 保底**（不要 `worktree remove`，不要 `--force`），再走门禁 → PR → squash 合并 → 清理。合并顺序上建议**先合旧批次再基于新 `main` 开当天批次**，避免两批都改 `docs/06.03.ai/README.md` 时撞行。
+>
+> **坑 39（未开采帖的差集基准要读 `references/sources.md`，不能靠记忆）**：坑 34 的「帖 id 差集」法要拿 `mianjing.json` 的 post id 全集**减去已开采清单**。已开采清单的唯一权威来源是 **`skills/question-bank-refresh/references/sources.md` 里的牛客批次表**，不是上一轮任务自己的记忆——上一轮已经开采了 6 个新帖，2026-10-23 再按记忆算差集会**重复开采同一批帖**。2026-10-23 实测：`mianjing.json` 共 385 条、**15 个 distinct post id**，扣掉已记录的 9 个后**只剩 6 个未开采**，本轮全部开采完后这条线索**彻底用尽**。
+>
+> **坑 40（信号榜条数 ≠ 可出题数，每条都要做覆盖判定）**：`zchary1106.github.io/agent-interview-hub/question-signals.html` 是 L2 面经信号站（带独立来源数、公司、轮次标注），2026-10-23 实测共 **12 条信号**，逐条与 `docs/06.03.ai/` 现有 60 题比对后：
+> - **已被覆盖、直接放弃**：#1 工具边界、#3 Coding 验证、#4 Agent 评测、#5 RAG 分层定位、#6 四层职责、#8 重试幂等、#10 结构化输出、#11 Agentic RL、#12 路径震荡与无进展循环（**「无进展检测 + 循环指纹熔断」已写在既有「Agent = Model + Harness」题的执行循环一节里**）；
+> - **可出题**：#2 记忆分层（→ 本轮 `{#p1-agent-memory-persistence-layers}`）、#9 链路延迟与成本（→ 本轮 `{#p1-agent-chain-latency-cost-optimization}`）。
+> **结论：12 条信号里真正能出题的只有 1~2 条**。不要因为「信号很多」就规划很多题。
+>
+> **坑 41（链接探活要识别「Moved 空壳页」，并把 200 + 大体积当成不充分条件）**：`opentelemetry.io/docs/specs/semconv/gen-ai/` 返回 **200、体积 172KB**，但正文整页只是「**GenAI semantic conventions have moved to the OpenTelemetry GenAI semantic conventions repository**」的迁移提示——**规范的任何条目都不在页面上**。判据要再加一条：**正文里能否 grep 到期望的规范条目**（本例应有 span / metric 属性名），只有「200 + 体积大 + 标题不含 Moved」还不够。
+> 同时本轮修掉两条**真漂移**：
+> - vLLM 指标文档：`docs.vllm.ai/en/latest/serving/metrics.html` → **404**，现址是 `docs.vllm.ai/en/latest/usage/metrics.html`（用坑 37 的 `llms.txt` 路径一次命中）；
+> - OTel GenAI 语义约定 → 迁到独立仓 `github.com/open-telemetry/semantic-conventions-genai`（该仓 README 写明覆盖 **spans / metrics / events**，并含 **MCP** 约定）。
+>
+> **坑 42（arXiv 日期以页面 `citation_date` meta 为准，不要凭印象写月份）**：本轮差点把 InstructGPT 记成「2022-03-16」，实际 **v1 是 2022-03-04**。一条命令核到 title / author / date 三件套：
+> ```bash
+> curl -sL https://arxiv.org/abs/2203.02155 | grep -oE '<meta name="citation_(title|author|date)" content="[^"]*"'
+> ```
+> 同一条命令还纠正了另外两处易错点：**DPO 是 2023-05-29**（不是 5 月初）、**CoALA 是 2023-09-05**、**MemGPT 是 2023-10-12**。论文**正文**里的机制细节（PPO、KL 惩罚项、CoALA 的记忆分类术语）要去 **ar5iv 全文**核：`curl -sL https://ar5iv.labs.arxiv.org/html/2309.02427`，只读 abstract 会漏掉这些。
+>
+> **坑 43（核证类子任务自己跑比委托可靠）**：2026-10-23 尝试把 4 组 L0 核证委托给子 Agent，**20+ 分钟零输出**，最终自己用 `curl + grep` 在几分钟内核完全部条目（见坑 42 的命令）。**核证是本任务的核心门禁，不能等一个不可观测的异步结果**；要么自己做，要么就明确接受「核不到就整条不录」。
+>
 
 ---
 
