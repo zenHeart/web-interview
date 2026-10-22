@@ -299,6 +299,64 @@ git push origin feature/question-bank-refresh
 > **坑 31（数学结论要在自己的实现上跑一遍才算核过）**：像「RoPE 的注意力内积只依赖相对距离」这类结论，光看论文不够。2026-10-21 用 TypeScript 复刻 `ropeRotate` 并数值验证：整体平移后内积差 **1.22e-8**（float32 精度内），而改变相对距离内积变化 **9.04e-1**——结论与实现同时成立。**面试官追问「怎么证明」时，能当场跑出这两组数字比背公式强得多。**
 > 核对时注意主流实现的两个细节：**半拆分布局**（`x[:d/2]` 与 `x[d/2:]`）与 **频率公式 `invFreq = base^(-2d/dim)`**，两者共同决定数值，别写错成交错配对。
 >
+> **坑 33（用 heredoc / 脚本批量写中文，可能悄悄写入 U+FFFD 替换字符，且仓库里已有存量）**：`cat >> file <<'EOF'` 与 `python3` 写文件在处理中文时**偶发把某个汉字写成 `U+FFFD`（码点 U+FFFD）**，且**文件能正常渲染、构建全绿、lint 全绿**——只有肉眼读那一句才会发现。2026-10-22 实测：`docs/06.03.ai/05.runtime-internals.md` 的「重试一个必然失败的请求」里的「的」在 **origin/main 里就已经是 `U+FFFD`**（2 个替换字符），已在线上站点存在多日，本轮顺带修掉。
+> 处置：**每次批量写完中文正文，必须全库扫一次替换字符**（这是最便宜的"内容体检"）：
+> ```bash
+> python3 - <<'PY'
+> from pathlib import Path
+> bad = 0
+> for p in list(Path('docs').rglob('*.md')) + list(Path('contributors').rglob('*.md')) + list(Path('skills').rglob('*.md')):
+>     n = p.read_text(encoding='utf-8', errors='replace').count('\ufffd')
+>     if n:
+>         print(f"CORRUPT {p}: {n}")
+>         bad += n
+> print("total:", bad)
+> PY
+> ```
+> 输出 `total: 0` 才算通过。**注意这个检查要覆盖 `origin/main` 已有的存量**——先跑一次全库扫描再动手改，能把"我新引入的"和"历史遗留的"分开归因。
+
+> **坑 34（未开采牛客帖的最快发现路径：mianjing.json 的 `sources` 里藏着全部帖 id）**：`mianjing.json` 每条记录的 `sources` 数组**列出了该题被哪些帖子引用过**，把这些 URL 里的 nowcoder 帖 id 去重，得到的就是**该语料池涉及的全部牛客帖**（2026-10-22 实测 385 条记录共指向 **14 个 distinct 帖 id**）。与 `references/sources.md` 里已记录的高价值帖**取差集**，差集就是**尚未开采的真题帖**——本轮据此一次挖到 6 个未开采帖（字节 AI Agent 开发岗面经、网易 agent 测试一二面、字节 ai agent 评测实习生、Shopee AI 开发二面等），开出 6 道新题。
+> 这个路径比 `gap-audit.py` 更直接：`gap-audit` 告诉你「哪些主题覆盖不足」，但**帖 id 差集告诉你「哪份原文还没读过」**——后者往往藏着成组的真题题面。
+> ```bash
+> python3 - <<'PY'
+> import json, os, re, collections
+> d = json.load(open(os.path.expanduser("~/code/github/careers/resume/2026/jobs/agents/mianjing.json"), encoding="utf-8"))
+> ids = collections.Counter()
+> for x in d:
+>     for s in x["sources"] + [x["source_url"]]:
+>         m = re.search(r"nowcoder\.com/(?:feed/main/detail|discuss)/([A-Za-z0-9]+)", s)
+>         if m: ids[m.group(1)] += 1
+> print(len(ids), "distinct nowcoder posts")
+> for pid, n in ids.most_common(): print(pid, n)
+> PY
+> ```
+
+> **坑 35（覆盖度打分必须用 CJK bigram，按空白切词会把中文题全部低估）**：做差集时若用 `re.split(r'\W+', q)` 切词，中文整句会变成**一个 token**（因为 `\w` 在 Python 里匹配 CJK），于是「上下文压缩」这种题拿去匹配正文必然命中 0，**所有中文题的覆盖率都会塌到 0.1 以下**，得出「几乎全是缺口」的假结论。
+> 正确做法：**中文按 2-gram 切，英文按词切**：
+> ```python
+> def grams(s):
+>     s = re.sub(r"[^\w\u4e00-\u9fff]+", " ", s.lower())
+>     out = set()
+>     for w in s.split():
+>         if re.search(r"[\u4e00-\u9fff]", w):
+>             out.update(w[i:i+2] for i in range(len(w) - 1)); out.add(w)
+>         elif len(w) >= 3: out.add(w)
+>     return out
+> ```
+> 语料**仍然只扫「题目标题 + slug」**（坑 4 不变），只是切词方式要换。
+
+> **坑 36（`spec-audit.py` 整目录跑只打印前 20 条 WARN，要定位必须逐文件传参）**：脚本第 121~125 行写死了 `for p in warns[:20]`，末尾还打印「另有 N 条」。所以**整目录跑一次只能看到前 20 条**，无法判断「自己新加的题有没有引入 WARN」。
+> 处置：**逐文件传参跑**（一次一个文件，WARN 数量小到能全看完），再按 `Answer#N` 的编号**对照题目顺序**判断是不是自己新增的那道：
+> ```bash
+> for f in docs/06.03.ai/0*.md; do
+>   echo "### $f"; python3 skills/question-bank-refresh/scripts/spec-audit.py "$f" 2>&1 | sed -n '/WARN/,$p' | tail -n +2
+> done
+> ```
+> 2026-10-22 实测：5 个改动文件的 WARN 全部是 `Answer#1`~`Answer#6` 缺「规范实现」的**历史存量**，新增的 6 道题**一条 WARN 都没有**。
+
+> **坑 37（找官方文档子页的最短路径：先试 `llms.txt`）**：需要在官方文档站定位某个具体子页时，**先取 `https://<site>/llms.txt`**——它通常是一份全站 Markdown 索引（含每个子页的标题、描述与精确 URL），比逐个猜路径或站内搜索快得多。
+> 2026-10-22 实测：`https://agentskills.io/llms.txt`（13 行）直接给出了 `Evaluating skill output quality`（`/skill-creation/evaluating-skills.md`）、`Optimizing skill descriptions`（`/skill-creation/optimizing-descriptions.md`）等子页，且这些子页**直接给 `.md` 原文**，用 `curl` 取回就是纯文本，比解析 HTML 省事得多。
+
 > **坑 32（链接探活只看 HTTP 状态码，会漏判「迁移后的空壳页」）**：文档站搬家时，旧域名常保留一个 **返回 200 但没有正文的壳页**（JS 跳转或 meta refresh）。2026-10-21 实测：`langchain-ai.github.io/langgraph/` 返回 **200 但整页只有 757 字节**，内容是一段 "Documentation has moved" 跳转提示；真正的文档已迁到 `docs.langchain.com`。
 > 后果：**只看 `curl -w '%{http_code}'` 会以为链接有效**，但读者点进去拿不到资料；而且这类页里 `grep` 不到任何正文关键词，用「搜关键词」的方式校验也会误判为「页面没这内容」。
 > 处置——**探活要同时看状态码与正文体量/关键词**：
