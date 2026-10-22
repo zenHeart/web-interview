@@ -25,6 +25,7 @@ graph TB
         T1_5["微调 / RAG / Prompt 三条路线的选型边界与成本结构"]
         T1_6["位置编码机制 (RoPE / ALiBi) 与长上下文外推原理"]
         T1_7["复读机退化重复生成的成因诊断与分层干预"]
+        T1_8["LoRA 与 QLoRA：参数高效微调的显存账本与量化前提"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -33,6 +34,7 @@ graph TB
         T2_3["生成式 UI (Generative UI) 动态组件与 Shadow DOM 沙箱"]
         T2_4["多轮复杂分支会话树状态机 (Branch Tree / 时光旅行 / 撤销重试)"]
         T2_5["流式并发打断：排队、打断与最终渲染顺序保证"]
+        T2_6["流式 ASR 的临时结果与最终结果：稳定前缀渲染"]
     end
 
     subgraph Tier3["Tier 3: 智能体工程与前端载体 (03.agent-engineering.md)"]
@@ -52,6 +54,7 @@ graph TB
         T3_14["Agent 多次执行的稳定性度量与轨迹分叉定位"]
         T3_15["Agent / Orchestrator / Harness / Runtime 四层职责边界"]
         T3_16["Agent 多步工具轨迹的 Reward 设计与信用分配"]
+        T3_17["审批快照与执行绑定：TOCTOU 缝隙与幂等兜底"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -66,6 +69,8 @@ graph TB
         T4_9["评测指标选型：BLEU/ROUGE 失效边界与 NDCG 排序场景"]
         T4_10["Agent 过程级评测指标与 PRM 步骤级监督"]
         T4_11["A2A (Agent2Agent) 协议：Agent 间通信与同 MCP 的分工"]
+        T4_12["Skill 路由准确率评测：触发率与误触发门禁"]
+        T4_13["ASR WER 与下游任务指标的错位与分层诊断"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -82,6 +87,7 @@ graph TB
         T5_11["RAG 召回质量分层诊断与 Rerank 精排"]
         T5_12["Word/PDF 文档解析到向量库的五段入库流水线"]
         T5_13["vLLM 推理引擎：PagedAttention 分页与连续批处理吞吐"]
+        T5_14["RAG 父子索引：小块检索、大块喂给的粒度解耦"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -128,6 +134,7 @@ graph TB
 - `{#p1-finetune-vs-rag-vs-prompt}`：为什么用微调做代码生成，而不是纯 prompt 或 spec coding？微调和 RAG 各适合什么场景？
 - `{#p1-positional-encoding-rope}`：大模型怎么区分「猫追狗」和「狗追猫」？RoPE 旋转位置编码的原理与长上下文外推是怎么回事？
 - `{#p1-llm-degenerate-repetition}`：模型输出变成「复读机」，同一句话反复刷屏，怎么定位原因并修掉？
+- `{#p1-lora-vs-qlora}`：LoRA 和 QLoRA 有什么区别？为什么 QLoRA 能在单张 48GB 显卡上微调 65B 模型？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -135,6 +142,7 @@ graph TB
 - `{#p0-generative-ui-sandbox}`：什么是生成式 UI（Generative UI）？如何安全渲染模型动态生成的 React/Vue 组件并防止 XSS？
 - `{#p1-ai-chat-tree-state}`：在大模型多轮分支对话交互中，复杂会话树状态机与撤销重试是如何设计的？
 - `{#p0-streaming-concurrent-request-interrupt}`：流式回复还没输出完，用户又发来一条新消息，前端怎么打断、怎么排队、怎么保证最终渲染顺序？
+- `{#p1-streaming-asr-partial-final}`：流式语音转写里，临时结果和最终结果有什么区别？前端怎么渲染才不会一直抖？
 
 ### [03. 智能体工程与前端载体 (Agent Engineering & Harness)](./03.agent-engineering.md)
 - `{#p0-what-is-agent-core-elements}`：什么是智能体（Agent）？Agent 的四大核心要素（LLM 大脑、规划 Planning、记忆 Memory、工具 Tools）是什么？
@@ -153,6 +161,7 @@ graph TB
 - `{#p0-multi-agent-stability-evaluation}`：让 Agent 多次执行同一个任务，结果时好时坏，怎么度量稳定性、定位漂移来源？
 - `{#p1-agent-orchestrator-harness-runtime-layers}`：Agent、Orchestrator、Harness 和 Runtime 到底怎么分工？为什么要拆成四层？
 - `{#p1-agent-trajectory-reward-credit-assignment}`：要训一个会调工具的 Agent，多步轨迹的 Reward 怎么设计？信号稀疏时信用怎么分配？
+- `{#p1-agent-approval-execution-consistency}`：用户点了「确认」之后，怎么保证真正执行的内容和确认时看到的完全一致？审批后还能不能再调一次大模型？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -166,6 +175,8 @@ graph TB
 - `{#p0-eval-metric-bleu-ndcg-selection}`：BLEU、ROUGE 这类 n-gram 指标为什么不能用来评 LLM 的生成？什么场景才轮到 NDCG？
 - `{#p0-agent-process-metrics-prm}`：只看最终答案能判断 Agent 好不好吗？过程指标该怎么设计，PRM 和结果评测差在哪？
 - `{#p1-a2a-agent-interop-protocol}`：A2A（Agent2Agent）协议是怎么让两个 Agent 对话的？它和 MCP 到底怎么分工？
+- `{#p1-agent-skill-routing-eval}`：Agent 到底怎么判断该用哪个 Skill？怎么设计测试集来度量这个路由准不准？
+- `{#p1-asr-wer-downstream-metric-gap}`：ASR 的 WER 明明降下来了，为什么下游任务的准确率反而可能下降？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -181,6 +192,7 @@ graph TB
 - `{#p0-rag-recall-quality-rerank}`：RAG 召回质量怎么判断？召回不好该调什么参数，重排序怎么做？
 - `{#p0-rag-doc-parse-index-pipeline}`：企业知识问答要把 Word、PDF 灌进向量库，文档解析到入库的中间流程到底怎么走？
 - `{#p1-vllm-paged-attention-batching}`：vLLM 是怎么把推理吞吐做上去的？PagedAttention 和 Continuous Batching 分别解决了什么瓶颈？
+- `{#p1-rag-parent-child-index}`：RAG 流程中为什么要引入父子索引？「小块检索、大块喂给模型」是怎么权衡的？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
