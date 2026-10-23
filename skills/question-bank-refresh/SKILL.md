@@ -420,7 +420,7 @@ git push origin feature/question-bank-refresh
 > ```
 > 发现有未提交改动时：**先在它自己的分支上提交并 push 保底**（不要 `worktree remove`，不要 `--force`），再走门禁 → PR → squash 合并 → 清理。合并顺序上建议**先合旧批次再基于新 `main` 开当天批次**，避免两批都改 `docs/06.03.ai/README.md` 时撞行。
 >
-> **坑 39（未开采帖的差集基准要读 `references/sources.md`，不能靠记忆）**：坑 34 的「帖 id 差集」法要拿 `mianjing.json` 的 post id 全集**减去已开采清单**。已开采清单的唯一权威来源是 **`skills/question-bank-refresh/references/sources.md` 里的牛客批次表**，不是上一轮任务自己的记忆——上一轮已经开采了 6 个新帖，2026-10-23 再按记忆算差集会**重复开采同一批帖**。2026-10-23 实测：`mianjing.json` 共 385 条、**15 个 distinct post id**，扣掉已记录的 9 个后**只剩 6 个未开采**，本轮全部开采完后这条线索**彻底用尽**。
+> **坑 39（未开采帖的差集基准要读 `references/sources.md`，不能靠记忆）**：坑 34 的「帖 id 差集」法要拿 `mianjing.json` 的 post id 全集**减去已开采清单**。已开采清单的唯一权威来源是 **`skills/question-bank-refresh/references/sources.md` 里的牛客批次表**，不是上一轮任务自己的记忆——上一轮已经开采了 6 个新帖，2026-10-23 再按记忆算差集会**重复开采同一批帖**。2026-10-23 实测：`mianjing.json` 共 385 条、**14 个 distinct post id**，扣掉已记录的 8 个后**只剩 6 个未开采**，本轮全部开采完。⚠️ **2026-10-24 复核发现该结论不成立——当时只记录了 11 个 id，仍有 3 个从未开采**（其中 `470262180567400448` 引用数高达 72，是语料池里最多的一个）。**详见坑 46。**
 >
 > **坑 40（信号榜条数 ≠ 可出题数，每条都要做覆盖判定）**：`zchary1106.github.io/agent-interview-hub/question-signals.html` 是 L2 面经信号站（带独立来源数、公司、轮次标注），2026-10-23 实测共 **12 条信号**，逐条与 `docs/06.03.ai/` 现有 60 题比对后：
 > - **已被覆盖、直接放弃**：#1 工具边界、#3 Coding 验证、#4 Agent 评测、#5 RAG 分层定位、#6 四层职责、#8 重试幂等、#10 结构化输出、#11 Agentic RL、#12 路径震荡与无进展循环（**「无进展检测 + 循环指纹熔断」已写在既有「Agent = Model + Harness」题的执行循环一节里**）；
@@ -431,6 +431,7 @@ git push origin feature/question-bank-refresh
 > 同时本轮修掉两条**真漂移**：
 > - vLLM 指标文档：`docs.vllm.ai/en/latest/serving/metrics.html` → **404**，现址是 `docs.vllm.ai/en/latest/usage/metrics.html`（用坑 37 的 `llms.txt` 路径一次命中）；
 > - OTel GenAI 语义约定 → 迁到独立仓 `github.com/open-telemetry/semantic-conventions-genai`（该仓 README 写明覆盖 **spans / metrics / events**，并含 **MCP** 约定）。
+> - **2026-10-24 追加一例**：vLLM 的投机解码文档，**`/en/latest/features/spec_decode/` 返回 200 但只有 816 字节**（空壳），真址是 **`/en/latest/features/speculative_decoding/`**（213KB），且其下还有子页 **`/acceptance_metrics/`**（讲生产环境怎么观测接受率）。**教训不变：`spec_decode` 这类「缩写路径」最容易被生成出来，但常常不存在**——**探活必须同时看体积与关键词**，只看 200 会误判。
 >
 > **坑 42（arXiv 日期以页面 `citation_date` meta 为准，不要凭印象写月份）**：本轮差点把 InstructGPT 记成「2022-03-16」，实际 **v1 是 2022-03-04**。一条命令核到 title / author / date 三件套：
 > ```bash
@@ -439,6 +440,32 @@ git push origin feature/question-bank-refresh
 > 同一条命令还纠正了另外两处易错点：**DPO 是 2023-05-29**（不是 5 月初）、**CoALA 是 2023-09-05**、**MemGPT 是 2023-10-12**。论文**正文**里的机制细节（PPO、KL 惩罚项、CoALA 的记忆分类术语）要去 **ar5iv 全文**核：`curl -sL https://ar5iv.labs.arxiv.org/html/2309.02427`，只读 abstract 会漏掉这些。
 >
 > **坑 43（核证类子任务自己跑比委托可靠）**：2026-10-23 尝试把 4 组 L0 核证委托给子 Agent，**20+ 分钟零输出**，最终自己用 `curl + grep` 在几分钟内核完全部条目（见坑 42 的命令）。**核证是本任务的核心门禁，不能等一个不可观测的异步结果**；要么自己做，要么就明确接受「核不到就整条不录」。
+>
+> **坑 44（同一个站点的子页面 ≠ 全部：`question-signals.html` 只是 Agent Interview Hub 主站的极小子集）**：2026-10-23 用 `zchary1106.github.io/agent-interview-hub/question-signals.html`（12 条信号）选题，并据此写下「这条线索基本用尽」。**2026-10-24 发现同一个站的主站 `index.html` 才是主矿**：约 1.35MB、**50 个 `<section class="content-section">`**、展开后共 **715 条编号条目、约 500 组带答案的 Q&A**，每条带**难度（⭐）与频率（★）标注**和「参考答案」正文。**单站开出 7 道新题。**
+> - **提取要点（每一条都踩过）**：
+>   - `index.html` 的每个 section 里是**完整正文**；**`data-search` 属性只放约 200 字符的摘要，绝不能当正文用**——这是最容易误判「正文被截断」的地方。
+>   - `new.html`（约 1.7MB）的导航是 `<button data-target="通用知识-XXX">`，它指向的正文**同样在 `index.html` 的 section 里**，不在 `new.html` 自己身上。
+>   - 抽正文前必须先把 `<br>` 还原成换行、把块级标签闭合还原成换行，再剥标签；否则整篇会挤成一行，正则全部失配。
+>   - 题目形态是 `N. 问题` 开头，**「参考答案：」出现在标题的下一行**（不是标题里带 `A：`）。
+> - **通用做法**：遇到「某聚合站已用尽」的结论，**先把该域名下的其它页面列一遍**（`curl` 首页 + 找 `<a href>`），再决定是否放弃。
+>
+> **坑 45（Hub 里的题必须先过滤，否则会把 LeetCode 题和行为题录进 AI 模块）**：Agent Interview Hub 覆盖 15+ 家公司，混着大量**算法题（题干带 "LeetCode 103"）**、**公司战略题（"你对美团的 AI 战略怎么看"）**、**行为/HR 题（"怎么学习一门新技术"）**、以及**纯训练侧深度学习题（反向传播、梯度消失、CUDA warp、分布式训练）**。
+> - 处置：先用一个 BAD 正则把「算法题 / 行为题 / 公司战略题」整段剔掉，**再做覆盖判定**；训练侧深度学习题**默认不录**（与既有口径一致，见 `references/sources.md` 缺口表里「数据并行 / DeepSpeed」那条先例）。
+> - **更隐蔽的一种污染**：抽出来的「答案」里夹着大量 `A：` 开头的补充说明和 bullet，**它们不是题面**。只按「以问号结尾」过滤仍会混进 bullet 行——2026-10-24 实测，未过滤前 495 条候选里有一半是答案碎片；加上问号过滤 + BAD 正则后降到 **152 条真题**，再按 CJK 2-gram 覆盖度排序才拿到 7 道可录的。
+>
+> **坑 46（不要凭「某来源已用尽」下结论——先重算差集，再区分「没开采过」与「开采了但没价值」）**：2026-10-23 在 `references/sources.md` 写下「牛客 post id 线索**已彻底用尽**（15 个 id 全部开采过）」。2026-10-24 重算差集发现：`mianjing.json` 实际只有 **14 个** distinct id，而当时只记录了 **11 个**，剩下 3 个（`470262180567400448` **72 次引用，是语料池里最高的一个** / `c1e2eb280ad3496cb7886cd1bf75c80d` / `b234d314e00548f8883782b51c362c04`）**从未开采**。
+> - 逐帖核完结论：这 3 个帖对 AI 模块**零价值**（全是前端通用 + 行为/HR 题，已被 `docs/01.js`、`docs/02.html`、`docs/05.02.vue` 覆盖，行为题按坑 5 本就不算缺口）——**但上一轮「彻底用尽」的判断本身是错的**。
+> - 处置：**「线索用尽」这类结论必须用差集脚本重算后再写**，且要分两种状态记录：「**从未开采**」与「**开采了但无价值**」——后者也要写进去，否则下轮会重复挖一遍。
+> - 附带修正：坑 34 / 坑 39 里写的「15 个 distinct id」也是**沿用了错误计数**，正确值是 **14 个**。
+>
+> **坑 47（核验模型结构时，`config.json` 是最省事的一手证据，但 Llama 系会 401）**：核「某模型用没用 GQA / MoE 开了几个专家」时，HF 的模型配置是**可机读**的最快路径：
+> ```bash
+> curl -sL "https://huggingface.co/mistralai/Mixtral-8x7B-v0.1/raw/main/config.json" \
+>   | python3 -c "import json,sys; c=json.load(sys.stdin); print({k:c[k] for k in ['num_attention_heads','num_key_value_heads','num_local_experts','num_experts_per_tok'] if k in c})"
+> ```
+> 2026-10-24 实测一次拿到 `num_attention_heads=32 / num_key_value_heads=8 / num_local_experts=8 / num_experts_per_tok=2`。
+> - ⚠️ **`meta-llama/*` 系列会返回 401**（Meta 仓库是 gated）——此时改用**论文里的 Table**：Llama 2 论文 Table 1 有专门的 GQA 列（34B/70B 为 ✓，7B/13B 为 ✗），arXiv HTML 版 `https://arxiv.org/html/2307.09288v2` 可直接 grep。
+> - 配套：**取 arXiv 全文优先试 `https://arxiv.org/html/<id>v<n>`，比 `ar5iv` 稳**——2026-10-24 实测 ar5iv 返回 `000`（连接超时），arXiv HTML 版一次拿到 163KB 全文并 grep 成功。
 >
 
 ---
