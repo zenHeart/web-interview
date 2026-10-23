@@ -27,6 +27,9 @@ graph TB
         T1_7["复读机退化重复生成的成因诊断与分层干预"]
         T1_8["LoRA 与 QLoRA：参数高效微调的显存账本与量化前提"]
         T1_9["ChatGPT 的强化学习：SFT / 奖励模型 / PPO 三段式对齐"]
+        T1_10["MHA / MQA / GQA 三种注意力变体与 KV Cache 体积账"]
+        T1_11["混合专家模型 (MoE)：稀疏专家路由与负载均衡"]
+        T1_12["Scaling Law 与算力最优的模型-数据配比"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -58,6 +61,8 @@ graph TB
         T3_17["审批快照与执行绑定：TOCTOU 缝隙与幂等兜底"]
         T3_18["Agent 失败归因分解：模型能力 / 上下文 / 任务粒度 / 工具可靠性"]
         T3_19["Agent 链路端到端延迟与成本优化：分解、并行、缓存、降级"]
+        T3_20["提示注入防御：直接注入与间接注入的纵深架构"]
+        T3_21["Reflexion 语言化强化：反思记忆与失败经验复用"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -92,6 +97,8 @@ graph TB
         T5_13["vLLM 推理引擎：PagedAttention 分页与连续批处理吞吐"]
         T5_14["RAG 父子索引：小块检索、大块喂给的粒度解耦"]
         T5_15["Agent 记忆持久化分层：会话级 / 任务级 / 项目级与冲突更新"]
+        T5_16["投机解码：draft-verify 无损加速与接受率收益"]
+        T5_17["GraphRAG 图索引：Local / Global Search 与建图成本"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -140,6 +147,9 @@ graph TB
 - `{#p1-llm-degenerate-repetition}`：模型输出变成「复读机」，同一句话反复刷屏，怎么定位原因并修掉？
 - `{#p1-rlhf-reward-model-ppo}`：ChatGPT 里的强化学习是怎么实现的？为什么不直接拿人写的答案继续微调？
 - `{#p1-lora-vs-qlora}`：LoRA 和 QLoRA 有什么区别？为什么 QLoRA 能在单张 48GB 显卡上微调 65B 模型？
+- `{#p1-mha-mqa-gqa-kv-cache}`：多头注意力的 MHA、MQA、GQA 三种变体有什么区别？为什么 GQA 能让 KV Cache 显著变小？
+- `{#p1-moe-sparse-expert-routing}`：混合专家模型（MoE）是怎么做到「总参数量很大、单次推理只激活一小部分」的？专家之间负载不均怎么办？
+- `{#p1-scaling-laws-compute-optimal}`：Scaling Law 揭示了什么？为什么「模型越大越好」在算力预算固定时不成立？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -169,6 +179,8 @@ graph TB
 - `{#p1-agent-failure-attribution-small-model}`：线上 Agent 出现「指令遵循失败」，是模型能力不够还是工程没做好？怎么归因？
 - `{#p1-agent-chain-latency-cost-optimization}`：一个 Agent 任务要串好几次模型调用和工具调用，延迟和成本都压不下来，怎么优化？
 - `{#p1-agent-approval-execution-consistency}`：用户点了「确认」之后，怎么保证真正执行的内容和确认时看到的完全一致？审批后还能不能再调一次大模型？
+- `{#p0-agent-prompt-injection-defense}`：Agent 把检索到的网页、邮件或工单内容喂给模型时，提示注入（Prompt Injection）怎么防？直接注入和间接注入有什么区别？
+- `{#p1-agent-reflexion-verbal-reinforcement}`：Reflexion 的「语言化强化学习」和真正的权重更新有什么区别？Agent 怎么把失败经验变成下一次的成功？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -201,6 +213,8 @@ graph TB
 - `{#p1-vllm-paged-attention-batching}`：vLLM 是怎么把推理吞吐做上去的？PagedAttention 和 Continuous Batching 分别解决了什么瓶颈？
 - `{#p1-agent-memory-persistence-layers}`：Agent 的记忆怎么持久化？会话级、任务级、项目级怎么分层？提取和冲突更新怎么处理？
 - `{#p1-rag-parent-child-index}`：RAG 流程中为什么要引入父子索引？「小块检索、大块喂给模型」是怎么权衡的？
+- `{#p1-speculative-decoding-draft-verify}`：投机解码（Speculative Decoding）是怎么用小模型给大模型「打草稿」加速的？为什么它不会改变输出分布？
+- `{#p1-graphrag-local-global-search}`：GraphRAG 和向量 RAG 到底差在哪？什么场景该建图索引，什么时候用传统 RAG 就够了？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
