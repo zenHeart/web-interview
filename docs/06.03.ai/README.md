@@ -30,6 +30,12 @@ graph TB
         T1_10["MHA / MQA / GQA 三种注意力变体与 KV Cache 体积账"]
         T1_11["混合专家模型 (MoE)：稀疏专家路由与负载均衡"]
         T1_12["Scaling Law 与算力最优的模型-数据配比"]
+        T1_13["Transformer 三种架构范式 (Encoder/Decoder/Enc-Dec) 与任务选型"]
+        T1_14["模型涌现能力 (Emergent) 与度量方式造成的假象"]
+        T1_15["微调中的灾难性遗忘：EWC / LwF / 重放与 LoRA 缓解"]
+        T1_16["SFT 数据集工程：质量优先于数量与构建流水线"]
+        T1_17["Pre-norm + RMSNorm：现代大模型的稳定性配方"]
+        T1_18["SSM / Mamba 与 Transformer 的取舍：线性复杂度换来的能力代价"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -141,6 +147,8 @@ graph TB
 - `{#p0-transformer-self-attention-for-fe}`：前端工程师需要了解的 Transformer 架构：什么是 Self-Attention（自注意力机制）？多头注意力（Multi-Head Attention）解决了什么？
 - `{#p0-llm-hallucination-mitigation}`：为什么大模型会产生幻觉（Hallucination）？前端能从工程上做什么来防范和降低幻觉？
 - `{#p0-structured-outputs-json-schema}`：什么是结构化输出（Structured Outputs）？为什么基于 JSON Schema / Zod 约束比纯自然语言 Prompt 更可靠？
+- `{#p0-transformer-architecture-paradigms}`：BERT、GPT、T5 都基于 Transformer，三种架构范式的注意力掩码与训练目标有何本质区别？各自适合什么任务？
+- `{#p0-llm-emergent-abilities-mirage}`：大模型的「涌现能力」是真的吗？为什么有研究认为它只是度量方式造成的假象？
 - `{#p1-embedding-vector-search-basics}`：什么是 Embedding（向量嵌入）？向量空间与余弦相似度在前端语义搜索中是如何工作的？
 - `{#p1-finetune-vs-rag-vs-prompt}`：为什么用微调做代码生成，而不是纯 prompt 或 spec coding？微调和 RAG 各适合什么场景？
 - `{#p1-positional-encoding-rope}`：大模型怎么区分「猫追狗」和「狗追猫」？RoPE 旋转位置编码的原理与长上下文外推是怎么回事？
@@ -150,6 +158,10 @@ graph TB
 - `{#p1-mha-mqa-gqa-kv-cache}`：多头注意力的 MHA、MQA、GQA 三种变体有什么区别？为什么 GQA 能让 KV Cache 显著变小？
 - `{#p1-moe-sparse-expert-routing}`：混合专家模型（MoE）是怎么做到「总参数量很大、单次推理只激活一小部分」的？专家之间负载不均怎么办？
 - `{#p1-scaling-laws-compute-optimal}`：Scaling Law 揭示了什么？为什么「模型越大越好」在算力预算固定时不成立？
+- `{#p1-finetune-catastrophic-forgetting}`：微调后模型「原有能力退化」，怎么诊断和缓解？EWC、LwF、重放三种做法的原理分别是什么？
+- `{#p1-sft-data-curation-quality}`：SFT 训练数据是越多越好吗？「1000 条高质量数据就够用」的说法成立吗？数据集该怎么构建？
+- `{#p1-prenorm-rmsnorm-training-stability}`：原始 Transformer 用的是 Post-norm + LayerNorm，为什么现代大模型几乎都换成了 Pre-norm + RMSNorm？
+- `{#p1-ssm-mamba-vs-transformer}`：SSM / Mamba 号称要取代 Transformer，它到底解决了什么问题、牺牲了什么？为什么主流 LLM 至今仍是 Decoder-Only Transformer？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
