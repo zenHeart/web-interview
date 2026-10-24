@@ -467,6 +467,55 @@ git push origin feature/question-bank-refresh
 > - ⚠️ **`meta-llama/*` 系列会返回 401**（Meta 仓库是 gated）——此时改用**论文里的 Table**：Llama 2 论文 Table 1 有专门的 GQA 列（34B/70B 为 ✓，7B/13B 为 ✗），arXiv HTML 版 `https://arxiv.org/html/2307.09288v2` 可直接 grep。
 > - 配套：**取 arXiv 全文优先试 `https://arxiv.org/html/<id>v<n>`，比 `ar5iv` 稳**——2026-10-24 实测 ar5iv 返回 `000`（连接超时），arXiv HTML 版一次拿到 163KB 全文并 grep 成功。
 >
+> **坑 48（Hub 主站的公司分节用 `Q:` 格式，只按 `N.` 提取会静默丢掉整批真题）**：2026-10-25 实测，Agent Interview Hub 的**通用知识分节**用 `1. 问题` 编号，而**公司分节**（字节/阿里/腾讯/百度/美团/小红书/快手/蚂蚁/华为的「面试题与面经」与「真实面经」）用 **`Q:` / `Q1:` 前缀**，正文形如 `Q: xxx?` + 下一行 `A: xxx`。只写 `^\d{1,3}[.、]\s*(.+)$` 正则时，**所有公司分节全部返回 0 条且不报错**——提取结果 195 条 vs 补上 `Q\d*[:：]` 后 **491 条**，凭空丢掉一半真题。
+> - 判据：某个分节明明有大量内容却提取为 0 条时，**先打印该分节的纯文本前 1200 字看格式**，不要急着判定「该节没内容」。
+> - 配套：抽取器必须同时支持 `N.`、`N、`、`Q:`、`Q1:` 四种前缀；且**每个分节都要打印命中条数**，0 条分节要人工过一眼。
+>
+> **坑 49（CJK 2-gram 覆盖判定有假阴性，候选必须再做一轮关键词 grep 复核）**：坑 35 的 2-gram 相似度适合**排序**，不能直接当**判定**。2026-10-25 实测：GraphRAG 的 Local/Global Search 差异、vLLM 的 PagedAttention/Continuous Batching 这类**既有题已覆盖**的考点，2-gram 得分只有 0.30~0.33，落在 0.34 阈值下方被误列为候选。原因是 2-gram 抓不住「同义改写」（如「社区报告」vs「community report」）。
+> - 配套流程：**① 2-gram 打分排序 → ② 对每个候选用 `grep -ril "<核心关键词>" docs/` 逐个复核**。今天对 16 个候选关键词逐一 grep：`EWC` 命中 12 个文件全是 `newConfig` 之类**子串误命中**，`LwF` 命中 2 个是 `callWebViewCallback`，`Decoder-Only` 命中 1 个是既有题里的**追问**（不是独立题）——这些都必须逐个打开确认。
+> - 反向教训：**不要因为「grep 命中很多」就判定已覆盖**，子串误命中极常见（`EWC`/`LwF`/`Llama 2` 全中过）。
+>
+> **坑 50（「当前主流模型是什么架构」这类状态断言，用 HF `config.json` 的 `architectures` 字段做机读实证最省事）**：要证明「2026 年主流 LLM 仍是注意力式 Decoder-Only」，不必翻各家博客或模型卡，直接读 `config.json`：
+> ```bash
+> for m in "Qwen/Qwen3-235B-A22B" "deepseek-ai/DeepSeek-V3.2-Exp" "zai-org/GLM-4.6" \
+>          "moonshotai/Kimi-K2-Instruct" "MiniMaxAI/MiniMax-M2"; do
+>   printf "%-44s " "$m"
+>   curl -sL --max-time 20 "https://huggingface.co/$m/raw/main/config.json" \
+>     | python3 -c "import json,sys; c=json.load(sys.stdin); print(c.get('model_type'), (c.get('architectures') or ['?'])[0])"
+> done
+> ```
+> 2026-10-25 实测五个模型仓全部返回 `*ForCausalLM` 注意力架构（`Qwen3MoeForCausalLM` / `DeepseekV32ForCausalLM` / `Glm4MoeForCausalLM` / `DeepseekV3ForCausalLM` / `MiniMaxM2ForCausalLM`），**没有一个以 SSM 为主干**——这一句话就足够支撑「取代没有发生」的断言，且是机读可复验的。
+> - 配套：`model_type` 与 `architectures` **两个字段都要看**（`kimi_k2` 的 `model_type` 是 `kimi_k2`，但 `architectures` 却是 `DeepseekV3ForCausalLM`，说明它基于 DeepSeek-V3 架构——只看 `model_type` 会误判）。
+>
+> **坑 51（arXiv HTML 全文只覆盖 2023-12 之后的投稿，老论文必须走 ar5iv；且指定版本号可能命中不存在的版本页）**：2026-10-25 实测，`https://arxiv.org/html/<id>` 对 **2016 年的 EWC（1612.00796）/ LwF（1606.09282）返回 7KB 错误页**，因为 arXiv 的 HTML 渲染只对 2023-12 之后投稿开放；老论文要走 `https://ar5iv.labs.arxiv.org/html/<id>`（**但 ar5iv 可能返回空内容，需要重试**，实测同一 URL 有时 len 0、有时 55KB）。
+> - 另外 **版本号不能瞎猜**：`arxiv.org/html/2307.09288v3` 返回 6KB（该版本页不存在），而 `v1`/`v2`/无版本号 URL 都返回约 1MB 全文。**先试无版本号 URL**，再回退 `v1`/`v2`。
+> - 配套：判断是否拿到全文看**字节数**（正文通常 100KB~1MB），不要只看 HTTP 200；只有 6~8KB 就是错误页。
+> - 另一个零成本兜底：**论文摘要页的 `citation_title` / `citation_date` 元数据**足够核「标题 + 日期 + 作者」三件套，但**机制细节**（Fisher 信息矩阵、二次惩罚、蒸馏软标签等）仍必须进全文。
+>
+> **坑 52（本仓库未启用 remark-math，`$...$` 是字面文本，里面的 `{` 会被 MDX 当 JSX 表达式——合法 JS 被静默吞掉，非法 JS 直接构建失败）**：2026-10-25 实测两次构建失败都栽在这里。`docusaurus.config.ts` 只配了 `remark-gfm` / `rehype-raw`，**没有 `remark-math` / `rehype-katex`**，因此：
+> - `$x_{l+1} = ...$`、`$\theta_A^{*}$`、`$\mathrm{LN}(x_l)$` 里的 `{` / `}` 会被 MDX 解析成 **JSX 表达式**：
+>   - 花括号里是**合法 JS**（如仓库既有的 `10^{-5}` → 被解析成数字 `-5`）→ **构建通过但渲染是错的**，`10^{-5}` 实际显示成 `10-5`，属于**既有静默 bug**；
+>   - 花括号里是**非法 JS**（如 `{*}`、`{\mathrm{LN}}`）→ **构建直接失败**，报 `Could not parse expression with acorn`。
+> - **写公式的正确姿势（本仓库口径）**：一律用**行内代码**表达，不要用 LaTeX 数学环境。例如 `x[l+1] = x[l] + F(LN(x[l]))`、`θ*_A`、`O(n²)`、`（Δ, A, B, C）`。既不触发 MDX 表达式解析，渲染也更像前端读者熟悉的写法。
+> - **配套自检**（提交前对新增行跑一遍，围栏代码与行内代码除外）：
+>   ```bash
+>   python3 - <<'PY'
+>   import re, subprocess
+>   diff = subprocess.run(["git","diff","-U0"],capture_output=True,text=True).stdout
+>   added=[l[1:] for l in diff.split("\n") if l.startswith("+") and not l.startswith("+++")]
+>   INLINE=re.compile(r"`[^`\n]*`"); fence=False; hits=[]
+>   for l in added:
+>       if l.strip().startswith("```"): fence = not fence; continue
+>       if fence: continue
+>       s=INLINE.sub(" ", l).replace("<Answer>","").replace("</Answer>","")
+>       s=re.sub(r"\{#[a-z0-9-]+\}", " ", s)      # 标题锚点是 MDX 合法语法，放行
+>       for m in re.finditer(r"\$|\{", s): hits.append((m.group(0), l.strip()[:90]))
+>   print("命中", len(hits), "处"); [print("  *", h) for h in hits]
+>   PY
+>   ```
+>   另外**裸 `<` 也要一起扫**（MDX 会当成 JSX 标签，`<org>`、`<model>` 这类占位符 URL 必须包进行内代码，否则报 `Expected a closing tag for <model>`）。2026-10-25 实测：`huggingface.co/<org>/<model>/raw/main/config.json` 就是这么炸的。
+> - **替换 LaTeX 时小心误伤既有内容**：全局 `str.replace(r"$i$", ...)` 会连**既有句子**一起改（当天就把一句「生成第 $i$ 个词」改成了「生成第 第 i 个 个词」）。替换后必须 `git diff -U0 | grep '^-'` 复查**被修改的既有行**，确认只剩有意改动。
+>
 
 ---
 
