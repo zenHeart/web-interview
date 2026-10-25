@@ -36,6 +36,8 @@ graph TB
         T1_16["SFT 数据集工程：质量优先于数量与构建流水线"]
         T1_17["Pre-norm + RMSNorm：现代大模型的稳定性配方"]
         T1_18["SSM / Mamba 与 Transformer 的取舍：线性复杂度换来的能力代价"]
+        T1_19["GRPO：PPO 的 critic 成本账与组内相对优势基线"]
+        T1_20["LLaMA 1/2/3 代际演进：尺寸、上下文与训练数据量基线"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -105,6 +107,10 @@ graph TB
         T5_15["Agent 记忆持久化分层：会话级 / 任务级 / 项目级与冲突更新"]
         T5_16["投机解码：draft-verify 无损加速与接受率收益"]
         T5_17["GraphRAG 图索引：Local / Global Search 与建图成本"]
+        T5_18["KV Cache 压缩：量化、驱逐与低秩三条正交路线"]
+        T5_19["向量索引结构：HNSW 分层图与 DiskANN 的 SSD 方案"]
+        T5_20["FlashAttention：IO 感知的精确注意力与分块计算"]
+        T5_21["语义缓存：相似度阈值、误命中风险与失效策略"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -162,6 +168,8 @@ graph TB
 - `{#p1-sft-data-curation-quality}`：SFT 训练数据是越多越好吗？「1000 条高质量数据就够用」的说法成立吗？数据集该怎么构建？
 - `{#p1-prenorm-rmsnorm-training-stability}`：原始 Transformer 用的是 Post-norm + LayerNorm，为什么现代大模型几乎都换成了 Pre-norm + RMSNorm？
 - `{#p1-ssm-mamba-vs-transformer}`：SSM / Mamba 号称要取代 Transformer，它到底解决了什么问题、牺牲了什么？为什么主流 LLM 至今仍是 Decoder-Only Transformer？
+- `{#p1-grpo-group-relative-policy-optimization}`：PPO 要额外训一个价值模型，DeepSeek 的 GRPO 怎么把它省掉？
+- `{#p1-llama-1-2-3-generations-evolution}`：LLaMA 1、LLaMA 2、LLaMA 3 三代到底差在哪？为什么参数量总是 7B、13B、70B 这种数字？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -214,6 +222,7 @@ graph TB
 - `{#p0-rag-frontend-knowledge-base}`：前端如何构建端侧本地 RAG 系统？文档分块、客户端 Embedding 与余弦相似度检索是如何落地的？
 - `{#p1-agent-memory-context-compression}`：Agent 长会话场景下，面对有限的上下文窗口，如何设计多级记忆管理与滑动压缩机制？
 - `{#p0-prompt-caching-kv-cache-optimization}`：什么是 Prompt Caching（前缀缓存）与 KV-Cache 状态优化？静态与动态上下文编排如何降低首字时延（TTFT）与成本？
+- `{#p1-kv-cache-compression-quantization-eviction}`：KV Cache 越用越大，有哪些压缩手段？量化、驱逐和低秩压缩各自是怎么做的？
 - `{#p0-long-task-context-decay-drift}`：长任务跑久了，上下文会「腐化」、行为会「漂移」，怎么检测和干预？
 - `{#p0-agent-retry-storm-backoff}`：工具失败后重试，为什么容易演变成「重试风暴」？退避与熔断怎么设计？
 - `{#p0-agents-md-context-bloat}`：AGENTS.md / 规则文件越写越长，效果反而变差，怎么治理？
@@ -222,11 +231,14 @@ graph TB
 - `{#p0-agent-memory-privacy-boundary}`：记忆和个性化：如何让 Agent 长期记住用户习惯，又不泄漏隐私？
 - `{#p0-rag-recall-quality-rerank}`：RAG 召回质量怎么判断？召回不好该调什么参数，重排序怎么做？
 - `{#p0-rag-doc-parse-index-pipeline}`：企业知识问答要把 Word、PDF 灌进向量库，文档解析到入库的中间流程到底怎么走？
+- `{#p1-vector-index-hnsw-vamana-diskann}`：向量检索上亿条数据时，HNSW、DiskANN 这类图索引是怎么工作的？内存和 SSD 怎么取舍？
 - `{#p1-vllm-paged-attention-batching}`：vLLM 是怎么把推理吞吐做上去的？PagedAttention 和 Continuous Batching 分别解决了什么瓶颈？
+- `{#p1-flashattention-io-aware-exact-attention}`：FlashAttention 为什么能把注意力算得快？它说的「IO 感知」到底指什么？
 - `{#p1-agent-memory-persistence-layers}`：Agent 的记忆怎么持久化？会话级、任务级、项目级怎么分层？提取和冲突更新怎么处理？
 - `{#p1-rag-parent-child-index}`：RAG 流程中为什么要引入父子索引？「小块检索、大块喂给模型」是怎么权衡的？
 - `{#p1-speculative-decoding-draft-verify}`：投机解码（Speculative Decoding）是怎么用小模型给大模型「打草稿」加速的？为什么它不会改变输出分布？
 - `{#p1-graphrag-local-global-search}`：GraphRAG 和向量 RAG 到底差在哪？什么场景该建图索引，什么时候用传统 RAG 就够了？
+- `{#p1-semantic-cache-similarity-threshold-false-hit}`：语义缓存（Semantic Cache）是怎么用相似度命中回答的？阈值怎么定，误命中怎么办？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？

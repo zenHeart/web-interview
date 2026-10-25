@@ -517,6 +517,23 @@ git push origin feature/question-bank-refresh
 > - **替换 LaTeX 时小心误伤既有内容**：全局 `str.replace(r"$i$", ...)` 会连**既有句子**一起改（当天就把一句「生成第 $i$ 个词」改成了「生成第 第 i 个 个词」）。替换后必须 `git diff -U0 | grep '^-'` 复查**被修改的既有行**，确认只剩有意改动。
 >
 
+> **坑 53（Hub 主站的公司分节还有两种更隐蔽的题目格式，只认 `N.` / `Q:` 会静默丢掉整批真题）**：坑 48 补上了 `Q:` / `Q1:` 前缀，但 2026-10-26 实测**仍有两类分节提取结果为 0**：
+> - **格式 C（华为 / 蚂蚁 / 腾讯「真实面经-网络实录」）**：`N、` 编号（`1、` `2、` …）——比 `N.` 只差一个顿号。
+> - **格式 D（美团 / 快手「面试题与面经」）**：**题面是一行裸文本**（**不以 `？` 结尾**——例如「自我介绍中阐述 AI 大模型工具在学习和实践中的作用」这种行**根本没有问号**），**后面跟若干空行 + 一行「参考答案：」**，再跟答案正文。
+> - **通用解法（对上面所有格式都成立，且不用猜）**：**不要用「这一行长得像不像题目」做前置判断**——改用**锚点法**：先扫出全文所有「参考答案：」出现的位置，**再从每个位置往前找最近的一条非空行**，那条就是题面；再叠加一个「编号前缀」正则（`^\s*(\d{1,3})[.、]\s*(.+)$` 或 `^\s*[Qq]\d{0,3}[:：]\s*(.+)$`）处理无「参考答案：」的纯编号分节。
+> - **判据**：任何分节提取结果为 **0 条**时，**不要判定它「没有内容」**，必须先打印该分节的**前 30 行原始文本**看格式——这是坑 48 同一条纪律的延伸（0 命中 = 格式没认出来，不是内容为空）。
+
+> **坑 54（Hub 主站 section 的 `id` 里含中文和空格，shell 传参会被拆散 → 必须用 Python 驱动提取，不能靠 shell 数组）**：2026-10-26 实测 `section id` 形如 `section-Agentic RAG与GraphRAG深度解析`（**中间有空格**）。写成 `python3 extract.py "section-腾讯-面试题与面经" "section-Agentic RAG..."` 时，**shell 会按空格拆成两个参数**，第二个变成 `RAG与GraphRAG深度解析`，于是该分节**静默变成 0 命中**——看起来像「这个分节没内容」，实际是**参数被拆了**。
+> - **修法**：**从 HTML 里直接正则抓全部 `id`**，在 Python 内部遍历，不要把 section 名当命令行参数传。判据：任何分节 0 命中时，**先确认它的 id 是不是被空格拆了**（打印 `sys.argv` 对照即可）。
+> - 附带规模基线：Hub 主站 2026-10-26 实测共 **47 个 section、1165 组带答案 Q&A**（此前只开采了 19 个分节），**仍有大量未开采分节**（`*-真实面经-网络实录` 系列每个 35~53 条、`通用知识-Context Engineering上下文工程` 87 条、`通用知识-模型微调完全指南` 84 条、`通用知识-Agentic RAG与GraphRAG深度解析` 55 条）。
+
+> **坑 55（arXiv id 不能凭记忆写：先核 `citation_title`，而且有些经典论文根本不在 arXiv 上）**：2026-10-26 实测差点把 **DiskANN** 写成 `arXiv:1906.04824`——该 id 实际是**一篇经济学论文**（"Advertising in an oligopoly with differentiated goods…"）。真相是：**DiskANN 论文根本不在 arXiv**，它是 **NeurIPS 2019** 论文（`papers.nips.cc/paper/9527-...`）。
+> - **处置纪律**：凡是写进题目的 arXiv 编号，**必须先跑一遍 id→title 核对**（一条命令核一组，见坑 42），**并把 `citation_title` 一起核出来**——**title 对不上就是 id 记错了**，不能只看 HTTP 200。
+> - **论文不在 arXiv 时的取证路径**：NeurIPS proceedings 走 `papers.nips.cc/paper/<id>-<slug>.pdf`；PDF 的 `/Title` 元数据与**首页正文标题可能不一致**——**DiskANN 就是反例**：PDF 元数据标题是 "**Rand\|NSG**: Fast Accurate Billion-point Nearest Neighbor Search on a Single Node"（proceedings 条目沿用旧名），**论文首页正文标题才是 "DiskANN: ..."**。两者都要写清楚，否则被追问会露馅。
+> - **PDF 取证的额外坑**：PDF 字体编码会把词拆开（实测 "Fast" 被抽成 "F ast"），**搜关键词必须用「去空白子串匹配」**（先把提取文本的空白全删掉再 `count` / `find`），否则明明有却搜不到。
+> - **配套**：arXiv API 也能当反查入口——`http://export.arxiv.org/api/query?search_query=ti:"<关键词>"`；但**搜不到不代表论文不存在**（Neural Information Processing Systems 的论文大多不在 arXiv），此时要回到会议 proceedings 站。
+
+
 ---
 
 ## 8. 复盘（每轮结束必做）
