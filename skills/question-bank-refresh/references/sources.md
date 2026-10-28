@@ -165,6 +165,11 @@
 > - **差集复核必须大小写敏感（SKILL.md 坑 58）**：`grep -ril "ReAct"` 命中 212 个文件（Vue 的 `reactive`），改 `grep -rn` 后只有 7 处——差点误判「ReAct 已覆盖」而放弃选题。反向也踩了：`Lost in the Middle` 命中 3 个文件，**打开一看只是既有「Token 预算」题里的一个 bullet**，差点重复出题。
 > - **arXiv id 错了两个（SKILL.md 坑 56）**：Plan-and-Solve 凭记忆写成 `2205.04091`（**实为一篇 Weyl 拟微分算子数学论文**，正确是 **`2305.04091`**）；`2310.06769` 是 NLS 孤子物理论文。**年份号差一位就完全不相干**，已改用 arXiv API 按标题反查 + 批量核 `citation_title`。
 > - **「通用知识-」系列已接近采尽**：本轮全量提取后，`大模型推理优化与部署`（88 条标题）、`模型微调完全指南`（100 条标题）、`Context Engineering`（41 条标题）三节**内容 90% 与既有题重叠**（vLLM / PagedAttention / FlashAttention / 投机解码 / KV Cache / LoRA / QLoRA / 上下文压缩全库已有专题）。**真正的新矿在「公司分节」的冷门公司**：华为 18 条、蚂蚁 22 条、阿里巴巴 11 条、腾讯 9 条、小红书 9 条、字节 10 条——这些分节**带一线参考答案**且考点不撞车，本轮的「知识冲突消解」（华为分节）与「公开基准」即出自此列。
+> - **证伪轮（2026-10-29）**：本轮对关键断言各做了一轮反面检索，**未发现实质反例**：
+>   - **CoT 规模门槛**：检索到的多份解读（含论文 Table 2 原始数据）**与论文口径一致**——「below roughly 100B parameters, adding reasoning steps does not help and sometimes hurts」「Small models write fluent-looking but logically broken chains」。**注意二手解读里把阈值写成「约 10B 以下会掉分」（对应 LaMDA 420M 与 UL2 20B 的行），这与论文原文「~100B 才有收益」并不矛盾——两者分别说「收益出现的规模」与「明显掉分的规模」**，答题时以**论文原文**为准，不引二手博客的阈值。
+>   - **Plan-and-Execute 溯源**：检索**证实**了官方出处——LangChain 博客明写 inspired by **BabyAGI + Plan-and-Solve paper**，且初始实现的 **executor 就是 Action Agent**。据此**补写进题目**（原先只有 L2 面经口径，现升级为官方博客口径）。
+>   - **Self-RAG / 公开基准**：数字均直接取自论文正文表格（落库前逐条 grep 复核），未采用二手解读中的转述数字。
+>   - **公开基准的缺陷（**找到实质性反面证据**）**：`web_search` 通道本轮返回 `MATRIX_TOOL_REQUEST_FAILED`（**已知缺口：改用 arXiv API 反查**），改用 `export.arxiv.org/api/query` 按 `ti:` / `abs:` 检索，**找到 4 篇直接质疑 SWE-bench 的论文**：**2506.12286**（The SWE-Bench Illusion，用诊断任务区分「记忆 vs 推理」）、**2512.10218**（Does SWE-Bench-Verified Test Agent Ability or Model Memory?，**跨基准 3 倍 / 定位文件 6 倍**）、**2505.23419**（SWE-bench-Live）、**2509.16941**（SWE-Bench Pro）。**已据此把 Q4 从「污染是理论风险」升级为「污染已被量化实证」**。
 > - **本轮判定为「有价值但未录」的候选（留待下轮）**：
 >   - 「**模型如何理解时间** / 带时间窗口的对话系统」（蚂蚁集团分节）——连续两轮被 defer，**L0 依据仍偏薄**（是工程惯例而非有论文支撑的机制），但工程味足；等出现有出处的「LLM 时间感知」研究再录。
 >   - 「**大模型上线后的线上监控指标**」（腾讯分节）——与既有评测体系题可能争考点。
