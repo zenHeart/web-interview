@@ -38,6 +38,7 @@ graph TB
         T1_18["SSM / Mamba 与 Transformer 的取舍：线性复杂度换来的能力代价"]
         T1_19["GRPO：PPO 的 critic 成本账与组内相对优势基线"]
         T1_20["LLaMA 1/2/3 代际演进：尺寸、上下文与训练数据量基线"]
+        T1_21["Chain-of-Thought 分步推理与规模门槛：Self-Consistency 的补位"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -71,6 +72,7 @@ graph TB
         T3_19["Agent 链路端到端延迟与成本优化：分解、并行、缓存、降级"]
         T3_20["提示注入防御：直接注入与间接注入的纵深架构"]
         T3_21["Reflexion 语言化强化：反思记忆与失败经验复用"]
+        T3_22["ReAct 交错 vs Plan-and-Execute 解耦：规划与执行的耦合时机"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -87,6 +89,7 @@ graph TB
         T4_11["A2A (Agent2Agent) 协议：Agent 间通信与同 MCP 的分工"]
         T4_12["Skill 路由准确率评测：触发率与误触发门禁"]
         T4_13["ASR WER 与下游任务指标的错位与分层诊断"]
+        T4_14["公开基准选型：GAIA / SWE-bench / AgentBench / WebArena 的维度边界"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -111,6 +114,8 @@ graph TB
         T5_19["向量索引结构：HNSW 分层图与 DiskANN 的 SSD 方案"]
         T5_20["FlashAttention：IO 感知的精确注意力与分块计算"]
         T5_21["语义缓存：相似度阈值、误命中风险与失效策略"]
+        T5_22["Self-RAG：反思 token 与自适应检索时机"]
+        T5_23["知识冲突消解：上下文与参数化记忆的三类冲突"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -170,6 +175,7 @@ graph TB
 - `{#p1-ssm-mamba-vs-transformer}`：SSM / Mamba 号称要取代 Transformer，它到底解决了什么问题、牺牲了什么？为什么主流 LLM 至今仍是 Decoder-Only Transformer？
 - `{#p1-grpo-group-relative-policy-optimization}`：PPO 要额外训一个价值模型，DeepSeek 的 GRPO 怎么把它省掉？
 - `{#p1-llama-1-2-3-generations-evolution}`：LLaMA 1、LLaMA 2、LLaMA 3 三代到底差在哪？为什么参数量总是 7B、13B、70B 这种数字？
+- `{#p1-chain-of-thought-scale-threshold}`：Chain-of-Thought 提示法是怎么让模型分步推理的？为什么小模型用 CoT 反而更差？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -201,6 +207,7 @@ graph TB
 - `{#p1-agent-approval-execution-consistency}`：用户点了「确认」之后，怎么保证真正执行的内容和确认时看到的完全一致？审批后还能不能再调一次大模型？
 - `{#p0-agent-prompt-injection-defense}`：Agent 把检索到的网页、邮件或工单内容喂给模型时，提示注入（Prompt Injection）怎么防？直接注入和间接注入有什么区别？
 - `{#p1-agent-reflexion-verbal-reinforcement}`：Reflexion 的「语言化强化学习」和真正的权重更新有什么区别？Agent 怎么把失败经验变成下一次的成功？
+- `{#p1-react-vs-plan-and-execute-architecture}`：Agent 的推理和行动该交错还是拆开？ReAct 和 Plan-and-Execute 两种架构怎么选？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -216,6 +223,7 @@ graph TB
 - `{#p1-a2a-agent-interop-protocol}`：A2A（Agent2Agent）协议是怎么让两个 Agent 对话的？它和 MCP 到底怎么分工？
 - `{#p1-agent-skill-routing-eval}`：Agent 到底怎么判断该用哪个 Skill？怎么设计测试集来度量这个路由准不准？
 - `{#p1-asr-wer-downstream-metric-gap}`：ASR 的 WER 明明降下来了，为什么下游任务的准确率反而可能下降？
+- `{#p1-agent-public-benchmark-selection}`：Agent 能力的公开基准该怎么选？GAIA、SWE-bench、AgentBench、WebArena 各自测的是什么？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -239,6 +247,8 @@ graph TB
 - `{#p1-speculative-decoding-draft-verify}`：投机解码（Speculative Decoding）是怎么用小模型给大模型「打草稿」加速的？为什么它不会改变输出分布？
 - `{#p1-graphrag-local-global-search}`：GraphRAG 和向量 RAG 到底差在哪？什么场景该建图索引，什么时候用传统 RAG 就够了？
 - `{#p1-semantic-cache-similarity-threshold-false-hit}`：语义缓存（Semantic Cache）是怎么用相似度命中回答的？阈值怎么定，误命中怎么办？
+- `{#p1-self-rag-adaptive-retrieval-reflection-tokens}`：RAG 是不是检索得越多越好？Self-RAG 怎么让模型自己决定要不要检索？
+- `{#p1-rag-parametric-knowledge-conflict}`：RAG 检索到的内容和大模型自己「知道」的不一致时该信哪个？冲突要怎么消解？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？

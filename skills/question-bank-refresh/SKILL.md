@@ -533,6 +533,26 @@ git push origin feature/question-bank-refresh
 > - **PDF 取证的额外坑**：PDF 字体编码会把词拆开（实测 "Fast" 被抽成 "F ast"），**搜关键词必须用「去空白子串匹配」**（先把提取文本的空白全删掉再 `count` / `find`），否则明明有却搜不到。
 > - **配套**：arXiv API 也能当反查入口——`http://export.arxiv.org/api/query?search_query=ti:"<关键词>"`；但**搜不到不代表论文不存在**（Neural Information Processing Systems 的论文大多不在 arXiv），此时要回到会议 proceedings 站。
 
+> **坑 56（凭记忆写的 arXiv id 是高危字段：年份号差一位就是完全无关的论文，必须批量逐个核 `citation_title`）**：2026-10-29 实测**同一个下午错了两个**：Plan-and-Solve 我凭记忆写成 `2205.04091`，实际 `2205.04091` 是**一篇 Weyl 拟微分算子的数学论文**（"Positivity results for Weyl's pseudodifferential calculus on the Wiener space"），真正的 Plan-and-Solve 是 **`2305.04091`**——**只差首位 `2`/`3`**；同轮另一个 `2310.06769` 也是一篇 NLS 孤子物理论文。**「年份 + 序号」型 id 尤其危险，因为差一位看起来完全合理**。
+> - **配套 1（反查优先于硬猜）**：用 arXiv API 按标题反查，**不要靠记忆拼 id**：
+>   ```bash
+>   curl -sL 'http://export.arxiv.org/api/query?search_query=ti:%22Plan-and-Solve%20Prompting%22&max_results=5' \
+>     | python3 -c "import sys,re,html; t=sys.stdin.read();
+>   [print(re.search(r'<id>(.*?)</id>',e,re.S).group(1),'|',html.unescape(re.sub(r'\s+',' ',re.search(r'<title>(.*?)</title>',e,re.S).group(1))).strip()) for e in re.findall(r'<entry>(.*?)</entry>',t,re.S)]"
+>   ```
+>   注意 **搜不到不代表论文不存在**（NeurIPS proceedings 的论文大多不在 arXiv），此时回会议 proceedings 站。
+> - **配套 2（一条命令核一组，别一条一条来）**：`for id in ...; do curl -sL https://arxiv.org/abs/$id | python3 -c "citation_title / citation_date"; done`（`citation_title` 对不上就是 id 记错了，**不要只看 HTTP 200**）。
+> - **配套 3（正文数据也要核）**：题目里要写「17.9 → 56.9」这类数字，必须**进全文**用定向 grep 取（`arxiv.org/html/<id>` 对 2022/2023 年的论文实测可用；实在拿不到再走 ar5iv，见坑 51）。
+
+> **坑 57（Hub 主站有「Q&A 型」与「指南型」两种分节，用同一套提取器会静默丢掉指南型分节的全部内容）**：2026-10-29 实测：上一轮 sources.md 记的「通用知识-模型微调完全指南 84 条 / Context Engineering 87 条」，**其实是 h3/h4 标题数**（本轮提取为 100 / 41 条标题），**不是「带参考答案的 Q&A 组数」**；用「参考答案：」锚点法去提这两个分节，只出 **1 条 / 16 条**——因为它们是**指南型**分节，内容在 `<h3 class="md-h3">` / `<h4 class="md-h4">` 标题及其正文里，**根本没有「参考答案：」**。
+> - **判据**：**提取结果骤降（预期 84 实得 1）时，绝不能判定「该分节没内容」**，要先看它是哪种型：`<h3 class="md-h3">1.1 为什么需要微调？</h3>` 这类 = **指南型**（可当**概念候选**源）；`Q: xxx` + `参考答案：` = **Q&A 型**（可当**真题**源）。
+> - **配套**：**两套提取器并行跑**——`hub_extract.py`（锚点法 + 编号前缀法，挖 Q&A）与 `hub_headings.py`（抓 h1~h4 标题，挖概念）。后者产出的候选**必须再过「2-gram 打分 → grep 复核」**才能进选题，不能直接出题。
+
+> **坑 58（差集判定的 grep 复核必须大小写敏感 + 逐个打开确认，否则「假已覆盖」和「假未覆盖」两个方向都会中招）**：2026-10-29 实测两个方向都踩了：
+> - **假未覆盖（大小写不敏感导致误判「已覆盖」）**：`grep -ril "ReAct"` 命中 **212 个文件**——因为 Vue 的 `reactive` 全库遍布。差点据此判定「ReAct 已被大量覆盖」而放弃选题；改用**大小写敏感**的 `grep -rn "ReAct"` 后，全库其实只有 **7 处**，且全在既有 Agent 题里，**Plan-and-Execute 确实 0 覆盖**。
+> - **假已覆盖（命中的是正文 bullet 不是独立题）**：`grep -ril "Lost in the Middle"` 命中 3 个文件，**打开一看只是既有「Token 预算」题里的一个 bullet**（"注意力稀释（Needle In A Haystack / Lost in the Middle）"），**不是独立题目**——差点重复出题。
+> - **配套纪律**：**grep 命中数只能当线索**。判定「已覆盖」的唯一标准是**存在同名独立题目（标题行带该锚点）**，不是「文件里出现过这个词」；命中后**必须打开看命中的是标题、正文 bullet、还是既有题的追问**。
+
 
 ---
 
@@ -548,3 +568,6 @@ git push origin feature/question-bank-refresh
 - `scripts/refresh-sources.sh` —— 数据源镜像刷新
 - `scripts/gap-audit.py` —— 面经差集与主题空白分析
 - `scripts/fetch-nowcoder.py` —— 牛客面经只读抓取
+- `scripts/hub_extract.py` —— Agent Interview Hub 主站 **Q&A 型分节**提取（锚点法 + 编号前缀法，见坑 53/54/57）
+- `scripts/hub_headings.py` —— Agent Interview Hub 主站 **指南型分节**的概念标题提取（h1~h4，见坑 57）
+- `scripts/candidate-score.py` —— 候选打分（只扫「题目标题 + slug」的 CJK 2-gram 排序，判定仍靠 grep，见坑 4/49/58）
