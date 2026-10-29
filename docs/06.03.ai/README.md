@@ -39,6 +39,7 @@ graph TB
         T1_19["GRPO：PPO 的 critic 成本账与组内相对优势基线"]
         T1_20["LLaMA 1/2/3 代际演进：尺寸、上下文与训练数据量基线"]
         T1_21["Chain-of-Thought 分步推理与规模门槛：Self-Consistency 的补位"]
+        T1_22["多模态对齐 (VLM)：CLIP 对比学习与 LLaVA 视觉指令微调的两阶段"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -90,6 +91,7 @@ graph TB
         T4_12["Skill 路由准确率评测：触发率与误触发门禁"]
         T4_13["ASR WER 与下游任务指标的错位与分层诊断"]
         T4_14["公开基准选型：GAIA / SWE-bench / AgentBench / WebArena 的维度边界"]
+        T4_15["AI 应用可观测性：Tracing / Metrics / Logs 与 OpenTelemetry GenAI 语义约定"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -116,6 +118,8 @@ graph TB
         T5_21["语义缓存：相似度阈值、误命中风险与失效策略"]
         T5_22["Self-RAG：反思 token 与自适应检索时机"]
         T5_23["知识冲突消解：上下文与参数化记忆的三类冲突"]
+        T5_24["Embedding 字段分工：语义字段入向量与结构化过滤的边界"]
+        T5_25["个性化 RAG：用户画像注入检索链路的三个位置"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -176,6 +180,7 @@ graph TB
 - `{#p1-grpo-group-relative-policy-optimization}`：PPO 要额外训一个价值模型，DeepSeek 的 GRPO 怎么把它省掉？
 - `{#p1-llama-1-2-3-generations-evolution}`：LLaMA 1、LLaMA 2、LLaMA 3 三代到底差在哪？为什么参数量总是 7B、13B、70B 这种数字？
 - `{#p1-chain-of-thought-scale-threshold}`：Chain-of-Thought 提示法是怎么让模型分步推理的？为什么小模型用 CoT 反而更差？
+- `{#p1-vlm-modal-alignment-clip-llava}`：多模态大模型（VLM）怎么把「图像」和「文本」对齐到一起？CLIP 的对比学习和 LLaVA 的视觉指令微调各解决了什么？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -224,6 +229,7 @@ graph TB
 - `{#p1-agent-skill-routing-eval}`：Agent 到底怎么判断该用哪个 Skill？怎么设计测试集来度量这个路由准不准？
 - `{#p1-asr-wer-downstream-metric-gap}`：ASR 的 WER 明明降下来了，为什么下游任务的准确率反而可能下降？
 - `{#p1-agent-public-benchmark-selection}`：Agent 能力的公开基准该怎么选？GAIA、SWE-bench、AgentBench、WebArena 各自测的是什么？
+- `{#p1-llm-observability-tracing-genai-semconv}`：LLM 应用上线后怎么排查问题？AI 应用的可观测性和普通 Web 服务有什么不一样，OpenTelemetry 的 GenAI 语义约定到底约定了什么？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -249,6 +255,8 @@ graph TB
 - `{#p1-semantic-cache-similarity-threshold-false-hit}`：语义缓存（Semantic Cache）是怎么用相似度命中回答的？阈值怎么定，误命中怎么办？
 - `{#p1-self-rag-adaptive-retrieval-reflection-tokens}`：RAG 是不是检索得越多越好？Self-RAG 怎么让模型自己决定要不要检索？
 - `{#p1-rag-parametric-knowledge-conflict}`：RAG 检索到的内容和大模型自己「知道」的不一致时该信哪个？冲突要怎么消解？
+- `{#p0-rag-embedding-field-design-vs-filter}`：商品库做 RAG 时，标题、类目、价格这些字段该拿哪个去做 embedding？为什么价格这种数值字段不该进向量？
+- `{#p1-personalized-rag-user-profile-injection}`：同一个问题，不同用户应该得到不同答案——个性化 RAG 怎么做？用户画像该注入到检索链路的哪一环？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
