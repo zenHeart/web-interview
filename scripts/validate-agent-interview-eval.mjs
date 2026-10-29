@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const FIXTURES = path.join(ROOT, "..", "docs", "06.03.ai", "fixtures");
+const FIXTURES = path.join(ROOT, "docs", "06.03.ai", "fixtures");
 const SHA = /^[a-f0-9]{64}$/;
 const ID = /^[a-z0-9][a-z0-9._-]*$/;
 const TYPES = new Set(["code", "trace", "diagram", "test", "explanation"]);
