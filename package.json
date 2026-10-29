@@ -39,7 +39,8 @@
     "demo:tfo": "node docs/network/tcp/examples/tfo.js",
     "topics": "./scripts/topics.sh",
     "question:lint": "node scripts/question-lint.js",
-    "question:lint:changed": "node scripts/question-lint.js --changed"
+    "question:lint:changed": "node scripts/question-lint.js --changed",
+    "test:agent-interview-eval": "node --test scripts/tests/agent-interview-eval.test.mjs"
   },
   "repository": {
     "type": "git",
