@@ -74,6 +74,9 @@ graph TB
         T3_20["提示注入防御：直接注入与间接注入的纵深架构"]
         T3_21["Reflexion 语言化强化：反思记忆与失败经验复用"]
         T3_22["ReAct 交错 vs Plan-and-Execute 解耦：规划与执行的耦合时机"]
+        T3_23["多 Agent 拓扑选型：中心协调者 vs 自组织 swarm 与拆分粒度"]
+        T3_24["跨 Agent 交接消息契约：目标 / 约束 / 证据 / 进度与授权不可转授"]
+        T3_25["Skill 粒度划分与换基座模型后的触发评测回归"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -120,6 +123,7 @@ graph TB
         T5_23["知识冲突消解：上下文与参数化记忆的三类冲突"]
         T5_24["Embedding 字段分工：语义字段入向量与结构化过滤的边界"]
         T5_25["个性化 RAG：用户画像注入检索链路的三个位置"]
+        T5_26["上下文压缩的可验证性：禁止事项断言与任务回放回归"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -213,6 +217,9 @@ graph TB
 - `{#p0-agent-prompt-injection-defense}`：Agent 把检索到的网页、邮件或工单内容喂给模型时，提示注入（Prompt Injection）怎么防？直接注入和间接注入有什么区别？
 - `{#p1-agent-reflexion-verbal-reinforcement}`：Reflexion 的「语言化强化学习」和真正的权重更新有什么区别？Agent 怎么把失败经验变成下一次的成功？
 - `{#p1-react-vs-plan-and-execute-architecture}`：Agent 的推理和行动该交错还是拆开？ReAct 和 Plan-and-Execute 两种架构怎么选？
+- `{#p1-multi-agent-topology-coordinator-vs-swarm}`：多 Agent 协作该用中心协调者（Coordinator）模式还是自组织（swarm）模式？Claude Code 的 agent teams 官方是怎么设计的？
+- `{#p1-multi-agent-handoff-message-contract}`：多 Agent 之间交接任务时，消息该带哪些字段？为什么不能把另一个 Agent 的「已批准」当成用户授权？
+- `{#p1-agent-skill-granularity-model-portability}`：一个 Agent 系统该把能力切成几个 Skill？换了底层大模型，这些 Skill 还能直接用吗？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -235,6 +242,7 @@ graph TB
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
 - `{#p0-rag-frontend-knowledge-base}`：前端如何构建端侧本地 RAG 系统？文档分块、客户端 Embedding 与余弦相似度检索是如何落地的？
 - `{#p1-agent-memory-context-compression}`：Agent 长会话场景下，面对有限的上下文窗口，如何设计多级记忆管理与滑动压缩机制？
+- `{#p1-context-compaction-verification-replay}`：上下文压缩把老对话压成摘要之后，怎么验证「没压坏」？
 - `{#p0-prompt-caching-kv-cache-optimization}`：什么是 Prompt Caching（前缀缓存）与 KV-Cache 状态优化？静态与动态上下文编排如何降低首字时延（TTFT）与成本？
 - `{#p1-kv-cache-compression-quantization-eviction}`：KV Cache 越用越大，有哪些压缩手段？量化、驱逐和低秩压缩各自是怎么做的？
 - `{#p0-long-task-context-decay-drift}`：长任务跑久了，上下文会「腐化」、行为会「漂移」，怎么检测和干预？
