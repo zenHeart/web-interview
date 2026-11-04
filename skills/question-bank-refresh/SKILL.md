@@ -605,17 +605,20 @@ git push origin feature/question-bank-refresh
 > **坑 65（本仓库既有压缩题讲的是「怎么做」，缺的是「怎么验证没做坏」——差集命中要看被追问覆盖的现状）**：2026-11-05 新出题时先按「关键词 0 命中」判定为真空白，**但逐条打开既有题才发现**：`docs/06.03.ai/05.runtime-internals.md` 的「多级记忆管理与滑动压缩机制」题**整篇没有验证/回归/评测内容**，而 `00.concept.md` 的 Token 题**追问 1 已覆盖「怎么防止关键约束被丢掉」（预防视角）**。于是「压缩的可验证性（事后检测）」是一个**真实空白**，而「压缩机制本身」不是。
 > - **纪律**：判定「真空白」时，除了 grep 关键词，**必须再问一句「既有题讲的是不是同一个视角」**——预防 vs 检测、机制 vs 度量、能力 vs 成本、选型 vs 运维，这四组是最常见的「关键词不命中但考点已覆盖」的错位。
 >
-> **坑 66（GitHub Pages「legacy」构建器会在某次平台变更后整体失效——判据是「连已知可构建的旧产物也失败」，别再怀疑自己的产物）**：2026-11-05 实测：`scripts/deploy.sh` 推 `gh-pages` 成功、`deployment-meta.json` 的 `sourceCommit` 正确、产物里四个新锚点全部命中，但**线上始终是上一版**。逐层排查（全部为空）：
-> ```bash
-> gh api "repos/<owner>/<repo>/pages/builds?per_page=8"    # 每次都 building 约 10~13 分钟后 errored: "Page build failed."
-> gh api repos/<owner>/<repo>/pages                        # build_type: legacy
-> ```
-> - **决定性实验（务必先做这一步）**：把**上一次已知构建成功的产物**（`git archive <上一次 built 的 commit>`）推到 `gh-pages` 再触发构建。2026-11-05 实测：**旧产物同样 errored**（且挂得更久，13.5 分钟）→ **问题与本轮内容无关，是平台侧 legacy 构建器失效**。
-> - **其它排除项（都查过、全部正常）**：产物无符号链接（mode 120000）、无 100755 可执行位、最大文件 19.7 MB（`search-index.json`）、共 645 个文件 / 81.8 MB、`.nojekyll` 在位、两次产物的**文件清单完全一致**（只有 webpack chunk 哈希变）、远端镜像仓库仅 **28.57 MiB / clone 34 秒**（所以「clone 变慢导致超时」不成立）、GitHub Status 面板 Pages 显示 operational（**大面板只报大故障，不覆盖这类退化**）。
-> - **处置纪律**：① **不要**为了「让线上更新」去强推、删分支或改 `scripts/deploy.sh` 绕过；② **把正确的产物留在 `gh-pages` 上**（构建器一恢复就会自动发布），确保 `deployment-meta.json` 的 `sourceCommit` 指向本轮 `main` HEAD；③ **把「已知可构建的旧产物」探针留成标准排查步骤**——这是区分「内容问题」与「平台问题」的唯一低成本判据；④ 升级到 GitHub Actions（`actions/deploy-pages`）属于**改变部署机制的口径变更**，**必须由用户拍板**，定时任务里只报告不动手。
-> - **GitHub API 触发构建（不改内容）**：`gh api -X POST repos/<owner>/<repo>/pages/builds` → 返回 `{"status":"queued"}`；可用于在不改 `gh-pages` 的前提下重试。
+> **坑 66（GitHub Pages「legacy」构建器会阶段性整体失效——用「已知可构建的旧产物探针」判定是不是自己的锅，并且要敢于重试）**：2026-11-05 实测：`scripts/deploy.sh` 推 `gh-pages` 成功、`deployment-meta.json` 的 `sourceCommit` 正确、产物里新锚点全部命中，但**线上始终是上一版**。Pages 构建每次 building 约 **10~13 分钟**后 `errored: "Page build failed."`（API 只给这一句，无日志）。**共 5 次连续失败**，分别是：2 次 push 触发、1 次重跑 `deploy.sh`、1 次 API 触发、1 次**用旧产物做的探针**。
+> - **决定性实验（务必先做这一步，它能把「内容问题」与「平台问题」彻底分开）**：把**上一次已知构建成功的产物**推上去再触发构建——
+>   ```bash
+>   cd /tmp && mkdir -p ghtest-probe && cd ghtest-probe && git init -q --initial-branch=deploy
+>   git -C <repo> archive <上一次 built 的 commit> | tar -x -C /tmp/ghtest-probe
+>   git add -A && git -c user.name=... -c user.email=... commit -q -m "probe: known-good artifact"
+>   git push -f git@github.com:<owner>/<repo>.git HEAD:gh-pages
+>   ```
+>   2026-11-05 实测：**旧产物同样 errored**（还挂得更久，13.5 分钟）→ **问题与本轮内容无关，是平台侧 legacy 构建器阶段性失效**。⚠️ **探针做完必须把正确产物推回去**（`git push -f <url> <correct-commit>:gh-pages`），否则构建器恢复后线上会停在旧内容。
+> - **其它排除项（都查过、全部正常，用来排除「是我产物的问题」）**：无符号链接（mode 120000）、无 100755 可执行位、最大文件 19.7 MB（`search-index.json`）、共 645 个文件 / 81.8 MB、`.nojekyll` 在位、两次产物的**文件清单完全一致**（只有 webpack chunk 哈希变）、远端镜像仓库仅 **28.57 MiB / clone 34 秒**（所以「clone 变慢导致超时」不成立）、GitHub Status 面板 Pages 显示 operational（**大面板只报大故障，覆盖不到这类退化**）。
+> - **处置纪律**：① **不要**为了「让线上更新」去强推、删分支或改 `scripts/deploy.sh` 绕过；② **把正确的产物留在 `gh-pages` 上**（构建器一恢复就自动发布），确保 `deployment-meta.json` 的 `sourceCommit` 指向 `main` HEAD；③ **敢于重试**——2026-11-05 实测构建器在**约 45 分钟内自行恢复**（随后两次构建 `built` 成功，线上一次命中全部新锚点），**不要把一次失败当成永久性故障就放弃**；④ 升级到 GitHub Actions（`actions/deploy-pages`）属于**改变部署机制的口径变更**，**必须由用户拍板**，定时任务里只报告不动手。
+> - **不改内容也能触发构建（首选重试手段）**：`gh api -X POST repos/<owner>/<repo>/pages/builds` → 返回 `{"status":"queued"}`。比重跑 `deploy.sh` 少一次约 1.5 分钟的构建。
 > - **线上校验要分两层看**：`curl -sI <url>` 的 **`last-modified`** 早于本轮构建时间 = 拿到旧页（先看 `x-cache` / `age` 再下结论，坑 25）；**即使加了 cache-busting 查询串仍返回旧内容**，说明**源站本身就是旧的**（不是 CDN 缓存），此时应直接查 Pages 构建队列而不是继续等 CDN。
-> - **顺带**：把 `gh-pages` 推到「已知可构建的旧产物」作为探针后，**务必把正确产物再推回去**（`git push -f <url> <correct-commit>:gh-pages`），否则恢复后线上会停在旧内容。
+> - **查构建日志的限制**：legacy 构建的详细日志只在 GitHub Web UI 的 Pages 设置页可见，**API 拿不到**；仓库为私有时未登录的浏览器只会拿到 404 —— **不要为此去索要用户的密码 / Token**，直接按上面的排除项法在命令行侧定位即可。
 
 
 >
