@@ -108,6 +108,7 @@
 | 「知识库入库的数据质量门禁」（重复文档、近重复检测、时效性判定、同一事实的表述冲突、人工审核闸门） | **2026-11-10 判定为相邻**：既有 `{#p0-rag-doc-parse-index-pipeline}` 已覆盖五段流水线、清洗阶段（页眉页脚 / 断行）、内容指纹与增量更新；本候选的增量只有「准入前的重复 / 时效 / 冲突判定」，考点密度不足以单独立题 | **不录**——留作该题追问扩展 |
 | 「Agent 在线自诊断 / 自助根因分析」 | **2026-11-10 第三次复核仍无 L0 依据**（只有面经题面，无论文或官方实践），与既有 `{#p1-agent-failure-attribution-small-model}` 的「离线人工归因」边界未划清 | **不录** |
 | 牛客搜索页 `page` 参数可能失效 | 2026-11-10 实测同一关键词的 p1 与 p2 返回**完全相同的 id 集合** | 见 SKILL.md 坑 67——**换关键词，不翻页**；并用字节数 < 20000 过滤频控骨架页 |
+| `pnpm install` 因 npm 镜像滞后失败 | 当天工作区装不上依赖，门禁与构建无法进行 | **先诊断再动手**：官方源有、镜像没有 → 镜像滞后 → 优先**复用长期主工作区的 `node_modules`（符号链接）**，兜底换 `--registry=https://registry.npmjs.org`（慢）。见 SKILL.md 坑 71 |
 | `web_search` 偶发 `MATRIX_TOOL_REQUEST_FAILED` | 检索通道不可用 | 改 `web_fetch` / `curl` 直接取官方页（arXiv abs 页、ACL Anthology 页） |
 | `blog.webassembly.org` SSL 握手失败 | 取不到 Wasm 3.0 官方公告原文 | 改用 `webassembly.github.io/spec/` 的 All Versions 段 |
 | Vite「10-30x faster」「full plugin compatibility」无第三方复现 | 性能宣称不可作事实 | 写成「官方声称」 |

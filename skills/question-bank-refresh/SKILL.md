@@ -650,6 +650,27 @@ git push origin feature/question-bank-refresh
 > **坑 70（写「FID 需要更多样本」是不完整的——它的偏差项依赖被评估的模型本身）**：arXiv:1911.07023（Chong & Forsyth, 2019-11-16）证明 **FID 与 IS 在有限样本下是有偏估计**，且**偏差项依赖于被评估的模型**——**模型 A 得分更好可能只是因为 A 的偏差项更小**，**这个效应无法靠固定样本数消除**。arXiv:2401.09603（Rethinking FID）进一步论证 FID 会**与人类评分相悖**、**反映不出迭代式模型的渐进改进**、**样本量一变结果就不一致**。
 > - 写题与答题口径：**不能只说「样本量要够」**，要说清「**有偏 + 偏差项模型相关 + 固定样本数消不掉**」三层，并给出替代路线（CMMD 等基于 CLIP 特征 + MMD 的度量）。
 > - 通用教训：**凡是有「无偏估计」诉求的评测指标，都要问一句「偏差项依赖谁」**——依赖被测对象的指标，在跨模型对比时天然不可比。
+> **坑 71（本机 npm 镜像滞后会让 `pnpm install` 直接失败——先查镜像有没有那个版本，再决定换源还是复用既有 `node_modules`）**：2026-11-10 实测：`pnpm install` 在本机默认 registry（`registry.npmmirror.com`）下**失败**：
+> ```
+> ERR_PNPM_NO_MATCHING_VERSION  No matching version found for @algolia/client-analytics@5.63.0
+>   at @docusaurus/theme-search-algolia@3.10.2 → algoliasearch@5.63.0
+> ```
+> 根因：**`main` 上没有 `pnpm-lock.yaml`，pnpm 每次都重新解析到最新的 `algoliasearch@5.63.0`，而它依赖的 `@algolia/client-analytics@5.63.0` 镜像尚未同步**（官方 `registry.npmjs.org` 已有，镜像最高只到 5.61.0）。**这是镜像滞后，不是依赖坏了**。
+> - **先诊断再动手**（一条命令区分「镜像滞后」与「真装不上」）：
+>   ```bash
+>   npm view @algolia/client-analytics versions --registry=https://registry.npmjs.org --json | tail -3   # 官方源有这个版本？
+>   npm view @algolia/client-analytics versions --json | tail -3                                        # 镜像有吗？
+>   ```
+>   官方有、镜像没有 → **镜像滞后**，往下走；两边都没有 → 才是依赖问题。
+> - **两条可行路径**（优先第一条，零网络等待）：
+>   1. **复用长期主工作区的 `node_modules`**：`/Users/chengle/code/github/.worktrees/web-interview-main/node_modules` 是同一 `package.json`、同一 commit 装出来的完整依赖（2399 个包），在当天的临时工作区里 **做符号链接**即可：
+>      ```bash
+>      ln -s /Users/chengle/code/github/.worktrees/web-interview-main/node_modules node_modules
+>      ```
+>      ⚠️ **`node_modules/` 带尾斜杠的忽略规则不匹配符号链接**（与坑 17 的 `repos/` 同理），**`git status` 会把它显示成未跟踪文件**——所以**不要用 `git add -A`**，改为**显式 `git add <具体文件>`**。`rm -rf node_modules` 删的是**符号链接本身**，不会删到主工作区的真目录，但仍建议不要在受管 shell 里跑相对路径的 `rm -rf`。
+>   2. **换官方源重装**：`pnpm install --registry=https://registry.npmjs.org`——**实测从境内解析极慢（数分钟无输出）**，适合作为兜底而非首选。
+> - **部署工作区不需要重装**：长期主工作区本来就带着完整的 `node_modules`，`scripts/deploy.sh` 在那里跑 `npm run build` 即可。
+> - **注意**：无论走哪条路，**`pnpm-lock.yaml` 都不许提交**（仓库既有约定）。
 
 ---
 
