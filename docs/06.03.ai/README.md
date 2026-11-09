@@ -40,6 +40,7 @@ graph TB
         T1_20["LLaMA 1/2/3 代际演进：尺寸、上下文与训练数据量基线"]
         T1_21["Chain-of-Thought 分步推理与规模门槛：Self-Consistency 的补位"]
         T1_22["多模态对齐 (VLM)：CLIP 对比学习与 LLaVA 视觉指令微调的两阶段"]
+        T1_23["幻觉检测与度量：事实性 vs 忠实性、原子事实判定与度量选型"]
     end
 
     subgraph Tier2["Tier 2: 流式交互与生成式 UI (02.ui-interaction.md)"]
@@ -77,6 +78,7 @@ graph TB
         T3_23["多 Agent 拓扑选型：中心协调者 vs 自组织 swarm 与拆分粒度"]
         T3_24["跨 Agent 交接消息契约：目标 / 约束 / 证据 / 进度与授权不可转授"]
         T3_25["Skill 粒度划分与换基座模型后的触发评测回归"]
+        T3_26["工具调用链路的凭据隔离与授权边界：凭据不进上下文、受众绑定与禁止透传"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -95,6 +97,7 @@ graph TB
         T4_13["ASR WER 与下游任务指标的错位与分层诊断"]
         T4_14["公开基准选型：GAIA / SWE-bench / AgentBench / WebArena 的维度边界"]
         T4_15["AI 应用可观测性：Tracing / Metrics / Logs 与 OpenTelemetry GenAI 语义约定"]
+        T4_16["生成模型评测：FID / CLIP Score / 人类偏好与「准 vs 全」的分离"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -185,6 +188,7 @@ graph TB
 - `{#p1-llama-1-2-3-generations-evolution}`：LLaMA 1、LLaMA 2、LLaMA 3 三代到底差在哪？为什么参数量总是 7B、13B、70B 这种数字？
 - `{#p1-chain-of-thought-scale-threshold}`：Chain-of-Thought 提示法是怎么让模型分步推理的？为什么小模型用 CoT 反而更差？
 - `{#p1-vlm-modal-alignment-clip-llava}`：多模态大模型（VLM）怎么把「图像」和「文本」对齐到一起？CLIP 的对比学习和 LLaVA 的视觉指令微调各解决了什么？
+- `{#p1-hallucination-detection-faithfulness-metrics}`：线上大模型的回答经常「读起来对、其实在编」。除了在提示词里加防线，你打算怎么检测出它编没编？「事实性幻觉」和「忠实性幻觉」该怎么分，各自用什么指标度量？
 
 ### [02. 流式交互与生成式 UI (Streaming & Generative UI)](./02.ui-interaction.md)
 - `{#p0-ai-streaming-render}`：前端如何实现类似 ChatGPT 的打字机流式响应？SSE 与 Fetch ReadableStream 该如何选择？
@@ -220,6 +224,7 @@ graph TB
 - `{#p1-multi-agent-topology-coordinator-vs-swarm}`：多 Agent 协作该用中心协调者（Coordinator）模式还是自组织（swarm）模式？Claude Code 的 agent teams 官方是怎么设计的？
 - `{#p1-multi-agent-handoff-message-contract}`：多 Agent 之间交接任务时，消息该带哪些字段？为什么不能把另一个 Agent 的「已批准」当成用户授权？
 - `{#p1-agent-skill-granularity-model-portability}`：一个 Agent 系统该把能力切成几个 Skill？换了底层大模型，这些 Skill 还能直接用吗？
+- `{#p1-agent-credential-isolation-tool-authz}`：Agent 要调公司的订单 API，但 Key 只能待在执行层。你怎么设计这条链路，保证密钥既不进模型上下文、也不进日志，同时用户 A 的请求绝对读不到用户 B 的数据？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -237,6 +242,7 @@ graph TB
 - `{#p1-asr-wer-downstream-metric-gap}`：ASR 的 WER 明明降下来了，为什么下游任务的准确率反而可能下降？
 - `{#p1-agent-public-benchmark-selection}`：Agent 能力的公开基准该怎么选？GAIA、SWE-bench、AgentBench、WebArena 各自测的是什么？
 - `{#p1-llm-observability-tracing-genai-semconv}`：LLM 应用上线后怎么排查问题？AI 应用的可观测性和普通 Web 服务有什么不一样，OpenTelemetry 的 GenAI 语义约定到底约定了什么？
+- `{#p1-generative-model-eval-diversity-fidelity}`：我们要把文生图模型接进产品，评测该怎么做？FID、CLIP Score、人类偏好分别测的是什么？「多样性」和「准确性」又各自用什么指标量？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？

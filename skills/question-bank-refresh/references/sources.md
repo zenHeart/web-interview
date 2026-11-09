@@ -64,6 +64,7 @@
 | 渠道 | 用途 | 采集方式 | 注意 |
 | :--- | :--- | :--- | :--- |
 | **牛客搜索页（本轮新增的第三条真题通道）** | **发现新的 AI/Agent 面经帖**——`mianjing.json` 停更后唯一还活着的真题增量来源 | `curl -sL -A "<Chrome UA>" "https://www.nowcoder.com/search/all?query=<关键词>&type=all&page=<N>"`（SSR 渲染，无需登录） | 结果链接用 **`/feed/main/detail/<id>`**（`/discuss/<id>` 部分帖子返回 404 壳）；**预览正文在 `class="feed-text ..."` 块里，直接含真题题面**；牛客频控仍在，连抓会返回骨架页。见 SKILL.md 坑 63 |
+| **`llm-master` 面经仓（L2，2026-11-10 新增）** | **高价值面经正文源**（带答案的完整解析） | `https://raw.githubusercontent.com/youngyangyang04/llm-master/main/docs/interview/llm/<日期><公司>.md` | GitHub raw 直取；`mianjing.json` 的 `source_url` 指向 `github.com/youngyangyang04/llm-master/...` 时即属本通道（**L2 可用**）。逐题必须做覆盖判定，见 SKILL.md 坑 68 |
 | 牛客面经帖 | 一线真实面经（2026-09/10 仍在更新） | `scripts/fetch-nowcoder.py` | SSR 内联 JSON；`desc` 常被截断，优先取 `content`；有频控 |
 | 牛客题库页 | 公司真题 | 只读 | 多数需登录 |
 | **牛客 AI Agent 专场面经（2026-09/10 高频）** | 一线真题的主要增量来源 | `scripts/fetch-nowcoder.py <url>` | 2026-10-20 已核到并录题的高价值帖：<br/>· `nowcoder.com/feed/main/detail/8ee12044e8284a8d8d6140dc2d0840ff`（深圳外企 Agent 开发 18 问）→ 工具定义膨胀/两层工具调用/意图识别/企业 Word·PDF RAG/召回质量<br/>· `nowcoder.com/discuss/800426409796624384`（蚂蚁国际一面 19 问）→ NDCG/搜索排序指标/重排序/Agent 评测<br/>· `nowcoder.com/feed/main/detail/54b3374bbfec494dba76294891edd9b4`（金山办公大模型实习一面）→ ROUGE 计算原理/LCS |
@@ -100,6 +101,13 @@
 | 中文题的覆盖度打分 | 按空白切词会让中文整句变成单 token，**所有中文题覆盖率塌到 0.1 以下** | 用 **CJK 2-gram** 切词（SKILL.md 坑 35），语料仍只扫「标题 + slug」 |
 | 写中文正文可能产生 U+FFFD | 文件能渲染、lint 与构建全绿，**只有肉眼能看出某字变成替换字符**；2026-10-22 在 `origin/main` 里发现存量 1 处 | 写完必扫全库替换字符（SKILL.md 坑 33），本轮已修掉存量 |
 | `mianjing.json` 的 `company` 字段看不出信源层级 | 容易把 L3 聚合站题面当真题录入 | 读 `source_url`：`github.com` / `raw.githubusercontent.com` / `*.github.io` = L2 可用；`developer.aliyun.com` / `developer.cloud.tencent.cn` / `gitcode.csdn.net` = **L3 只作线索** |
+| 「Agent 工具调用链路的凭据与授权边界」（Key 泄露、敏感信息暴露、token 透传、跨用户越权） | **2026-11-10 已录**：新题 `{#p1-agent-credential-isolation-tool-authz}`；L0 = MCP 2026-07-28 授权规范（STDIO 从环境变量取凭据 / audience 绑定 / 禁止 token 透传 / 混淆代理）+ MCP 安全最佳实践（Scope Minimization）+ OWASP LLM02 / LLM06；L2 = `llm-master` 字节四面 21 题解析 + 启云方 2026-10-30 牛客面经（#45 权限风险、#53 生产可用 Agent 的安全设计） | 不用录 |
+| 「幻觉的检测与度量」（事实性 vs 忠实性、原子事实判定、专用检测模型） | **2026-11-10 已录**：新题 `{#p1-hallucination-detection-faithfulness-metrics}`；L0 = AlignScore / FActScore / RARR / 幻觉综述；L2 = 启云方与腾讯内容安全面经、外企「忠实度与覆盖度」面经 | 不用录 |
+| 「生成模型评测（多样性 vs 准确性、FID / CLIP Score / 人类偏好）」 | **2026-11-10 已录**：新题 `{#p1-generative-model-eval-diversity-fidelity}`；L0 = FID / FID 无偏性 / Rethinking FID / CLIPScore / 生成侧 P&R / ImageReward / VQAScore；L2 = `llm-master` 字节四面 21 题解析 | 不用录 |
+| 「多 Agent 互相确认的死锁」（A 发消息要 B 确认，B 同时发消息要 A 确认） | **2026-11-10 第三次复核**：L2 出处仍只有 1 条（`nowcoder.com/feed/main/detail/2b4b7cf9b1ab45e58a60794d7d92cc68`），缺多源印证；且与既有 `{#p1-multi-agent-handoff-message-contract}` 的授权边界相邻 | **不录**——等第二条独立 L2 出处再开 |
+| 「知识库入库的数据质量门禁」（重复文档、近重复检测、时效性判定、同一事实的表述冲突、人工审核闸门） | **2026-11-10 判定为相邻**：既有 `{#p0-rag-doc-parse-index-pipeline}` 已覆盖五段流水线、清洗阶段（页眉页脚 / 断行）、内容指纹与增量更新；本候选的增量只有「准入前的重复 / 时效 / 冲突判定」，考点密度不足以单独立题 | **不录**——留作该题追问扩展 |
+| 「Agent 在线自诊断 / 自助根因分析」 | **2026-11-10 第三次复核仍无 L0 依据**（只有面经题面，无论文或官方实践），与既有 `{#p1-agent-failure-attribution-small-model}` 的「离线人工归因」边界未划清 | **不录** |
+| 牛客搜索页 `page` 参数可能失效 | 2026-11-10 实测同一关键词的 p1 与 p2 返回**完全相同的 id 集合** | 见 SKILL.md 坑 67——**换关键词，不翻页**；并用字节数 < 20000 过滤频控骨架页 |
 | `web_search` 偶发 `MATRIX_TOOL_REQUEST_FAILED` | 检索通道不可用 | 改 `web_fetch` / `curl` 直接取官方页（arXiv abs 页、ACL Anthology 页） |
 | `blog.webassembly.org` SSL 握手失败 | 取不到 Wasm 3.0 官方公告原文 | 改用 `webassembly.github.io/spec/` 的 All Versions 段 |
 | Vite「10-30x faster」「full plugin compatibility」无第三方复现 | 性能宣称不可作事实 | 写成「官方声称」 |
@@ -217,3 +225,23 @@
 >   - 「**Agent 批量任务并发：动态限流、优先级调度、故障隔离防雪崩**」（字节交易与广告面经）——与既有 `{#p0-agent-sandbox-pool-scheduling}` 同族 → **不录**；
 >   - 「**1M 上下文仍不够**」「**长上下文压缩成五层追问**」——与既有压缩题 / Token 题同族 → **不录**。
 > - **下一轮选题建议**：①**首选牛客搜索页**——用新关键词组合（如「Agent 沙箱 并发」「多智能体 通信」「Skill 路由」「上下文 超限」「MCP 安全」）继续捞新帖，**注意逐个 URL 抓 + 间隔 20~30 秒**；②Hub 主站**字节数未变，已确认枯竭**，不必重复全站开采；③L2 镜像仓两仓停更，**不必重复挖**；④`通用知识-八股文题库-DataWhale开源` 的「七、开放性问题」子节**本轮已逐条复核，全部为开放性/行业判断题，缺 L0 依据 → 不录**。
+> **2026-11-10 开采记录（牛客搜索页第二轮 + `llm-master` 面经仓首次开采）**：本轮出题 **3 道**——**Agent 工具调用链路的凭据隔离与授权边界**、**幻觉的检测与度量（事实性 vs 忠实性）**、**生成模型评测（多样性与准确性）**；另给既有「Agent = Model + Harness」题补了 1 条追问。
+> - **三条通道的枯竭状态（按 SKILL.md 坑 64 逐条核实）**：
+>   - **语料池差集**：`mianjing.json` 仍停在 **2026-10-20**（385 条 / 14 个 distinct post id 全部开采过），**差集恒为空，不能据此推断「没有新帖」**；
+>   - **站点 / 镜像通道**：34 个镜像仓已刷新（`whatwg-html` 2026-11-09、`vite` 2026-11-09、`wasm-spec` 2026-11-06 等），**L2 题库仓无新增 AI 考点**（`interview-question` 仍停在 2025-09-07、`front-end-interview-handbook` 停在 2026-10-05）；**Hub 主站本轮未复查字节数**（上轮 1,356,052 字节）；
+>   - **站点搜索通道**：**本轮唯一有效通道**——8 组关键词 × 2 页，捞到 **47 个 distinct post id**，其中 AI/Agent 相关约 18 个。
+> - **本轮新发现的通道（坑 68）**：`llm-master` 仓的 `docs/interview/llm/20260506bytedance.md`（字节 Agent 开发四面 **21 题全解析**，32KB，GitHub raw 直取）是**带答案正文的高价值 L2 源**，此前从未开采；其中「工具调用的安全问题（Key 泄露、敏感信息暴露）」与「生图/生成模型的多样性和准确性评测」直接开出 2 道新题。
+> - **本轮开采的牛客帖（L2 一线出处）**：
+>   · `nowcoder.com/feed/main/detail/17d995811f6f4b509fdcef6389dcf54c`（**启云方 ai 应用开发 一面面经 10.30**，56 问）→ **权限风险控制**（#45）、**生产可用 Agent 的安全设计**（#53）、**会话隔离**（#46，判定与沙箱池题同族未录）、**复合意图拆分**（#54，判定与意图路由题同族未录）；
+>   · `nowcoder.com/feed/main/detail/7cab90ca59084f64bc19d1cb13935937`（**顺丰 agent 开发 一面**）→ 「Agent 没法自验证怎么解决」「Agent 状态机管理」「tool 调用死循环」「沙箱怎么设计」——**全部与既有题同族，未录**；
+>   · `nowcoder.com/feed/main/detail/a9e773c96cae4a8ebbca23d84f59cb8c`（**美团 + 阿里二面**，问 nexus-agent-pro）→ 文档入库质量判定（#7）、切分规则（#8）、三路召回合并（#5）、粗过滤 → 候选集 → 重排（#6）——**全部与既有 RAG 题同族，未录**；
+>   · `nowcoder.com/feed/main/detail/712626e9f6114e6ebdffe11d83d19ff7`（**长鑫存储 AI 全栈开发 一面**，10.30）→ 「harness 会不会被模型取代」——**并入既有「Agent = Model + Harness」题作追问 4**；
+>   · `nowcoder.com/feed/main/detail/1d067ce539c64d3988eabb9b646ef8a0`（**美团 Agent 开发一面凉经**）、`5a4f138ab80f4d05a104244ff72052f0`（Java 后端 AI Agent 方向）—— **无新增考点**。
+> - **本轮 L0 核验（全部逐条核 `citation_title`，见坑 69）**：
+>   - **MCP 2026-07-28 授权规范**（本地镜像 `repos/specification/`）：授权为 **OPTIONAL**；HTTP 传输 SHOULD 遵循、**STDIO 传输 SHOULD NOT 遵循并改为从环境变量取凭据**；受保护 server 扮演 OAuth 2.1 资源服务器、client 扮演 OAuth 2.1 客户端；**MUST** 校验 audience、**MUST NOT** 透传 token、**MUST** 安全存储令牌、**SHOULD** 短时效、公开客户端 **MUST** 轮换刷新令牌；Scope Minimization 为渐进式提权（`WWW-Authenticate` + `scope="..."`，可只签发子集）。**OWASP LLM Top 10（2025）** 编号现场核对：**LLM02 = Sensitive Information Disclosure、LLM06 = Excessive Agency**。
+>   - **arXiv id 现场核对结果**：AlignScore = **2305.16739**（2023-05-26，355M 参数，22 基准、19 个未见过）、FActScore = **2305.14251**（2023-05-23，ChatGPT 人物简介任务原子事实支持率仅 **58%**）、RARR = **2210.08726**（2022-10-17）、幻觉综述 = **2309.01219**；FID = **1706.08500**（2017-06-26）、FID 无偏性 = **1911.07023**（2019-11-16）、Rethinking FID = **2401.09603**、CLIPScore = **2104.08718**（2021-04-18）、生成侧 P&R = **1904.06991**（2019-04-15）、ImageReward = **2304.05977**（2023-04-12）、VQAScore = **2404.01291**（2024-04-01）、LIM-RA = **2404.06579**。⚠️ **本轮凭记忆写错两个**（AlignScore 记成 2305.14139、RARR 记成 2104.06861），见坑 69。
+> - **证伪轮（2026-11-10）**：
+>   - **幻觉检测度量**：AlignScore 的训练集含噪（**LIM-RA 用约 10% 数据量超过原版**）；**通用对齐函数并非处处最优**（细粒度指标 DAE / QuestEval 在特定数据集上仍更好）；NLI 类度量在长文档与多跳推理上会掉。→ 已在题目中写成「度量互补而非替代」。
+>   - **生成模型评测**：**FID / IS 是有偏估计且偏差项依赖被评估模型本身，固定样本数消不掉**（arXiv:1911.07023）；FID 与人类判断相悖、反映不出渐进改进、样本量一变结果就变（arXiv:2401.09603）；CLIP Score 在组合式 prompt 上饱和（VQAScore 论文给出对照）；偏好模型有训练分布偏置与审美偏置。→ 已写进题目的「失效面」小节。
+> - **本轮判定为「有价值但未录」的候选**：见上方缺口表（多 Agent 死锁、知识库数据质量门禁、Agent 在线自诊断）。
+> - **下一轮选题建议**：①继续用牛客搜索页，但**换关键词**（不要再翻页，见坑 67）——如「Agent 灰度」「模型路由 降级」「评测集 构建」「Agent 权限 隔离」；②**继续挖 `llm-master` 的 `docs/interview/llm/` 目录**（本轮只开了 1 个日期文件）；③找第二条「多 Agent 死锁」的 L2 出处；④找「知识库数据质量门禁」的 L0 依据（近重复检测 / 矛盾检测）以划清与既有入库流水线的边界。
