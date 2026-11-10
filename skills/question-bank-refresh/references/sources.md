@@ -64,7 +64,7 @@
 | 渠道 | 用途 | 采集方式 | 注意 |
 | :--- | :--- | :--- | :--- |
 | **牛客搜索页（本轮新增的第三条真题通道）** | **发现新的 AI/Agent 面经帖**——`mianjing.json` 停更后唯一还活着的真题增量来源 | `curl -sL -A "<Chrome UA>" "https://www.nowcoder.com/search/all?query=<关键词>&type=all&page=<N>"`（SSR 渲染，无需登录） | 结果链接用 **`/feed/main/detail/<id>`**（`/discuss/<id>` 部分帖子返回 404 壳）；**预览正文在 `class="feed-text ..."` 块里，直接含真题题面**；牛客频控仍在，连抓会返回骨架页。见 SKILL.md 坑 63 |
-| **`llm-master` 面经仓（L2，2026-11-10 新增）** | **高价值面经正文源**（带答案的完整解析） | `https://raw.githubusercontent.com/youngyangyang04/llm-master/main/docs/interview/llm/<日期><公司>.md` | GitHub raw 直取；`mianjing.json` 的 `source_url` 指向 `github.com/youngyangyang04/llm-master/...` 时即属本通道（**L2 可用**）。逐题必须做覆盖判定，见 SKILL.md 坑 68 |
+| **`llm-master` 面经仓（L2，2026-11-10 新增；2026-11-11 摸清目录规模）** | **高价值面经正文源**（带答案的完整解析） | 目录清单：`curl -sL "https://api.github.com/repos/youngyangyang04/llm-master/contents/docs/interview/llm"`（返回带 `size` 的文件列表）；正文：`https://raw.githubusercontent.com/youngyangyang04/llm-master/main/docs/interview/llm/<文件名>.md` | GitHub raw 直取；`mianjing.json` 的 `source_url` 指向 `github.com/youngyangyang04/llm-master/...` 时即属本通道（**L2 可用**）。**该目录实为 30 个文件 / 约 696KB，此前只开采过 1 个——按 `size` 降序开采，优先最厚的**。这批文件是「文章体」：问句散落在引号块与「面试官问：」行里，**不能按标题抽**（见 SKILL.md 坑 72）。逐题必须做覆盖判定，见 SKILL.md 坑 68 |
 | 牛客面经帖 | 一线真实面经（2026-09/10 仍在更新） | `scripts/fetch-nowcoder.py` | SSR 内联 JSON；`desc` 常被截断，优先取 `content`；有频控 |
 | 牛客题库页 | 公司真题 | 只读 | 多数需登录 |
 | **牛客 AI Agent 专场面经（2026-09/10 高频）** | 一线真题的主要增量来源 | `scripts/fetch-nowcoder.py <url>` | 2026-10-20 已核到并录题的高价值帖：<br/>· `nowcoder.com/feed/main/detail/8ee12044e8284a8d8d6140dc2d0840ff`（深圳外企 Agent 开发 18 问）→ 工具定义膨胀/两层工具调用/意图识别/企业 Word·PDF RAG/召回质量<br/>· `nowcoder.com/discuss/800426409796624384`（蚂蚁国际一面 19 问）→ NDCG/搜索排序指标/重排序/Agent 评测<br/>· `nowcoder.com/feed/main/detail/54b3374bbfec494dba76294891edd9b4`（金山办公大模型实习一面）→ ROUGE 计算原理/LCS |
@@ -107,6 +107,8 @@
 | 「多 Agent 互相确认的死锁」（A 发消息要 B 确认，B 同时发消息要 A 确认） | **2026-11-10 第三次复核**：L2 出处仍只有 1 条（`nowcoder.com/feed/main/detail/2b4b7cf9b1ab45e58a60794d7d92cc68`），缺多源印证；且与既有 `{#p1-multi-agent-handoff-message-contract}` 的授权边界相邻 | **不录**——等第二条独立 L2 出处再开 |
 | 「知识库入库的数据质量门禁」（重复文档、近重复检测、时效性判定、同一事实的表述冲突、人工审核闸门） | **2026-11-10 判定为相邻**：既有 `{#p0-rag-doc-parse-index-pipeline}` 已覆盖五段流水线、清洗阶段（页眉页脚 / 断行）、内容指纹与增量更新；本候选的增量只有「准入前的重复 / 时效 / 冲突判定」，考点密度不足以单独立题 | **不录**——留作该题追问扩展 |
 | 「Agent 在线自诊断 / 自助根因分析」 | **2026-11-10 第三次复核仍无 L0 依据**（只有面经题面，无论文或官方实践），与既有 `{#p1-agent-failure-attribution-small-model}` 的「离线人工归因」边界未划清 | **不录** |
+| 「跨模型工具调用 / 结构化输出的兼容层」（同一套工具定义在 DeepSeek / Qwen / Anthropic 上的 schema 严格性、并行 `tool_calls`、参数类型强制差异，以及如何在自家框架里做一层归一化适配 + 契约测试） | **2026-11-11 首次采到一线出处**（成都小厂 agent 面经 #10），**全库 0 命中**（`工具调用 差异`、`结构化输出 差异` 均 0；AI 学科内的 `DeepSeek` / `Qwen` 命中都与本题无关） | **本轮不录——缺 L0**：三家官方 API 文档需逐条核（schema 子集支持、`tool_choice` 形态、并行调用上限、参数类型强制的失败表现），没核完就出题等于自拟行为。**下轮补齐 L0 后可单独立题** |
+| `llm-master` 目录剩余文件（`harness_interview.md` 37KB、`multi_agent_communication_interview.md` 24KB、`production_agent_architecture_harness_org_talent.md` 27KB、`agent_harness_observability_interview.md` 28KB、`spec_driven_development_interview.md` 26KB 等） | **2026-11-11 已下载 26 个文件但只精读 7 个**，这批尚未逐题过覆盖判定 | **下轮继续开采**——按 `size` 降序，优先最厚的；注意这批是「文章体」，问句在引号块与「面试官问：」行里（SKILL.md 坑 72） |
 | 牛客搜索页 `page` 参数可能失效 | 2026-11-10 实测同一关键词的 p1 与 p2 返回**完全相同的 id 集合** | 见 SKILL.md 坑 67——**换关键词，不翻页**；并用字节数 < 20000 过滤频控骨架页 |
 | `pnpm install` 因 npm 镜像滞后失败 | 当天工作区装不上依赖，门禁与构建无法进行 | **先诊断再动手**：官方源有、镜像没有 → 镜像滞后 → 优先**复用长期主工作区的 `node_modules`（符号链接）**，兜底换 `--registry=https://registry.npmjs.org`（慢）。见 SKILL.md 坑 71 |
 | `web_search` 偶发 `MATRIX_TOOL_REQUEST_FAILED` | 检索通道不可用 | 改 `web_fetch` / `curl` 直接取官方页（arXiv abs 页、ACL Anthology 页） |
@@ -246,3 +248,23 @@
 >   - **生成模型评测**：**FID / IS 是有偏估计且偏差项依赖被评估模型本身，固定样本数消不掉**（arXiv:1911.07023）；FID 与人类判断相悖、反映不出渐进改进、样本量一变结果就变（arXiv:2401.09603）；CLIP Score 在组合式 prompt 上饱和（VQAScore 论文给出对照）；偏好模型有训练分布偏置与审美偏置。→ 已写进题目的「失效面」小节。
 > - **本轮判定为「有价值但未录」的候选**：见上方缺口表（多 Agent 死锁、知识库数据质量门禁、Agent 在线自诊断）。
 > - **下一轮选题建议**：①继续用牛客搜索页，但**换关键词**（不要再翻页，见坑 67）——如「Agent 灰度」「模型路由 降级」「评测集 构建」「Agent 权限 隔离」；②**继续挖 `llm-master` 的 `docs/interview/llm/` 目录**（本轮只开了 1 个日期文件）；③找第二条「多 Agent 死锁」的 L2 出处；④找「知识库数据质量门禁」的 L0 依据（近重复检测 / 矛盾检测）以划清与既有入库流水线的边界。
+
+> **2026-11-11 开采记录（`llm-master` 目录首次全量摸底 + 牛客搜索页第二轮新帖）**：本轮出题 **4 道**——**工具返回值的上下文预算**、**代码检索 vs 向量 RAG**、**记忆介质选型（Markdown 文件 vs 向量库）**、**Agent 写文件的并发一致性（CAS + worktree 隔离）**；另给既有「结构化输出」题补了 1 条追问。
+> - **三条通道的枯竭状态（按 SKILL.md 坑 64 逐条核实）**：
+>   - **语料池差集**：`mianjing.json` 仍停在 **2026-10-20**（385 条 / 14 个 distinct post id 全部开采过），**差集恒为空，不能据此推断「没有新帖」**；
+>   - **镜像通道**：34 个仓已刷新（`rolldown` 2026-11-10、`whatwg-html` / `vite` / `vercel-ai` / `specification` / `rspack` / `openai-agents-python` / `biome` 均 2026-11-09），**L2 题库仓仍无新增 AI 考点**（`interview-question` 停在 2025-09-07、`front-end-interview-handbook` 停在 2026-10-05）；
+>   - **站点搜索通道**：**本轮有效**——6 组关键词里 4 组被频控成 6KB 骨架页，成功的一组拿到 **16 个 post id、其中 13 个从未开采**。
+> - **本轮最大发现是「`llm-master` 目录比想象的大得多」**（见 SKILL.md 坑 72）：`docs/interview/llm/` 实为 **30 个文件 / 约 696KB**，此前只开采过 1 个。用 GitHub contents API 列出目录（带 `size`）后按厚度优先下载 26 个，本轮据此挖出**代码检索**（`claude_code_grep_rag_interview.md`）这条全新考点。
+> - **本轮开采的牛客帖（L2 一线出处）**：
+>   · `nowcoder.com/feed/main/detail/25f0445d66b947bf9f979c6acdbf9fef`（**千问 agent 社招一面**，阿里 P7 社招）→ **记忆为什么用 Markdown 文件维护、它和 RAG 差在哪**（追问 #3，与蚂蚁集团帖互相印证）、**上下文溢出改用结构化对象承接**（#16/#17）、**工具参数传错后如何让模型观察错误并纠正**（#10，与既有「重试风暴」题同族未录）、**Neo4j 图方案 vs LangGraph 图式运行时**（#7，与既有框架选型题同族未录）；
+>   · `nowcoder.com/feed/main/detail/f2126e0d7f3745babb33e8c672253618`（**蚂蚁集团 AI Agent 开发面经**）→ **记忆用 Markdown vs RAG 的差异**（#3）；
+>   · `nowcoder.com/feed/main/detail/3b05460868c7429193e93f8d09f62794`（**蚂蚁 Agent 日常一面凉经**，纯技术、无八股）→ **read 工具读 10 兆文件如何不撑爆上下文**（追问 #2）、**主流 coding agent 的元工具（read / edit / bash）设计差异**（#1）、**edit 工具在用户与 Agent 同时改文件时的增强**（追问 #3）；
+>   · `nowcoder.com/feed/main/detail/d9d6a1ea1adc41b4a44ca47b535e9994`（**秋招 蚂蚁 AI 应用方向技术面经**，支付服务方向）→ **JSON 符合 Schema 但内容判断错了怎么发现**（#7，**归入既有结构化输出题的追问**）、**压缩把「不能修改生产配置」变成「修改生产配置」并写入长期记忆怎么发现和避免**（#12，**归入既有压缩可验证性题的追问，不另立题**）；
+>   · `nowcoder.com/feed/main/detail/600fa3f292654e02ab227d923206a158`（**阳光保险 AI 应用开发二面**）→ **Claude Code 的 hook 与 CLAUDE.md 的区别**（#10，与既有 HITL 拦截题同族未录）；
+>   · `nowcoder.com/feed/main/detail/34dd692b16c84c059daeb00866533d96`（**成都小厂 agent 面经**）→ **DeepSeek / Qwen 对工具调用与结构化输出支持差异如何兼容**（#10，本轮缺 L0 未录）、**多轮对话固定 Prompt 前缀与 Token 缓存命中率**（#12/#13，已被既有 Prompt Caching 题覆盖）；
+>   · `nowcoder.com/feed/main/detail/6d45897f57b0484eb9863bc991993866`（**秋招 淘天 AI Agent 一面面经**）→ **Agent 请求授权 / 追问时执行流程怎么暂停与恢复**（已被既有 HITL 题覆盖）、**记忆的时效性、衰减与更新**（已被既有记忆分层题覆盖）——本轮该帖正文抓取失败（`未抽取到正文`，坑 27），题面取自搜索页预览。
+> - **L0 核验（本轮全部走 Claude Code 官方原文，未凭记忆写）**：见 `contributors/authoritative-sources.md` 版本基线表新增 4 行——**工具返回值与上下文预算**（`Read` 单次 25,000 tokens / 256 KB 拒绝线 / `PARTIAL view`、`Grep` 默认只回路径、`Glob` 100 文件上限与截断标记、`Bash` 30,000 字符内联 + 2,000 字符预览、压缩后 >5,000 tokens 文件只回 `Referenced file`）、**代码检索 vs 向量检索**（官方工具集只有 `LSP` / `Glob` / `Grep` / `Read`，**没有向量检索**）、**文件式记忆与向量库式记忆**（auto memory 目录结构、四类 type、索引 200 行 / 25KB 上限与**超限整段丢弃**）、**写文件并发一致性**（`Edit` 的精确替换与 CAS 语义、三道闸门、`PARTIAL view` 不算读过、非 UTF-8 拒绝、**worktree 隔离优先于冲突检测**）。
+> - **本轮判定为「有价值但未录」的候选**：
+>   - 「**跨模型工具调用 / 结构化输出兼容层**」（DeepSeek / Qwen / Anthropic 的 schema 严格性、并行 `tool_calls`、参数类型强制差异）——**全库 0 命中**，但缺 L0（需逐个核三家官方 API 文档），本轮不硬凑，**留待下轮**；
+>   - 「**HITL 的挂起与恢复**」「**记忆时效性与衰减**」「**Schema 语义校验**」「**压缩的否定语义反转**」「**Claude Code hook vs CLAUDE.md**」「**RAG 召回质量**」「**Skill 粒度与路由**」「**Agent 与 Workflow 选型**」「**多 Agent 拓扑**」——全部命中既有题或与之同族（见 SKILL.md 坑 74 的判定口诀）。
+> - **下一轮选题建议**：①**继续挖 `llm-master` 的 `docs/interview/llm/` 剩余文件**——本轮已下载 26 个但只精读了 7 个，`harness_interview.md`（37KB）、`multi_agent_communication_interview.md`（24KB）、`production_agent_architecture_harness_org_talent.md`（27KB）、`agent_harness_observability_interview.md`（28KB）、`spec_driven_development_interview.md`（26KB）尚未逐题过覆盖判定；②**补「跨模型工具调用兼容层」的 L0**（三家官方 API 文档逐条核）；③**牛客搜索页继续换关键词**（本轮有效关键词是「AI Agent 面经」，其余 5 组被频控）；④`mianjing.json` 差集仍恒为空，**不要再据此下「无新帖」结论**。
