@@ -672,6 +672,35 @@ git push origin feature/question-bank-refresh
 > - **部署工作区不需要重装**：长期主工作区本来就带着完整的 `node_modules`，`scripts/deploy.sh` 在那里跑 `npm run build` 即可。
 > - **注意**：无论走哪条路，**`pnpm-lock.yaml` 都不许提交**（仓库既有约定）。
 
+
+> **坑 72（`llm-master` 的 `docs/interview/llm/` 是一个 30 个文件的目录，此前只开采过 1 个——摸目录规模要靠 GitHub contents API，不是靠猜文件名）**：坑 68 打开了 `20260506bytedance.md` 一个文件就以为把这条通道挖尽了。2026-11-11 实测，该目录共有 **30 个文件、约 696KB**（`agent_interview.md` 43KB、`harness_interview.md` 37KB、`claude_code_deep_dive.md` 41KB、`multi_agent_communication_interview.md` / `multi_agent_harness_interview.md` / `production_agent_architecture_harness_org_talent.md` 各 25~27KB、`rag_interview.md` 28KB、`graphrag_interview.md` 27KB、`finetuning_sft_rlhf_interview.md` 29KB、`claude_code_context_window_interview.md` 29KB、`claude_code_grep_rag_interview.md` 29KB……），**此前只开采 1 个**。
+> - **列目录的正确姿势**（不要猜文件名、不要爬网页目录页）：
+>   ```bash
+>   curl -sL "https://api.github.com/repos/youngyangyang04/llm-master/contents/docs/interview/llm" \
+>     | python3 -c "import json,sys;[print(x['size'], x['name']) for x in json.load(sys.stdin)]"
+>   ```
+>   `size` 字段直接告诉你哪些是厚文件（厚 = 多题 + 带答案），**按 size 降序开采，优先最厚的**。每个文件直取 `https://raw.githubusercontent.com/youngyangyang04/llm-master/main/docs/interview/llm/<name>.md`。
+> - **这些文件不是纯 Q&A，而是「文章体」**：正文是散文 + 小标题，问句散落在**引号块**（`"……？"`) 与「面试官问：……」里，小标题 `## N. …` 多为章节而非题目。**直接按标题抽会得到 706 条噪声**（`Phase 2：Hardening`、`CrewAI` 这类）。
+>   - **有效抽法**：① 正则取带引号且以问号结尾的句子 → 159 条；② 正则取 `面试官(问|提问|会问|追问)：` 开头行 → 50 条；③ 合并去重后剩 **209 条**，其中 207 条含问号。**这 207 条才是真题候选**。
+> - **提取器的题型判定仍然适用**（坑 53/57/59）：同一个仓库里既有「带参考答案的 Q&A」也有「纯概念指南」，本目录这批属**文章体 + 散落问句**型，是坑 59「纯问题行清单」的加强版。
+
+> **坑 73（牛客搜索页的「预览正文」足以完成选题，全文抓取失败不影响本轮出题）**：2026-11-11 实测，6 组关键词里 **4 组返回 6KB 左右的骨架页**（频控，坑 6/27/67），但**成功的那一组（269KB）一次给出 16 个 post id，其中 13 个从未开采**——包括「千问 agent 社招一面」「淘天 AI Agent 一面」「字节跳动 后端 Agent 一/二面」「蚂蚁集团 AI Agent 开发面经」「阳光保险 AI 应用开发二面」等一线帖子。
+> - **关键认知**：搜索结果的**预览块里直接含真实面试题片段**（坑 63 已记），所以**选题环节根本不需要全文**；全文只在需要「确认某条题面的完整表述」时才去抓。
+> - **因此本轮的正确顺序是：先扫预览选出候选 → 只对最终要引用的 2~3 个帖抓全文 → 其余放弃**。这比"每轮批量抓 6 个 URL"省一个数量级的请求，也就**绕开了频控**。
+> - **预览里能直接读到的题面样例**：「Agent 的记忆为什么有人选择用 Markdown 文件维护？它和 RAG 在用途、检索方式及更新成……」「追问 read tool，如果要读取一个 10 兆的文件，全放进去上下文直接爆了，你怎么解决」「claude code，codex，dsh，pi 这些主流 coding agent 在元工具的设计上有什么不同……」。
+> - **配套**：坑 46 要求的「三条通道状态」里，本轮再次确认——**语料池差集恒为空（`mianjing.json` 停更）、镜像 L2 仓无新增、唯一有效通道是站点搜索**（坑 64）。**结论不要写"线索已彻底用尽"，要写"哪条通道枯竭、哪条通道本轮有效"。**
+
+> **坑 74（「新考点」判定要分清「同域不同层」与「独立考点」——更锐的实例应归入既有题的追问，而不是另立一题）**：坑 62 只区分"独立主考点 vs 顺带提及"，本轮补上第三种形态：**同域、但落在既有题的另一层（更锐的实例）**。
+> - **实例一（归为追问）**：牛客「JSON 格式符合 Schema，但内容判断错了，怎么发现？」看起来是全新的"语义校验"考点，但既有 `{#p0-structured-outputs-json-schema}` 讲的是**语法层**（软约束 vs 语法掩码），而"Schema 只保证形状、不保证事实"是**事实层**——同域、同一工具、层次不同。→ 处置：**并入该题的追问 2**（规则校验 / 交叉验证 / 溯源引用 / 抽检回归四道闸门），**不另立题**。
+> - **实例二（归为追问）**：牛客「如果压缩把『不能修改生产配置』变成了『修改生产配置』，并写入长期记忆，怎么发现和避免？」比既有 `{#p1-context-compaction-verification-replay}` 的"禁止事项丢失"更锐（**否定语义反转** + **污染传播到长期记忆**）。但既有题的第一失效形态已经就是"禁止事项丢失（不要改数据库被压没了）"，并给出"把约束放进不参与压缩的固定区 + 可 grep 断言"的解法——**增量只有"更锐的实例"，不是新机制**。→ 处置：**不另立题**。
+> - **判定口诀**：候选与既有题**同域**时，先问「它是**另一个层**（语法/事实、机制/度量、能力/成本、预防/检测）还是**另一个对象**？」——**另一个层** → 并入追问；**另一个对象**（不同工具、不同数据、不同阶段）→ 才值得另立题。
+> - **配套**：真正值得另立题的那几道，判定依据是**全库关键词 0 命中 + 既有题里连"顺带提及"都没有**：本轮的「工具返回值自身的上下文预算」「代码检索 vs 向量检索」「记忆介质选型（文件 vs 向量库）」「Agent 写文件的并发一致性」全部满足；而「HITL 挂起/恢复」「记忆时效性仲裁」「RAG 召回质量」「Skill 粒度与路由」「Agent 与 Workflow 的选型」「多 Agent 拓扑」「Schema 强约束」全部命中既有题或与之同族。
+
+> **坑 75（官方文档站的 `llms.txt` 旁边往往还有「每页直给 Markdown 原文」的兄弟入口，取证比 `web_fetch` 整页省一个数量级）**：2026-11-11 实测，`https://code.claude.com/llms.txt`（585 行）给出全站子页索引，而**每条索引项的 URL 后缀换成 `.md` 就直接返回该页的 Markdown 原文**（如 `https://code.claude.com/docs/en/tools-reference.md` → 90KB 纯文本）。这是坑 37 的加强版：坑 37 说"llms.txt 用来**定位**子页"，本轮补充"定位完之后**直接取 `.md` 原文**"。
+> - **一条命令列全站结构**：先 `curl -sL <site>/llms.txt` 存盘，再 `grep -inE "<关键词>" llms.txt` 定位；**不要把整份 llms.txt 读进上下文**。
+> - **本轮实际取到的 L0 一手页**：`tools-reference.md`（Read / Edit / Write / Grep / Glob / Bash / LSP 的行为规范与全部限额）、`context-window.md`（启动自动加载、每次文件读取的代价、压缩后大文件只回 `Referenced file`、subagent 隔离大读取）、`memory.md`（auto memory 的目录结构、`MEMORY.md` 的 200 行 / 25KB 上限与超限丢弃、四类记忆 type、写入准入）、`worktrees.md`（并行会话用 worktree 隔离、越界工具调用被阻断）。
+> - **配套**：这类"限额型"事实（25,000 tokens / 256 KB / 30,000 字符 / 2,000 字符预览 / 100 个文件 / 200 行 / 25KB）**必须逐条回原文核对**——它们是版本相关的，改版就会变；引用时写"官方文档口径"并给核对入口，不要写成永恒常量。
+
 ---
 
 ## 8. 复盘（每轮结束必做）
