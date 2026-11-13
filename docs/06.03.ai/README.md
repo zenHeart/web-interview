@@ -80,6 +80,7 @@ graph TB
         T3_25["Skill 粒度划分与换基座模型后的触发评测回归"]
         T3_26["工具调用链路的凭据隔离与授权边界：凭据不进上下文、受众绑定与禁止透传"]
         T3_27["Agent 改文件的并发一致性：Edit 的 CAS 语义与 worktree 隔离"]
+        T3_28["Agent 自进化的数据供给与质量闭环：数据来源、可验证性判据与产物准入门禁"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -99,6 +100,7 @@ graph TB
         T4_14["公开基准选型：GAIA / SWE-bench / AgentBench / WebArena 的维度边界"]
         T4_15["AI 应用可观测性：Tracing / Metrics / Logs 与 OpenTelemetry GenAI 语义约定"]
         T4_16["生成模型评测：FID / CLIP Score / 人类偏好与「准 vs 全」的分离"]
+        T4_17["并行工具调用的执行语义：协议层并行 vs 执行层并行与结果回填契约"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -131,6 +133,7 @@ graph TB
         T5_27["工具返回值的上下文预算：先定位再限量、截断显式告知与落盘留引用"]
         T5_28["代码检索 vs 向量 RAG：符号级精确匹配与语义召回的边界"]
         T5_29["记忆介质选型：Markdown 文件式记忆与向量库式记忆的分工"]
+        T5_30["会话生命周期：压缩 / 清空 / 归档的语义边界与压缩的有损清单"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -230,6 +233,7 @@ graph TB
 - `{#p1-agent-skill-granularity-model-portability}`：一个 Agent 系统该把能力切成几个 Skill？换了底层大模型，这些 Skill 还能直接用吗？
 - `{#p1-agent-credential-isolation-tool-authz}`：Agent 要调公司的订单 API，但 Key 只能待在执行层。你怎么设计这条链路，保证密钥既不进模型上下文、也不进日志，同时用户 A 的请求绝对读不到用户 B 的数据？
 - `{#p1-agent-edit-concurrency-cas}`：Agent 改文件时，怎么保证不会把用户刚改的内容覆盖掉？
+- `{#p1-agent-self-evolution-data-quality}`：Agent 想做自进化，喂给它的进化数据从哪来？怎么判断一条轨迹算高质量，进化产物又该怎么评估？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -248,6 +252,7 @@ graph TB
 - `{#p1-agent-public-benchmark-selection}`：Agent 能力的公开基准该怎么选？GAIA、SWE-bench、AgentBench、WebArena 各自测的是什么？
 - `{#p1-llm-observability-tracing-genai-semconv}`：LLM 应用上线后怎么排查问题？AI 应用的可观测性和普通 Web 服务有什么不一样，OpenTelemetry 的 GenAI 语义约定到底约定了什么？
 - `{#p1-generative-model-eval-diversity-fidelity}`：我们要把文生图模型接进产品，评测该怎么做？FID、CLIP Score、人类偏好分别测的是什么？「多样性」和「准确性」又各自用什么指标量？
+- `{#p1-parallel-tool-call-execution-semantics}`：模型一次返回多个工具调用时，这些调用该怎么执行？结果要怎么回填，某一个失败了又该怎么办？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -279,6 +284,7 @@ graph TB
 - `{#p1-agent-tool-result-context-budget}`：工具一次返回了 10MB 内容，怎么在不撑爆上下文的前提下把信息取回来？
 - `{#p1-code-retrieval-vs-vector-rag}`：代码检索该用向量 RAG 还是精确匹配？Claude Code 为什么没有给代码仓库建向量索引？
 - `{#p1-agent-memory-markdown-vs-vector-store}`：Agent 的长期记忆为什么有人用 Markdown 文件维护？它和 RAG 在用途、检索方式、更新成本上差在哪？
+- `{#p1-agent-session-lifecycle-compact-reset}`：Agent 的会话什么时候该压缩、什么时候该清空重开？两种操作各自会丢掉什么，怎么让用户感觉不到「失忆」？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
