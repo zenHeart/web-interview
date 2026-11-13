@@ -700,6 +700,28 @@ git push origin feature/question-bank-refresh
 > - **一条命令列全站结构**：先 `curl -sL <site>/llms.txt` 存盘，再 `grep -inE "<关键词>" llms.txt` 定位；**不要把整份 llms.txt 读进上下文**。
 > - **本轮实际取到的 L0 一手页**：`tools-reference.md`（Read / Edit / Write / Grep / Glob / Bash / LSP 的行为规范与全部限额）、`context-window.md`（启动自动加载、每次文件读取的代价、压缩后大文件只回 `Referenced file`、subagent 隔离大读取）、`memory.md`（auto memory 的目录结构、`MEMORY.md` 的 200 行 / 25KB 上限与超限丢弃、四类记忆 type、写入准入）、`worktrees.md`（并行会话用 worktree 隔离、越界工具调用被阻断）。
 > - **配套**：这类"限额型"事实（25,000 tokens / 256 KB / 30,000 字符 / 2,000 字符预览 / 100 个文件 / 200 行 / 25KB）**必须逐条回原文核对**——它们是版本相关的，改版就会变；引用时写"官方文档口径"并给核对入口，不要写成永恒常量。
+>
+> **坑 76（牛客搜索页的预览正文在 `placeholder-text` 里，坑 63 记的 `feed-text` 只是外层 `<a>` 容器）**：坑 63 说"预览正文在紧随其后的 `class="feed-text ..."` 块里"——**准确说法是：`<a class="feed-text ...">` 是外层容器，真正的预览文本在它内部的 `<div class="placeholder-text">` 里**。2026-11-14 实测：直接对 `class="feed-text[^"]*"` 做正则取块并剥标签，得到的是**空串**（因为文本在嵌套 div 里）；换成剥 `<a>` 标签后再取 `placeholder-text` 才拿到完整预览（272~480 字符）。
+> - **可靠的抽取顺序**（一次拿到「标题 + id + 预览」三件套）：
+>   ```python
+>   ids = re.findall(r'/feed/main/detail/([0-9a-f]{16,40})', t)
+>   for m in re.finditer(r'href="/feed/main/detail/([0-9a-f]{16,40})\?sourceSSR=search"[^>]*class="tw-cursor-pointer dy"[^>]*>(.*?)</a>', t, re.S):
+>       pid, title = m.group(1), clean(m.group(2))
+>       mm = re.search(r'id="feed-dynamic-content-%s".*?class="placeholder-text"[^>]*>(.*?)</div>' % pid, t, re.S)
+>       preview = clean(mm.group(1)) if mm else ''
+>   ```
+> - **配套**：预览块里 `<div>` 层层嵌套，**剥标签后必须把 `&nbsp;` 也还原成空格**，否则预览里会出现 `他们要的是...&nbsp;第二，` 这种断裂。
+>
+> **坑 77（牛客搜索页的 id 集合在不同关键词之间大量重叠——必须全局去重，逐关键词计数会高估）**：2026-11-14 实测：3 组关键词（"Agent 沙箱 隔离" / "Agent 权限 隔离" / "多 Agent 通信 协议"）各返回 5 个 id，**并集只有 7 个**——其中 **4 个 id 在全部 3 组里都出现**，另 2 组各只贡献 1 个新 id。**坑 67 的"换关键词"策略有效（每组都带来新帖），但"每组 5 条"不等于 15 条**。处置：**先按关键词分别收集，再对 id 做全局并集**，报告里写"N 组关键词 → M 个 distinct post id（其中 K 个此前从未开采）"，不要逐关键词累加报数。
+>
+> **坑 78（官方 API 文档的 `.md` 直给入口在 `platform.claude.com`，`anthropic.com/engineering/*` 是 JS 渲染取不到正文）**：2026-11-14 实测三件事：
+> - **Claude Code 文档索引在 `https://code.claude.com/llms.txt`**（58KB，585 行）。**注意不是 `code.claude.com/docs/en/llms.txt`——后者返回 404、0 字节**。索引里每条 URL 后缀换成 `.md` 即得该页 Markdown 原文（坑 75）。
+> - **`https://www.anthropic.com/engineering/writing-tools-for-agents` 返回 200 / 230KB，但正文取不到**：页面是 JS 渲染，剥标签后 **long lines = 0**、`__NEXT_DATA__` 不存在，`curl` 只能拿到 79KB 空壳。**这类营销页不能当取证入口**。
+> - **Anthropic API 文档走 `https://platform.claude.com/docs/en/<path>.md`** 直取原文（实测 `agents-and-tools/tool-use/parallel-tool-use.md` = 58KB、`implement-tool-use.md` = 41KB，均为纯文本，含代码示例与官方原话）。**取证优先选这里，不要去碰 engineering 博客页。**
+>
+> **坑 79（`llm-master` 的文章体里，同一个问句会出现两次——抽取必须去重，否则候选数虚高一倍）**：坑 72 给的抽取法（引号块问句 + `面试官问：` 行 + `问题：` 行）在本轮实测**会把同一问句收两遍**：因为原文往往先在正文里以独立问句行出现一次，随后又在「面试官可能会问」的引号块里复述一次。2026-11-14 实测 `agent_interview.md`：去重前 35 条、去重后约 18 条独立问句（`claude_code_deep_dive.md` 同理，29 → 15）。处置：**抽取后按归一化文本去重**（去空白 + 去标点），再进候选池；**去重后的条数才是真实题量**，拿虚高的数字做「本轮题库已采尽」的判断会误判。
+>
+> **坑 80（`question-lint.js` 的 WARN 只对 `system-design` 类型生效——普通题目不会因篇幅/结构被判 WARN，但 `spec-audit` 会）**：`scripts/question-lint.js` 里的 `warn(...)` 调用**全部位于 `qtype === 'system-design'` 分支内**（`SD_MULTI` / `SD_NONE` / `SD_CAP_UNIT` / `SD_CAP_NUMBER`），因此**普通 `p0/p1` 题型的题目无论长短都不会触发 question-lint 的 WARN**——「question-lint 零 WARN」这条门禁对常规题目是恒真的，**不能把它当成内容质量检查**。真正会判内容 WARN 的是 `spec-audit.py`（缺「规范实现」区块、正文过短/超长）。2026-11-14 实测：本轮新增 3 题在三个文件里的题号分别是 #28 / #17 / #30，**逐文件跑 `spec-audit.py` 确认这三个题号零 WARN**，而同文件历史题目的 WARN（#1~#6 缺「规范实现」、#14 超长）全部是存量。**新增题后要自查的是「我这个题号有没有出现在 WARN 列表里」，不是看整份文件的 WARN 总数。**
 
 ---
 
