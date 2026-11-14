@@ -1,5 +1,8 @@
 # AI 智能工程 (AI Engineering) 体系导读✅
 
+> **系统面试证据合同**：[agent-interview-eval-v1 说明与样例](./agent-interview-eval-v1.md) · [schema](./agent-interview-eval-v1.schema.json) · [校验器](../../scripts/validate-agent-interview-eval.mjs)
+
+
 在大模型（LLM）与智能体（Agent）深度重塑软件工业的 2026 年，**AI 智能工程已成为现代高级前端架构师与全栈技术专家的核心分水岭**。根据头部大厂与高薪技术岗位（35K~160K+）的真实画像，现代工程师已全面跳出“简单的 Chat 对话框接入”这一原始阶段，深度进入**“交互体验重构（流式/Generative UI）、Agent 运行载体（Harness/MCP/Skills/Subagents）、端侧异构推理（WebGPU/本地 RAG）以及效能规范守卫（Spec-Driven/质量门禁）”**四大核心战役。
 
 本项目严格遵循**布鲁姆修订版认知分类学（Bloom's Taxonomy）与“技术问题域高内聚 × 认知深度递进”的双轴信息架构（IA）**，为前端与全栈工程师构建了一套自底向上、由浅入深的专业知识与能力测评体系。
