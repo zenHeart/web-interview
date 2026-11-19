@@ -84,6 +84,7 @@ graph TB
         T3_29["生产轨迹到训练数据集：失败分层与同任务内偏好对构造"]
         T3_30["专用工具的权限 / 输出 / 错误三重契约 vs 万能 Shell"]
         T3_31["Planner 工具可见性：能力目录注入与计划可执行性预检"]
+        T3_32["长任务状态的一致性等级：前端投影、版本护栏与分级兜底"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -105,6 +106,8 @@ graph TB
         T4_16["生成模型评测：FID / CLIP Score / 人类偏好与「准 vs 全」的分离"]
         T4_17["并行工具调用的执行语义：协议层并行 vs 执行层并行与结果回填契约"]
         T4_18["工具入参的确定性校验与语义歧义补全：可恢复纠错的回填契约"]
+        T4_19["既有接口工具化的 MCP 契约：入参语义化、出参可校验与错误可自纠"]
+        T4_20["Streamable HTTP 响应模式选型：单 JSON 与 SSE 流的代价与取消语义"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -241,6 +244,7 @@ graph TB
 - `{#p1-agent-trajectory-to-training-dataset}`：线上攒了十万条 Agent 轨迹，怎么清洗成能拿去微调的数据集？
 - `{#p1-dedicated-tool-contract-vs-universal-shell}`：为什么不直接给 Agent 一个万能 Shell，而要拆成 Read / Grep / Glob / Edit 这些专用工具？
 - `{#p1-planner-executor-tool-visibility}`：Planner 不知道执行层有哪些工具，怎么制定出真正能执行的计划？
+- `{#p1-agent-async-status-consistency-levels}`：Agent 长任务在前端显示的状态和服务端真实状态可能对不上，一致性等级该怎么定，各级又要怎么兜底？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -261,6 +265,8 @@ graph TB
 - `{#p1-generative-model-eval-diversity-fidelity}`：我们要把文生图模型接进产品，评测该怎么做？FID、CLIP Score、人类偏好分别测的是什么？「多样性」和「准确性」又各自用什么指标量？
 - `{#p1-parallel-tool-call-execution-semantics}`：模型一次返回多个工具调用时，这些调用该怎么执行？结果要怎么回填，某一个失败了又该怎么办？
 - `{#p1-tool-input-validation-and-parameter-clarification}`：模型发起的工具调用缺参数、或者参数不合法，Agent 怎么把它变成一次可恢复的纠错？
+- `{#p1-mcp-tool-contract-business-api-wrapping}`：公司已有的报表接口要封装成 MCP 工具给模型调，入参出参该怎么设计，才能让模型不调错？
+- `{#p1-mcp-streaming-vs-full-response-tradeoff}`：MCP 服务端该返回完整 JSON 还是 SSE 流，这个选择在高并发下分别要付出什么代价？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？

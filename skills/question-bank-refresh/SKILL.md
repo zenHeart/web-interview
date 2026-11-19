@@ -769,6 +769,24 @@ git push origin feature/question-bank-refresh
 > - 配套（坑 63 已记但易错）：`fetch-nowcoder.py` 的 `--out-dir` **每次都写同一个 `post_01.txt`**——**每个 URL 必须用独立子目录**，否则后一个覆盖前一个。本轮用 `/tmp/nc/<id>/` 逐个落盘，零覆盖。
 
 
+> **坑 88（MCP 的游标分页只覆盖 list 操作，`tools/call` 没有游标字段——别把分页语义直接套到工具调用上）**：2026-11-20 实测：MCP 规范 `server/utilities/pagination.mdx` 的「Operations Supporting Pagination」只列了 `resources/list`、`resources/templates/list`、`prompts/list`、`tools/list` **四项**；而 `schema.mdx` 的 `CallToolRequestParams` 只有 `_meta`、`inputResponses`、`requestState`、`name`、`arguments`——**没有任何游标字段**。
+> - 后果：写「把既有接口工具化」的题时，若照搬「MCP 分页 = 不透明游标」的口径，就会写出「`tools/call` 支持游标翻页」这种**协议上不存在的能力**。
+> - 正确口径（三选一，按优先级）：① **工具自己签发不透明游标**并作为普通入参，且 description 必须写明「服务端签发、必须原样回传、不得自行构造或递增」；② **服务端直接裁剪结果**并提示模型缩小查询范围（加 `groupBy`、拆日期区间）；③ **绝不把 `page` / `limit` 当成模型可自由填的语义参数**。
+> - 核对入口：`repos/specification/docs/specification/2026-07-28/server/utilities/pagination.mdx`、`.../schema.mdx`（`CallToolRequestParams` 节）。
+>
+> **坑 89（牛客频控的恢复时间比想象的长：25~30 秒的重试间隔不够，70 秒以上才实测恢复；而「预览」已经足够当题面证据）**：2026-11-20 实测：同一批 4 个 URL，`a0306a04`（淘天 AI Agent 一面）首抓即拿到 4.3KB 正文；而 `1bc42e6a`（字节交易与广告面经）连续 4 次抓取返回 **186~230 字节**（间隔 25~32 秒，**全部失败**），改为**每 70 秒重试**后第 1 轮即恢复到 11.8KB；`53ccfc01`（快手商业化）第 2 轮恢复到 8.7KB。
+> - 判据分层：`TITLE: 牛客网 - 找工作神器` = **整页骨架**；**标题正常但正文只有几百字节** = **抽到了壳、尚未恢复**。两者都**不是「该帖无价值」**。
+> - 纪律：**抓不到全文不等于选题作废**——搜索页预览里已含完整题面（坑 73 再验证，本轮 6 个新 id 里 3 个只靠预览就完成了选题），可以直接把「预览原文」当出处引用，并在报告里注明「题面取自搜索页预览」。**不要因为抓不到全文就放弃一整批选题。**
+> - 配套：**同一场面试常有两个帖子**——本轮淘天 AI Agent 一面同时出现 `a0306a04`（题号清单 1~22）与 `61fada08`（追问清单），**内容互补但 id 不同**。**两个 id 都要记进台账**，否则下轮会把同一场面试当成新帖重挖。
+>
+> **坑 90（判断「MCP 有没有新版本」只能看已发布版本目录，`draft/` 不是版本号）**：2026-11-20 实测：`repos/specification/docs/specification/` 下有 `2024-11-05 / 2025-03-26 / 2025-06-18 / 2025-11-25 / 2026-07-28 / draft` 六个目录。**`draft/` 只是累积未发布变更，它不是「下一个版本号」**——它下面也有 `changelog.mdx`，很容易被误读成新版本。
+> - 本轮镜像 HEAD（2026-11-19）的提交是 `sep(SEP-3415): Events Extension`，属 **draft 侧变更** → **最新已发布版本仍是 2026-07-28**，题库基线无需改。
+> - 纪律：核「MCP 当前版本」时**只认已发布版本目录 + 该版本的 `changelog.mdx`**；`draft/changelog.mdx` 的条目**不能**写成「新版本特性」。
+>
+> **坑 91（本轮再次验证：镜像刷新脚本「大量触发看门狗」不等于镜像坏了——健康度要看各仓最后提交时间）**：2026-11-20 实测 `refresh-sources.sh` 的 update 阶段有 **10 余个仓触发 `CLONE_TIMEOUT` 看门狗**，日志里满屏 `Terminated: 15`，看起来像整轮失败；但刷新后关键 L0 仓全部是当日——`specification` 2026-11-19、`whatwg-html` 2026-11-19、`vercel-ai` 2026-11-19、`openai-agents-python` 2026-11-18。**判据仍是坑 19 那条：看各仓 `git log -1 --format=%cs`，不看脚本是否跑完。**
+> - 附带：**L2 题库仓仍无新增**（`interview-question` 停在 2025-09-07、`front-end-interview-handbook` 停在 2026-10-05），连续多轮如此——真题增量只能走面经帖通道。
+
+
 ---
 
 ## 8. 复盘（每轮结束必做）
