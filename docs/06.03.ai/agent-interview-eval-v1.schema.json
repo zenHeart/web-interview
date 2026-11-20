@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://web-interview.zenheart.site/schemas/agent-interview-eval-v1.json",
+  "title": "Agent system interview evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["artifact", "spec", "target_role", "scenario", "questions", "evidence", "scores", "decision", "qualification", "mastery", "links"],
+  "properties": {
+    "artifact": { "const": "interview-agent-eval" },
+    "spec": { "const": "agent-interview-eval-v1" },
+    "target_role": { "type": "string", "minLength": 1 },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt", "constraints", "expected_state"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+        "prompt": { "type": "string", "minLength": 1 },
+        "constraints": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "expected_state": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "question", "followups", "expected_topics"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$" },
+          "question": { "type": "string", "minLength": 1 },
+          "followups": { "type": "array", "maxItems": 5, "items": { "type": "string", "minLength": 1 } },
+          "expected_topics": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "type", "locator", "sha256", "failing_case"],
+        "properties": {
+          "question_id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["code", "trace", "diagram", "test", "explanation"] },
+          "locator": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "failing_case": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "security", "reliability", "evaluation", "communication"],
+      "properties": {
+        "architecture": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "security": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "reliability": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "evaluation": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "communication": { "type": "integer", "minimum": 0, "maximum": 4 }
+      }
+    },
+    "decision": { "enum": ["pass", "needs_followup", "no"] },
+    "qualification": { "enum": ["qualified", "needs_followup", "not_qualified"] },
+    "mastery": { "enum": ["pass", "pending", "fail"] },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workflow_issue", "career_issue", "eval_spec"],
+      "properties": {
+        "workflow_issue": { "type": "string", "format": "uri" },
+        "career_issue": { "type": "string", "format": "uri" },
+        "eval_spec": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}
