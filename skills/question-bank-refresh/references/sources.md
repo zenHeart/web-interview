@@ -124,6 +124,12 @@
 | 「基模能力变强后，垂类 SFT / RL 的边际价值是否被抹平」 | **2026-11-15 采到一线出处**（`llm-master` 的 `finetuning_sft_rlhf_interview.md`），全库 `垂类` / `边际价值` **0 命中** | **不另立题**——与既有 `{#p1-finetune-vs-rag-vs-prompt}`（微调 vs RAG vs prompt 的场景取舍）**同域**，属更锐的一层而非新对象。**建议作该题的追问扩展** |
 | 「知识库增量更新：哪些 chunk 失效、跨文件引用怎么同步」 | RAG 八股 #6（**12 篇频次**）+ `llm-master` 的 `rag_hardest_parts_interview.md`；既有 `{#p0-rag-doc-parse-index-pipeline}` 已含「内容指纹与增量更新」 | **不另立题**——**同域**，属既有题的追问扩展 |
 | 「主流 coding agent 的元工具（Read / Edit / Bash）设计差异对比」（Claude Code / Codex / DSH / Pi） | **2026-11-15 采到一线出处**（牛客 `0d7eda07a0e74cac81e83d9e5554b9b8` 附带的「窝真的是个彩笔」面经 + `llm-master` 的 `claude_code_deep_dive.md`） | **本轮不录**——`DSH` / `Pi` **没有可核的官方文档入口**，L0 不足；且 Claude Code 侧的四层工具已被 `{#p1-code-retrieval-vs-vector-rag}` 覆盖。**下轮若能定位各家的官方文档再评估** |
+| 「多模态 RAG 的向量化与检索：文本检索图片/视频、图片检索图片/视频、跨模态同库干扰、大文件/长视频切分、LLM 生成图片描述做图像检索的失真」 | **2026-11-26 采到一线出处**（牛客 `eccda50b085b44b0852c580c68a871b9` 途游 Agent 二面 #6~#9），全库 `图文检索` / `图片描述` **0 命中** | **本轮不录**——`{#p1-vlm-modal-alignment-clip-llava}` 已含「多模态 RAG 里『用哪套向量做召回』与『模型能不能看懂图』是两件事」一节，覆盖了模型侧；**但检索侧的跨模态同库干扰与切片策略确实没覆盖**。**缺 L0 依据**（跨模态向量空间的度量一致性、异构向量混索引的工程处置都还没核）→ **下轮补到 L0 再评估** |
+| 「IVF 倒排索引的 `nprobe` / `nlist` 参数怎么配，百万级数据量怎么选」 | 牛客 `eccda50b085b44b0852c580c68a871b9` #15/#16 | **不另立题**——`{#p1-vector-index-hnsw-vamana-diskann}` 已含「倒排类（IVF 系）」与「桶边界处召回会掉」，只是没讲参数调优；**属该题的追问扩展** |
+| 「vLLM 的 chunked batching / chunked prefill、GEMM 与 GEMV 的区别、分布式部署如何解决 IO bound」 | 牛客 `457067bffbfe47998e9c70ef626acdcc`（京东大模型推理算法一面二面，**正文本轮抓取未抽取到，题面取自搜索页预览**）；全库 `chunked` **0 命中** | **本轮不录**——`{#p1-vllm-paged-attention-batching}` 已覆盖 PagedAttention 与 Continuous Batching，**chunked batching 是更锐的同一族**；且**缺 L0**（未核 vLLM 官方对 chunked prefill 的口径）→ **建议作 vLLM 题的追问扩展，下轮补 L0** |
+| 「多轮对话 Agent 的 Prompt 拼装顺序」 | 牛客 `61346587b71949c6a56be58698e987fd`（阿里千问 Agent 开发二面 #11） | **不另立题**——与既有 `{#p0-prompt-caching-kv-cache-optimization}`（静态与动态上下文编排）**同域**，属同一层的更细表述；**建议作该题的追问扩展** |
+| 「主 Agent 该把多少上下文交给子 Agent」 | 牛客 `1bee89abbd3d4e3fbf0fe535f0a8ff91`（OPPO agent 一面 11.3） | **不另立题**——`{#p0-agent-extension-mechanisms}` 已讲 Subagent「独立上下文 + 只回传高密度的结构化总结」并有追问 1（上下文腐化），**「传什么 / 成本模型 / 选择准则」是该题更深一层** → **建议作追问扩展** |
+| 「多 Agent 通信的结果如何做到『明确且可验证』、如何消除自然语言的不确定性」 | 牛客 `3c305b0c1565458ba05c9906322f5327`（阿里国际 业务 agent 一面） | **不另立题**——`{#p1-multi-agent-handoff-message-contract}` 已含「接收方如何检查」与授权不可转授，**同域** → 建议作该题追问扩展 |
 
 ---
 
@@ -343,3 +349,19 @@
 >   - 「**PDF 扫描件与 OCR、表格结构化提取的技术难点**」（淘天 #3）——已被既有 `{#p0-rag-doc-parse-index-pipeline}` 覆盖（2026-11-15 批次已判定）→ **不录**；
 >   - 「**子任务失败（数据为空）时整个工作流的重试与降级**」（淘天 #15）——已被既有重试风暴题 + 多 Agent 冲突题覆盖 → **不录**。
 > - **下一轮选题建议**：①**继续用牛客搜索页换关键词**（本轮有效的是「Agent 工具调用 兼容性」「MCP 工具 封装 流式」「多 Agent 死锁 通信」；**重试间隔务必拉到 70 秒以上**，见坑 89）；②**`llm-master` 的 `docs/interview/llm/` 剩余未精读文件**（`rag_interview.md` 46 条、`agent_skill_interview.md` 34 条、`agent_harness_observability_interview.md` 33 条、`finetuning_sft_rlhf_interview.md` 27 条、`multi_agent_harness_interview.md` 27 条、`bytedance_fanqie_agent_intern_interview.md` 22 条、`claude_code_context_window_interview.md` 19 条、`spec_driven_development_interview.md` 17 条等）——**连续三轮只开了其中一部分，这是目前体量最大的未开采 L2 源**；③**补「跨模型工具调用兼容层」的 L0**；④**「Agent 出事故责任归属」等拿到 L0 再开**；⑤`mianjing.json` 差集仍恒为空，**不要再据此下「无新帖」结论**；⑥**牛客搜索页未开采 id 仍有 8 个**（`3d554c6d` / `61fada08` / `bb69ac95` / `fdba40c8` / `91aec19e` / `0d226871` / `5701f5af` / `8c4af551`），其中 `fdba40c8`「MCP 和 Skills 有什么区别」、`5701f5af`（汽车之家二面，SSE 流式输出）、`8c4af551`（字节前端一面）待下一轮核。
+
+> **2026-11-26 开采记录（牛客搜索页第六轮：4 组关键词全命中 + `llm-master` 未开采文件 + MCP 扩展仓取证）**：本轮出题 **3 道** + **1 道既有题追问增强**——**MCP tasks 扩展与长耗时工具的异步执行**、**MoE 推理部署的 EP/TP 切分**、**LightRAG 双层图谱与增量更新**，并给既有的 `{#p0-model-routing-fallback}` 补上「追问 4：路由器本身怎么训练、冷启动没有标注数据怎么办」。
+> - **三条通道的状态（坑 64 要求分别写清）**：
+>   - ① **语料池差集**：`mianjing.json` **于 2026-11-19 更新过**（不再是停更状态），现有 **416 条 / 16 个 distinct post id**（上一轮记录为 385 条 / 14 个）。其中 **`bed0467d91c2473e821509cd89229954` 与 `875341004021297152` 为新增 id**（均为京东），但**这批新增记录的 `question` 字段为空**，**没有可用题面** → **语料池通道本轮「有效但无新题面」**，不是「差集为空」也不是「用尽」。
+>   - ② **镜像 / 站点通道**：L2 题库仓**连续多轮无新增**（`interview-question` 停在 2025-09-07、`front-end-interview-handbook` 停在 2026-10-05）；L0 关键仓健康（`specification` 2026-11-19、`whatwg-html` 2026-11-19、`vercel-ai` 2026-11-19、`openai-agents-python` 2026-11-18）。
+>   - ③ **站点搜索通道（本轮唯一有效通道）**：**4 组关键词全部命中**（无骨架页），并集 **37 个 distinct post id**，其中 **32 个从未开采**。注意坑 77——**id 集合跨关键词大量重叠，逐关键词计数会高估**。
+> - **本轮开采并录题的出处**：
+>   - `nowcoder.com/feed/main/detail/eccda50b085b44b0852c580c68a871b9`（**途游 Agent 二面**，广州，27 届校招）→ **开出「MCP tasks 扩展与长耗时工具的异步执行」一题**（第 5 题原文：「在 ReAct Agent 调用外部工具时，如果工具服务启动较慢（例如 Pod 启动耗时），应该采用同步调用还是异步调用？如果采用异步方案，后台任务和结果回调如何实现？」）。该帖另含 **#6~#9 多模态 RAG**、**#15/#16 IVF 参数**、**#10~#13 RAG 评估与耗时统计** 四簇线索 → **除 IVF 可作既有题追问外，其余三簇记入缺口表**。
+>   - `nowcoder.com/feed/main/detail/457067bffbfe47998e9c70ef626acdcc`（**京东大模型推理算法一面二面**）→ **开出「MoE 推理部署的 EP/TP 切分」一题**（题面含「DeepSeek-MoE 部署 EP TP 部署优劣对比」）。⚠️ **该帖正文两轮抓取均未抽取到（185 / 229 字节），题面取自牛客搜索页预览**（坑 89 再验证：**抓不到全文不等于选题作废**）。
+>   - `llm-master` 仓 `docs/interview/llm/graphrag_interview.md`（L2，GitHub raw）→ **开出「LightRAG 双层图谱与增量更新」一题**（「LightRAG 和 GraphRAG 区别？「LightRAG 是什么？和 GraphRAG 有什么区别？为什么会有 LightRAG？」）。⚠️ **该 L2 文件把作者单位写成「港大数据科学实验室（HKUDS）」，与论文署名（北京邮电大学香港）不符——已按论文为准写进题目，并在「常见误区」里点名**。
+> - **L0 取证的两处关键动作**：
+>   - **MCP tasks 扩展的正文在独立仓 `modelcontextprotocol/ext-tasks`**（不在 `specification` 主仓，主仓里只有 2025-11-25 的实验版 `tasks/result`，语义相反）→ **新坑 93**。
+>   - **`Result.resultType` 的兼容规则「字段缺失即当作 `complete`」** → **新坑 94**（判别方向写反会把老服务端的每个结果都误判成待轮询任务）。
+> - **`llm-master` 的新抽取形态**：这批文件里**部分**带 frontmatter 的结构化 `faq:` 列表（`- q: "..."` / `- a: "..."`），坑 72 的问句抽法对 5 个文件**全部返回 0 条** → **新坑 92**（先看 frontmatter 有没有 faq，再决定用哪种抽法）。
+> - **本轮判定为「有价值但未录」的候选**：多模态 RAG 的跨模态同库干扰与大文件/长视频切片（缺 L0）、vLLM 的 chunked batching（缺 L0 且与既有 vLLM 题同族）、多轮 Prompt 拼装顺序（与 Prompt Caching 题同域）、子 Agent 上下文边界（与扩展机制题同域）、多 Agent 通信结果的可验证性（与交接消息契约题同域）——**全部记入上方缺口表**，本轮不硬凑。
+> - **下一轮选题建议**：①**给「多模态 RAG 检索侧」补 L0**（跨模态向量空间的度量一致性、异构向量混索引的处置），补到即可开题；②**给 vLLM chunked prefill 补官方文档 L0**，补到即可并入 vLLM 题的追问；③**继续挖 `llm-master` 剩余未开采文件**——本轮确认仍可开采的有 `agent_framework_comparison.md`（30KB）、`transformer_interview.md`（25KB）、`graph_engineering_interview.md`（21KB）、`vibe_coding_interview.md`（23KB）、`ai_enhanced_development_openspec_superpowers_gstack.md`（19KB）、`agent_hallucination_control_interview.md`（18KB）、`agent_drift_hallucination_interview.md`（14KB）、`agent_hybrid_routing_interview.md`（13KB）；④**MCP 扩展仓 `ext-tasks` 的 `typescript/` 目录**（`client/execution.md`、`client/input-and-recovery.md` 等）本轮未读，是异步工具客户端实现的 L0 来源。

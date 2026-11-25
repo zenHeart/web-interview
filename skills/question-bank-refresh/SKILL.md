@@ -787,6 +787,40 @@ git push origin feature/question-bank-refresh
 > - 附带：**L2 题库仓仍无新增**（`interview-question` 停在 2025-09-07、`front-end-interview-handbook` 停在 2026-10-05），连续多轮如此——真题增量只能走面经帖通道。
 
 
+> **坑 92（`llm-master` 仓有两种 frontmatter：只有部分文件带结构化 FAQ，问句抽取器必须先判型再抽）**：坑 72 给的抽法（引号块问句 + `面试官问：` 行 + `问题：` 行）在本轮实测**对 5 个文件全部返回 0 条**，但内容极丰富——原因是这批文件用的是**另一种结构**：`---` frontmatter 里的 `faq:` 列表，形如
+> ```yaml
+> faq:
+>   - q: "Agent Loop 到底在循环什么？"
+>     a: "不只是'思考-行动-观察'。……"
+> ```
+> - 一条命令抽出来：`re.findall(r'^\s*-\s*q:\s*["\'](.+?)["\']\s*$', t, re.M)`（2026-11-26 实测：`loop_engineering_interview.md` 5 条、`graph_engineering_interview.md` 4 条）。
+> - ⚠️ **但 FAQ 不是通用的**：`agent_drift_hallucination_interview.md` / `agent_hybrid_routing_interview.md` / `graphrag_interview.md` 的 frontmatter **只有 title/description，没有 faq**，这几个仍要靠正文抽取。**所以顺序是「先看 frontmatter 有没有 faq → 有就抽 faq，没有再按坑 72 抽正文」**，而不是反过来。
+> - 这正是坑 59「0 命中 = 格式没认出来，不是内容为空」的又一次实例——**0 条时永远先打印文件头 20 行看格式**。
+
+> **坑 93（扩展类协议能力的正文不在主协议仓里——查「某能力在不在核心规范」要先定位它在哪个仓）**：MCP 的 `tasks` 扩展正文**不在** `modelcontextprotocol/specification` 仓里，而在**独立仓 `github.com/modelcontextprotocol/ext-tasks`**（`specification/2026-07-28/tasks.md`）。2026-11-26 实测：`specification` 仓里搜 `tasks` 只有 `docs/specification/2025-11-25/basic/utilities/tasks.mdx`——**那是被移出核心前的实验版**，语义完全不同（阻塞式 `tasks/result`，与新版「`tasks/get` 轮询 + `tasks/update`」相反）。**照着旧路径核对，会写出与当前规范相反的答案。**
+> - 判据：查某能力时，**先确认三件事**——① 它在核心规范还是在扩展（看 `2026-07-28/changelog.mdx` 的「移出核心 / 改为扩展」条目）；② 若在扩展，去**扩展自己的仓**找正文；③ 扩展仓的路径从 `modelcontextprotocol.io/extensions/<name>/overview` 的仓库链接拿（扩展 overview 文档本身通常只有摘要，**细节在仓里的 `specification/<version>/<name>.md`**）。
+> - 配套：`repos/specification` 这个镜像**只覆盖主协议仓**，覆盖不到扩展仓——所以扩展类取证要联网取。
+
+> **坑 94（多态结果的判别式有「缺失即默认」的兼容规则，客户端不能只判 `resultType`）**：MCP 基础 schema 里 `Result` 带 `resultType: string`，规范原文写明：「**服务端实现的是更早的协议版本（不含 `resultType`）时，客户端 MUST 把该字段缺失当作 `"complete"` 处理**」。2026-11-26 实测这行写在 `schema.mdx` 的 `Result` 注释里，很容易漏读。
+> - 后果：客户端若写成 `if (result.resultType === 'task') {…} else { /* 当成完整结果 */ }`，在**老服务端**上恰好是对的（字段缺失 → 走 else）；但若写成 `if (result.resultType !== 'complete') { 当成 task }`，**老服务端会被误判成任务句柄**。**判别方向写反，老服务端上的每一个结果都会被当成待轮询的任务。**
+> - 正确写法：显式按「**有 `resultType` 且等于 `"task"`** → 句柄；**有 `resultType` 且等于 `"complete"`** → 完整结果；**字段缺失** → 按规范当作 `"complete"`」三分支。
+
+> **坑 95（给既有题加内容后，spec-audit 要与 `origin/main` 基线做「WARN 集合 diff」，不要靠人工数题号）**：坑 80 说「新增题后自查我这个题号有没有出现在 WARN 列表里」，坑 85 说「逐文件跑 spec-audit 并与基线对比条数」——但**逐条数题号在给既有题追加内容时不可靠**：追加会改变该文件后续题的 `Answer#N` 编号，WARN 跟着漂移；且**基线里本来就有的超长 WARN 会与新引入的混在一起**。
+> - 2026-11-26 实测：`04.protocols-ecosystem.md` 基线 6 条 WARN、当前 6 条，**逐条明细完全一致**（含一条基线就有的 `Answer#14 正文 4805 字，超长`）——说明本轮新增的 1 道题（3432 字）与给既有路由题加的追问（2086 → 2725 字）**都没引入新 WARN**。光看「当前 6 条」会误以为超长是新引入的。
+> - **可直接抄的 diff 做法**（一条命令出结论）：
+>   ```bash
+>   mkdir -p /tmp/base/docs/06.03.ai
+>   git show origin/main:docs/06.03.ai/<file>.md > /tmp/base/docs/06.03.ai/<file>.md
+>   for f in <file1> <file2>; do
+>     b=$(python3 skills/question-bank-refresh/scripts/spec-audit.py /tmp/base/docs/06.03.ai/$f.md 2>&1 | grep -cE "Answer#")
+>     c=$(python3 skills/question-bank-refresh/scripts/spec-audit.py docs/06.03.ai/$f.md 2>&1 | grep -cE "Answer#")
+>     echo "$f: baseline=$b current=$c"
+>   done
+>   ```
+>   **条数相同还不够**——再把两边的 WARN 明细各打一遍**逐行比对**，确认是同一批（`Answer#` 编号相同、描述相同），而不是「一进一出恰好抵消」。
+> - 附带口径：新题正文（去围栏代码、去空白后）要 **300~4000 字**；本轮三道新题分别 **3432 / 2821 / 2824 字**，均在阈值内。
+
+
 ---
 
 ## 8. 复盘（每轮结束必做）
