@@ -108,6 +108,7 @@ graph TB
         T4_18["工具入参的确定性校验与语义歧义补全：可恢复纠错的回填契约"]
         T4_19["既有接口工具化的 MCP 契约：入参语义化、出参可校验与错误可自纠"]
         T4_20["Streamable HTTP 响应模式选型：单 JSON 与 SSE 流的代价与取消语义"]
+        T4_21["MCP tasks 扩展：长耗时工具的异步执行、轮询回填与协作式取消"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -141,6 +142,8 @@ graph TB
         T5_28["代码检索 vs 向量 RAG：符号级精确匹配与语义召回的边界"]
         T5_29["记忆介质选型：Markdown 文件式记忆与向量库式记忆的分工"]
         T5_30["会话生命周期：压缩 / 清空 / 归档的语义边界与压缩的有损清单"]
+        T5_31["MoE 推理部署：EP 与 TP 的切分、Prefill/Decode 粒度差与冗余专家"]
+        T5_32["LightRAG 双层图谱检索与增量更新：与 GraphRAG 的路线差异"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -267,6 +270,7 @@ graph TB
 - `{#p1-tool-input-validation-and-parameter-clarification}`：模型发起的工具调用缺参数、或者参数不合法，Agent 怎么把它变成一次可恢复的纠错？
 - `{#p1-mcp-tool-contract-business-api-wrapping}`：公司已有的报表接口要封装成 MCP 工具给模型调，入参出参该怎么设计，才能让模型不调错？
 - `{#p1-mcp-streaming-vs-full-response-tradeoff}`：MCP 服务端该返回完整 JSON 还是 SSE 流，这个选择在高并发下分别要付出什么代价？
+- `{#p1-mcp-tasks-async-tool-execution}`：工具调用是同步的，那慢服务怎么调？MCP 的 tasks 扩展给出了什么答案？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -299,6 +303,8 @@ graph TB
 - `{#p1-code-retrieval-vs-vector-rag}`：代码检索该用向量 RAG 还是精确匹配？Claude Code 为什么没有给代码仓库建向量索引？
 - `{#p1-agent-memory-markdown-vs-vector-store}`：Agent 的长期记忆为什么有人用 Markdown 文件维护？它和 RAG 在用途、检索方式、更新成本上差在哪？
 - `{#p1-agent-session-lifecycle-compact-reset}`：Agent 的会话什么时候该压缩、什么时候该清空重开？两种操作各自会丢掉什么，怎么让用户感觉不到「失忆」？
+- `{#p1-moe-ep-tp-prefill-decode-deployment}`：MoE 模型上线时，专家并行（EP）和张量并行（TP）该怎么切？为什么预填充和解码的切法差一个量级？
+- `{#p1-lightrag-dual-layer-incremental-graph-rag}`：LightRAG 和 GraphRAG 有什么区别？双层图谱与增量更新解决了什么？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
