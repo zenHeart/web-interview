@@ -85,6 +85,7 @@ graph TB
         T3_30["专用工具的权限 / 输出 / 错误三重契约 vs 万能 Shell"]
         T3_31["Planner 工具可见性：能力目录注入与计划可执行性预检"]
         T3_32["长任务状态的一致性等级：前端投影、版本护栏与分级兜底"]
+        T3_33["工具权限规则求值：deny / ask / allow 优先级与六种权限模式"]
     end
 
     subgraph Tier4["Tier 4: 协议生态与质量工程 (04.protocols-ecosystem.md)"]
@@ -109,6 +110,7 @@ graph TB
         T4_19["既有接口工具化的 MCP 契约：入参语义化、出参可校验与错误可自纠"]
         T4_20["Streamable HTTP 响应模式选型：单 JSON 与 SSE 流的代价与取消语义"]
         T4_21["MCP tasks 扩展：长耗时工具的异步执行、轮询回填与协作式取消"]
+        T4_22["自建评测集构造：维度标签、dev / holdout 切分与近重复泄漏检测"]
     end
 
     subgraph Tier5["Tier 5: 端侧推理与底层运行机制 (05.runtime-internals.md)"]
@@ -144,6 +146,7 @@ graph TB
         T5_30["会话生命周期：压缩 / 清空 / 归档的语义边界与压缩的有损清单"]
         T5_31["MoE 推理部署：EP 与 TP 的切分、Prefill/Decode 粒度差与冗余专家"]
         T5_32["LightRAG 双层图谱检索与增量更新：与 GraphRAG 的路线差异"]
+        T5_33["多跳检索：迭代检索的桥实体选择与查询分解"]
     end
 
     subgraph Tier6["Practical Capstone: 白板手写实战 (coding.md)"]
@@ -248,6 +251,7 @@ graph TB
 - `{#p1-dedicated-tool-contract-vs-universal-shell}`：为什么不直接给 Agent 一个万能 Shell，而要拆成 Read / Grep / Glob / Edit 这些专用工具？
 - `{#p1-planner-executor-tool-visibility}`：Planner 不知道执行层有哪些工具，怎么制定出真正能执行的计划？
 - `{#p1-agent-async-status-consistency-levels}`：Agent 长任务在前端显示的状态和服务端真实状态可能对不上，一致性等级该怎么定，各级又要怎么兜底？
+- `{#p1-claude-code-permission-modes-rule-precedence}`：Agent 执行高风险工具时，权限规则该按什么顺序判定？deny / ask / allow 的优先级和权限模式怎么设计？
 
 ### [04. 协议生态与质量工程 (Protocols & Ecosystem)](./04.protocols-ecosystem.md)
 - `{#p0-mcp-protocol-frontend}`：Model Context Protocol (MCP) 协议在前端是如何工作的？它与传统 Function Calling 有什么区别？
@@ -271,6 +275,7 @@ graph TB
 - `{#p1-mcp-tool-contract-business-api-wrapping}`：公司已有的报表接口要封装成 MCP 工具给模型调，入参出参该怎么设计，才能让模型不调错？
 - `{#p1-mcp-streaming-vs-full-response-tradeoff}`：MCP 服务端该返回完整 JSON 还是 SSE 流，这个选择在高并发下分别要付出什么代价？
 - `{#p1-mcp-tasks-async-tool-execution}`：工具调用是同步的，那慢服务怎么调？MCP 的 tasks 扩展给出了什么答案？
+- `{#p1-agent-eval-set-construction-overfitting}`：自建 Agent 评测集该怎么造？数据集从哪来、怎么切分，为什么对着评测集调优会让分数虚高？
 
 ### [05. 端侧推理与底层运行机制 (Runtime & Internals)](./05.runtime-internals.md)
 - `{#p1-browser-webgpu-llm}`：浏览器端侧如何运行轻量大模型？WebGPU 与 Transformers.js / WebLLM 的底层推理机制是什么？
@@ -305,6 +310,7 @@ graph TB
 - `{#p1-agent-session-lifecycle-compact-reset}`：Agent 的会话什么时候该压缩、什么时候该清空重开？两种操作各自会丢掉什么，怎么让用户感觉不到「失忆」？
 - `{#p1-moe-ep-tp-prefill-decode-deployment}`：MoE 模型上线时，专家并行（EP）和张量并行（TP）该怎么切？为什么预填充和解码的切法差一个量级？
 - `{#p1-lightrag-dual-layer-incremental-graph-rag}`：LightRAG 和 GraphRAG 有什么区别？双层图谱与增量更新解决了什么？
+- `{#p1-rag-multi-hop-iterative-retrieval}`：RAG 遇到「A 公司的 CEO 毕业院校是哪所」这种依赖型问题，召回不到答案时该怎么办？多跳检索和查询分解怎么设计？
 
 ### [实战白板与综合手写 (Coding Practice)](./coding.md)
 - `{#p0-coding-agent-loop}`：手写实现一个包含工具调用与终止条件的最小 Agent 运行时循环（Agent Loop）？
