@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkweb_interview||=[]).push([[7609],{76198(e){e.exports=JSON.parse('{"authors":[{"name":"zenheart","title":"Web Interview \u7ef4\u62a4\u8005","url":"https://github.com/zenHeart","imageURL":"https://github.com/zenHeart.png","key":"zenheart","page":null,"count":1}]}')}}]);
