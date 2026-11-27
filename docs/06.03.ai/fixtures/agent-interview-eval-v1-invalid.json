@@ -1,0 +1,61 @@
+{
+  "artifact": "interview-agent-eval",
+  "spec": "agent-interview-eval-v1",
+  "target_role": "agent-platform-engineer",
+  "scenario": {
+    "id": "knowledge-base-agent-v1",
+    "prompt": "为测试环境知识库设计一个带引用、ACL、工具调用、恢复和人工确认的 Agent。",
+    "constraints": [
+      "只使用公开或合成资料",
+      "ACL 必须在检索阶段生效",
+      "外部副作用需要幂等键和人工确认",
+      "响应丢失后先读真实状态再决定重试"
+    ],
+    "expected_state": ["retrieving", "tool_pending", "awaiting_approval", "completed", "failed", "cancelled"]
+  },
+  "questions": [
+    {
+      "id": "q-architecture",
+      "question": "请画出从问题输入到带引用答案的完整状态和数据流。",
+      "followups": ["召回结果为空时如何停机？", "模型声称工具成功但响应超时如何处理？"],
+      "expected_topics": ["source snapshot", "ACL", "state machine", "citation"]
+    },
+    {
+      "id": "q-reliability",
+      "question": "如何避免工具超时和响应丢失造成重复副作用？",
+      "followups": ["幂等键由谁生成？", "什么时候进入人工接管？"],
+      "expected_topics": ["idempotency", "checkpoint", "read-after-timeout", "HITL"]
+    }
+  ],
+  "evidence": [
+    {
+      "question_id": "q-architecture",
+      "type": "diagram",
+      "locator": "artifacts/architecture.md#state-flow",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "failing_case": "fixtures/knowledge-base-agent/acl-leakage.json"
+    },
+    {
+      "question_id": "q-reliability",
+      "type": "test",
+      "locator": "artifacts/recovery.test.ts#read-status-before-retry",
+      "sha256": "",
+      "failing_case": "fixtures/knowledge-base-agent/response-lost-after-write.json"
+    }
+  ],
+  "scores": {
+    "architecture": 3,
+    "security": 3,
+    "reliability": 7,
+    "evaluation": 2,
+    "communication": 3
+  },
+  "decision": "needs_followup",
+  "qualification": "needs_followup",
+  "mastery": "pending",
+  "links": {
+    "workflow_issue": "https://github.com/zenHeart/workflow/issues/651",
+    "career_issue": "https://github.com/zenHeart/careers/pull/211",
+    "eval_spec": "file:///private/evals"
+  }
+}
